@@ -422,15 +422,40 @@ void main() {
     // Same audit as the v2 pair's note-count test below, run against
     // v3/v3-tr. Re-derived at HEAD: 73 verses, of which 30 carry across
     // from the v2 set (使徒行传 8:41 and 路加福音 9:17 do not — v3 either
-    // renumbers or no longer disagrees there) and 43 are NEW to v3 and
-    // have not been checked against the publisher yet.
+    // renumbers or no longer disagrees there) and 43 were new to v3.
     //
-    // Pinned as an OBSERVED baseline, not an adjudicated one — unlike
-    // the v2 set below, most of this list has not been run through
-    // tools/audit_biblexg_notes.py. A future importer change should
-    // show up here as a new reference, not silently. The 43 unchecked
-    // ones are filed as a queue item; their presence in this set means
-    // "seen", not "cleared".
+    // 2026-09-20: those 43 are now adjudicated against
+    // ~/Documents/CodingProject/Yahwehdehua/app/build/bible.db's ljks/ljkt
+    // tables — the actual source tools/adopt_official_ljk.py used to add
+    // v3's 2,209-footnote apparatus (commit c6461080), which mattwhatsup's
+    // own tw-*.json/cn-*.json cannot see (their footnotes live in separate
+    // `comment` nodes, not the `<cite>` this repo's audit tool checks).
+    //
+    // 34 are the publisher's own two editions disagreeing — confirmed by
+    // querying ljks/ljkt directly at each verse and finding OUR cn/tr
+    // counts match theirs exactly. Not ours; not repaired.
+    //
+    // 2 were an importer regression, now fixed: 路加福音 9:5 and
+    // 加拉太书 3:7 had their Traditional editorial gloss ("作為警告。",
+    // "稱義") flattened back into scripture body text when v3 was
+    // re-imported, undoing a ruling docs/梁家鏗譯本-請教出版方.md §四之三
+    // already established from the PRINTED 註釋本's type sizes (12pt =
+    // the editor's voice). Restored verbatim — the words were already
+    // there, only the `<note:>` wrapper had gone missing. They no longer
+    // appear in this set.
+    //
+    // 7 are confirmed importer defects, NOT repaired here (scope-control:
+    // partial adjudication over a rushed all-43 verdict) — filed as
+    // docs/autonomous-queue.md's follow-up item:
+    //   - 加拉太书 3:9 / 约翰福音 12:25: the SAME flattened-gloss class as
+    //     the 2 above (also fixed), but each is ALSO independently
+    //     missing one of the 2,209 footnotes entirely (confirmed present
+    //     in ljkt, absent from ours) — that second defect remains open.
+    //   - 使徒行传 20:32 / 歌罗西书 1:9 / 歌罗西书 3:9: missing a footnote
+    //     ljkt carries, confirmed against ljkt directly.
+    //   - 启示录 5:10 / 5:12: a footnote is duplicated onto the WRONG
+    //     verse (ljkt's 5:9 note lands on our 5:10; ljkt's 5:11 note is
+    //     duplicated onto our 5:12 as well as staying on 5:11).
     const knownNoteDifferences = <String>{
       // The 30 that carry across from the v2/v2-tr set below.
       '马太福音 10:8', '马太福音 13:21', '马太福音 22:45', '马太福音 26:29',
@@ -441,20 +466,23 @@ void main() {
       '哥林多后书 6:18', '以弗所书 2:8', '以弗所书 3:12', '以弗所书 4:25',
       '以弗所书 6:3', '歌罗西书 3:10', '帖撒罗尼迦前书 5:19',
       '提摩太后书 3:15', '启示录 3:1', '启示录 8:12', '启示录 12:17',
-      // The 43 new to v3 — unadjudicated, see the queue item this test
-      // files them under.
+      // 34 of the 43 new to v3 — the publisher's own ljks/ljkt disagree.
       '使徒行传 2:16', '使徒行传 3:13', '使徒行传 3:21', '使徒行传 5:37',
-      '使徒行传 12:2', '使徒行传 13:6', '使徒行传 13:14', '使徒行传 20:32',
-      '加拉太书 3:7', '加拉太书 3:9', '启示录 5:10', '启示录 5:12',
+      '使徒行传 12:2', '使徒行传 13:6', '使徒行传 13:14',
       '启示录 8:7', '哥林多前书 10:16', '哥林多前书 13:2', '哥林多前书 13:8',
       '哥林多前书 14:1', '哥林多后书 5:8', '希伯来书 10:26',
       '帖撒罗尼迦前书 3:2', '帖撒罗尼迦后书 2:7', '帖撒罗尼迦后书 2:8',
-      '歌罗西书 1:9', '歌罗西书 3:9', '约翰一书 2:18', '约翰一书 3:9',
-      '约翰一书 5:20', '约翰福音 1:14', '约翰福音 1:16', '约翰福音 12:25',
-      '罗马书 10:8', '罗马书 10:13', '路加福音 9:5', '路加福音 11:9',
+      '约翰一书 2:18', '约翰一书 3:9',
+      '约翰一书 5:20', '约翰福音 1:14', '约翰福音 1:16',
+      '罗马书 10:8', '罗马书 10:13', '路加福音 11:9',
       '路加福音 11:23', '路加福音 12:20', '路加福音 23:43', '马可福音 5:2',
       '马可福音 9:42', '马可福音 9:43', '马太福音 7:11', '马太福音 8:19',
       '马太福音 8:20',
+      // 7 of the 43 — confirmed importer defects, filed not fixed (see
+      // comment above). Still differ, for the residual/unfixed reason.
+      '使徒行传 20:32', '加拉太书 3:9', '启示录 5:10', '启示录 5:12',
+      '歌罗西书 1:9', '歌罗西书 3:9', '约翰福音 12:25',
+      // 路加福音 9:5 and 加拉太书 3:7 are GONE from this set — fixed.
     };
     final note = RegExp(r'<note:.*?>');
     final cn = {for (final v in load('assets/biblexg-v3.json')) v['id']: v};

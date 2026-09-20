@@ -73,7 +73,14 @@ Known non-defects, all verified individually rather than waved through:
     哥林多前書 15:11, 馬太福音 7:11 / 路加福音 11:9. Adopting them is the
     open question in §四之二 of the publisher letter, not a repair.
 
-Usage:  python3 tools/audit_biblexg_notes.py [--refresh]
+Usage:  python3 tools/audit_biblexg_notes.py [--edition v2|v3] [--refresh]
+
+--edition defaults to v2 so nothing already pinned moves. v3 fetches into
+its own cache dir (~/.cache/yswords/ljk-source-v3), never the v2 one — v3
+was imported from a later upstream state (commit 16633cad, "The
+梁家鏗譯本 is the September fetch") than the v2 cache's 2026-08-10 fetch,
+so reusing that cache would blame a live publisher revision on our v3
+importer.
 
 Read-only. Never writes to assets/.
 """
@@ -87,7 +94,25 @@ from collections import Counter
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_BASE = 'https://mattwhatsup.github.io/ljk-nt-bible-webapp/resources'
-CACHE_DIR = os.path.expanduser('~/.cache/yswords/ljk-source')
+
+# Two witness snapshots on this Mac are different dates (see the queue item
+# that added --edition): the v2 baseline was fetched 2026-08-10, and v3 was
+# imported from a later, September upstream state (commit 16633cad, "The
+# 梁家鏗譯本 is the September fetch"). Auditing v3 against the Aug-10 cache
+# would attribute a live publisher revision to our importer, so v3 gets its
+# own cache dir and is always fetched fresh rather than reusing v2's.
+EDITIONS = {
+    'v2': {
+        'tr_asset': 'assets/biblexg-v2-tr.json',
+        'cn_asset': 'assets/biblexg-v2.json',
+        'cache_dir': os.path.expanduser('~/.cache/yswords/ljk-source'),
+    },
+    'v3': {
+        'tr_asset': 'assets/biblexg-v3-tr.json',
+        'cn_asset': 'assets/biblexg-v3.json',
+        'cache_dir': os.path.expanduser('~/.cache/yswords/ljk-source-v3'),
+    },
+}
 
 # (upstream abbreviation, simplified book name, traditional book name)
 BOOKS = [
@@ -199,11 +224,11 @@ ACCOUNTED_FOR_TEXT = {
 }
 
 
-def fetch(lang: str, abbr: str, refresh: bool) -> list:
+def fetch(lang: str, abbr: str, refresh: bool, cache_dir: str) -> list:
     fname = f'{lang}-{abbr}.json'
-    cached = os.path.join(CACHE_DIR, fname)
+    cached = os.path.join(cache_dir, fname)
     if refresh or not os.path.exists(cached):
-        os.makedirs(CACHE_DIR, exist_ok=True)
+        os.makedirs(cache_dir, exist_ok=True)
         with urllib.request.urlopen(f'{SRC_BASE}/{fname}', timeout=30) as r:
             data = r.read()
         # Netlify-style hosts answer a missing file with a 200 and HTML.
@@ -246,13 +271,14 @@ def ours(path: str) -> dict:
     return out
 
 
-def audit(lang: str, asset: str, book_index: int, refresh: bool) -> int:
+def audit(lang: str, asset: str, book_index: int, refresh: bool,
+          cache_dir: str) -> int:
     shipped = ours(asset)
     unexplained = 0
     fewer = more = 0
     for row in BOOKS:
         abbr, name = row[0], row[book_index]
-        cites = publisher_cites(fetch(lang, abbr, refresh))
+        cites = publisher_cites(fetch(lang, abbr, refresh, cache_dir))
         for (chapter, label), theirs in cites.items():
             mine = shipped.get((name, chapter, label))
             if mine is None:
@@ -282,7 +308,8 @@ def audit(lang: str, asset: str, book_index: int, refresh: bool) -> int:
     return unexplained
 
 
-def audit_text(lang: str, asset: str, book_index: int, refresh: bool) -> int:
+def audit_text(lang: str, asset: str, book_index: int, refresh: bool,
+               cache_dir: str) -> int:
     """Compare what the notes SAY, per chapter. See the module docstring
     for why this is keyed on the chapter and not on the verse."""
     mine_by_chapter: dict = {}
@@ -295,7 +322,7 @@ def audit_text(lang: str, asset: str, book_index: int, refresh: bool) -> int:
         abbr, name = row[0], row[book_index]
         theirs_by_chapter: dict = {}
         for (chapter, _), cites in publisher_cites(
-                fetch(lang, abbr, refresh)).items():
+                fetch(lang, abbr, refresh, cache_dir)).items():
             counter = theirs_by_chapter.setdefault(chapter, Counter())
             counter.update(c for c in map(normalise, cites) if c)
         for chapter, theirs in theirs_by_chapter.items():
@@ -323,20 +350,30 @@ def audit_text(lang: str, asset: str, book_index: int, refresh: bool) -> int:
 
 def main() -> int:
     refresh = '--refresh' in sys.argv
+    edition = 'v2'
+    for i, arg in enumerate(sys.argv):
+        if arg == '--edition' and i + 1 < len(sys.argv):
+            edition = sys.argv[i + 1]
+    if edition not in EDITIONS:
+        raise SystemExit(f'--edition must be one of {sorted(EDITIONS)}, '
+                          f'got {edition!r}')
+    cfg = EDITIONS[edition]
+    cache_dir, tr_asset, cn_asset = (
+        cfg['cache_dir'], cfg['tr_asset'], cfg['cn_asset'])
     total = 0
-    print('== Do we carry every note? (count, per verse)')
-    print('Traditional (tw-*.json → assets/biblexg-v2-tr.json)')
-    total += audit('tw', 'assets/biblexg-v2-tr.json', 2, refresh)
+    print(f'== Do we carry every note? (count, per verse) [{edition}]')
+    print(f'Traditional (tw-*.json → {tr_asset})')
+    total += audit('tw', tr_asset, 2, refresh, cache_dir)
     print()
-    print('Simplified (cn-*.json → assets/biblexg-v2.json)')
-    total += audit('cn', 'assets/biblexg-v2.json', 1, refresh)
+    print(f'Simplified (cn-*.json → {cn_asset})')
+    total += audit('cn', cn_asset, 1, refresh, cache_dir)
     print()
     print('== Do they say the same thing? (text, per chapter)')
     print('Traditional')
-    total += audit_text('tw', 'assets/biblexg-v2-tr.json', 2, refresh)
+    total += audit_text('tw', tr_asset, 2, refresh, cache_dir)
     print()
     print('Simplified')
-    total += audit_text('cn', 'assets/biblexg-v2.json', 1, refresh)
+    total += audit_text('cn', cn_asset, 1, refresh, cache_dir)
     print()
     if total:
         print(f'FAIL — {total} places where our editorial notes do not '

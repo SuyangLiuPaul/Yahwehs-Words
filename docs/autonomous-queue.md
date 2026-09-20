@@ -8682,6 +8682,100 @@ has never seen this repo.
       **CI:** pushed as `22a18ea2` (merged with an unrelated concurrent
       `chore(songs)` commit); run `35198838714` — green.
 
+- [x] **The 43 note-count differences new to the selectable v3 pair are
+      adjudicated, 2026-09-20.** `tools/audit_biblexg_notes.py` gained
+      `--edition v2|v3` (default v2, so nothing pinned moves) and a
+      v3-only cache dir (`~/.cache/yswords/ljk-source-v3`) — v3 was
+      imported from a September fetch (commit `16633cad`), six weeks
+      after the v2 cache's 2026-08-10 fetch, so the two must never share
+      a cache.
+
+      That tool's Pass 1 turned out **not** to be the right check for
+      v3: it counts `<cite>` in mattwhatsup's `tw-*.json`/`cn-*.json`
+      against our `<note:>`, but v3's apparatus is 2,209 footnotes wide
+      (commit `c6461080`), most of them adopted from a *different*
+      pipeline — `tools/adopt_official_ljk.py`, pulling `<fnote>` from
+      `~/Documents/CodingProject/Yahwehdehua/app/build/bible.db`'s
+      `ljks`/`ljkt` tables — and mattwhatsup's own verse nodes carry
+      most of that content in separate `comment` nodes Pass 1 never
+      walks. Comparing v3's note count to mattwhatsup's `<cite>` count
+      alone floods with false "MORE" results. The real witness for the
+      43 is `bible.db`'s `ljks`/`ljkt` (dated 2026-09-18 on this Mac),
+      which is what `adopt_official_ljk.py` actually read from.
+
+      Querying it verse-by-verse for all 43 sorted them:
+
+      **34 — the publisher's own two editions disagree.** Our v3/v3-tr
+      counts match `ljks`/`ljkt`'s own counts exactly at each verse, so
+      the split is inherited, not introduced. Not repaired:
+      使徒行传 2:16, 3:13, 3:21, 5:37, 12:2, 13:6, 13:14 · 启示录 8:7 ·
+      哥林多前书 10:16, 13:2, 13:8, 14:1 · 哥林多后书 5:8 · 希伯来书
+      10:26 · 帖撒罗尼迦前书 3:2 · 帖撒罗尼迦后书 2:7, 2:8 · 约翰一书
+      2:18, 3:9, 5:20 · 约翰福音 1:14, 1:16 · 罗马书 10:8, 10:13 · 路加
+      福音 11:9, 11:23, 12:20, 23:43 · 马可福音 5:2, 9:42, 9:43 · 马太
+      福音 7:11, 8:19, 8:20.
+
+      **2 — a v2 ruling regressed on re-import, now restored.** 路加福音
+      9:5 and 加拉太书 3:7's Traditional had the editor's gloss
+      ("作為警告。", "稱義") flattened back into scripture body text —
+      the same defect this whole tool exists to catch. `docs/
+      梁家鏗譯本-請教出版方.md` §四之三 already settled, from the
+      PRINTED 註釋本's 12pt type size, that these ARE the editor's words
+      in 4 verses; v2-tr wrapped them in `<note:>` accordingly, and the
+      September re-import silently lost the wrapper. Restored verbatim
+      in `assets/biblexg-v3-tr.json` (byte-identical to what v2-tr
+      already carried) — no character invented, none moved, only the
+      `<note:>` tag put back. Both verses now match between v3/v3-tr and
+      are off the pinned-difference list entirely.
+
+      **7 — confirmed importer defects, filed not repaired (scope
+      control: an hour, not a day).** The other two verses from the same
+      4-verse printed-typography ruling, 加拉太书 3:9 and 约翰福音 12:25,
+      got the same flattening fix here, but EACH is also independently
+      missing one of the 2,209 footnotes outright (confirmed present in
+      `ljkt`, absent from ours) — that second defect is untouched and
+      they stay on the pinned list for it. Plus:
+      使徒行传 20:32 / 歌罗西书 1:9 / 歌罗西书 3:9 are each missing a
+      footnote `ljkt` carries (confirmed by direct query, not corpus-
+      internal comparison). 启示录 5:10 / 5:12: a footnote is attached to
+      the wrong verse — `ljkt`'s 5:9 note lands on our 5:10, and `ljkt`'s
+      5:11 note is duplicated onto our 5:12 as well as correctly staying
+      on 5:11. Full per-verse evidence (our note text vs. `ljks`/`ljkt`'s)
+      is in the commit that lands this item; re-run against `bible.db`
+      before repairing, since none of this was re-confirmed against the
+      PRINTED 註釋本 the way the 4 flattening cases were.
+
+      `test/biblexg_verse_integrity_test.dart`'s pinned set and comment
+      updated to match (71 verses now, was 73 — the 2 fixed are gone).
+      `docs/梁家鏗譯本-請教出版方.md` §四之三 gets a dated addendum
+      noting the regression-and-refix; the 34-verse publisher-disagrees
+      list is NOT added there — that "finalized, ready to send" letter
+      is v2-scoped and none of this is a new question for the publisher.
+
+      **Also found, not fixed (separate, smaller item):** running the
+      unmodified `--edition v2` pass today reports 4 unexplained diffs
+      (路加福音 9:5, 約翰福音 12:25, 加拉太書 3:7, 3:9 again, this time
+      against mattwhatsup) that the tool's own docstring says should be
+      0 as of 2026-08-11. `ACCOUNTED_FOR` was never updated after
+      `tools/audit_printed_typography.py` wrapped these 4 in `<note:>`
+      in v2-tr — the audit script and the typography fix drifted apart.
+      Filed below.
+
+- [ ] **`tools/audit_biblexg_notes.py --edition v2` reports 4 unexplained
+      diffs that predate this session** (路加福音 9:5, 約翰福音 12:25,
+      加拉太書 3:7, 加拉太書 3:9 — all "we have MORE notes than the
+      publisher"), contradicting its own docstring's "0 unexplained as
+      of 2026-08-11." Root cause: `tools/audit_printed_typography.py`
+      wrapped these 4 in `<note:>` in `assets/biblexg-v2-tr.json`
+      afterwards (per the comment at `test/
+      biblexg_verse_integrity_test.dart:501-509`), and `ACCOUNTED_FOR`
+      in `audit_biblexg_notes.py` was never given the matching 4 entries.
+      Cosmetic — the asset is already correct, only the audit tool's
+      bookkeeping is stale — but it means the tool no longer proves what
+      its own docstring claims. Add the 4 entries to `ACCOUNTED_FOR`,
+      citing the printed-typography ruling, and fix the docstring's
+      stale "0 of either" claim.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`

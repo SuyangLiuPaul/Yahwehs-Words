@@ -2181,6 +2181,22 @@ skipped (rate limit) or NEXT_TASK.md wasn't refreshed — not a crash.
     test over chaining navigations in one test — a chained run that
     disagrees with an isolated run is a red flag for THIS class of
     flutter_test state leakage, not automatically a real finding.
+72. **`tools/audit_biblexg_notes.py`'s Pass 1 (`<cite>` count vs
+    `<note:>` count) only proves anything for v2.** Run it against v3 and
+    it floods with hundreds of false "MORE notes than the publisher"
+    results. Cause: v3 carries a 2,209-footnote apparatus (commit
+    `c6461080`) adopted by a SEPARATE tool, `tools/adopt_official_ljk.py`,
+    from a SEPARATE witness — `~/Documents/CodingProject/Yahwehdehua/
+    app/build/bible.db`'s `ljks`/`ljkt` tables (`<fnote>` markup) — not
+    from mattwhatsup's `tw-*.json`/`cn-*.json` (`<cite>` markup) that
+    `audit_biblexg_notes.py` reads. mattwhatsup's own verse nodes carry
+    most of that footnote content in separate `comment` nodes the
+    `<cite>`-only regex never walks, so v3 legitimately has far more
+    notes than mattwhatsup has `<cite>` tags — that gap is not a defect.
+    **To check v3's notes against a publisher witness, query
+    `bible.db`'s `ljks`/`ljkt` directly** (same `book`/`chapter`/`verse`
+    lookup `adopt_official_ljk.py` itself uses), not mattwhatsup's JSON.
+    Found adjudicating queue's 43-new-to-v3 note-count item, 2026-09-20.
 
 ## Trap: "local green" and "CI green" are different claims
 
