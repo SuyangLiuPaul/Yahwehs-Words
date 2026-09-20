@@ -397,6 +397,13 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     _attachedPositionsListener = currentListener;
     currentListener.itemPositions
         .addListener(_handleItemPositionsChanged);
+    // 2026-09-20: and READ it once, because subscribing does not.
+    // `itemPositions` is a ValueNotifier: it fires on change, and the
+    // page we just swiped to was laid out and settled while we were
+    // still attached to the old one — so nothing fires, and the
+    // position pill kept the previous chapter's reading until the
+    // reader scrolled. Reported as 「翻到下一页 那个bar没有跟着一起动」.
+    _handleItemPositionsChanged();
     // 2026-05-22 (v1.2.71): no longer subscribing to
     // provider.scrollOffsetListener.changes — that stream stops
     // emitting after the SPL re-mounts (verified bug). Chrome auto-
@@ -826,7 +833,14 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     provider.setCurrentChapter(book: book, chapter: chap);
     provider.updateCurrentVerse(verse: matched.first);
     provider.jumpToTop();
-    if (mounted) _visibleItemIndexNotifier.value = 0;
+    if (mounted) {
+      _visibleItemIndexNotifier.value = 0;
+      // The pill reads these two, not `_visibleItemIndexNotifier`.
+      // Left stale they showed the old chapter's verse number against
+      // the new chapter's total — a number belonging to neither.
+      _visibleItemPosNotifier.value = 0;
+      _chapterProgressNotifier.value = 0;
+    }
     // 2026-05-24 (v1.3.1): pre-warm paragraph cache for next-prev
     // chapters so the user's NEXT swipe lands on a cache hit instead
     // of a ~50 ms recompute. User reported persistent "翻页还是有点

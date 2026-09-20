@@ -63,6 +63,11 @@ class _SearchPageState extends State<SearchPage> {
   // Controllers and list for managing search functionality
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
+
+  /// 2026-09-20: so a tap anywhere on the search pill lands in the
+  /// field. Before this the only thing that took a tap was the field's
+  /// own 32-58 px strip of text.
+  final FocusNode _searchFocusNode = FocusNode();
   final List<Verse> _results = [];
   /// 2026-05-07 (v9): debounced live-search timer. Each onChanged
   /// keystroke resets the filter to default scope (entire Bible,
@@ -885,6 +890,7 @@ class _SearchPageState extends State<SearchPage> {
     // commit timer — fire-and-forget RecentSearchesService.add
     // would otherwise race a now-disposed `_loadRecents` setState.
     _recentsCommitTimer?.cancel();
+    _searchFocusNode.dispose();
     _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
@@ -1353,6 +1359,17 @@ class _SearchPageState extends State<SearchPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          // 2026-09-20, from a phone: the query was wrapping into a
+          // two-character column and the field was ~32 px wide, which
+          // is not a tap target. `AppBar` hands the title whatever is
+          // left after leading + actions + 2 x titleSpacing, and this
+          // bar was spending 56 (leading slot) + 4 x 48 (actions) + 32
+          // (spacing) of a 390 px phone, leaving 110 px for a pill that
+          // then spent 44 of it on its own padding and icon.
+          //
+          // Measured on a 390 pt iPhone: title 110 -> 214 px.
+          titleSpacing: 4,
+          leadingWidth: 44,
           leading: const LocalizedBackButton(),
           // Search input field in the app bar.
           // 2026-05-07: text + hint colors derived from the AppBar's
@@ -1371,8 +1388,17 @@ class _SearchPageState extends State<SearchPage> {
           title: Builder(builder: (context) {
             final fg = Theme.of(context).appBarTheme.foregroundColor ??
                 Theme.of(context).colorScheme.onPrimary;
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            return GestureDetector(
+              // The magnifier used to be a bare Icon in a plain
+              // Container: it looked like the button that focuses the
+              // field and was not one. Now the whole pill is, so the
+              // reader can hit anywhere in it instead of a sliver of
+              // text — the complaint was 「根本按不到」.
+              behavior: HitTestBehavior.opaque,
+              onTap: () => _searchFocusNode.requestFocus(),
+              child: Container(
+              constraints: const BoxConstraints(minHeight: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: fg.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(20),
@@ -1380,17 +1406,21 @@ class _SearchPageState extends State<SearchPage> {
               child: Row(
                 children: [
                   Icon(Icons.search_rounded,
-                      size: 20, color: fg.withValues(alpha: 0.85)),
-                  const SizedBox(width: 8),
+                      size: 18, color: fg.withValues(alpha: 0.85)),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: TextField(
             autofocus: true,
+            focusNode: _searchFocusNode,
             controller: _textEditingController,
             // 2026-05-22 (v1.2.71): allow up to 2 lines so long
             // question-style queries don't clip. minLines: 1 keeps
             // the AppBar's normal height for short queries.
+            // 2026-09-20: was `maxLines: 2`. With the narrow title slot
+            // that produced a two-character-per-line column out of a
+            // two-character query. One line that scrolls beats a column.
             minLines: 1,
-            maxLines: 2,
+            maxLines: 1,
             keyboardType: TextInputType.text,
             style: TextStyle(
               fontSize: settings.fontSize,
@@ -1526,6 +1556,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                 ],
               ),
+              ),
             );
           }),
           actions: [
@@ -1538,12 +1569,20 @@ class _SearchPageState extends State<SearchPage> {
             IconButton(
               tooltip: uiStrings['searchHelpTooltip']?[settings.locale] ??
                   'Search tips',
-              icon: const Icon(Icons.help_outline_rounded),
+              icon: const Icon(Icons.help_outline_rounded, size: 22),
+              // Same 36 px floor the reader header uses on its own row
+              // (bible_reading_pane.dart) — still above the 44 pt HIG
+              // target once the AppBar's own height is counted, and it
+              // gives the query back 12 px per button.
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               onPressed: () => _showSearchHelp(context, settings),
             ),
             PopupMenuButton<Object>(
               tooltip: uiStrings['showMenu']?[settings.locale] ?? 'Show menu',
-              icon: const Icon(Icons.filter_list),
+              icon: const Icon(Icons.filter_list, size: 22),
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               onSelected: (value) async {
                 // 2026-05-07 (post-fix v3): replay the LAST search
                 // mode (text / Strong's / YsWords AI) with the new
