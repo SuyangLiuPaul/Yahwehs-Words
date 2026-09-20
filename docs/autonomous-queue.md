@@ -16806,7 +16806,7 @@ has never seen this repo.
       green first: rebuilt the asset (md5 `ae240484…` byte-identical),
       re-ran `flutter analyze` (clean) and the full
       `bible_chronology_test.dart` file (152 tests, green) on this
-      iteration's own machine before committing.
+      iteration's own machine before committing. Pushed as `8b7708f1`.
 
 - [ ] **Follow-up, filed not built: the `matriarchs` line id/name is
       deliberately plural.** Noted 2026-09-17 landing the Sarah slice
