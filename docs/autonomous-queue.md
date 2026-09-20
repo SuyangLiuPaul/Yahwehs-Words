@@ -16151,6 +16151,101 @@ has never seen this repo.
       including the three-locale declaration test and the live
       `assets/kjv.json` verse-text/reference check.
 
+      **2026-09-20 slice — the same "plausible, wrong-sounding claim"
+      defect on the Family Tree page's own labels, not the chronology
+      chart.** Two provable falsehoods, both measured from the asset:
+      (1) `assets/family_tree.json` `_meta.yearLegend.bc` said "Ussher
+      baseline for patriarchs", but `abraham.birthYear` is −2166 while
+      Ussher puts his birth at 1996 BC (AM 2008, per this same chart's
+      own `contested_note()` prose) — a 170-year gap this repo already
+      measures as `bible_chronology.json` `_meta.familyTreeScaleOffset`.
+      The legend's "Thiele for kings" half held up under a refutation
+      attempt (David born 1040 BC / 70-year lifespan matches his known
+      40-year reign to 970 BC; Hezekiah's death year matches Thiele's
+      686 BC exactly), so only the patriarch half was rewritten — to
+      name the late-date scheme `bible_timeline.json` uses instead
+      (Abraham's birth −2166 minus his call-age 75 = 2091 BC, matching
+      `contested_note()`'s own "2091 BC" for Abram's call) and point at
+      `familyTreeScaleOffset` rather than re-asserting Ussher for a
+      figure that isn't on it. (2) The 9 `familyTreeEraSub*` strings
+      (`ui_strings.dart`) hardcode date ranges `_eraSubtitle()`
+      (`family_tree_page.dart:2193`) prints under each era header; 5 of
+      9 disagreed with the people the era actually contains: antediluvian
+      said "Adam to Noah" while `eraLabel()`'s own text for the same
+      section says "Adam → Lamech" (Noah is tagged `post_flood`, not
+      `antediluvian`) — reworded to "Adam to Lamech", range unchanged
+      (AM 0–1656, Methuselah's death, still correct). `post_flood` said
+      "Shem to Terah · ~BC 2400–2000"; the era's true span is Noah's
+      birth to Eber's death (2948–1817 BC — Eber outlives Terah by
+      lifespan, the same "outlives its own descendants" fact the chart
+      item's Eber slices already established) — reworded to "Noah to
+      Eber", range corrected. `mosaic`, `davidic_line` and `kings` kept
+      their named people (none of those three phrased an X-to-Y range
+      claim) and only had their numbers corrected: 1850–1405 BC
+      (Kohath's birth to Moses' death), 1880–1005 BC (Perez's birth to
+      Ish-bosheth's death), 1040–560 BC (Bathsheba's birth to Jeconiah's
+      death, and a `~` added — the original read "BC 1010 – 586" with no
+      tilde, i.e. as exact). `nt` was BC-only ("~BC 5 – AD 30") when the
+      era's true span crosses into AD (Joseph's birth 30 BC to Mary's
+      death AD 48) — corrected. `patriarchs`, `exile` and
+      `lukan_lineage` were already correct or print no range; left
+      alone.
+
+      **Made `eraLabel()` (was `_eraLabel`, private) public** so a test
+      could check its "(X → Y)" endpoint claims against the asset from
+      outside `family_tree_page.dart` — a visibility change only, no
+      call sites or behaviour changed (3 call sites updated to match).
+
+      **Correction, made while landing this writeup an hour later**: the
+      6 corrected `familyTreeEraSub*` strings in (2) above are **not**
+      part of this commit — they were already on `main` before this
+      commit, landed inside `006ec71c` ("Pick a verse, built like Pick a
+      chapter"), an unrelated commit whose message never mentions them
+      (`git log --oneline -S "Noah to Eber" -- lib/constants/ui_strings.dart`
+      returns only that one commit). This commit carries the
+      `yearLegend.bc` asset edit, the `eraLabel` visibility rename, and
+      the test below — not the `ui_strings.dart` diff itself.
+
+      New `test/family_tree_era_subtitle_test.dart`: recomputes each
+      era's earliest/latest year independently from
+      `assets/family_tree.json` (never from the subtitle strings) on a
+      shared AM/BC/AD signed timeline, and asserts the digit runs in all
+      three locales' subtitle strings match, for the 6 eras that changed
+      this slice; separately asserts every `eraLabel()` "(X → Y)" pair
+      names people actually tagged with that era. **Proved red first, at
+      the time**: last hour's session stashed only `ui_strings.dart` +
+      `assets/family_tree.json` (kept the `eraLabel` rename, since
+      reverting it is a compile error, not a numeric assertion) and
+      reran — 5 of 7 tests failed with the exact old-vs-new numbers
+      (e.g. davidic_line `Expected: [1880, 1005], Actual: [1900,
+      1050]`), then restored the fix and reran green. That red-proof is
+      no longer reproducible as described, now that `ui_strings.dart`
+      is committed on `main` outside this diff (see correction above);
+      the test itself still passes against current `main`, verified
+      again by this commit.
+
+      **Refuted before committing**: an independent agent was given the
+      Ussher/AM-2008/1996-BC claim, the 2091 BC late-date cross-check,
+      every era's re-derived min/max in the table above, "Noah is
+      `post_flood` not `antediluvian`", "Kohath −1850 is `mosaic`'s
+      earliest person", and "Thiele for kings still holds", and asked to
+      break each from its own knowledge and the raw asset rather than
+      confirm this description. All survived.
+
+      `git log -S` on the `yearLegend.bc` string found one commit
+      (`eabab098`, the original page's creation) — not a later
+      deliberate user edit, so correcting it does not risk overwriting a
+      judgement call the way the frozen `cuvs-yhwh*` files would.
+      `yearLegend` is documentation-only `_meta` (`grep` for it in
+      `lib/` finds nothing) — not rendered anywhere, so this slice is
+      asset + code (visibility rename) + test only, no UI string most
+      readers will ever see changed except the 6 era subtitles, which
+      per this item's own guard rail still does not trigger a deploy.
+
+      `flutter analyze` clean repo-wide. Full suite run in the
+      foreground, all green (see this iteration's commit for the count).
+      Checkbox stays open; the chart item spans many slices.
+
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
       the Joseph lifeline (entry above). `DUPLICATES` dedupes 5 timeline
@@ -18664,6 +18759,24 @@ so the bundle-size answer stays on the record.
       for `setapak`/`ydh` not existing yet, or its `Refresh songs`
       workflow's own red streak — those are `yswords-data` issues,
       tracked there.
+
+- [ ] **Tier 5 tooling: `.github/workflows/sync-songs.yml` pushes
+      straight to `main` with no `pull --rebase`/retry, so it loses a
+      push race against this loop.** Found 2026-09-20 by that hour's
+      `NEXT_TASK.md` while checking CI (step 0), not while working this
+      item. Latest `main` run was green (`35498289082`), but the daily
+      `Sync songs` cron failed the same morning (`35496958152`, 07:28
+      UTC) — first failure in its last 6 runs. Not a defect in the sync
+      logic itself: it committed `chore(songs): refresh bundled snapshot
+      from yswords-data`, then `git push` hit `! [rejected] main ->
+      main (fetch first)` because this loop pushed to `main` in the same
+      window. `assets/songs.json` did not refresh that day as a result.
+      Fix shape: `git pull --rebase` (or fetch + rebase) immediately
+      before the workflow's push, with a bounded retry — the same class
+      of race the human-driven guard rail above ("check `ps | grep
+      release_web` + `git status` before building") exists to avoid for
+      people; this workflow has no equivalent for itself. Not fixed this
+      hour — below the family-tree slice above in tier order.
 
 ## P3 — known but blocked or deferred
 

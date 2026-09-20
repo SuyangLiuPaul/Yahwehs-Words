@@ -952,7 +952,7 @@ class _EraSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _eraLabel(era, locale),
+                          eraLabel(era, locale),
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
@@ -1829,7 +1829,7 @@ String _eraLabelShort(String era, String locale) {
     'lukan_lineage': {'en': 'Lukan', 'zh-Hans': '路加家谱', 'zh-Hant': '路加家譜'},
     'nt': {'en': 'NT', 'zh-Hans': '新约', 'zh-Hant': '新約'},
   };
-  return labels[era]?[locale] ?? _eraLabel(era, locale);
+  return labels[era]?[locale] ?? eraLabel(era, locale);
 }
 
 // ── Comparison table ──────────────────────────────────────────
@@ -2207,7 +2207,10 @@ String _eraSubtitle(String era, String locale) {
   return uiStrings[key]?[locale] ?? '';
 }
 
-String _eraLabel(String era, String locale) {
+/// Public (not `_`-prefixed) so `test/family_tree_era_subtitle_test.dart`
+/// can check the "Adam → Lamech"-style named endpoints against the people
+/// each era actually contains, independently of this file.
+String eraLabel(String era, String locale) {
   const labels = {
     'antediluvian': {
       'en': 'Antediluvian (Adam → Lamech)',

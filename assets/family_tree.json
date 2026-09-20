@@ -5,7 +5,7 @@
     "description": "Curated biblical family-tree data covering the canonical Adam → Jesus line per Matthew 1 + Luke 3. Years are: AM (Anno Mundi, since Creation) for Genesis 5 + 11 figures where the Bible gives explicit ages; BC for figures from Abraham onward where standard scholarly chronology applies. Verse refs use canonical English book names and parse cleanly via lib/utils/reference_parser.dart.",
     "yearLegend": {
       "am": "Anno Mundi (years since Creation, derived from Genesis 5 and 11)",
-      "bc": "Years before Christ (standard chronology; Ussher baseline for patriarchs, Thiele for kings)"
+      "bc": "Years before Christ. Kings follow Thiele's chronology. Patriarch years (Abraham through Joseph) follow the same late-date scheme as assets/bible_timeline.json, which reads about 170 years earlier than the Ussher anchor assets/bible_chronology.json's Anno Mundi chart uses for the same people — see that asset's _meta.familyTreeScaleOffset"
     }
   },
   "people": [
