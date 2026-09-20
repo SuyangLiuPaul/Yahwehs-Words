@@ -104,6 +104,35 @@
         "sarah"
       ]
     },
+    "crossSystemParentLinks": [
+      {
+        "childId": "abraham",
+        "parentId": "terah",
+        "relation": "father",
+        "childSignedYear": -2166,
+        "parentSignedYear": -2126,
+        "gapYears": -40,
+        "note": "terah is `am` (Genesis 11 genealogy); abraham is `bc` under the late-date patriarchal scheme. Converted to one signed timeline, abraham's birth lands 40 years before terah's — the boundary where the two schemes meet, not a data error to fix by moving either year."
+      },
+      {
+        "childId": "haran",
+        "parentId": "terah",
+        "relation": "father",
+        "childSignedYear": -2200,
+        "parentSignedYear": -2126,
+        "gapYears": -74,
+        "note": "Same terah/`am`-vs-`bc` boundary as abraham above; 74 years on this line."
+      },
+      {
+        "childId": "nahor_younger",
+        "parentId": "terah",
+        "relation": "father",
+        "childSignedYear": -2180,
+        "parentSignedYear": -2126,
+        "gapYears": -54,
+        "note": "Same terah/`am`-vs-`bc` boundary as abraham above; 54 years on this line."
+      }
+    ],
     "crossSurfaceYearDiffs": [
       {
         "eventId": "cain_abel",

@@ -84,6 +84,47 @@ def am_to_year(am):
     return am - CREATION_BC + 1
 
 
+# ── Cross-yearSystem parent/child links (queue:14267, 2026-09-21) ───
+#
+# `assets/family_tree.json` mixes two yearSystems (see the module
+# docstring): `am` for the Genesis 5/11 genealogical block, `bc` for
+# Abraham onward under the late-date patriarchal scheme. A person's
+# fatherId/motherId almost always points within the same system — but
+# Terah is recorded `am` (his birth comes from the Genesis 11
+# genealogy) while his sons Abraham, Haran and Nahor the younger are
+# already `bc`, so exactly 3 links straddle the boundary. Declared
+# here, each with its measured childSigned-minus-parentSigned gap, so
+# a NEW cross-system link — or a change to one of these three — fails
+# the build instead of silently passing (the old behaviour of
+# test/family_tree_year_integrity_test.dart, which skipped every
+# cross-system pair outright).
+#
+# This is a disagreement to disclose, not to resolve: adjudicating
+# between the AM and late-date schemes is not this repo's call (see
+# the guard rail on this item). It is NOT asserted to be the same
+# mechanism as `familyTreeScaleOffset` below — Terah is not among that
+# table's personIds, and the two figures do not match arithmetically;
+# they are two separate places the same two schemes happen to clash.
+CROSS_SYSTEM_PARENT_LINKS = {
+    # (childId, relation): (parentId, expected childSigned - parentSigned)
+    ("abraham", "father"): (
+        "terah", -40,
+        "terah is `am` (Genesis 11 genealogy); abraham is `bc` under "
+        "the late-date patriarchal scheme. Converted to one signed "
+        "timeline, abraham's birth lands 40 years before terah's — "
+        "the boundary where the two schemes meet, not a data error to "
+        "fix by moving either year."),
+    ("haran", "father"): (
+        "terah", -74,
+        "Same terah/`am`-vs-`bc` boundary as abraham above; 74 years "
+        "on this line."),
+    ("nahor_younger", "father"): (
+        "terah", -54,
+        "Same terah/`am`-vs-`bc` boundary as abraham above; 54 years "
+        "on this line."),
+}
+
+
 # ── Where the two files describe the SAME event ─────────────────────
 #
 # Both assets date Creation, Enoch, the Flood, Abram's call and Isaac's
@@ -1280,6 +1321,72 @@ def build():
         "personIds": sorted(offset_person_ids),
     }
 
+    # ── Sweep every fatherId/motherId link for cross-yearSystem pairs ──
+    #
+    # Independent of the offset derivation just above (that one only
+    # covers the 7 drawn lifelines that also have a family_tree.json
+    # `bc` record; this covers all 277 people and both parent fields).
+    # See CROSS_SYSTEM_PARENT_LINKS above for what each declared row
+    # means and why. Any live pair whose gap is not declared there, or
+    # whose gap no longer matches the declared figure, fails the build.
+    cross_system_parent_links = []
+    for child_id, child in people.items():
+        child_system = child.get("yearSystem")
+        child_birth = child.get("birthYear")
+        if child_system is None or child_birth is None:
+            continue
+        child_signed = (am_to_year(child_birth) if child_system == "am"
+                         else child_birth)
+        for relation, field in (("father", "fatherId"), ("mother", "motherId")):
+            parent_id = child.get(field)
+            if parent_id is None:
+                continue
+            parent = people.get(parent_id)
+            if parent is None:
+                continue
+            parent_system = parent.get("yearSystem")
+            parent_birth = parent.get("birthYear")
+            if parent_system is None or parent_birth is None:
+                continue
+            if parent_system == child_system:
+                continue
+            parent_signed = (am_to_year(parent_birth)
+                              if parent_system == "am" else parent_birth)
+            gap = child_signed - parent_signed
+            declared = CROSS_SYSTEM_PARENT_LINKS.get((child_id, relation))
+            if declared is None or declared[0] != parent_id:
+                problems.append(
+                    "%s/%s (%s): undeclared cross-yearSystem parent link, "
+                    "gap %d years — add it to CROSS_SYSTEM_PARENT_LINKS "
+                    "with its note, or fix the source; it does not get to "
+                    "pass silently" % (child_id, parent_id, relation, gap))
+                continue
+            _, expected_gap, note = declared
+            if gap != expected_gap:
+                problems.append(
+                    "%s/%s (%s): cross-yearSystem gap is now %d years, "
+                    "CROSS_SYSTEM_PARENT_LINKS still says %d — the table "
+                    "has gone stale, update it"
+                    % (child_id, parent_id, relation, gap, expected_gap))
+                continue
+            cross_system_parent_links.append({
+                "childId": child_id, "parentId": parent_id,
+                "relation": relation,
+                "childSignedYear": child_signed,
+                "parentSignedYear": parent_signed,
+                "gapYears": gap,
+                "note": note,
+            })
+    live_cross_system_keys = {
+        (r["childId"], r["relation"]) for r in cross_system_parent_links}
+    for (child_id, relation) in CROSS_SYSTEM_PARENT_LINKS:
+        if (child_id, relation) not in live_cross_system_keys:
+            problems.append(
+                "CROSS_SYSTEM_PARENT_LINKS declares %s's %s but no such "
+                "cross-yearSystem link exists in family_tree.json anymore "
+                "— remove the stale row" % (child_id, relation))
+    cross_system_parent_links.sort(key=lambda r: (r["childId"], r["relation"]))
+
     flood = birth_of["noah"] + 600
     markers = [
         marker("creation", 0, "antediluvian",
@@ -1948,6 +2055,17 @@ def build():
             # silently drifting from `contested_note()`'s prose, which
             # is built from these same two values.
             "familyTreeScaleOffset": family_tree_scale_offset,
+            # Every fatherId/motherId link in family_tree.json whose two
+            # ends use different yearSystems — see
+            # CROSS_SYSTEM_PARENT_LINKS above for what each row means
+            # and why a new or changed one fails the build rather than
+            # passing silently. Recomputed here from all 277 people and
+            # both parent fields, not just the 7 drawn lifelines
+            # familyTreeScaleOffset covers. Filed as part of
+            # queue:14267's 2026-09-21 slice, closing the skip in
+            # test/family_tree_year_integrity_test.dart that let this
+            # boundary (all 3 rows are Terah's sons) pass unexamined.
+            "crossSystemParentLinks": cross_system_parent_links,
             # Every person-linked birth/death event in
             # assets/bible_timeline.json (id ending "_born"/"_dies"),
             # compared against the SAME person's year in

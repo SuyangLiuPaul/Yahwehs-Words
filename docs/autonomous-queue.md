@@ -14262,6 +14262,28 @@ has never seen this repo.
       Events | Lifelines), not a second page — the queue's own "shipping a
       second, prettier timeline beside the existing one" is what it avoided.
 
+      **2026-09-21 — the mistake this entry warns about recurred, on the
+      built feature rather than the un-dispatched one.** Three consecutive
+      hourly iterations — `c264f210` (2026-09-20, cross-surface person-year
+      diffs), `9cad9aff` (2026-09-20/21, vital/non-vital `personIds`
+      partition), and this hour's `crossSystemParentLinks` slice — were all
+      planned and logged against `queue:14267`, which is the **archived**
+      `- [ ]` copy inside the `<details>` block immediately below this entry
+      (opens at what was line 14265 before this note; this item here is the
+      live, merged, `[x]` one). Confirmed directly: the `<details>` block's
+      first line is `- [ ] **An interactive Bible chronology chart — LOW
+      priority, several iterations.**`, unchanged since the August
+      write-up, and it sits inside `<details>` opened two lines above it —
+      exactly the shape this entry already names as the mistake. The chart
+      feature itself is done and merged; each of these three iterations was
+      a legitimate, tested builder guard on the *shipped* chart (cross-
+      surface diffs, vital-event partitioning, cross-system parent links),
+      not wasted work — but they were dispatched as if reopening an item
+      that was never actually open, while the queue's real unchecked
+      backlog sat untouched underneath. Same root cause as 2026-09-03:
+      whatever counts items for dispatch is still reading inside
+      `<details>` as backlog.
+
 <details><summary>original</summary>
 
 - [ ] **An interactive Bible chronology chart — LOW priority, several
@@ -19195,6 +19217,25 @@ so the bundle-size answer stays on the record.
       call under time pressure near the end of a stage is. Filed, not
       fixed here — the fix lives outside this repo, in the loop's own
       prompt/orchestration.
+
+      **Fourth recurrence, 2026-09-21 ~07:20, landing this same hour's
+      `crossSystemParentLinks` slice (stranded by the 06:08–06:17
+      stage; `queue:14267` archive-vs-live note above is that same
+      landing).** The trigger fired again — `flutter test` (no file
+      filter, full suite) ran past the Bash tool's 120s default and the
+      harness auto-moved it to background — but this time the turn did
+      **not** end on it. The stage instead called `TaskOutput` with
+      `block: true` on the backgrounded task id in the SAME turn and
+      waited on it there (it completed at 06:24 elapsed, 3473 tests,
+      1 skipped, exit 0), so the work did not strand. **This is not
+      the permanent fix** — it depended on the stage noticing the
+      auto-background and choosing to block on it rather than treating
+      it as "started, will be notified later" and moving on, which is
+      exactly the failure shape of recurrences 2 and 3. The permanent
+      fix is still the one already named above: run the suite as
+      foreground chunks with an explicit `timeout` under the 120s
+      default so it never auto-backgrounds in the first place, rather
+      than relying on a stage to correctly handle it after the fact.
 
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &
