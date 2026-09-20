@@ -16470,6 +16470,11 @@ has never seen this repo.
       Pushed as `c264f210`. CI run `35521774276` watched to conclusion
       in the foreground: **success**.
 
+      Follow-up docs-only commit `e9321836` (this note) pushed; its own
+      CI run `35522198792` had not concluded inside this iteration's
+      watch budget (still `in_progress` at last check) — next
+      iteration's step 0 should check it before picking anything else.
+
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
       the Joseph lifeline (entry above). `DUPLICATES` dedupes 5 timeline
