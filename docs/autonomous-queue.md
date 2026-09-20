@@ -16467,6 +16467,9 @@ has never seen this repo.
 
       Checkbox stays open; the chart item spans many slices.
 
+      Pushed as `c264f210`. CI run `35521774276` watched to conclusion
+      in the foreground: **success**.
+
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
       the Joseph lifeline (entry above). `DUPLICATES` dedupes 5 timeline
