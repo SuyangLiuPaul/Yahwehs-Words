@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>关于 · 雅伟之言、雅伟之剑、雅伟之界、新闻洞见</title>
-<meta name="description" content="四个免费的圣经工具：雅伟之言（读）、雅伟之剑（查）、雅伟之界（看）、新闻洞见（察）。网页直接用，也可下载安装。Four free Bible tools — read, study, see, discern.">
+<title>关于 · 雅伟之言、雅伟之剑、雅伟之界</title>
+<meta name="description" content="三个免费的圣经工具：雅伟之言（读）、雅伟之剑（查）、雅伟之界（看）。网页直接用，也可下载安装。Three free Bible tools — read, study, see.">
 <link rel="canonical" href="https://yahwehword.com/about">
 <link rel="icon" href="/favicon.png">
 <meta name="theme-color" content="#f7f9ff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101417" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:title" content="关于 · Yahweh's Word">
-<meta property="og:description" content="四个免费的圣经工具：读、查、看、察。Four free Bible tools.">
+<meta property="og:description" content="三个免费的圣经工具：读、查、看。Three free Bible tools.">
 <meta property="og:url" content="https://yahwehword.com/about">
 <meta property="og:image" content="https://yahwehword.com/og-card.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -19,7 +19,7 @@
   ONE FILE, NO WEBFONT, NO BUILD STEP. Deliberate, and the reason is the
   readership rather than taste: fonts.gstatic.com is not reachable from
   mainland China, and this is the first page a newcomer sees. It renders
-  before any of the four apps it introduces has begun to load.
+  before any of the three apps it introduces has begun to load.
 
   It is also NOT a Flutter route. `/about` on this domain returned 200
   long before this file existed — that was the SPA catch-all handing
@@ -34,7 +34,7 @@
   from that same call rather than sampled off a screenshot — surface
   #f7f9ff / #101417, primary #27638a / #96cdf8, and the rest.
 
-  THREE SCRIPTS, like the four apps. Every translatable string ships all
+  THREE SCRIPTS, like the three apps. Every translatable string ships all
   three and CSS shows one, so switching is instant, needs no round trip,
   and the page still reads if the script never runs. The small script
   remembers the choice and guesses the first one.
@@ -137,7 +137,8 @@
   /* Each name carries its OWN separator and cannot be split from it.
      On a 375 dp phone the hero wrapped as 「雅伟之言·雅伟之剑 /
      ·雅伟之界·新闻洞见」 — a line beginning with a separator, which
-     reads as a typo. A break may now fall only BETWEEN names. */
+     reads as a typo. A break may now fall only BETWEEN names. (News
+     Insight left the list on 2026-09-19; the rule holds for three.) */
   .mark .nm { white-space: nowrap; }
   .mark .sep { color: var(--primary); padding: 0 .12em; font-weight: 400; }
   .thesis { margin: 0; font-size: 1.0625rem; color: var(--muted);
@@ -152,10 +153,15 @@
   }
   h2::after { content: ""; flex: 1; height: 1px; background: var(--outline); }
 
-  /* ── the four ─────────────────────────────────────────────── */
+  /* ── the three ────────────────────────────────────────────── */
   .apps { display: grid; gap: 1rem; grid-template-columns: 1fr;
     margin: 0 0 3.25rem; }
   @media (min-width: 44rem) { .apps { grid-template-columns: 1fr 1fr; } }
+  /* Three cards in two columns: the odd one out takes the whole row
+     rather than sitting beside an empty cell. */
+  @media (min-width: 44rem) {
+    .apps > .app:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  }
   .app {
     background: var(--card); border: 1px solid var(--outline);
     border-radius: 16px; padding: 1.375rem; box-shadow: var(--shadow);
@@ -164,10 +170,11 @@
   .app-head { display: flex; align-items: center; gap: .5rem;
     flex-wrap: wrap; }
   /* Each app's real mark, at the size a home screen shows it. Words'
-     is the file /logo already serves; the other three were copied from
+     is the file /logo already serves; the other two were copied from
      their own repositories into web/app-icons/ — a page that introduces
-     four apps and draws none of their icons is asking the reader to
-     recognise a name they have never seen. */
+     three apps and draws none of their icons is asking the reader to
+     recognise a name they have never seen. (news.png is still served,
+     unlinked from here: a URL that existed is not removed.) */
   .ico { width: 44px; height: 44px; border-radius: 11px; flex: none;
     background: var(--card-alt); }
   .zh { font-size: 1.3125rem; font-weight: 600; margin: 0;
@@ -350,14 +357,14 @@
 
   <header class="hero">
     <h1 class="mark">
-      <span data-l="hans"><span class="nm">雅伟之言<span class="sep">·</span></span><span class="nm">雅伟之剑<span class="sep">·</span></span><span class="nm">雅伟之界<span class="sep">·</span></span><span class="nm">新闻洞见</span></span>
-      <span data-l="hant"><span class="nm">雅偉之言<span class="sep">·</span></span><span class="nm">雅偉之劍<span class="sep">·</span></span><span class="nm">雅偉之界<span class="sep">·</span></span><span class="nm">新聞洞見</span></span>
-      <span data-l="en"><span class="nm">Yahweh’s Words<span class="sep">·</span></span><span class="nm">Sword<span class="sep">·</span></span><span class="nm">World<span class="sep">·</span></span><span class="nm">News Insight</span></span>
+      <span data-l="hans"><span class="nm">雅伟之言<span class="sep">·</span></span><span class="nm">雅伟之剑<span class="sep">·</span></span><span class="nm">雅伟之界</span></span>
+      <span data-l="hant"><span class="nm">雅偉之言<span class="sep">·</span></span><span class="nm">雅偉之劍<span class="sep">·</span></span><span class="nm">雅偉之界</span></span>
+      <span data-l="en"><span class="nm">Yahweh’s Words<span class="sep">·</span></span><span class="nm">Sword<span class="sep">·</span></span><span class="nm">World</span></span>
     </h1>
     <p class="thesis">
-      <span data-l="hans">四个免费的圣经工具，一个域名，各做一件事：<b>读</b>、<b>查</b>、<b>看</b>、<b>察</b>。不收费，不放广告，不注册也能用。网页打开就读，也可以装到手机和电脑上。</span>
-      <span data-l="hant">四個免費的聖經工具，一個網域，各做一件事：<b>讀</b>、<b>查</b>、<b>看</b>、<b>察</b>。不收費，不放廣告，不註冊也能用。網頁打開就讀，也可以裝到手機和電腦上。</span>
-      <span data-l="en">Four free Bible tools on one domain, each doing one thing: <b>read</b>, <b>study</b>, <b>see</b>, <b>discern</b>. No charge, no advertising, no account needed. Open them in a browser, or install them on a phone or a desktop.</span>
+      <span data-l="hans">三个免费的圣经工具，一个域名，各做一件事：<b>读</b>、<b>查</b>、<b>看</b>。不收费，不放广告，不注册也能用。网页打开就读，也可以装到手机和电脑上。</span>
+      <span data-l="hant">三個免費的聖經工具，一個網域，各做一件事：<b>讀</b>、<b>查</b>、<b>看</b>。不收費，不放廣告，不註冊也能用。網頁打開就讀，也可以裝到手機和電腦上。</span>
+      <span data-l="en">Three free Bible tools on one domain, each doing one thing: <b>read</b>, <b>study</b>, <b>see</b>. No charge, no advertising, no account needed. Open them in a browser, or install them on a phone or a desktop.</span>
     </p>
   </header>
 
@@ -378,9 +385,9 @@
       </span>
     </p>
     <p>
-      <span data-l="hans">圣经里神的名字就写作这四个希伯来字母，拉丁转写作 <b>YHWH</b>。中文多半译成「耶和华」—— 那个读法是把 YHWH 的辅音和「我主」（אֲדֹנָי）的元音拼在一起念出来的，十六世纪才进入西方译本，并不是原来的读音。按学界对古代读法的重建，<b>雅伟</b>更接近祂自己所报的那个名字。所以这四个 app 都称祂雅伟。</span>
-      <span data-l="hant">聖經裡神的名字就寫作這四個希伯來字母，拉丁轉寫作 <b>YHWH</b>。中文多半譯成「耶和華」—— 那個讀法是把 YHWH 的子音和「我主」（אֲדֹנָי）的母音拼在一起唸出來的，十六世紀才進入西方譯本，並不是原來的讀音。按學界對古代讀法的重建，<b>雅偉</b>更接近祂自己所報的那個名字。所以這四個 app 都稱祂雅偉。</span>
-      <span data-l="en">God’s name in the Hebrew Bible is written with these four letters, transliterated <b>YHWH</b>. English has long said “Jehovah” — a reading made by setting those consonants against the vowels of <i>Adonai</i> (“my Lord”), which entered Western Bibles only in the sixteenth century and was never how the name was said. The reconstruction closest to the original sound is <b>Yahweh</b>, and that is the name all four apps use.</span>
+      <span data-l="hans">圣经里神的名字就写作这四个希伯来字母，拉丁转写作 <b>YHWH</b>。中文多半译成「耶和华」—— 那个读法是把 YHWH 的辅音和「我主」（אֲדֹנָי）的元音拼在一起念出来的，十六世纪才进入西方译本，并不是原来的读音。按学界对古代读法的重建，<b>雅伟</b>更接近祂自己所报的那个名字。所以这三个 app 都称祂雅伟。</span>
+      <span data-l="hant">聖經裡神的名字就寫作這四個希伯來字母，拉丁轉寫作 <b>YHWH</b>。中文多半譯成「耶和華」—— 那個讀法是把 YHWH 的子音和「我主」（אֲדֹנָי）的母音拼在一起唸出來的，十六世紀才進入西方譯本，並不是原來的讀音。按學界對古代讀法的重建，<b>雅偉</b>更接近祂自己所報的那個名字。所以這三個 app 都稱祂雅偉。</span>
+      <span data-l="en">God’s name in the Hebrew Bible is written with these four letters, transliterated <b>YHWH</b>. English has long said “Jehovah” — a reading made by setting those consonants against the vowels of <i>Adonai</i> (“my Lord”), which entered Western Bibles only in the sixteenth century and was never how the name was said. The reconstruction closest to the original sound is <b>Yahweh</b>, and that is the name all three apps use.</span>
     </p>
 
     <h3 class="sub"><span data-l="hans">我们想做的事</span><span data-l="hant">我們想做的事</span><span data-l="en">What we are trying to do</span></h3>
@@ -429,7 +436,7 @@
     </blockquote>
   </div>
 
-  <h2><span data-l="hans">四个应用</span><span data-l="hant">四個應用</span><span data-l="en">The four</span></h2>
+  <h2><span data-l="hans">三个应用</span><span data-l="hant">三個應用</span><span data-l="en">The three</span></h2>
   <div class="apps">
 
     <article class="app">
@@ -501,31 +508,6 @@
              disk image, so it gets the same Download button as the rest. -->
         <a class="dl" href="/dl/world"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
         <a class="gh" href="https://github.com/SuyangLiuPaul/Yahwehs-World/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Other platforms · GitHub</span></a>
-      </div>
-    </article>
-
-    <article class="app">
-      <div class="app-head">
-        <img class="ico" src="/app-icons/news.png" alt="" width="44" height="44" loading="lazy" decoding="async">
-        <h3 class="zh"><span data-l="hans">新闻洞见</span><span data-l="hant">新聞洞見</span><span data-l="en">News Insight</span></h3>
-        <span class="verb"><span data-l="hans">察</span><span data-l="hant">察</span><span data-l="en">Discern</span></span>
-      </div>
-      <p class="en"><span data-l="hans">News Insight</span><span data-l="hant">News Insight</span><span data-l="en">新闻洞见</span></p>
-      <p class="what">
-        <span data-l="hans">世界、中国与澳洲的新闻，每一条都配上一节相关的经文与一段默想。</span>
-        <span data-l="hant">世界、中國與澳洲的新聞，每一條都配上一節相關的經文與一段默想。</span>
-        <span data-l="en">World, China and Australia headlines, each paired with a related verse and a short reflection.</span>
-      </p>
-      <!-- 2026-09-17: the Cloudflare CNAME exists and Netlify has issued
-           the certificate, so the label and the link below moved off
-           news-insight.netlify.app together. All four entries are
-           yahwehword.com addresses now, which is what 「入口可以是四个app
-           的link 都是yahwehword里面那个」 asked for. -->
-      <p class="host">newsinsight.yahwehword.com</p>
-      <div class="links">
-        <a class="go" href="https://newsinsight.yahwehword.com/"><span data-l="hans">打开</span><span data-l="hant">開啟</span><span data-l="en">Open</span></a>
-        <a class="dl" href="/dl/news"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
-        <a class="gh" href="https://github.com/SuyangLiuPaul/News-Insight/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Other platforms · GitHub</span></a>
       </div>
     </article>
 
@@ -724,9 +706,9 @@
 
   <footer>
     <p>
-      <span data-l="hans">雅伟之言 · 雅伟之剑 · 雅伟之界 · 新闻洞见</span>
-      <span data-l="hant">雅偉之言 · 雅偉之劍 · 雅偉之界 · 新聞洞見</span>
-      <span data-l="en">Yahweh’s Words · Sword · World · News Insight</span>
+      <span data-l="hans">雅伟之言 · 雅伟之剑 · 雅伟之界</span>
+      <span data-l="hant">雅偉之言 · 雅偉之劍 · 雅偉之界</span>
+      <span data-l="en">Yahweh’s Words · Sword · World</span>
       &nbsp;|&nbsp; yahwehword.com
     </p>
   </footer>
