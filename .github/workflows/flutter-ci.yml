@@ -237,6 +237,23 @@ jobs:
       - name: Songs-snapshot-churn audit unit tests
         run: python3 test/test_audit_songs_snapshot_churn.py
 
+      # Unit tests for scripts/push_songs_snapshot.py (added 2026-09-20,
+      # fixing the sync-songs.yml push race — see that script's own
+      # comment for the incident). Safe on a bare runner: every test
+      # builds its own bare remote + clones under a
+      # tempfile.TemporaryDirectory(), synthetic git repos only, never
+      # this checkout and never the network.
+      - name: Songs-sync push-retry unit tests
+        run: python3 test/test_push_songs_snapshot.py
+
+      # Unit tests for scripts/pull_songs_snapshot.py's evaluate() — the
+      # sibling of the push-retry gate above, existed since the
+      # 2026-09-04..07 incident (see the file's own docstring) but was
+      # never wired into any workflow. Pure fixtures only, no network,
+      # no filesystem beyond the module import — safe unconditionally.
+      - name: Songs-snapshot pull-guard unit tests
+        run: python3 test/test_pull_songs_snapshot.py
+
       - name: Test
         run: flutter test --reporter expanded
 

@@ -18765,23 +18765,49 @@ so the bundle-size answer stays on the record.
       workflow's own red streak — those are `yswords-data` issues,
       tracked there.
 
-- [ ] **Tier 5 tooling: `.github/workflows/sync-songs.yml` pushes
-      straight to `main` with no `pull --rebase`/retry, so it loses a
-      push race against this loop.** Found 2026-09-20 by that hour's
-      `NEXT_TASK.md` while checking CI (step 0), not while working this
-      item. Latest `main` run was green (`35498289082`), but the daily
-      `Sync songs` cron failed the same morning (`35496958152`, 07:28
-      UTC) — first failure in its last 6 runs. Not a defect in the sync
+- [x] **Tier 5 tooling: `.github/workflows/sync-songs.yml` pushed
+      straight to `main` with no `pull --rebase`/retry, so it lost a
+      push race against this loop — FIXED 2026-09-20, landed the
+      following hour after being implemented and stranded uncommitted.**
+      Found 2026-09-20 by that hour's `NEXT_TASK.md` while checking CI
+      (step 0), not while working this item. Latest `main` run was
+      green (`35498289082`), but the daily `Sync songs` cron failed the
+      same morning (`35496958152`, 07:28 UTC) — the only failure in its
+      last **10** runs (corrected from "6" — the 10-run history is
+      otherwise unbroken back to 2026-09-11). Not a defect in the sync
       logic itself: it committed `chore(songs): refresh bundled snapshot
       from yswords-data`, then `git push` hit `! [rejected] main ->
-      main (fetch first)` because this loop pushed to `main` in the same
-      window. `assets/songs.json` did not refresh that day as a result.
-      Fix shape: `git pull --rebase` (or fetch + rebase) immediately
-      before the workflow's push, with a bounded retry — the same class
-      of race the human-driven guard rail above ("check `ps | grep
-      release_web` + `git status` before building") exists to avoid for
-      people; this workflow has no equivalent for itself. Not fixed this
-      hour — below the family-tree slice above in tier order.
+      main (fetch first)` at 07:28:45Z because this loop's `a4912a0b`
+      landed at 07:28:29Z, ~16s earlier, in the same window.
+      `assets/songs.json` did not refresh that day as a result.
+
+      **Fix**: `scripts/push_songs_snapshot.py` — reads the snapshot
+      bytes into memory once, then on a fetch-first rejection does
+      `git fetch` + `git reset --hard FETCH_HEAD` (not `--soft`, which
+      would leave the index holding the whole pre-reset tree and
+      silently revert whatever else the winning commit touched),
+      rewrites just `assets/songs.json` back to the bytes already
+      decided, and retries the push (bounded, default 3 attempts). Not
+      a rebase: the workflow's `actions/checkout@v4` has no
+      `fetch-depth:`, so it's a depth-1 shallow clone with no merge
+      base to rebase onto. `sync-songs.yml` now calls it instead of a
+      plain `git commit` + `git push`. Confirmed by grep this is the
+      only workflow in `.github/workflows/` that pushes to a branch
+      (the other two `git push` hits, in `release-linux.yml` and
+      `release-windows.yml`, are prose comments about pushing a tag).
+
+      `test/test_push_songs_snapshot.py` (7 tests, not the 5 first
+      estimated — builds a bare remote + clones under
+      `tempfile.TemporaryDirectory()`, no network, safe on a bare CI
+      runner) covers the no-race path, a competing commit on a
+      *different* file (the `--soft` trap), a competing commit on the
+      *same* file (ours wins), bound exhaustion, and a non-race
+      rejection (protected branch / auth) failing immediately without
+      retrying. Also wired `test/test_pull_songs_snapshot.py` into
+      `flutter-ci.yml` — it existed since 2026-09-04..07 but was never
+      referenced by any workflow, so its 7 tests had never run in CI.
+      Both suites (7 push-retry tests, 7 pull-guard tests) pass locally
+      and are now CI gates.
 
 ## P3 — known but blocked or deferred
 
@@ -18821,6 +18847,24 @@ so the bundle-size answer stays on the record.
       backgrounding it. `claude -p` sessions must never rely on a
       background task notification arriving in a later turn, because
       for a one-shot `-p` invocation there is no later turn.
+
+      **Recurred 2026-09-20, this time on Python instead of Dart.**
+      That hour's stage was assigned `queue:18768` above (the
+      `sync-songs.yml` push race), implemented it fully — both workflow
+      YAMLs, `scripts/push_songs_snapshot.py`, and
+      `test/test_push_songs_snapshot.py` — then ran `flutter test` in
+      the background and ended the turn at 21:30:06 with `rc=0`,
+      logging exactly: *"Pausing here to let the background `flutter
+      test` run finish — I'll resume automatically via the scheduled
+      wakeup or task notification."* There was no later turn. Four
+      files sat uncommitted (mtimes 21:20–21:25) until the following
+      hour's `NEXT_TASK.md` found them, verified them, and landed them
+      as `queue:18768`'s fix — costing that item a second full
+      iteration purely to recover work the first iteration had already
+      finished. The fix above (foreground chunks, exit code checked
+      before moving on) already covers this; the recurrence is that a
+      background call was reached for anyway, not that the fix doesn't
+      work.
 
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &
