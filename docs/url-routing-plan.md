@@ -160,6 +160,7 @@ accept the parameter that would make it so (documented per-row).
 | `SermonByIdPage` | `/sermons/:id` | `id` (String) | same identifier as `SermonDetailPage` | yes — this IS the registered `/sermons/:id` page; it is listed because the sermon-library cross-corpus card pushes it by name with that routeName |
 | `SermonsPage` | `/sermons` | none (search/filter is local state) | — | yes for the base list; filter state has the same partial gap as `SearchPage` |
 | `FamilyTreePage` | `/family-tree` | none | — | yes |
+| `JesusTeachingsPage` | `/jesus-teachings` | none | — | yes |
 | `BibleTimelinePage` | `/timeline` | none | — | yes |
 | `ChronologyChartPage` | `/chronology` | none | — | yes — the same page as `/timeline` opened on its chronology-chart view; a separate class because a route here is keyed by page class (see its doc comment in `bible_timeline_page.dart`), and a Featured destination has to be addressable |
 | `MisconceptionsPage` | `/misconceptions` | none | — | yes for the list; **individual entries are not a separate page today** (§2) — out of scope until/unless a `MisconceptionDetailPage` is split out |

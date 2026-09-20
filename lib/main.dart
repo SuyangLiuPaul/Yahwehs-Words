@@ -12,6 +12,7 @@ import 'package:yahwehs_words/pages/dashboard_page.dart';
 import 'package:yahwehs_words/pages/evidence_detail_page.dart';
 import 'package:yahwehs_words/pages/evidence_page.dart';
 import 'package:yahwehs_words/pages/family_tree_page.dart';
+import 'package:yahwehs_words/pages/jesus_teachings_page.dart';
 import 'package:yahwehs_words/pages/feedback_page.dart';
 import 'package:yahwehs_words/pages/highlights_page.dart';
 import 'package:yahwehs_words/pages/home_page.dart';
@@ -251,6 +252,14 @@ final List<GetPage> _registeredGetPages = [
   GetPage(
     name: '/family-tree',
     page: () => const FamilyTreePage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  // 主耶稣的教导, ported from Yahweh's Sword 2026-09-21.
+  GetPage(
+    name: '/jesus-teachings',
+    page: () => const JesusTeachingsPage(),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,

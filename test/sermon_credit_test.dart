@@ -71,7 +71,12 @@ void main() {
     };
 
     final sermonMention = RegExp(r'sermon|讲道|講道', caseSensitive: false);
-    final twoPlusDigits = RegExp(r'\d{2,}');
+    // Not a digit run that touches a colon: that is a chapter:verse
+    // reference, and a reference is never a count. 2026-09-21 — the
+    // 主耶稣的教导 preface, ported word for word from Sword, cites
+    // 约14:26；林前11:23；15:3 in the same sentence that says 讲道, and
+    // this read 14, 26, 11, 23 and 15 as five invented sermon totals.
+    final twoPlusDigits = RegExp(r'(?<![:\d])\d{2,}(?![:\d])');
     final offenders = <String>[];
     uiStrings.forEach((key, byLocale) {
       byLocale.forEach((locale, value) {

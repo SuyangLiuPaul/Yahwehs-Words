@@ -33,6 +33,8 @@ const Set<String> kRegisteredRoutePaths = {
   '/songs/playlists',
   '/profiles',
   '/family-tree',
+  // 2026-09-21: 主耶稣的教导, ported from Yahweh's Sword.
+  '/jesus-teachings',
   '/timeline',
   '/chronology',
   '/sermons',

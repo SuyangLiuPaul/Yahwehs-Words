@@ -11,6 +11,7 @@ import 'package:yahwehs_words/pages/evidence_page.dart';
 import 'package:yahwehs_words/pages/family_tree_page.dart';
 import 'package:yahwehs_words/pages/feedback_page.dart';
 import 'package:yahwehs_words/pages/highlights_page.dart';
+import 'package:yahwehs_words/pages/jesus_teachings_page.dart';
 import 'package:yahwehs_words/pages/profile_edit_page.dart';
 import 'package:yahwehs_words/pages/profiles_page.dart';
 import 'package:yahwehs_words/pages/search_page.dart';
@@ -52,6 +53,7 @@ void main() {
     'StatsPage': () => const StatsPage(),
     'SearchPage': () => const SearchPage(),
     'FamilyTreePage': () => const FamilyTreePage(),
+    'JesusTeachingsPage': () => const JesusTeachingsPage(),
     'BibleTriviaPage': () => const BibleTriviaPage(),
     'EvidencePage': () => const EvidencePage(),
     'SermonsPage': () => const SermonsPage(),

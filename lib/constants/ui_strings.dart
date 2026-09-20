@@ -6927,6 +6927,97 @@ const uiStrings = {
     'zh-Hant': '聖經家譜',
     'en': 'Family Tree',
   },
+  // ── 主耶稣的教导, 2026-09-21 ──
+  // Copied from Yahweh's Sword with the page, word for word: there they
+  // are a page-local map in `jesus_teachings_page.dart`, here they follow
+  // the house rule and live in this file. The column headings are
+  // NEUTRAL on purpose — 「在使徒书信中」, not 「以此为根基」 — because the
+  // cross-reference data behind them says two passages are related and
+  // nothing more. The conviction is stated once, in the preface, with
+  // the texts that ground it. Change one app's wording, change both.
+  'jesusTeachings': {
+    'zh-Hans': '主耶稣的教导',
+    'zh-Hant': '主耶穌的教導',
+    'en': 'The Teachings of the Lord Jesus',
+  },
+  'jesusTeachingsHomeHint': {
+    'zh-Hans': '比喻、讲论与其他教导，各附经文、讲道与使徒书信',
+    'zh-Hant': '比喻、講論與其他教導，各附經文、講道與使徒書信',
+    'en': 'Parables, discourses and more — each with its passages, '
+        'sermons and letters',
+  },
+  'jesusTeachingsPreface': {
+    'zh-Hans': '使徒所传的，是从主领受的（约14:26；林前11:23；15:3）。'
+        '下面列出每一项教导：主耶稣所说的经文、讲道、旧约中相关的经文，'
+        '以及使徒书信中接续它的地方。',
+    'zh-Hant': '使徒所傳的，是從主領受的（約14:26；林前11:23；15:3）。'
+        '下面列出每一項教導：主耶穌所說的經文、講道、舊約中相關的經文，'
+        '以及使徒書信中接續它的地方。',
+    'en': 'The apostles taught what they received from the Lord '
+        '(Jn 14:26; 1 Cor 11:23; 15:3). For each teaching below: the '
+        'passage, the sermons on it, related Old Testament passages, and '
+        'where the apostles\' letters take it up.',
+  },
+  'jesusTeachingsScripture': {
+    'zh-Hans': '经文',
+    'zh-Hant': '經文',
+    'en': 'Passage',
+  },
+  'jesusTeachingsSermons': {
+    'zh-Hans': '讲道',
+    'zh-Hant': '講道',
+    'en': 'Sermons',
+  },
+  'jesusTeachingsOt': {
+    'zh-Hans': '旧约中相关的经文',
+    'zh-Hant': '舊約中相關的經文',
+    'en': 'Related in the Old Testament',
+  },
+  'jesusTeachingsApostles': {
+    'zh-Hans': '在使徒书信中',
+    'zh-Hant': '在使徒書信中',
+    'en': 'In the apostles\' letters',
+  },
+  'jesusTeachingsPlates': {
+    'zh-Hans': '图画',
+    'zh-Hant': '圖畫',
+    'en': 'Illustrations',
+  },
+  'jesusTeachingsContains': {
+    'zh-Hans': '其中包括',
+    'zh-Hant': '其中包括',
+    'en': 'Includes',
+  },
+  'jesusTeachingsLordsWord': {
+    'zh-Hans': '使徒自述为主的话',
+    'zh-Hant': '使徒自述為主的話',
+    'en': 'the apostle says this is the Lord\'s own word',
+  },
+  'jesusTeachingsCount': {
+    'zh-Hans': '项教导',
+    'zh-Hant': '項教導',
+    'en': 'teachings',
+  },
+  'jesusTeachingsAll': {
+    'zh-Hans': '全部',
+    'zh-Hant': '全部',
+    'en': 'All',
+  },
+  'jesusTeachingsDiscourse': {
+    'zh-Hans': '讲论',
+    'zh-Hant': '講論',
+    'en': 'Discourses',
+  },
+  'jesusTeachingsParable': {
+    'zh-Hans': '比喻',
+    'zh-Hant': '比喻',
+    'en': 'Parables',
+  },
+  'jesusTeachingsOther': {
+    'zh-Hans': '其他教导',
+    'zh-Hant': '其他教導',
+    'en': 'Other',
+  },
   'familyTreeSearchHint': {
     'zh-Hans': '按姓名或简介搜索…',
     'zh-Hant': '按姓名或簡介搜尋…',
