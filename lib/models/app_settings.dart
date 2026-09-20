@@ -43,7 +43,18 @@ const _kParagraphMode = 'paragraphMode';
 // serif-ish verse numbers) — scoped to the reading pane only, not a
 // global theme swap.
 const _kReadingPaperTheme = 'readingPaperTheme';
+/// How long the splash holds, in seconds: the default, and the range
+/// the Settings control offers. 3 s was the old fixed value and stays
+/// reachable as the fastest setting for anyone who liked it.
+const int kSplashSecondsDefault = 10;
+const int kSplashSecondsMin = 2;
+const int kSplashSecondsMax = 30;
+
 const _kMenuScale = 'menuScale';
+// 2026-09-20: how long the splash holds once the verse is on screen.
+// It was a hard 3 s and readers said the verse was gone before they had
+// read it (「都没有看清楚就进去了」).
+const _kSplashSeconds = 'splashSeconds';
 // 2026-05-08 (v1.1.1): which card / tile material to render across
 // the app's framing surfaces. See `lib/models/app_style_preset.dart`
 // for the [CardMaterial] enum. Default `classic` keeps the look the
@@ -305,6 +316,7 @@ class AppSettings extends ChangeNotifier {
   bool _paragraphMode = true;
   bool _readingPaperTheme = false;
   double _menuScale = 1.0;
+  int _splashSeconds = kSplashSecondsDefault;
   // 2026-05-08 (v1.1.1): card / tile material; classic by default.
   CardMaterial _cardMaterial = CardMaterial.classic;
   /// 'sections', 'list' or 'grid' — persisted choice for the books
@@ -438,6 +450,10 @@ class AppSettings extends ChangeNotifier {
   bool get paragraphMode => _paragraphMode;
   bool get readingPaperTheme => _readingPaperTheme;
   double get menuScale => _menuScale;
+
+  /// Seconds the splash stays up after the daily verse has resolved.
+  /// The reader can always leave sooner with the button on it.
+  int get splashSeconds => _splashSeconds;
   CardMaterial get cardMaterial => _cardMaterial;
   String get booksViewMode => _booksViewMode;
   bool get boldVerseText => _boldVerseText;
@@ -1206,6 +1222,18 @@ class AppSettings extends ChangeNotifier {
     await prefs.setBool(_kPickVerseAfterChapter, enabled);
   }
 
+  /// Seconds to hold the splash. Clamped to the range the settings
+  /// control offers, so a hand-edited preference cannot park a reader
+  /// on the splash for a minute.
+  Future<void> setSplashSeconds(int seconds) async {
+    final clamped = seconds.clamp(kSplashSecondsMin, kSplashSecondsMax);
+    if (_splashSeconds == clamped) return;
+    _splashSeconds = clamped;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_kSplashSeconds, clamped);
+  }
+
   Future<void> setMenuScale(double scale) async {
     final clamped = scale.clamp(0.7, 1.5);
     if (_menuScale == clamped) return;
@@ -1313,6 +1341,7 @@ class AppSettings extends ChangeNotifier {
     _paragraphMode = true;
     _readingPaperTheme = false;
     _menuScale = 1.0;
+    _splashSeconds = kSplashSecondsDefault;
     _cardMaterial = CardMaterial.classic;
     _booksViewMode = 'sections';
     _boldVerseText = false;
@@ -1358,6 +1387,7 @@ class AppSettings extends ChangeNotifier {
       _kParagraphMode,
       _kReadingPaperTheme,
       _kMenuScale,
+      _kSplashSeconds,
       _kCardMaterial,
       // 2026-05-07 (v17): the offlineMode toggle is gone, but we
       // still purge the stored bool on reset so users who toggled
@@ -1511,6 +1541,8 @@ class AppSettings extends ChangeNotifier {
     _themeMode = _parseThemeMode(prefs.getString(_kThemeMode));
     _paragraphMode = prefs.getBool(_kParagraphMode) ?? true;
     _readingPaperTheme = prefs.getBool(_kReadingPaperTheme) ?? false;
+    _splashSeconds = (prefs.getInt(_kSplashSeconds) ?? kSplashSecondsDefault)
+        .clamp(kSplashSecondsMin, kSplashSecondsMax);
     final rawMenuScale = prefs.getDouble(_kMenuScale) ?? 1.0;
     _menuScale = ((rawMenuScale * 10).roundToDouble() / 10).clamp(0.7, 1.5);
     // 2026-05-08 (v1.1.1): card material — default `classic` so

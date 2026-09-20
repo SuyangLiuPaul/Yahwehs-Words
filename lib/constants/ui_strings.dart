@@ -4128,6 +4128,28 @@ const uiStrings = {
   // heading says CHANGES, not versions — how often we deploy is our
   // business, what changed is theirs, and on this app the two numbers
   // differ by a factor of five.
+  // 2026-09-20: the splash used to hold for a fixed 3 s and readers
+  // said the verse was gone before they had read it.
+  'splashEnter': {
+    'zh-Hans': '进入',
+    'zh-Hant': '進入',
+    'en': 'Enter',
+  },
+  'splashSeconds': {
+    'zh-Hans': '开屏停留时间',
+    'zh-Hant': '開屏停留時間',
+    'en': 'Splash screen',
+  },
+  'splashSecondsHint': {
+    'zh-Hans': '打开应用时，经文停留多久。随时可以按「进入」直接进去。',
+    'zh-Hant': '打開應用時，經文停留多久。隨時可以按「進入」直接進去。',
+    'en': 'How long the opening verse stays. "Enter" goes in at any time.',
+  },
+  'splashSecondsValue': {
+    'zh-Hans': '{n} 秒',
+    'zh-Hant': '{n} 秒',
+    'en': '{n}s',
+  },
   'changelogTitle': {
     'zh-Hans': '更新记录',
     'zh-Hant': '更新記錄',

@@ -521,6 +521,72 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                 ),
               ),
               SizedBox(height: 16 * s),
+              // 2026-09-20: how long the opening verse stays up. It was
+              // a fixed 3 s and the feedback was that the verse was gone
+              // before it had been read.
+              Card(
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              uiStrings['splashSeconds']?[settings.locale] ??
+                                  'Splash screen',
+                              style: TextStyle(
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                                fontSize: settings.fontSize + 2,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            (uiStrings['splashSecondsValue']
+                                        ?[settings.locale] ??
+                                    '{n}s')
+                                .replaceAll(
+                                    '{n}', '${settings.splashSeconds}'),
+                            style: TextStyle(
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              fontSize: settings.fontSize,
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Slider(
+                        key: const Key('settings.splashSeconds'),
+                        value: settings.splashSeconds.toDouble(),
+                        min: kSplashSecondsMin.toDouble(),
+                        max: kSplashSecondsMax.toDouble(),
+                        divisions: kSplashSecondsMax - kSplashSecondsMin,
+                        label: '${settings.splashSeconds}',
+                        onChanged: (val) =>
+                            settings.setSplashSeconds(val.round()),
+                      ),
+                      Text(
+                        uiStrings['splashSecondsHint']?[settings.locale] ??
+                            'How long the opening verse stays. "Enter" goes '
+                                'in at any time.',
+                        style: TextStyle(
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          fontSize: settings.fontSize * 0.8,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 16 * s),
               Card(
                 child: Padding(
                   padding: EdgeInsets.all(16 * s),

@@ -334,17 +334,27 @@ class _LoadingPageState extends State<LoadingPage> {
       return;
     }
     _autoAdvance?.cancel();
-    _autoAdvance = Timer(const Duration(seconds: 3), () {
-      if (!mounted) return;
-      final advance = widget.onAdvance;
-      if (advance != null) {
-        advance();
-      } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomePage()),
-        );
-      }
-    });
+    // 2026-09-20: was a fixed 3 s, and readers reported the verse was
+    // gone before they had read it (「都没有看清楚就进去了」). The reader
+    // sets this now — 10 s by default — and the button on the splash
+    // leaves whenever they like, so a longer hold costs nobody time.
+    final seconds = context.read<AppSettings>().splashSeconds;
+    _autoAdvance = Timer(Duration(seconds: seconds), _enterApp);
+  }
+
+  /// Leave the splash for the app. Safe to call twice — the timer is
+  /// cancelled first, so the button and the timeout cannot both push.
+  void _enterApp() {
+    if (!mounted) return;
+    _autoAdvance?.cancel();
+    final advance = widget.onAdvance;
+    if (advance != null) {
+      advance();
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    }
   }
 
   /// Schedule one auto-retry with linear backoff (2 s, 4 s, 6 s) while
@@ -784,6 +794,35 @@ class _LoadingPageState extends State<LoadingPage> {
                   // this never shows on the normal path — it only
                   // guarantees that anything still parked here past
                   // 15 s always has a way out.
+                  // 2026-09-20: the way in, said out loud. The splash
+                  // holds for `splashSeconds` (10 by default) so the
+                  // verse can be read; this is how a reader who has
+                  // read it — or does not want to — leaves at once.
+                  // Only once the app actually has something to show:
+                  // while the boot is still loading there is nowhere
+                  // to go, and a button that did nothing would be
+                  // worse than no button.
+                  // The same condition `_scheduleAdvanceIfReady` uses:
+                  // a button that could not go anywhere is worse than
+                  // no button.
+                  if (mainProvider.verses.isNotEmpty &&
+                      mainProvider.loadError == null) ...[
+                    SizedBox(height: 28 * s),
+                    FilledButton.icon(
+                      key: const Key('splash.enter'),
+                      onPressed: _enterApp,
+                      icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                      label: Text(
+                        uiStrings['splashEnter']?[settings.locale] ??
+                            'Enter',
+                        style: TextStyle(
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          fontSize: settings.fontSize * 0.9,
+                        ),
+                      ),
+                    ),
+                  ],
                   _buildPatienceFooter(context, settings),
                 ],
               ),

@@ -18,6 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/verse.dart';
 import 'package:yahwehs_words/pages/loading_page.dart';
@@ -68,8 +69,9 @@ Future<bool> _pumpAndSeeIfAdvances(
     await tester.pump();
   }
 
-  // The advance timer is 3 s; give it room, then settle.
-  await tester.pump(const Duration(seconds: 4));
+  // 2026-09-20: the hold is the reader's setting now (10 s by
+  // default), not a fixed 3 s. Pump past whatever it is.
+  await tester.pump(Duration(seconds: settings.splashSeconds + 1));
   await tester.pump();
   return advanced;
 }
@@ -93,5 +95,50 @@ void main() {
     expect(advanced, isTrue,
         reason: 'slow boot must still advance once verses arrive — '
             'this is the frozen-splash regression');
+  });
+
+  testWidgets('the hold is the reader\'s setting, and Enter leaves at once',
+      (tester) async {
+    // 2026-09-20 「都没有看清楚就进去了」: the splash holds 10 s by default
+    // so the verse can be read, and the button leaves whenever they like.
+    SharedPreferences.setMockInitialValues({});
+    final mainProvider = MainProvider()
+      ..setVerses(_verses)
+      ..setBootInFlight(false);
+    final settings = AppSettings();
+    await settings.loadSettings();
+    var advanced = false;
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<MainProvider>.value(value: mainProvider),
+          ChangeNotifierProvider<AppSettings>.value(value: settings),
+        ],
+        child: MaterialApp(
+          home: LoadingPage(
+            verses: const [],
+            onAdvance: () => advanced = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // Where the old three seconds would have taken the reader away.
+    await tester.pump(const Duration(seconds: 4));
+    expect(advanced, isFalse,
+        reason: 'the verse must still be on screen at 4 s');
+
+    // The way out, before the timer.
+    expect(find.byKey(const Key('splash.enter')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('splash.enter')));
+    await tester.pump();
+    expect(advanced, isTrue, reason: 'Enter goes in at once');
+
+    // And the cancelled timer cannot fire a second push afterwards.
+    advanced = false;
+    await tester.pump(const Duration(seconds: 20));
+    expect(advanced, isFalse, reason: 'the timer was cancelled by Enter');
   });
 }
