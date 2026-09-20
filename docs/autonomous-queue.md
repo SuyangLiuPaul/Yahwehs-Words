@@ -19286,6 +19286,11 @@ so the bundle-size answer stays on the record.
       it — the test against the real queue only asserts depth balances
       and no open item is reported inside a details block.
 
+      Pushed as `c37988f7`. CI run `35543663693` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
+
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &
       Faith/Sermons & Studies/P.Eric Sermon/Spiritual Vision/`) was
