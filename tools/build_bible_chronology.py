@@ -72,6 +72,18 @@ def year_to_am(year):
     return CREATION_BC - 1 + year          # AD 1 → AM 4004
 
 
+def am_to_year(am):
+    """The inverse of year_to_am — the signed BC/AD year an AM value
+    lands on. Checked against the same two anchors year_to_am's own
+    docstring cites: am_to_year(4004) == 1 (AD 1) and am_to_year(4098)
+    == 95 (Revelation, AD 95). Used by the cross-surface person-year
+    sweep in build(), to convert an `am`-system family_tree.json year
+    into the same signed-BC/AD space bible_timeline.json uses."""
+    if am < CREATION_BC:
+        return am - CREATION_BC
+    return am - CREATION_BC + 1
+
+
 # ── Where the two files describe the SAME event ─────────────────────
 #
 # Both assets date Creation, Enoch, the Flood, Abram's call and Isaac's
@@ -1365,6 +1377,188 @@ def build():
         if not any(x["id"] == pid for x in events):
             problems.append("pinned event %s is not in the timeline" % pid)
 
+    # ── Cross-surface person-year disagreements ─────────────────────
+    #
+    # assets/bible_timeline.json and assets/family_tree.json each state
+    # a year for the same person's birth or death, independently
+    # curated, and nothing kept them in step. A reader who opens the
+    # Family Tree page and then this chart for the same person could
+    # see two different years with no way to tell a mistake from a
+    # known clash of dating schemes. Filed as queue:14246's 2026-09-21
+    # slice.
+    #
+    # Vital events are found by id convention: every timeline event
+    # whose id ends "_born" or "_dies" states a birth or death — this
+    # catches seth_born, ishmael_born, isaac_born, jacob_esau_born,
+    # moses_born, moses_dies and john_baptist_born. The convention is
+    # NOT a complete semantic sweep of the 98-event file, and is not
+    # claimed to be: "Cain Murders Abel" and "Crucifixion of Jesus"
+    # also state a specific death (Abel's, Jesus's) without an id
+    # ending "_dies", and are added by hand in
+    # EXTRA_VITAL_EVENT_KINDS below rather than by a rule, because
+    # there is no derivable signal for "this title states a death" the
+    # way there is for an id suffix. This list is not guaranteed
+    # exhaustive either — a future death/birth event under an odd id
+    # will not be caught automatically; widening it further is filed
+    # to the queue, not attempted here.
+    EXTRA_VITAL_EVENT_KINDS = {
+        "cain_abel": "death",    # Cain murders Abel — Abel dies, Cain
+                                  # does not; family_tree.json has no
+                                  # deathYear for Cain, so he is
+                                  # skipped below regardless.
+        "crucifixion": "death",  # Jesus dies on the cross.
+    }
+    #
+    # A "_born" event can name several people — parents alongside the
+    # child (moses_born: moses, jochebed, amram) or twins with no
+    # parent present (jacob_esau_born: jacob, esau). The subject(s) are
+    # derived, not hand-picked: a personId counts as a birth/death
+    # SUBJECT unless another personId in the SAME event is recorded as
+    # their father or mother in family_tree.json — then it is a parent,
+    # not the subject.
+    #
+    # Markers (creation, abram_born, isaac_born-as-marker,
+    # abraham_dies, ...) are NOT swept here: their AM values already
+    # come straight from the CHAIN/CHILD_ANCHORED cross-checks earlier
+    # in this function and from family_tree_scale_offset below, so
+    # sweeping them again would just re-derive the same equality a
+    # second way instead of adding information.
+    CROSS_SURFACE_YEAR_DIFF_CLASSES = {
+        # (eventId, personId): (expected deltaYears, class name, note)
+        # deltaYears = family_tree.json's year minus bible_timeline.json's
+        # placed year, both expressed as signed BC/AD.
+        ("seth_born", "seth"): (
+            -4, "creationAnchor4Year",
+            "bible_timeline.json places Creation at 4000 BC; the AM "
+            "scale here (via CREATION_BC) anchors it at 4004 BC — the "
+            "same 4-year gap already recorded on the creation marker's "
+            "placedDeltaYears."),
+        ("moses_born", "moses"): (
+            1, "mosesAnchorYear",
+            "family_tree.json dates Moses 1525-1405 BC, "
+            "bible_timeline.json 1526-1406 BC — both ends 1 year "
+            "later on family_tree.json, so this is a shared anchor "
+            "difference, not a lifespan error: both put his life at "
+            "exactly 120 years (see the assertion right below this "
+            "table)."),
+        ("moses_dies", "moses"): (
+            1, "mosesAnchorYear",
+            "See moses_born above — the same 1-year anchor shift, at "
+            "the other end of the same 120-year life."),
+        ("jesus_born", "jesus"): (
+            1, "nativityDating",
+            "family_tree.json dates Jesus's birth 4 BC, "
+            "bible_timeline.json 5 BC — both are years used in "
+            "published nativity chronologies; this chart does not "
+            "adjudicate between them or assert which one is right."),
+        ("cain_abel", "abel"): (
+            21, "unresolved",
+            "family_tree.json gives Abel a deathYear (AM 75) with no "
+            "scripture citation for a specific age at death — Genesis "
+            "does not state one, unlike Seth's stated lifespan. This "
+            "21-year gap against bible_timeline.json's placement is "
+            "recorded, not resolved: neither figure is derived from a "
+            "stated age, so there is nothing here to adjudicate "
+            "between, only to disclose."),
+        ("crucifixion", "jesus"): (
+            -3, "crucifixionDating",
+            "family_tree.json dates Jesus's death AD 30, "
+            "bible_timeline.json's crucifixion event AD 33 — both are "
+            "years used in published crucifixion chronologies (the "
+            "disagreement usually turns on which Passover during "
+            "Pilate's AD 26-36 tenure is read as the crucifixion's "
+            "Friday); this chart does not adjudicate between them."),
+    }
+
+    cross_surface_diffs = []
+    for e in timeline["events"]:
+        eid = e["id"]
+        if eid.endswith("_born"):
+            kind = "birth"
+        elif eid.endswith("_dies"):
+            kind = "death"
+        elif eid in EXTRA_VITAL_EVENT_KINDS:
+            kind = EXTRA_VITAL_EVENT_KINDS[eid]
+        else:
+            continue
+        pids = e.get("personIds") or []
+        if not pids:
+            continue
+        ykey = "birthYear" if kind == "birth" else "deathYear"
+        for pid in pids:
+            person = people.get(pid)
+            if person is None:
+                problems.append(
+                    "%s: personId %s is not in family_tree.json" % (eid, pid))
+                continue
+            is_parent_here = any(
+                other != pid and (
+                    people.get(other, {}).get("fatherId") == pid
+                    or people.get(other, {}).get("motherId") == pid)
+                for other in pids)
+            if is_parent_here:
+                continue
+            fam_val = person.get(ykey)
+            if fam_val is None:
+                continue
+            fam_year = (am_to_year(fam_val) if person.get("yearSystem") == "am"
+                        else fam_val)
+            delta = fam_year - e["year"]
+            declared = CROSS_SURFACE_YEAR_DIFF_CLASSES.get((eid, pid))
+            if declared is None:
+                if delta != 0:
+                    problems.append(
+                        "%s/%s: undeclared %d-year cross-surface "
+                        "disagreement (family_tree.json %d vs "
+                        "bible_timeline.json %d) — add it to "
+                        "CROSS_SURFACE_YEAR_DIFF_CLASSES with its class, "
+                        "or fix the source; it does not get to pass "
+                        "silently" % (eid, pid, delta, fam_year, e["year"]))
+                    continue
+                cross_surface_diffs.append({
+                    "eventId": eid, "personId": pid, "kind": kind,
+                    "timelineYear": e["year"], "familyTreeYear": fam_year,
+                    "deltaYears": 0, "class": "none",
+                })
+                continue
+            expected_delta, cls_name, note = declared
+            if delta != expected_delta:
+                problems.append(
+                    "%s/%s: cross-surface delta is now %d years, "
+                    "CROSS_SURFACE_YEAR_DIFF_CLASSES still says %d "
+                    "(class %s) — the table has gone stale, update it"
+                    % (eid, pid, delta, expected_delta, cls_name))
+                continue
+            cross_surface_diffs.append({
+                "eventId": eid, "personId": pid, "kind": kind,
+                "timelineYear": e["year"], "familyTreeYear": fam_year,
+                "deltaYears": delta, "class": cls_name, "note": note,
+            })
+
+    # The mosesAnchorYear class above asserts the 1-year shift is the
+    # SAME shift at both ends of Moses's life, i.e. an anchor
+    # difference rather than a lifespan error — checked directly here
+    # rather than just implied by two matching table rows, so a future
+    # edit to only one end fails the build instead of silently
+    # widening his lifespan on one surface but not the other.
+    if "moses" in people and "deathYear" in people["moses"]:
+        fam_moses_lifespan = (people["moses"]["deathYear"]
+                               - people["moses"]["birthYear"])
+        tl_moses_born = next(
+            (x["year"] for x in timeline["events"] if x["id"] == "moses_born"),
+            None)
+        tl_moses_dies = next(
+            (x["year"] for x in timeline["events"] if x["id"] == "moses_dies"),
+            None)
+        if tl_moses_born is not None and tl_moses_dies is not None:
+            tl_moses_lifespan = tl_moses_dies - tl_moses_born
+            if fam_moses_lifespan != tl_moses_lifespan:
+                problems.append(
+                    "Moses: family_tree.json lifespan %d years != "
+                    "bible_timeline.json lifespan %d years — the "
+                    "mosesAnchorYear class assumes these agree"
+                    % (fam_moses_lifespan, tl_moses_lifespan))
+
     if problems:
         for p in problems:
             sys.stderr.write("FAIL: %s\n" % p)
@@ -1594,6 +1788,18 @@ def build():
             # silently drifting from `contested_note()`'s prose, which
             # is built from these same two values.
             "familyTreeScaleOffset": family_tree_scale_offset,
+            # Every person-linked birth/death event in
+            # assets/bible_timeline.json (id ending "_born"/"_dies"),
+            # compared against the SAME person's year in
+            # assets/family_tree.json. Zero-delta rows carry
+            # class "none"; nonzero ones must match a declared row in
+            # CROSS_SURFACE_YEAR_DIFF_CLASSES above or the build fails
+            # — see that table for what "none" excludes (markers,
+            # already covered by the checks above) and why each
+            # nonzero row is left as a recorded disagreement rather
+            # than resolved. Filed as part of queue:14246's
+            # 2026-09-21 slice.
+            "crossSurfaceYearDiffs": cross_surface_diffs,
             # Per band, the id + am of the placed event or computed
             # marker that set its START edge (`first_am_source` above),
             # and whether that item is one of the misordered placed

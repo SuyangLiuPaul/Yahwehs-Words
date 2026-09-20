@@ -1180,6 +1180,162 @@ void main() {
               'that this test is stale');
     });
 
+    // 2026-09-21 (queue:14246): a reader who opens the Family Tree page
+    // for Moses or Jesus, then this chart, sees the SAME person's birth
+    // or death one year apart — nothing arithmetically wrong, just two
+    // independently curated assets nobody had checked against each
+    // other. tools/build_bible_chronology.py now sweeps every
+    // "_born"/"_dies" event in assets/bible_timeline.json, plus the
+    // two events in EXTRA_VITAL_EVENT_KINDS that state a death without
+    // following that id convention (cain_abel, crucifixion — the
+    // second found by this slice's own refuter, which broke the
+    // original claim that the id convention alone was a complete
+    // sweep), against assets/family_tree.json, and records the result
+    // in _meta.crossSurfaceYearDiffs. This recomputes that sweep from
+    // the two raw JSON files, independently of the builder, and pins
+    // what it measured.
+    test('_meta.crossSurfaceYearDiffs is exactly the swept vital events, '
+        'recomputed independently from the raw assets', () {
+      const creationBc = 4004;
+      int amToYear(int am) =>
+          am < creationBc ? am - creationBc : am - creationBc + 1;
+      // Mirrors tools/build_bible_chronology.py's EXTRA_VITAL_EVENT_KINDS
+      // — a short, hand-maintained, and explicitly NOT-claimed-exhaustive
+      // list of events whose title states a death but whose id does not
+      // end "_dies". A future death/birth event under an odd id will not
+      // be caught by either this test or the builder; that is a known
+      // limit, not a bug this test should paper over.
+      const extraVitalEventKinds = <String, String>{
+        'cain_abel': 'death',
+        'crucifixion': 'death',
+      };
+
+      final timeline = json.decode(
+        File('assets/bible_timeline.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final events =
+          (timeline['events'] as List).cast<Map<String, dynamic>>();
+
+      String? kindOf(String eid) {
+        if (eid.endsWith('_born')) return 'birth';
+        if (eid.endsWith('_dies')) return 'death';
+        return extraVitalEventKinds[eid];
+      }
+
+      final swept = events
+          .map((e) => e['id'] as String)
+          .where((eid) => kindOf(eid) != null)
+          .toSet();
+      expect(
+        swept,
+        <String>{
+          'seth_born', 'ishmael_born', 'isaac_born', 'jacob_esau_born',
+          'moses_born', 'moses_dies', 'john_baptist_born', 'jesus_born',
+          'cain_abel', 'crucifixion',
+        },
+        reason: 'the measured set — pinned, not derived twice; a change '
+            'here means bible_timeline.json gained or lost a vital '
+            'event, or EXTRA_VITAL_EVENT_KINDS was widened without '
+            'updating this pin',
+      );
+
+      final expected = <Map<String, Object?>>[];
+      for (final e in events) {
+        final eid = e['id'] as String;
+        final kind = kindOf(eid);
+        if (kind == null) continue;
+        final pids = (e['personIds'] as List).cast<String>();
+        if (pids.isEmpty) continue;
+        final yearKey = kind == 'birth' ? 'birthYear' : 'deathYear';
+        for (final pid in pids) {
+          final person = familyTree[pid];
+          expect(person, isNotNull,
+              reason: '$eid names personId $pid, not in family_tree.json');
+          final isParentHere = pids.any((other) =>
+              other != pid &&
+              (familyTree[other]?['fatherId'] == pid ||
+                  familyTree[other]?['motherId'] == pid));
+          if (isParentHere) continue;
+          final famVal = person![yearKey] as int?;
+          if (famVal == null) continue;
+          final famYear =
+              person['yearSystem'] == 'am' ? amToYear(famVal) : famVal;
+          final timelineYear = (e['year'] as num).toInt();
+          expected.add({
+            'eventId': eid,
+            'personId': pid,
+            'kind': kind,
+            'timelineYear': timelineYear,
+            'familyTreeYear': famYear,
+            'deltaYears': famYear - timelineYear,
+          });
+        }
+      }
+
+      final actual =
+          ((raw['_meta'] as Map)['crossSurfaceYearDiffs'] as List)
+              .cast<Map<String, dynamic>>();
+      expect(actual.length, expected.length,
+          reason: 'the builder recorded a different number of '
+              'cross-surface rows than this independent recomputation');
+      for (var i = 0; i < expected.length; i++) {
+        final e = expected[i];
+        final a = actual[i];
+        expect(a['eventId'], e['eventId']);
+        expect(a['personId'], e['personId']);
+        expect(a['kind'], e['kind']);
+        expect(a['timelineYear'], e['timelineYear']);
+        expect(a['familyTreeYear'], e['familyTreeYear']);
+        expect(a['deltaYears'], e['deltaYears'],
+            reason: '${e['eventId']}/${e['personId']}: recomputed delta '
+                '${e['deltaYears']} years does not match what the '
+                'builder recorded');
+      }
+
+      // The live finding this slice measured, pinned so a future change
+      // must explain itself rather than silently drift: five nonzero
+      // rows, all class-declared, everything else agrees exactly.
+      final nonZero = expected.where((e) => e['deltaYears'] != 0);
+      expect(
+        nonZero.map(
+          (e) => '${e['eventId']}/${e['personId']}:${e['deltaYears']}',
+        ),
+        [
+          'cain_abel/abel:21',
+          'seth_born/seth:-4',
+          'moses_born/moses:1',
+          'moses_dies/moses:1',
+          'jesus_born/jesus:1',
+          'crucifixion/jesus:-3',
+        ],
+      );
+    });
+
+    test(
+        'Moses: family_tree.json and bible_timeline.json disagree on the '
+        'anchor year by exactly 1, but agree on the 120-year lifespan '
+        'itself', () {
+      final timeline = json.decode(
+        File('assets/bible_timeline.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final events =
+          (timeline['events'] as List).cast<Map<String, dynamic>>();
+      final born =
+          events.firstWhere((e) => e['id'] == 'moses_born')['year'] as int;
+      final dies =
+          events.firstWhere((e) => e['id'] == 'moses_dies')['year'] as int;
+      final moses = familyTree['moses']!;
+      final famBirth = moses['birthYear'] as int;
+      final famDeath = moses['deathYear'] as int;
+
+      expect(dies - born, 120, reason: 'bible_timeline.json lifespan');
+      expect(famDeath - famBirth, 120, reason: 'family_tree.json lifespan');
+      expect(famBirth - born, 1);
+      expect(famDeath - dies, 1,
+          reason: 'the same 1-year shift at both ends — an anchor '
+              'difference, not a lifespan error');
+    });
+
     test(
         "the contested band's note names assets/family_tree.json, not "
         'only assets/bible_timeline.json, in all three locales',

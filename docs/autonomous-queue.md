@@ -12645,6 +12645,17 @@ has never seen this repo.
       start the `GetMaterialApp` → `.router` migration branch, or close
       this as "won't fix"?
 
+      **Deferred a thirty-sixth consecutive iteration, 2026-09-21** —
+      this hour's NEXT_TASK.md picked the chronology chart's next slice
+      instead (below — the Moses −1 / Jesus −1 cross-surface year diffs
+      the 2026-09-20 slice filed as unfinished, plus a real gap the
+      refuter found in that same slice: the crucifixion event states a
+      death too and wasn't swept). Still branch-scale, still
+      unattended-unsafe, still the only fully open P2 checkbox besides
+      the chronology chart, and the question above to the user is still
+      unanswered: start the `GetMaterialApp` → `.router` migration
+      branch, or close this as "won't fix"?
+
 - [x] **FIXED 2026-09-05 (`3a12f70f`) — On the Bible reader, Back pushed a
       route instead of popping.** Pre-existing, orthogonal to the two
       defects above, flagged 2026-09-03. `_writeStateToUrl` issued a raw
@@ -16370,6 +16381,91 @@ has never seen this repo.
       inside this iteration's ~7-minute watch budget (still
       `in_progress` at last check) — next iteration's step 0 should
       check it before picking anything else.
+
+      (Logged by the next iteration: `35515675165` concluded `success`
+      — nothing to fix.)
+
+      **2026-09-21 slice — the Moses −1 / Jesus −1 cross-surface year
+      diffs this filed as unfinished, above.** `assets/family_tree.json`
+      and `assets/bible_timeline.json` are curated independently and
+      nothing checked them against each other, so a reader who opens
+      the Family Tree page for Moses or Jesus and then this chart could
+      see two different years with no way to tell a mistake from a
+      known dating clash. `tools/build_bible_chronology.py` now sweeps
+      every timeline event whose id ends `_born`/`_dies` (plus two
+      hand-listed exceptions found below — there is no derivable id
+      signal for those) against the matching `family_tree.json` person,
+      converting an `am`-system year into the same signed BC/AD space
+      via a new `am_to_year()` (the exact inverse of the existing
+      `year_to_am()`, checked against its own two documented anchors).
+      A multi-person event's actual subject (as opposed to a parent
+      along for the ride, e.g. `moses_born`'s `jochebed`/`amram`) is
+      derived from `fatherId`/`motherId`, not hand-picked. Every
+      nonzero delta must match a declared row in a new
+      `CROSS_SURFACE_YEAR_DIFF_CLASSES` table or the build fails —
+      same ratchet shape as `familyTreeScaleOffset`. Result, all
+      re-derivable from the assets, none invented: `seth_born` −4
+      (already-known 4000-vs-4004-BC Creation anchor, same mechanism
+      as the `creation` marker's `placedDeltaYears`), `moses_born`/
+      `moses_dies` both +1 (a shared anchor shift, not a lifespan
+      error — both surfaces independently agree his life was 120
+      years, now asserted directly, not just implied by two matching
+      table rows), `jesus_born` +1 (4 BC vs 5 BC, two years used in
+      published nativity chronologies; this chart does not adjudicate
+      between them). `ishmael_born`, `isaac_born`, `jacob_esau_born`
+      (both twins) all agree exactly. Markers (`abram_born`,
+      `abraham_dies`, `isaac_born`-as-marker, ...) are deliberately NOT
+      swept a second time — they are already covered by the existing
+      CHAIN/`family_tree_scale_offset` cross-checks in the same file.
+
+      **Refuted before committing, and two of seven claims broke — both
+      real, both fixed, not softened.** (1) The id-suffix convention is
+      NOT a complete sweep: `crucifixion` ("Crucifixion of Jesus")
+      states Jesus's death without an id ending `_dies`, and it is a
+      LIVE 3-year disagreement (`family_tree.json` AD 30 vs the
+      timeline's AD 33) that neither the old code nor the first draft
+      of this slice's own table caught. Added, via a short hand-typed
+      `EXTRA_VITAL_EVENT_KINDS` list explicitly NOT claimed exhaustive
+      (`cain_abel` was already known and filed; `crucifixion` is new) —
+      declared class `crucifixionDating`, −3, noting AD 30/AD 33 are
+      both conventional crucifixion-year positions turning on which
+      Passover during Pilate's AD 26–36 tenure is read as the Friday.
+      `cain_abel` (Abel's death, no scripture citation for the AM 75
+      family_tree.json carries) is swept too now rather than left as a
+      documented gap — its 21-year disagreement is recorded under class
+      `unresolved` since neither figure is derivable from a stated age.
+      (2) The first draft's Jesus-nativity note asserted "5 BC" was "a
+      minority reading of Josephus" for Herod the Great's death — the
+      refuter's own search found the actual documented minority
+      position is 1 BC (Filmer), not 5 BC; no scholarship citing 5 BC
+      for Herod was found. Reworded to state only the two years both
+      surfaces use, without asserting an unverifiable reason for the
+      gap. The refuter's other five claims (parent/child subject
+      detection across all 9 swept pairs; Moses's 120-year lifespan
+      identical on both surfaces; the seth_born delta being the same
+      mechanism as the creation marker's, not a coincidental second
+      4-year gap; all 7 markers already covered by existing checks; the
+      9 recomputed deltas matching by hand) held.
+
+      New tests in `test/bible_chronology_test.dart`: one recomputes
+      the whole sweep independently from the two raw JSON files (not
+      trusting the builder's own arithmetic back at itself), pins the
+      swept set (10 event/person pairs) and the 6 nonzero deltas by
+      value; a second pins Moses's 120-year lifespan on both surfaces
+      directly. Proved red first by perturbing `moses_born`'s year by
+      hand (without regenerating the built asset) and confirming the
+      recomputation-vs-built-asset comparison failed with the exact old/
+      new numbers, then restoring and confirming green — repeated after
+      the `crucifixion` fix with a perturbed `crucifixion` year,
+      confirming the table-staleness failure path this time.
+      `assets/bible_chronology.json` regenerated; diff is 98 additive
+      lines, all inside the new `_meta.crossSurfaceYearDiffs` — no
+      lifeline, marker or event values changed. `flutter analyze` clean
+      repo-wide; full suite green (363 files, run in 8 foreground
+      chunks — background `flutter test` is queue:18939/18404's own
+      recurring trap and was not used).
+
+      Checkbox stays open; the chart item spans many slices.
 
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding

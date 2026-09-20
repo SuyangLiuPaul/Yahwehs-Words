@@ -104,6 +104,104 @@
         "sarah"
       ]
     },
+    "crossSurfaceYearDiffs": [
+      {
+        "eventId": "cain_abel",
+        "personId": "abel",
+        "kind": "death",
+        "timelineYear": -3950,
+        "familyTreeYear": -3929,
+        "deltaYears": 21,
+        "class": "unresolved",
+        "note": "family_tree.json gives Abel a deathYear (AM 75) with no scripture citation for a specific age at death — Genesis does not state one, unlike Seth's stated lifespan. This 21-year gap against bible_timeline.json's placement is recorded, not resolved: neither figure is derived from a stated age, so there is nothing here to adjudicate between, only to disclose."
+      },
+      {
+        "eventId": "seth_born",
+        "personId": "seth",
+        "kind": "birth",
+        "timelineYear": -3870,
+        "familyTreeYear": -3874,
+        "deltaYears": -4,
+        "class": "creationAnchor4Year",
+        "note": "bible_timeline.json places Creation at 4000 BC; the AM scale here (via CREATION_BC) anchors it at 4004 BC — the same 4-year gap already recorded on the creation marker's placedDeltaYears."
+      },
+      {
+        "eventId": "ishmael_born",
+        "personId": "ishmael",
+        "kind": "birth",
+        "timelineYear": -2080,
+        "familyTreeYear": -2080,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "isaac_born",
+        "personId": "isaac",
+        "kind": "birth",
+        "timelineYear": -2066,
+        "familyTreeYear": -2066,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "jacob_esau_born",
+        "personId": "jacob",
+        "kind": "birth",
+        "timelineYear": -2006,
+        "familyTreeYear": -2006,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "jacob_esau_born",
+        "personId": "esau",
+        "kind": "birth",
+        "timelineYear": -2006,
+        "familyTreeYear": -2006,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "moses_born",
+        "personId": "moses",
+        "kind": "birth",
+        "timelineYear": -1526,
+        "familyTreeYear": -1525,
+        "deltaYears": 1,
+        "class": "mosesAnchorYear",
+        "note": "family_tree.json dates Moses 1525-1405 BC, bible_timeline.json 1526-1406 BC — both ends 1 year later on family_tree.json, so this is a shared anchor difference, not a lifespan error: both put his life at exactly 120 years (see the assertion right below this table)."
+      },
+      {
+        "eventId": "moses_dies",
+        "personId": "moses",
+        "kind": "death",
+        "timelineYear": -1406,
+        "familyTreeYear": -1405,
+        "deltaYears": 1,
+        "class": "mosesAnchorYear",
+        "note": "See moses_born above — the same 1-year anchor shift, at the other end of the same 120-year life."
+      },
+      {
+        "eventId": "jesus_born",
+        "personId": "jesus",
+        "kind": "birth",
+        "timelineYear": -5,
+        "familyTreeYear": -4,
+        "deltaYears": 1,
+        "class": "nativityDating",
+        "note": "family_tree.json dates Jesus's birth 4 BC, bible_timeline.json 5 BC — both are years used in published nativity chronologies; this chart does not adjudicate between them or assert which one is right."
+      },
+      {
+        "eventId": "crucifixion",
+        "personId": "jesus",
+        "kind": "death",
+        "timelineYear": 33,
+        "familyTreeYear": 30,
+        "deltaYears": -3,
+        "class": "crucifixionDating",
+        "note": "family_tree.json dates Jesus's death AD 30, bible_timeline.json's crucifixion event AD 33 — both are years used in published crucifixion chronologies (the disagreement usually turns on which Passover during Pilate's AD 26-36 tenure is read as the crucifixion's Friday); this chart does not adjudicate between them."
+      }
+    ],
     "eraBandBasis": [
       {
         "id": "antediluvian",
