@@ -12635,6 +12635,16 @@ has never seen this repo.
       is still unanswered: start the `GetMaterialApp` → `.router`
       migration branch, or close this as "won't fix"?
 
+      **Deferred a thirty-fifth consecutive iteration, 2026-09-20** —
+      this hour's NEXT_TASK.md picked the chronology chart's next slice
+      instead (below — a dozen Judahite kings' `birthYear` held their
+      accession year instead, producing three fathers "born" after
+      their own sons). Still branch-scale, still unattended-unsafe,
+      still the only fully open P2 checkbox besides the chronology
+      chart, and the question above to the user is still unanswered:
+      start the `GetMaterialApp` → `.router` migration branch, or close
+      this as "won't fix"?
+
 - [x] **FIXED 2026-09-05 (`3a12f70f`) — On the Bible reader, Back pushed a
       route instead of popping.** Pre-existing, orthogonal to the two
       defects above, flagged 2026-09-03. `_writeStateToUrl` issued a raw
@@ -16250,6 +16260,111 @@ has never seen this repo.
       inside this iteration's ~6-minute watch budget (still
       `in_progress` at last check) — next iteration's step 0 should
       check it before picking anything else.
+
+      **2026-09-20/21 slice — a dozen Judahite kings' `birthYear` held
+      their accession year instead, three fathers therefore "born"
+      after their own sons.** Surfaced by this item's own refuter (the
+      2026-09-19 slice above, where the refuter found Moses off by 1
+      between `family_tree.json` and `bible_chronology.json`). Measured
+      from the assets, not recalled: `ahaz` (−732) → `hezekiah` (−741,
+      9 years younger than his son), `amon` (−642) → `josiah` (−648, 6
+      years), `jehoiakim` (−609) → `jeconiah` (−616, 7 years). The cause
+      is systemic and the split is clean — every Judahite king in the
+      asset with no `deathYear` carries an accession year in
+      `birthYear`; the 5 that have a real birth/death pair
+      (`solomon`/`rehoboam`/`hezekiah`/`josiah`/`jeconiah`) do not.
+      Correcting only the 3 impossible pairs creates a new one
+      (`jotham` −740 is itself an accession year, so a corrected `ahaz`
+      alone would then predate his own father) — so all 11
+      verse-derivable kings were corrected in one pass: each new
+      `birthYear` = the king's own accession year (unchanged, already
+      in the field) minus the age-at-accession Scripture states, each
+      age read live out of `assets/kjv.json` rather than trusted from
+      memory — `jehoshaphat` 1 Kings 22:42 age 35 (−870→−905),
+      `jehoram_judah` 2 Kings 8:17 age 32 (−848→−880), `ahaziah_judah`
+      2 Kings 8:26 age 22 (−841→−863), `joash_judah` 2 Kings 11:21 age 7
+      (−835→−842), `amaziah` 2 Kings 14:2 age 25 (−796→−821), `uzziah`
+      2 Kings 15:2 age 16 (−767→−783), `jotham` 2 Kings 15:33 age 25
+      (−740→−765), `ahaz` 2 Kings 16:2 age 20 (−732→−752),
+      `manasseh_king` 2 Kings 21:1 age 12 (−697→−709), `amon` 2 Kings
+      21:19 age 22 (−642→−664), `jehoiakim` 2 Kings 23:36 age 25
+      (−609→−634). Same pass also read Exodus 6:16's stated 137-year
+      lifespan for `levi` — the tree's own 207-year gap contradicted a
+      verse `bible_chronology.json`'s own `_meta.statedLifespansNotDrawn`
+      cites — and moved `levi.deathYear` −1716→−1786 (unchanged
+      birthYear −1923 + 137). Cross-checked all 9
+      `statedLifespansNotDrawn` entries against `family_tree.json`:
+      only `levi` disagreed (moses 120 ✓, aaron 123 ✓, david 70 ✓;
+      kohath/amram have no `deathYear` in the tree; joshua/jehoiada/eli
+      are not in the tree at all).
+
+      `abijah` and `asa` are left alone and filed, not fixed — Scripture
+      states no age-at-accession for either, so there is nothing to
+      derive and inventing one would be exactly the fabrication this
+      loop must not do.
+
+      Filed, not fixed, and not this slice's to settle: the residual
+      sub-13-year father/child gaps that remain after this fix —
+      `ahaz`→`hezekiah` 11y (the genuine 2 Chronicles 28:1 LXX/Syriac
+      "25" crux), `abijah`→`asa` 2y, `asa`→`jehoshaphat` 6y,
+      `eliphaz`→`amalek` 0y, `heli`→`mary` 5y,
+      `nathan_son_of_david`→`mattatha_lk_31` 10y; the
+      `kohath`(−1850)→`amram`(−1570) 280-year and
+      `levi`→`jochebed` 373-year impossibilities, which depend on the
+      Exodus 12:40 430-year question this repo's own
+      `unanchoredLifespans` note already deliberately refuses to settle
+      — this slice does not pick a side either; the Exodus 7:7 3-vs-5
+      year Aaron/Moses birth gap (`aaron` −1530 vs `moses` −1525, each
+      individually matching its own stated lifespan, so which one moves
+      is not derivable from the asset); and the Moses −1 / Jesus −1
+      cross-surface year diffs between `family_tree.json` and
+      `bible_chronology.json`'s event markers (the defect class the
+      2026-09-19 slice's refuter surfaced and kept narrow).
+
+      Blast radius checked, not assumed: no era's earliest/latest year
+      moved — `kings` stays bathsheba −1040 → jeconiah −560,
+      `patriarchs` stays haran −2200 → zohar −1690 (Levi's death moves
+      *away* from that era's max) — so the `familyTreeEraSub*` strings
+      and `test/family_tree_era_subtitle_test.dart` needed no change.
+      `tools/build_bible_chronology.py` re-run; `assets/bible_chronology.json`
+      came out byte-identical (confirmed with a diff, not assumed —
+      none of the touched people are drawn chart lifelines, so
+      `_meta.familyTreeScaleOffset`'s 7-patriarch invariant is
+      untouched). `git log -S` on every touched number traced to the
+      same two agent-authored data-fill commits already cleared for
+      Aaron's −1530 (`0ab209c9`, `341c8ac4`/`eabab098`), not a
+      deliberate user edit — safe to correct.
+
+      New `test/family_tree_year_integrity_test.dart`: sweeps all 277
+      people for any same-`yearSystem` father/child pair where the
+      child is born strictly before the father (not `<=` — `eliphaz`/
+      `amalek` share a birth year and are a filed, not-this-test's
+      concern), and checks `deathYear − birthYear` against every
+      `statedLifespansNotDrawn` entry that has both years in the tree.
+      Proved red first: stashed the asset edit only, reran — the exact
+      3 impossible pairs and the Levi 207-vs-137 mismatch failed with
+      the precise numbers above, then restored and reran green.
+
+      **Refuted before committing**: an independent agent was given all
+      12 verse/age citations, the accession-year arithmetic, the
+      277-person no-child-before-father sweep, the 4-id
+      `statedLifespansNotDrawn` cross-check, and the two eras'
+      unchanged min/max, and asked to break each from the raw assets
+      rather than confirm this description. All survived; its one
+      caveat (the accession year isn't a separate field in the schema,
+      so the arithmetic can only be checked against the pre-edit
+      `birthYear` values, not re-derived from the file alone) is
+      correct but not a break — those pre-edit values are exactly what
+      this slice measured before editing.
+
+      `flutter analyze` clean repo-wide. Full suite green, 3469 tests.
+      Asset + test only, no version bump — per this item's own standing
+      rule, no deploy.
+
+      Also logged: the thirty-fifth consecutive `queue:12325`
+      (`GetMaterialApp` → `.router`) deferral, above.
+
+      Checkbox stays open; the chart item spans many slices.
 
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
