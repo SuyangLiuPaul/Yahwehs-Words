@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:yahwehs_words/constants/book_groups.dart'
+    show canonicalNtBooks, canonicalOtBooks;
 import 'package:yahwehs_words/constants/book_names.dart';
 import 'package:yahwehs_words/constants/text_patterns.dart' show sanitizeForSearch;
 import 'package:yahwehs_words/constants/ui_strings.dart';
@@ -246,6 +248,15 @@ class _NoteReferencePickerSheetState
     }
   }
 
+  /// The book step, in sections.
+  ///
+  /// 2026-09-20: it was one flat grid of every book the version has —
+  /// 66 identical pills in canonical order, which is a list you read
+  /// rather than a list you navigate. 「current book 分新旧约之类的 这样
+  /// 就更加清晰和navigate」. Three sections now: the chapter the reader
+  /// came from (one tap, and it is almost always the one they want,
+  /// because a note is being written ON that verse), then 旧约, then
+  /// 新约, each under its own heading.
   Widget _buildBookGrid(
       ScrollController scrollController, ColorScheme scheme, double fs) {
     // Use canonical 66-book ordering, BUT filter to books actually
@@ -253,39 +264,115 @@ class _NoteReferencePickerSheetState
     final available = standardBookOrder
         .where((b) => _chaptersByBook.containsKey(b))
         .toList();
-    return GridView.builder(
-      controller: scrollController,
-      padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 160,
-        mainAxisExtent: 48,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: available.length,
-      itemBuilder: (_, i) {
-        final canonical = available[i];
-        final label = _displayBookName(canonical);
-        return OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.symmetric(horizontal: 4),
-            side: BorderSide(color: scheme.outlineVariant),
-          ),
-          onPressed: () {
-            setState(() {
-              _selectedBookCanonical = canonical;
-              _selectedChapter = null;
-              _step = _PickerStep.chapter;
-            });
-          },
+    final current = _currentCanonicalBook();
+    final ot = [for (final b in available) if (canonicalOtBooks.contains(b)) b];
+    final nt = [for (final b in available) if (canonicalNtBooks.contains(b)) b];
+    // Anything the canon lists neither way (an imported edition's own
+    // book) still has to be reachable.
+    final rest = [
+      for (final b in available)
+        if (!canonicalOtBooks.contains(b) && !canonicalNtBooks.contains(b)) b
+    ];
+
+    const grid = SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: 160,
+      mainAxisExtent: 48,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
+    );
+
+    Widget heading(String text) => Padding(
+          padding: const EdgeInsets.fromLTRB(4, 12, 4, 6),
           child: Text(
-            label,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: fs - 3, fontWeight: FontWeight.w500),
+            text,
+            style: TextStyle(
+              fontSize: fs - 4,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
+              color: scheme.onSurfaceVariant,
+            ),
           ),
         );
+
+    SliverGrid gridOf(List<String> books) => SliverGrid(
+          gridDelegate: grid,
+          delegate: SliverChildBuilderDelegate(
+            (_, i) => _bookTile(books[i], scheme, fs),
+            childCount: books.length,
+          ),
+        );
+
+    return CustomScrollView(
+      controller: scrollController,
+      slivers: [
+        const SliverPadding(padding: EdgeInsets.only(top: 4)),
+        if (current != null && _chaptersByBook.containsKey(current)) ...[
+          SliverToBoxAdapter(
+            child: heading(_s('notePickerCurrentBook', 'Where you are')),
+          ),
+          SliverGrid(
+            gridDelegate: grid,
+            delegate: SliverChildBuilderDelegate(
+              (_, __) => _bookTile(current, scheme, fs, emphasised: true),
+              childCount: 1,
+            ),
+          ),
+        ],
+        if (ot.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: heading(_s('notePickerOldTestament', 'Old Testament')),
+          ),
+          gridOf(ot),
+        ],
+        if (nt.isNotEmpty) ...[
+          SliverToBoxAdapter(
+            child: heading(_s('notePickerNewTestament', 'New Testament')),
+          ),
+          gridOf(nt),
+        ],
+        if (rest.isNotEmpty) gridOf(rest),
+        const SliverPadding(padding: EdgeInsets.only(bottom: 16)),
+      ],
+    );
+  }
+
+  /// The reader's current book as a canonical English name, or null.
+  String? _currentCanonicalBook() {
+    final raw = widget.mainProvider.currentBook;
+    if (raw == null || raw.isEmpty) return null;
+    return bookNameToEnglish[raw] ?? raw;
+  }
+
+  String _s(String key, String fallback) =>
+      uiStrings[key]?[widget.locale] ?? fallback;
+
+  Widget _bookTile(String canonical, ColorScheme scheme, double fs,
+      {bool emphasised = false}) {
+    final label = _displayBookName(canonical);
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        side: BorderSide(
+            color: emphasised ? scheme.primary : scheme.outlineVariant),
+        backgroundColor:
+            emphasised ? scheme.primaryContainer.withValues(alpha: 0.35) : null,
+      ),
+      onPressed: () {
+        setState(() {
+          _selectedBookCanonical = canonical;
+          _selectedChapter = null;
+          _step = _PickerStep.chapter;
+        });
       },
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: fs - 3,
+          fontWeight: emphasised ? FontWeight.w700 : FontWeight.w500,
+        ),
+      ),
     );
   }
 

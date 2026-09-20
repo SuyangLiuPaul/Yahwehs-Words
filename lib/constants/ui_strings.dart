@@ -359,6 +359,23 @@ const uiStrings = {
     'zh-Hant': '+ 經文',
     'en': '+ Verse',
   },
+  // 2026-09-20: the book step is sectioned now — where the reader is,
+  // then the two testaments — instead of 66 identical pills in a row.
+  'notePickerCurrentBook': {
+    'zh-Hans': '当前书卷',
+    'zh-Hant': '當前書卷',
+    'en': 'Where you are',
+  },
+  'notePickerOldTestament': {
+    'zh-Hans': '旧约',
+    'zh-Hant': '舊約',
+    'en': 'Old Testament',
+  },
+  'notePickerNewTestament': {
+    'zh-Hans': '新约',
+    'zh-Hant': '新約',
+    'en': 'New Testament',
+  },
   'notePickerPickBook': {
     'zh-Hans': '选择书卷',
     'zh-Hant': '選擇書卷',
