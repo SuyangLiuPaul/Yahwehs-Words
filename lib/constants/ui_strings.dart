@@ -7338,7 +7338,7 @@ const uiStrings = {
         '刻度一直延伸到啟示錄，因為事件延伸到那裡；兩者的畫法刻意不同。',
   },
   // ── Second pass, 2026-09-04 ───────────────────────────────────
-  // The chart used to stop at Abraham (AM 2187) while the event list
+  // The chart used to stop at Eber (AM 2187) while the event list
   // on the SAME page ran to Revelation, so scrolling right never
   // arrived: 「chronology chart为什么不能一直往右边一直到今天」…
   // 「直接做到跟event一致就行了」. The axis now spans AM 0-4098
@@ -7368,6 +7368,11 @@ const uiStrings = {
     'en': 'The two scales disagree here',
     'zh-Hans': '两套刻度在此不合',
     'zh-Hant': '兩套刻度在此不合',
+  },
+  'chronologyEraBandLabel': {
+    'en': "A band's name is not its edges",
+    'zh-Hans': '色带的名称不等于其边界',
+    'zh-Hant': '色帶的名稱不等於其邊界',
   },
   'chronologyNoLifelines': {
     'en': 'no lifelines here',

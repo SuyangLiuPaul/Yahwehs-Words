@@ -3083,6 +3083,91 @@ void main() {
             reason: '${t.id} is in unknown era ${t.era}');
       }
     });
+
+    // A band's startAm/endAm are the placed-event layer, but its name
+    // points at the computed layer (a marker or a stated/chained
+    // lifeline age), and those two clocks don't always agree — see
+    // era_band_note() in tools/build_bible_chronology.py. This test
+    // recomputes, straight from the raw asset and independently of the
+    // builder's own `first_am`/`misordered` logic, which item actually
+    // set each band's start edge, so `_meta.eraBandBasis` can't drift
+    // from the truth without this failing.
+    test("_meta.eraBandBasis names the item that actually set each "
+        "band's own start edge", () {
+      final markers = (raw['markers'] as List).cast<Map<String, dynamic>>();
+      final events = (raw['events'] as List).cast<Map<String, dynamic>>();
+      final firstComputedInEra = <String, int>{};
+      for (final m in markers) {
+        final era = m['era'] as String;
+        final am = (m['am'] as num).toInt();
+        if (!firstComputedInEra.containsKey(era) ||
+            am < firstComputedInEra[era]!) {
+          firstComputedInEra[era] = am;
+        }
+      }
+      final misorderedIds = <String>{
+        for (final e in events)
+          if (firstComputedInEra.containsKey(e['era']) &&
+              (e['am'] as num).toInt() < firstComputedInEra[e['era']]!)
+            e['id'] as String,
+      };
+      final firstAmSource = <String, Map<String, dynamic>>{};
+      final firstAm = <String, int>{};
+      for (final x in [...events, ...markers]) {
+        final era = x['era'] as String;
+        final am = (x['am'] as num).toInt();
+        if (!firstAm.containsKey(era) || am < firstAm[era]!) {
+          firstAm[era] = am;
+          firstAmSource[era] = x;
+        }
+      }
+      final basis =
+          (raw['_meta']['eraBandBasis'] as List).cast<Map<String, dynamic>>();
+      expect(basis.length, data.eras.length);
+      for (final b in basis) {
+        final era = b['id'] as String;
+        final src = firstAmSource[era];
+        expect(src, isNotNull, reason: '$era has no dated item at all');
+        expect(b['startEdgeId'], src!['id'], reason: '$era start edge id');
+        expect((b['startEdgeAm'] as num).toInt(), src['am'],
+            reason: '$era start edge am');
+        expect(b['startEdgeMisordered'], misorderedIds.contains(src['id']),
+            reason: '$era start edge misordered flag');
+      }
+      // The two live cases named in the task this test was written
+      // for. If this set ever changes, `eraBandNote` needs a conscious
+      // rewrite — the build's own assertion (build_bible_chronology.py)
+      // guards that; this pins the reader-facing consequence.
+      expect(
+        basis
+            .where((b) => b['startEdgeMisordered'] == true)
+            .map((b) => b['id']),
+        ['patriarchs'],
+      );
+    });
+
+    // The band edges vs. named-milestone gap is explained nowhere but a
+    // code comment today (see the ORIENTATION comment on `eras` in the
+    // generator). This checks the reader-facing explanation exists, in
+    // all three locales, and actually names the figures the chart's own
+    // arithmetic produces rather than a paraphrase that could drift
+    // from them.
+    test('eraBandNote names the Flood at AM 1656 against the '
+        "antediluvian band's own AM 1918, and Abraham/Joseph against "
+        "the patriarchs band's own AM 1918-2304, in all three locales",
+        () {
+      for (final locale in const ['en', 'zh-Hans', 'zh-Hant']) {
+        final note = data.localizedEraBandNote(locale);
+        expect(note, isNotEmpty, reason: locale);
+        expect(note, contains('1656'), reason: '$locale: Flood AM');
+        expect(note, contains('1918'),
+            reason: '$locale: antediluvian/patriarchs edge AM');
+        expect(note, contains('2008'), reason: "$locale: Abraham's birth AM");
+        expect(note, contains('2304'),
+            reason: '$locale: patriarchs band end AM');
+        expect(note, contains('2369'), reason: "$locale: Joseph's death AM");
+      }
+    });
   });
 
   group('the generator is the only author of the asset', () {

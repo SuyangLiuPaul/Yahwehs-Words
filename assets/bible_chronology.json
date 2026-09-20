@@ -103,6 +103,69 @@
         "joseph",
         "sarah"
       ]
+    },
+    "eraBandBasis": [
+      {
+        "id": "antediluvian",
+        "startEdgeId": "creation",
+        "startEdgeAm": 0,
+        "startEdgeAmBasis": "computed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "patriarchs",
+        "startEdgeId": "lot_separates",
+        "startEdgeAm": 1918,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": true
+      },
+      {
+        "id": "mosaic",
+        "startEdgeId": "israel_oppressed",
+        "startEdgeAm": 2304,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "conquest",
+        "startEdgeId": "jordan_crossed",
+        "startEdgeAm": 2598,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "monarchy",
+        "startEdgeId": "saul_anointed",
+        "startEdgeAm": 2954,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "exile",
+        "startEdgeId": "judah_falls",
+        "startEdgeAm": 3418,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "intertestamental",
+        "startEdgeId": "intertestamental",
+        "startEdgeAm": 3604,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      },
+      {
+        "id": "nt",
+        "startEdgeId": "john_baptist_born",
+        "startEdgeAm": 3998,
+        "startEdgeAmBasis": "placed",
+        "startEdgeMisordered": false
+      }
+    ],
+    "eraBandNote": {
+      "en": "A band's edges are set by the placed-event layer (assets/bible_timeline.json), but its name points at the computed layer — lifelines and markers chained from Genesis's stated ages. The two do not always meet at the same year. The Antediluvian band runs to AM 1918, but the Flood itself is computed at AM 1656 — 262 years earlier. The Patriarchs band runs AM 1918–2304, but Abraham's computed birth is AM 2008 (after the band already started) and Joseph's computed death is AM 2369 (after the band already ended). Nothing has been shifted to close either gap: the band is an orientation device for the axis, the tick is the precise claim.",
+      "zh-Hans": "色带的边界来自事件安放层（assets/bible_timeline.json），但其名称指向的是按创世记所记年岁推算的生平横条与标记层，两者未必落在同一年份。「洪水前」色带一直画到创世纪元 1918 年，而洪水本身推算为创世纪元 1656 年——早了 262 年。「族长时代」色带跨创世纪元 1918 至 2304 年，而亚伯拉罕的推算出生年份是创世纪元 2008年（色带已经开始之后），约瑟的推算去世年份是创世纪元 2369 年（色带已经结束之后）。两处差距都没有为了拉近而挪动任何数字：色带是轴线上的定向工具，刻度才是精确的主张。",
+      "zh-Hant": "色帶的邊界來自事件安放層（assets/bible_timeline.json），但其名稱指向的是按創世記所記年歲推算的生平橫條與標記層，兩者未必落在同一年份。「洪水前」色帶一直畫到創世紀元 1918 年，而洪水本身推算為創世紀元 1656 年——早了 262 年。「族長時代」色帶跨創世紀元 1918 至 2304 年，而亞伯拉罕的推算出生年份是創世紀元 2008年（色帶已經開始之後），約瑟的推算去世年份是創世紀元 2369 年（色帶已經結束之後）。兩處差距都沒有為了拉近而挪動任何數字：色帶是軸線上的定向工具，刻度才是精確的主張。"
     }
   },
   "schemes": [

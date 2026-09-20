@@ -12531,6 +12531,16 @@ has never seen this repo.
       unanswered: start the `GetMaterialApp` → `.router` migration
       branch, or close this as "won't fix"?
 
+      **Deferred a thirty-fourth consecutive iteration, 2026-09-19** —
+      this hour's NEXT_TASK.md picked the chronology chart's era-band-
+      basis slice instead (below — the era strip names endpoints
+      ["Antediluvian (Creation → Flood)", "Patriarchs (Abraham →
+      Joseph)"] the bands' own edges do not reach). Still branch-scale,
+      still unattended-unsafe, still the only fully open P2 checkbox
+      besides the chronology chart, and the question above to the user
+      is still unanswered: start the `GetMaterialApp` → `.router`
+      migration branch, or close this as "won't fix"?
+
 - [x] **FIXED 2026-09-05 (`3a12f70f`) — On the Bible reader, Back pushed a
       route instead of popping.** Pre-existing, orthogonal to the two
       defects above, flagged 2026-09-03. `_writeStateToUrl` issued a raw
@@ -16679,7 +16689,124 @@ has never seen this repo.
       Pushed as `31d84c66`. CI run `35359435072` had not concluded
       inside this iteration's ~6-minute watch budget (still
       `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      check it before picking anything else. **Confirmed green on the
+      next iteration's step 0**: the remote was renamed to
+      `SuyangLiuPaul/Yahwehs-Words`; the old `SuyangLiuPaul/YsWords` path
+      still resolves via GitHub's rename redirect, so step 0 works either
+      way — both `daf95628` (run `35360103640`) and `31d84c66` (run
+      `35359435072`) concluded **success**.
+
+      **2026-09-19 slice — the era strip names endpoints the bands do
+      not have.** Same defect class as the Enoch/Adam/family-tree-offset
+      slices above — a plausible, wrong-sounding claim the chart makes
+      about itself — moved to the era bands: `antediluvian` runs AM
+      0→1918, but the `flood` marker it is named for (`amBasis:
+      computed`) is AM 1656, 262 years earlier; `patriarchs` runs
+      1918→2304, but Abraham's computed `birthAm` is 2008 (90 years
+      after the band starts) and Joseph's computed `deathAm` is 2369 (65
+      years after the band ends). Cause: a band's edges are
+      `first_am[era]` over the placed-events layer
+      (`tools/build_bible_chronology.py`), while its label points at the
+      computed layer, and the specific event setting the
+      antediluvian/patriarchs edge, `lot_separates` (AM 1918), is itself
+      one of the events the build's own `misordered` test already flags
+      as provably out of order for its era. The caveat existed only as a
+      code comment (`build_bible_chronology.py:1315`,
+      `chronology.dart:249`) — nowhere on screen.
+
+      **Fix shape, following the `contested_note()`/
+      `familyTreeScaleOffset` precedent — explain, do not move.** No
+      year moved; no band edge changed.
+      `tools/build_bible_chronology.py`: `_meta.eraBandBasis` (new)
+      records, per band, the id/am/amBasis of whichever marker or event
+      actually set that band's start edge (`first_am_source`, derived
+      alongside the existing `first_am`), and whether that item is in
+      `misordered`. A build assertion fails if the set of misordered
+      band starts ever becomes anything other than `{"patriarchs"}`, and
+      three more assert the two specific gaps this slice names (flood
+      vs. antediluvian-end, Abraham-birth vs. patriarchs-start,
+      Joseph-death vs. patriarchs-end) still hold — so a future edit
+      that closes either gap fails the build instead of shipping a note
+      about a disagreement that no longer exists. (This surfaced a
+      pre-existing ordering bug: every `problems.append()` after the
+      generator's one `if problems: raise SystemExit(1)` gate — the
+      family-tree-offset checks, the era/misordered checks, this slice's
+      new ones — was never actually checked, because that gate runs
+      before `eras`/`misordered`/the lifeline lookups those checks need
+      exist. Added a second gate right before `doc = {}` is built to
+      close it; the family-tree-offset checks from yesterday's slice
+      benefit too.) `era_band_note()` (new, mirrors `contested_note()`)
+      builds the trilingual explanation entirely from parameters —
+      never a literal a future data change could leave stale.
+      `lib/models/chronology.dart`: new `eraBandNote` field +
+      `localizedEraBandNote()`, same optional-map pattern as
+      `computedNote`. `lib/widgets/chronology_chart.dart`: a new bordered
+      note box in `_legend`, right after the existing "two scales
+      disagree" contested box — always on screen when scrolled to the
+      legend, no tap needed, so it does not touch the name-column width
+      arithmetic the "Eras" caption feeds. New string
+      `chronologyEraBandLabel` in `ui_strings.dart`.
+
+      **Secondary, same commit: three stale "AM 2187" comments.**
+      `computedEndAm` has been 2369 (Joseph) since the family-tree
+      lifelines were extended; `chronology_chart.dart:1114`, `:2948`
+      (now the `_Slot` doc comment) and `:2956` still said bars stop at
+      AM 2187. Fixed to 2369. Separately, `ui_strings.dart:7341`
+      attributed AM 2187 itself to Abraham — that AM is Eber's death
+      (2187); Abraham dies AM 2183. Past tense was already correct
+      (describing a real prior state); only the person's name was wrong.
+      Fixed "Abraham" → "Eber", left "AM 2187" as-is.
+
+      **Refuted before committing.** An independent agent re-derived all
+      four numeric claims straight from the raw asset (not from
+      `_meta.eraBandBasis`/`eraBandNote`, which are what was being
+      checked) and confirmed all four, including re-deriving that
+      `lot_separates` is misordered by the stated definition rather than
+      merely numerically equal to 1918 by coincidence. Asked to widen
+      the claim and find a third band with the same shape: **found
+      none** — all 7 computed `markers` and all 26 lifelines' AM range
+      (max 2369) sit entirely inside the antediluvian/patriarchs span,
+      so the other six bands have no computed figure to disagree with at
+      all. Recorded rather than generalised, same shape as yesterday's
+      Moses counterexample.
+
+      Two new tests in `test/bible_chronology_test.dart`: one recomputes
+      `first_am_source`/`misordered` independently of the builder from
+      the raw `markers`/`events` and checks every band's `eraBandBasis`
+      entry against it, plus pins the misordered-band-starts set to
+      exactly `['patriarchs']`; one checks `eraBandNote` names 1656,
+      1918, 2008, 2304 and 2369 in all three locales. Both proved red
+      first: reverted the model/builder/widget changes via `git stash`
+      and watched the compile fail on `localizedEraBandNote`; then, with
+      the fix restored, hand-perturbed `eraBandBasis.patriarchs
+      .startEdgeAm` to 9999 in the built asset (caught by the first
+      test) and the note's "1656" to "1111" (caught by the second),
+      regenerating from the builder after each and confirming the asset
+      came back byte-identical (`ae240484…`) both times. Also confirmed
+      the build's own new assertions fail on hand perturbation: an
+      `expected_misordered_band_starts` mismatch, and each of the three
+      "gap closed" checks, each restored to the same byte-identical
+      asset afterward. Builder re-run twice, byte-identical both times.
+      `_meta.count` (26), `computedEndAm` (2369), `spanEndAm` (4098) and
+      every band's `startAm`/`endAm` unmoved — new `_meta` keys only
+      (`eraBandBasis`, `eraBandNote`). `flutter analyze` clean
+      repo-wide. Full suite (356 files) run in 7 foreground chunks of
+      ≤55, all green.
+
+      Asset + code + test only, no version bump, no deploy — this item's
+      own guard rail. Checkbox stays open; the chart item spans many
+      slices.
+
+      **Completed 2026-09-19, 02:18–02:40, but not committed until
+      2026-09-20.** That execution stage did all of the above — builder,
+      asset, model, strings, widget, tests, analyze, full suite, refuter
+      — and then never ran `git commit`; the tree sat dirty for ~37
+      hours before this iteration staged exactly these 7 files by name
+      and landed them. Re-verified rather than re-trusted the stale
+      green first: rebuilt the asset (md5 `ae240484…` byte-identical),
+      re-ran `flutter analyze` (clean) and the full
+      `bible_chronology_test.dart` file (152 tests, green) on this
+      iteration's own machine before committing.
 
 - [ ] **Follow-up, filed not built: the `matriarchs` line id/name is
       deliberately plural.** Noted 2026-09-17 landing the Sarah slice

@@ -452,6 +452,14 @@ class ChronologyData {
   /// the chart, not in a tooltip.
   final Map<String, String> computedNote;
 
+  /// Trilingual explanation that a band's start/end edges come from the
+  /// placed-event layer while its name points at the computed layer,
+  /// naming the two places that currently disagree (see
+  /// `_meta.eraBandBasis`, which this is generated from, and
+  /// `era_band_note()` in the generator). Shown on the chart, not in a
+  /// tooltip — same placement rule as [computedNote].
+  final Map<String, String> eraBandNote;
+
   const ChronologyData({
     required this.defaultScheme,
     required this.spanStartAm,
@@ -467,6 +475,7 @@ class ChronologyData {
     required this.undrawnLines,
     required this.unanchoredLifespans,
     required this.computedNote,
+    required this.eraBandNote,
   });
 
   /// Both layers in one axis-ordered list — what the tick lane draws.
@@ -484,6 +493,9 @@ class ChronologyData {
 
   String localizedComputedNote(String locale) =>
       _localeMap(computedNote, locale);
+
+  String localizedEraBandNote(String locale) =>
+      _localeMap(eraBandNote, locale);
 
   /// The scheme the chart is actually drawn on. If `_meta.defaultScheme`
   /// ever fails to resolve, the fallback prefers a [ChronologyScheme.
@@ -581,6 +593,13 @@ class ChronologyData {
       ),
       computedNote:
           ((meta['computedNote'] as Map?) ?? const {}).map<String, String>(
+        (k, v) => MapEntry(k.toString(), v.toString()),
+      ),
+      // Older builds of the asset predate this note; an empty map keeps
+      // them rendering rather than throwing — localizedEraBandNote then
+      // returns '', which the widget checks before drawing a row.
+      eraBandNote:
+          ((meta['eraBandNote'] as Map?) ?? const {}).map<String, String>(
         (k, v) => MapEntry(k.toString(), v.toString()),
       ),
     );

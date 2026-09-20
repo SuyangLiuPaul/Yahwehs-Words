@@ -939,6 +939,77 @@ def contested_note(offset_years, offset_person_ids, people):
     }
 
 
+def era_band_note(antediluvian_end_am, flood_am, patriarchs_start_am,
+                   patriarchs_end_am, abraham_birth_am, joseph_death_am):
+    """Trilingual copy for `_meta.eraBandNote`.
+
+    Every figure here is a parameter, not a literal, so the prose can
+    never state a number `build()` did not just compute. `build()`
+    asserts the inequalities this sentence relies on (antediluvian
+    truly ends after the Flood; patriarchs truly starts before Abraham
+    is born and ends before Joseph dies) before calling this, so if a
+    future edit closes one of those gaps the build fails asking for the
+    note to be rewritten rather than shipping a caveat about a gap that
+    no longer exists. See the ORIENTATION comment on `eras` in build()
+    and `lib/models/chronology.dart:249` for the reason the gap exists
+    at all: a band's edges come from the placed-event layer
+    (assets/bible_timeline.json), but its name points at the computed
+    lifeline/marker layer, and those two layers are not drawn from the
+    same clock.
+    """
+    return {
+        "en": (
+            "A band's edges are set by the placed-event layer "
+            "(assets/bible_timeline.json), but its name points at the "
+            "computed layer — lifelines and markers chained from "
+            "Genesis's stated ages. The two do not always meet at the "
+            "same year. The Antediluvian band runs to AM %d, but the "
+            "Flood itself is computed at AM %d — %d years earlier. The "
+            "Patriarchs band runs AM %d–%d, but Abraham's computed "
+            "birth is AM %d (after the band already started) and "
+            "Joseph's computed death is AM %d (after the band already "
+            "ended). Nothing has been shifted to close either gap: the "
+            "band is an orientation device for the axis, the tick is "
+            "the precise claim." % (
+                antediluvian_end_am, flood_am,
+                antediluvian_end_am - flood_am,
+                patriarchs_start_am, patriarchs_end_am,
+                abraham_birth_am, joseph_death_am,
+            )
+        ),
+        "zh-Hans": (
+            "色带的边界来自事件安放层（assets/bible_timeline.json），但"
+            "其名称指向的是按创世记所记年岁推算的生平横条与标记层，两者未"
+            "必落在同一年份。「洪水前」色带一直画到创世纪元 %d 年，而洪水"
+            "本身推算为创世纪元 %d 年——早了 %d 年。「族长时代」色带跨"
+            "创世纪元 %d 至 %d 年，而亚伯拉罕的推算出生年份是创世纪元 %d"
+            "年（色带已经开始之后），约瑟的推算去世年份是创世纪元 %d 年"
+            "（色带已经结束之后）。两处差距都没有为了拉近而挪动任何数字："
+            "色带是轴线上的定向工具，刻度才是精确的主张。" % (
+                antediluvian_end_am, flood_am,
+                antediluvian_end_am - flood_am,
+                patriarchs_start_am, patriarchs_end_am,
+                abraham_birth_am, joseph_death_am,
+            )
+        ),
+        "zh-Hant": (
+            "色帶的邊界來自事件安放層（assets/bible_timeline.json），但"
+            "其名稱指向的是按創世記所記年歲推算的生平橫條與標記層，兩者未"
+            "必落在同一年份。「洪水前」色帶一直畫到創世紀元 %d 年，而洪水"
+            "本身推算為創世紀元 %d 年——早了 %d 年。「族長時代」色帶跨"
+            "創世紀元 %d 至 %d 年，而亞伯拉罕的推算出生年份是創世紀元 %d"
+            "年（色帶已經開始之後），約瑟的推算去世年份是創世紀元 %d 年"
+            "（色帶已經結束之後）。兩處差距都沒有為了拉近而挪動任何數字："
+            "色帶是軸線上的定向工具，刻度才是精確的主張。" % (
+                antediluvian_end_am, flood_am,
+                antediluvian_end_am - flood_am,
+                patriarchs_start_am, patriarchs_end_am,
+                abraham_birth_am, joseph_death_am,
+            )
+        ),
+    }
+
+
 def two_scale_note(person, birth, death):
     """The family_tree.json-vs-Anno-Mundi caveat block shared by every
     patriarch entry (and Sarah, whose AM year is computed via
@@ -1319,10 +1390,12 @@ def build():
         if e["era"] not in era_order:
             era_order.append(e["era"])
     first_am = {}
+    first_am_source = {}
     for x in events + markers:
         era = x["era"]
         if era not in first_am or x["am"] < first_am[era]:
             first_am[era] = x["am"]
+            first_am_source[era] = x
     eras = []
     for i, era in enumerate(era_order):
         style = ERA_STYLE[era]
@@ -1365,6 +1438,85 @@ def build():
             "eventCount": len(misordered),
             "note": contested_note(offset_years, offset_person_ids, people),
         }
+
+    # A band's start/end edges are the placed-event layer (first_am,
+    # above); its name points at the computed layer instead — a
+    # lifeline or marker. Those disagree in two places, and the
+    # comment on `eras` above only explains this to a reader of the
+    # source, not of the chart. `eraBandBasis` records, per band,
+    # which item actually set its start edge and whether that item is
+    # one of the misordered placed events, so a future edit that moves
+    # a band edge cannot silently change which bands this applies to
+    # without the assertions below catching it.
+    misordered_ids = {x["id"] for x in misordered}
+    era_band_basis = [
+        {
+            "id": era,
+            "startEdgeId": first_am_source[era]["id"],
+            "startEdgeAm": first_am_source[era]["am"],
+            "startEdgeAmBasis": first_am_source[era]["amBasis"],
+            "startEdgeMisordered": first_am_source[era]["id"] in misordered_ids,
+        }
+        for era in era_order
+    ]
+    expected_misordered_band_starts = {"patriarchs"}
+    actual_misordered_band_starts = {
+        b["id"] for b in era_band_basis if b["startEdgeMisordered"]
+    }
+    if actual_misordered_band_starts != expected_misordered_band_starts:
+        problems.append(
+            "era band start-edge misordering changed: expected %s, got "
+            "%s — a band's start is now set by a misordered placed "
+            "event that wasn't before (or one that was no longer is); "
+            "eraBandNote() below and its callers need a conscious "
+            "update, not a silent drift"
+            % (sorted(expected_misordered_band_starts),
+               sorted(actual_misordered_band_starts)))
+
+    eras_by_id = {e["id"]: e for e in eras}
+    antediluvian_end_am = eras_by_id["antediluvian"]["endAm"]
+    flood_am = by_marker["flood"]["am"]
+    patriarchs_start_am = eras_by_id["patriarchs"]["startAm"]
+    patriarchs_end_am = eras_by_id["patriarchs"]["endAm"]
+    abraham_birth_am = next(
+        l for l in lifelines if l["personId"] == "abraham")["birthAm"]
+    joseph_death_am = next(
+        l for l in lifelines if l["personId"] == "joseph")["deathAm"]
+    # These are the two live cases the note below names. If a future
+    # edit ever closes one of these gaps (moves a band edge across the
+    # computed marker it used to overrun), the note would describe a
+    # disagreement that no longer exists — fail instead of shipping
+    # stale prose.
+    if antediluvian_end_am <= flood_am:
+        problems.append(
+            "antediluvian band (ends AM %d) no longer overruns the "
+            "Flood (AM %d) — eraBandNote()'s antediluvian case is "
+            "stale, rewrite or remove it"
+            % (antediluvian_end_am, flood_am))
+    if patriarchs_start_am >= abraham_birth_am:
+        problems.append(
+            "patriarchs band (starts AM %d) no longer starts before "
+            "Abraham's computed birth (AM %d) — eraBandNote()'s "
+            "patriarchs case is stale, rewrite or remove it"
+            % (patriarchs_start_am, abraham_birth_am))
+    if patriarchs_end_am >= joseph_death_am:
+        problems.append(
+            "patriarchs band (ends AM %d) no longer ends before "
+            "Joseph's computed death (AM %d) — eraBandNote()'s "
+            "patriarchs case is stale, rewrite or remove it"
+            % (patriarchs_end_am, joseph_death_am))
+    era_band_note_text = era_band_note(
+        antediluvian_end_am, flood_am, patriarchs_start_am,
+        patriarchs_end_am, abraham_birth_am, joseph_death_am)
+
+    # A second gate, not a duplicate of the one above: everything
+    # appended to `problems` since that check (the era-band assertions
+    # just above) has never been checked, because that first gate runs
+    # before `eras`/`misordered`/the lifelines lookups it needs exist.
+    if problems:
+        for p in problems:
+            sys.stderr.write("FAIL: %s\n" % p)
+        raise SystemExit(1)
 
     doc = {
         "_meta": {
@@ -1442,6 +1594,21 @@ def build():
             # silently drifting from `contested_note()`'s prose, which
             # is built from these same two values.
             "familyTreeScaleOffset": family_tree_scale_offset,
+            # Per band, the id + am of the placed event or computed
+            # marker that set its START edge (`first_am_source` above),
+            # and whether that item is one of the misordered placed
+            # events. Derived, never hand-typed — see the assertion
+            # right after it that fails the build if a future edit
+            # changes which bands this is true of. `eraBandNote` below
+            # is generated from the same underlying data.
+            "eraBandBasis": era_band_basis,
+            # Explains, in the reader's own words, that a band's edges
+            # (placed events) and its name (computed markers/lifelines)
+            # are not always the same year, naming the two places on
+            # this chart where that is currently true. See
+            # era_band_note() for how the figures in it are derived and
+            # the assertions above it for what would make it stale.
+            "eraBandNote": era_band_note_text,
         },
         "schemes": SCHEMES,
         "lines": LINES,

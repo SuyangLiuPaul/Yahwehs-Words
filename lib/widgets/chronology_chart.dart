@@ -1111,7 +1111,7 @@ class _ChronologyChartState extends State<ChronologyChart> {
     final rowsHeight = slots.fold<double>(0, (a, s) => a + slotHeight(s));
 
     // The reclaimed height goes to the layer that HAS content out
-    // there. Past AM 2187 the event lane was one row tall under twenty
+    // there. Past AM 2369 the event lane was one row tall under twenty
     // empty ones; now it is the tall layer and the lifelines are the
     // thin one, which is the true shape of the data in that stretch.
     final reclaimedTickLane =
@@ -2905,6 +2905,40 @@ class _ChronologyChartState extends State<ChronologyChart> {
             ),
           ),
         ],
+        if (widget.data.localizedEraBandNote(widget.locale).isNotEmpty) ...[
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: scheme.outlineVariant.withValues(alpha: 0.8),
+                width: 0.8,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _s('chronologyEraBandLabel', "A band's name is not its "
+                      'edges'),
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.data.localizedEraBandNote(widget.locale),
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    height: 1.6,
+                    color: scheme.onSurface.withValues(alpha: 0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -2945,15 +2979,16 @@ class _Slot {
 /// Which lifeline rows earn a full row at the plot's current viewport.
 ///
 /// **Why this exists.** The chart's axis runs AM 0 → 4098 but its bars
-/// stop at AM 2187, because that is where Scripture stops stating the
-/// begetting ages. Scrolled to the right-hand end, all twenty rows were
-/// still drawn — twenty names against 700 BC, no bars, more than half
-/// the chart's height spent saying nothing. That is the defect this
-/// fixes. It is NOT a change to where the lifelines end: [lifelines] is
-/// the same list, drawn on the same axis, and nothing is invented past
-/// [spanEndAm] or hidden before it.
+/// stop at AM 2369 (Joseph's death), because that is where Scripture
+/// stops stating a continuous chain of begetting ages. Scrolled to the
+/// right-hand end, all twenty rows were still drawn — twenty names
+/// against 700 BC, no bars, more than half the chart's height spent
+/// saying nothing. That is the defect this fixes. It is NOT a change
+/// to where the lifelines end: [lifelines] is the same list, drawn on
+/// the same axis, and nothing is invented past [spanEndAm] or hidden
+/// before it.
 ///
-/// **Why it is not a switch at AM 2187.** A viewport that straddles the
+/// **Why it is not a switch at AM 2369.** A viewport that straddles the
 /// boundary has real bars in it, and a binary "past the boundary" test
 /// would drop them. The test here is plain overlap between each bar and
 /// the viewport, so partial overlap — the normal case at high zoom —
