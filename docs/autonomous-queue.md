@@ -70,6 +70,12 @@ and quoted.**
 > auditing discovers faster than it repairs, while things the user hits
 > on their own phone sat behind it. `~/Library/Application Support/
 > yswords-loop/prompt.md` carries the same order; keep them in step.
+>
+> `python3 tools/queue_open_items.py` (added 2026-09-21, see its `[x]`
+> entry in P3) reports this file's genuinely open items in the order
+> above, filtering out archived `- [ ]` copies kept inside `<details>`
+> blocks — run it before picking an item rather than reading the file
+> by eye.
 
 - [x] **2026-09-06 FIXED — Flutter CI went red on `main` twice in a row
       right after the sermon-library merge's own 9 unpushed commits
@@ -19241,6 +19247,44 @@ so the bundle-size answer stays on the record.
       inside this iteration's ~6-minute watch budget (still
       `in_progress` at last check, ~07:37) — next iteration's step 0
       should check it before picking anything else.
+
+- [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
+      structural parser this item's own sibling defect
+      (`queue:14246`'s note, whose own line number will drift — grep
+      for "An interactive Bible chronology chart" if it looks stale)
+      says is missing: something that tells a planning stage which
+      `- [ ]` lines are real backlog and which are archived copies
+      inside a `<details>` block, so the chronology-chart archive
+      trap that cost this loop a whole unauthorized feature
+      (2026-09-03) and three more hourly iterations (`c264f210`,
+      `9cad9aff`, `1f91bdf5`) can't recur by the same mechanism.**
+
+      The trap is subtler than "does the line contain `<details>`": that
+      note's own explanation of the trap mentions the tag in backticks,
+      in prose, 8 separate times (verified by direct grep, not carried
+      over from a prior write-up — a naive count is exactly the kind of
+      figure this class of bug produces). A naive "line contains the
+      tag" counter would misread all 8 as opens/closes and end the file
+      unbalanced, hiding real open items that sit after the note. The
+      tool instead only treats a tag as structural when
+      `line.lstrip()` starts with `<details` / `</details>` — verified
+      against the real file this hour: 6 real open tags and 6 real
+      closes, balancing to depth 0. (This entry's own description of
+      the trap necessarily adds more backticked mentions of the tag
+      elsewhere in the file — expected, and harmless to the tool, which
+      only ever looks at line starts.)
+
+      `python3 tools/queue_open_items.py` reports open items in the
+      user's work order (BUGS, P2, P3, P1, P0), not file order;
+      `--check` exits 1 if the `<details>` tags don't balance;
+      `--json` for machine use. Wired into CI as two new steps
+      (structural check + `test/test_queue_open_items.py`, 10 cases:
+      depth-0 open, inside-`<details>` archived, nested details, the
+      backticked-prose-mention non-regression, tier attribution, and
+      unbalanced-tag detection). Deliberately does **not** pin today's
+      "20 open / 2 archived" split anywhere the file can drift under
+      it — the test against the real queue only asserts depth balances
+      and no open item is reported inside a details block.
 
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &

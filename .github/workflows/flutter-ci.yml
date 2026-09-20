@@ -254,6 +254,23 @@ jobs:
       - name: Songs-snapshot pull-guard unit tests
         run: python3 test/test_pull_songs_snapshot.py
 
+      # Structural gate for tools/queue_open_items.py (added 2026-09-21).
+      # docs/autonomous-queue.md keeps closed-out write-ups as kept records
+      # inside <details> blocks, checkbox left unticked on purpose (the
+      # live outcome is a separate [x] entry above the block, not an edit
+      # to the archived text). A planning pass that just greps `- [ ]`
+      # can't tell the two apart, and it has dispatched real hours of work
+      # against an archived copy twice — see queue:14240 and queue:14256
+      # for both incidents. `--check` only asserts the file's <details>
+      # tags balance to depth 0; see the tool's own docstring for why a
+      # naive "line contains <details>" counter is the wrong check (eight
+      # backticked prose mentions of the tag would misread as structural).
+      - name: Queue open-items structural check
+        run: python3 tools/queue_open_items.py --check
+
+      - name: Queue open-items parser unit tests
+        run: python3 test/test_queue_open_items.py
+
       - name: Test
         run: flutter test --reporter expanded
 
