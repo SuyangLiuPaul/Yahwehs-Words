@@ -16539,6 +16539,25 @@ has never seen this repo.
       trap this slice was stranded by). No `lib/` change, so no build
       and no deploy.
 
+      Pushed as `9cad9aff`. CI run `35530495568` had not concluded
+      inside this iteration's ~8-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
+
+      **Commit-message artifact, not a code defect**: the commit's
+      prose body has a stray trailing `EOF` / `)` and one missing
+      closing parenthesis, from a shell heredoc quoting bug (unbalanced
+      parens in the message text confused the `$(cat <<'EOF' ... EOF)`
+      substitution). Noticed after committing; `git commit --amend` to
+      fix it was denied by the permission system — an unattended loop
+      has no human to approve a history-rewrite, even of a local,
+      unpushed, solo-authored commit — so it shipped as-is rather than
+      forcing the amend. The diff and its verification are unaffected;
+      only the prose has the artifact. Worth remembering for future
+      iterations: multi-paragraph commit messages with parenthetical
+      asides are the trigger — write them without unbalanced parens, or
+      via a temp file up front, not discovered after the fact.
+
       Checkbox stays open; the chart item spans many slices.
 
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
