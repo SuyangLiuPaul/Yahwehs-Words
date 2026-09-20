@@ -16246,6 +16246,11 @@ has never seen this repo.
       foreground, all green (see this iteration's commit for the count).
       Checkbox stays open; the chart item spans many slices.
 
+      Pushed as `be27d1f9`. CI run `35504113254` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
+
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
       the Joseph lifeline (entry above). `DUPLICATES` dedupes 5 timeline
