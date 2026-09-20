@@ -18809,6 +18809,11 @@ so the bundle-size answer stays on the record.
       Both suites (7 push-retry tests, 7 pull-guard tests) pass locally
       and are now CI gates.
 
+      Pushed as `5ff64133`. CI run `35511004260` had not concluded
+      inside this iteration's ~6.5-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
+
 ## P3 — known but blocked or deferred
 
 - [ ] **This loop's own tooling defect: `flutter test` backgrounded
