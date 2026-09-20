@@ -1391,16 +1391,20 @@ def build():
     # whose id ends "_born" or "_dies" states a birth or death — this
     # catches seth_born, ishmael_born, isaac_born, jacob_esau_born,
     # moses_born, moses_dies and john_baptist_born. The convention is
-    # NOT a complete semantic sweep of the 98-event file, and is not
-    # claimed to be: "Cain Murders Abel" and "Crucifixion of Jesus"
-    # also state a specific death (Abel's, Jesus's) without an id
-    # ending "_dies", and are added by hand in
-    # EXTRA_VITAL_EVENT_KINDS below rather than by a rule, because
-    # there is no derivable signal for "this title states a death" the
-    # way there is for an id suffix. This list is not guaranteed
-    # exhaustive either — a future death/birth event under an odd id
-    # will not be caught automatically; widening it further is filed
-    # to the queue, not attempted here.
+    # NOT a complete semantic sweep of the 98-event file on its own:
+    # "Cain Murders Abel" and "Crucifixion of Jesus" also state a
+    # specific death (Abel's, Jesus's) without an id ending "_dies",
+    # and are added by hand in EXTRA_VITAL_EVENT_KINDS below rather
+    # than by a rule, because there is no derivable signal for "this
+    # title states a death" the way there is for an id suffix.
+    #
+    # queue:14267's 2026-09-21 slice closes the gap this used to leave
+    # open ("a future death/birth event under an odd id will not be
+    # caught automatically"): NON_VITAL_EVENT_IDS below declares every
+    # OTHER person-linked event by name, and the assertion right after
+    # it fails the build if any event with a non-empty personIds is in
+    # neither set — so an odd-id vital event can no longer join the
+    # file silently, it has to be classified one way or the other.
     EXTRA_VITAL_EVENT_KINDS = {
         "cain_abel": "death",    # Cain murders Abel — Abel dies, Cain
                                   # does not; family_tree.json has no
@@ -1408,6 +1412,157 @@ def build():
                                   # skipped below regardless.
         "crucifixion": "death",  # Jesus dies on the cross.
     }
+
+    # john_baptist_born states a birth (id ends "_born") but names no
+    # subject: family_tree.json has no John-the-Baptist person, so its
+    # personIds is empty and the loop below has nothing to compare.
+    # Declared explicitly, with the assertion right after it, so the
+    # day someone adds a John-the-Baptist person and populates this
+    # event's personIds, the build fails instead of either silently
+    # starting an undeclared comparison or silently continuing to skip
+    # a now-populated event.
+    VITAL_EVENTS_WITH_NO_PERSON_ID = {
+        "john_baptist_born": "no John-the-Baptist person in "
+                              "family_tree.json to compare against",
+    }
+    for _eid, _why in VITAL_EVENTS_WITH_NO_PERSON_ID.items():
+        _ev = next(
+            (e for e in timeline["events"] if e["id"] == _eid), None)
+        if _ev is None:
+            problems.append(
+                "VITAL_EVENTS_WITH_NO_PERSON_ID names %s, not in "
+                "bible_timeline.json" % _eid)
+        elif _ev.get("personIds"):
+            problems.append(
+                "%s now has personIds %s — VITAL_EVENTS_WITH_NO_PERSON_ID "
+                "says (%s) it has none; update or remove the declaration "
+                "and let it flow into the ordinary cross-surface sweep "
+                "rather than leaving this stale"
+                % (_eid, _ev["personIds"], _why))
+
+    # Every OTHER event in bible_timeline.json that carries a non-empty
+    # personIds — i.e. every event NOT already swept as vital above.
+    # Declared explicitly, not left implicit, so {vital} ∪ {here} is a
+    # closed partition of every person-linked event in the file: the
+    # assertion right after it fails the build for any event this
+    # table and the vital sweep both miss. Reasons are short by design
+    # (queue:14267 asked for a classification, not 52 essays) and
+    # grouped by where the event sits in the narrative.
+    NON_VITAL_EVENT_IDS = {
+        # Genesis narrative — action, not a stated birth or death.
+        "eden": "placement in Eden, not a birth",
+        "fall": "disobedience and expulsion, not a birth/death",
+        "enoch_walks": (
+            "Gen 5:24 / Heb 11:5: God takes Enoch WITHOUT death — this "
+            "is deliberately the negation of a death event, not one. "
+            "family_tree.json's deathYear for Enoch (987 AM) exists "
+            "but BiblicalPerson.displayYears never renders it with a "
+            "died/death word (verified lib/models/biblical_person.dart "
+            "— it prints a bare year range); if that ever changes it "
+            "is its own scripture-accuracy defect, not this slice's"),
+        "flood": "the Flood judgement, not Noah's birth or death",
+        "abram_called": "a call, not a birth/death",
+        "lot_separates": "a parting of ways, not a birth/death",
+        "abrahamic_covenant": "a covenant, not a birth/death",
+        "sodom_destroyed": (
+            "the cities are destroyed; Lot escapes and is not stated "
+            "to die here"),
+        "isaac_offered": "the akedah — Isaac lives; no death stated",
+        "rebekah_marries": "a marriage, not a birth/death",
+        "jacob_blessing": "a deception and a flight, not a birth/death",
+        "jacobs_ladder": "a dream/vision, not a birth/death",
+        "jacob_marries": "a marriage, not a birth/death",
+        "joseph_sold": "sold into slavery, not stated to die",
+        "joseph_rises": "a promotion, not a birth/death",
+        "israel_egypt": "a migration, not a birth/death",
+        # Exodus narrative.
+        "burning_bush": "a commissioning, not a birth/death",
+        "plagues": (
+            "Egypt's firstborn die, but personIds names Moses/Aaron, "
+            "who do not — no year is stated for either of them here"),
+        "exodus": "a departure, not a birth/death",
+        "red_sea": (
+            "a crossing; Pharaoh's army drowns, not a tracked person"),
+        "manna": "provision over 40 years, not a birth/death",
+        "sinai": "the giving of the Law, not a birth/death",
+        "tabernacle": "a construction, not a birth/death",
+        "wilderness_40": (
+            "\"the older generation dies\" is collective, not a "
+            "per-person claim: Aaron (family_tree.json deathYear BC "
+            "1407) and Miriam (BC 1406) both die within this 40-year "
+            "span per Numbers 20, and Miriam's deathYear is an EXACT "
+            "match to this event's own year (BC 1406) — but that is "
+            "this event's `year` describing the span's end, not a "
+            "claim that Miriam died in it, so there is no specific "
+            "per-person birth/death statement here to check against "
+            "family_tree.json"),
+        # Ruth / united monarchy / divided kingdom.
+        "ruth": "a marriage, not a birth/death",
+        "saul_anointed": "an anointing, not a birth/death",
+        "david_anointed": "an anointing, not a birth/death",
+        "david_goliath": "a battle; Goliath is not a tracked person",
+        "david_king": (
+            "\"After Saul's death\" narrates it in passing, but "
+            "personIds names David, not Saul — no cross-surface "
+            "disagreement is being hidden by leaving this non-vital: "
+            "family_tree.json's Saul deathYear (BC 1010) is an exact "
+            "match to this event's own year"),
+        "jerusalem_captured": "a capture, not a birth/death",
+        "davidic_covenant": "a covenant, not a birth/death",
+        "solomon_king": "an accession, not a birth/death",
+        "temple_built": "a construction, not a birth/death",
+        "kingdom_divided": (
+            "\"After Solomon's death\" narrates it in passing, but "
+            "personIds names Rehoboam, not Solomon — no cross-surface "
+            "disagreement is being hidden by leaving this non-vital: "
+            "family_tree.json's Solomon deathYear (BC 931) is an "
+            "exact match to this event's own year"),
+        "hezekiah_reform": "a reform, not a birth/death",
+        "josiah_reform": "a reform, not a birth/death",
+        "judah_falls": (
+            "the city falls and Jeconiah is exiled, not stated to die "
+            "— family_tree.json's deathYear for him (BC 560) is 26 "
+            "years after this event's year (BC 586)"),
+        "return_zerubbabel": "a return, not a birth/death",
+        "temple_rebuilt": "a construction, not a birth/death",
+        # Gospels.
+        "magi": "a visit, not a birth/death",
+        "flight_egypt": "a flight, not a birth/death",
+        "jesus_temple_12": "a Temple visit, not a birth/death",
+        "jesus_baptized": "a baptism, not a birth/death",
+        "temptation": "a temptation, not a birth/death",
+        "disciples_called": "a calling, not a birth/death",
+        "sermon_mount": "a sermon, not a birth/death",
+        "5000_fed": "a feeding, not a birth/death",
+        "transfiguration": "a vision, not a birth/death",
+        "triumphal_entry": "an entry, not a birth/death",
+        "last_supper": "a meal, not a birth/death",
+        "resurrection": (
+            "Jesus's death is already the crucifixion event above; "
+            "rising from it is the negation of death, not a second "
+            "one — Mary is named as a witness, not a subject"),
+        "ascension": "a departure to heaven, not a death",
+    }
+    _vital_ids_by_convention = {
+        e["id"] for e in timeline["events"]
+        if e["id"].endswith("_born") or e["id"].endswith("_dies")
+        or e["id"] in EXTRA_VITAL_EVENT_KINDS
+    }
+    _overlap = _vital_ids_by_convention & set(NON_VITAL_EVENT_IDS)
+    if _overlap:
+        problems.append(
+            "NON_VITAL_EVENT_IDS overlaps the vital sweep: %s"
+            % sorted(_overlap))
+    for _e in timeline["events"]:
+        _eid = _e["id"]
+        if not _e.get("personIds"):
+            continue
+        if _eid in _vital_ids_by_convention or _eid in NON_VITAL_EVENT_IDS:
+            continue
+        problems.append(
+            "%s: has personIds %s but is classified as neither vital "
+            "nor declared in NON_VITAL_EVENT_IDS — classify it before "
+            "this build can pass" % (_eid, _e["personIds"]))
     #
     # A "_born" event can name several people — parents alongside the
     # child (moses_born: moses, jochebed, amram) or twins with no
@@ -1483,6 +1638,11 @@ def build():
             continue
         pids = e.get("personIds") or []
         if not pids:
+            if eid not in VITAL_EVENTS_WITH_NO_PERSON_ID:
+                problems.append(
+                    "%s: vital event has empty personIds with no entry "
+                    "in VITAL_EVENTS_WITH_NO_PERSON_ID — declare why, "
+                    "or add the person to family_tree.json" % eid)
             continue
         ykey = "birthYear" if kind == "birth" else "deathYear"
         for pid in pids:
@@ -1800,6 +1960,26 @@ def build():
             # than resolved. Filed as part of queue:14246's
             # 2026-09-21 slice.
             "crossSurfaceYearDiffs": cross_surface_diffs,
+            # The classification the assertions above enforce: every
+            # event in assets/bible_timeline.json with a non-empty
+            # personIds is either a vital event (its id matches the
+            # "_born"/"_dies" convention or EXTRA_VITAL_EVENT_KINDS) or
+            # is named in NON_VITAL_EVENT_IDS with a one-line reason —
+            # there is no third, unclassified case, because the build
+            # fails before reaching here if one exists.
+            # vitalEventsWithoutPersonIds covers the one declared
+            # exception the other two lists don't (john_baptist_born:
+            # a vital-by-id event with nobody to compare against).
+            # CI runs `flutter test`, not this script, so
+            # test/bible_chronology_test.dart recomputes this same
+            # partition from the two raw JSONs and fails if a new
+            # timeline event isn't covered by one of the three lists.
+            "vitalEventClassification": {
+                "vitalEventIds": sorted(_vital_ids_by_convention),
+                "vitalEventsWithoutPersonIds": dict(
+                    VITAL_EVENTS_WITH_NO_PERSON_ID),
+                "nonVitalEventIds": dict(NON_VITAL_EVENT_IDS),
+            },
             # Per band, the id + am of the placed event or computed
             # marker that set its START edge (`first_am_source` above),
             # and whether that item is one of the misordered placed

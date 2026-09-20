@@ -1336,6 +1336,100 @@ void main() {
               'difference, not a lifespan error');
     });
 
+    // 2026-09-21 (queue:14267): the sweep above only ever covered events
+    // matched by id convention or hand-added to EXTRA_VITAL_EVENT_KINDS,
+    // and said so itself — "a future death/birth event under an odd id
+    // will not be caught automatically". CI runs `flutter test`, not
+    // tools/build_bible_chronology.py, so the ratchet against that gap
+    // has to be checkable from here: _meta.vitalEventClassification now
+    // names every event with a non-empty personIds as either vital or
+    // declared non-vital (plus the one declared vital-with-no-personIds
+    // exception, john_baptist_born), and this test recomputes that
+    // partition independently from the two raw JSONs and asserts it is
+    // exact — a new bible_timeline.json event with personIds fails this
+    // test until it is classified in the builder.
+    test('_meta.vitalEventClassification partitions every '
+        'personIds-bearing event in assets/bible_timeline.json, '
+        'recomputed independently from the raw asset', () {
+      final timeline = json.decode(
+        File('assets/bible_timeline.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final events =
+          (timeline['events'] as List).cast<Map<String, dynamic>>();
+
+      const extraVitalEventKinds = <String, String>{
+        'cain_abel': 'death',
+        'crucifixion': 'death',
+      };
+      bool isVitalById(String eid) =>
+          eid.endsWith('_born') ||
+          eid.endsWith('_dies') ||
+          extraVitalEventKinds.containsKey(eid);
+
+      final classification =
+          (raw['_meta'] as Map)['vitalEventClassification'] as Map;
+      final vitalEventIds =
+          (classification['vitalEventIds'] as List).cast<String>().toSet();
+      final vitalWithoutPersonIds =
+          (classification['vitalEventsWithoutPersonIds'] as Map)
+              .cast<String, dynamic>();
+      final nonVitalEventIds = (classification['nonVitalEventIds'] as Map)
+          .cast<String, dynamic>();
+
+      expect(vitalEventIds, events.map((e) => e['id'] as String).where(
+          isVitalById).toSet(),
+          reason: 'vitalEventIds must be exactly the events matched by '
+              'the "_born"/"_dies" convention or EXTRA_VITAL_EVENT_KINDS '
+              '— recomputed independently, same rule as the id-convention '
+              'sweep test above');
+
+      final overlap = vitalEventIds.intersection(nonVitalEventIds.keys.toSet());
+      expect(overlap, isEmpty,
+          reason: 'an event cannot be both vital and declared non-vital');
+
+      for (final e in events) {
+        final eid = e['id'] as String;
+        final pids = (e['personIds'] as List).cast<String>();
+        if (pids.isEmpty) continue;
+        final classified =
+            vitalEventIds.contains(eid) || nonVitalEventIds.containsKey(eid);
+        expect(classified, isTrue,
+            reason: '$eid has personIds $pids but is neither in '
+                'vitalEventIds nor nonVitalEventIds — a new or '
+                'previously-unclassified event must be classified in '
+                'tools/build_bible_chronology.py before this can pass');
+      }
+
+      // The declared exception, checked both directions: it must be
+      // named as vital (john_baptist_born's id ends "_born"), and its
+      // personIds must actually be empty today — if that ever changes,
+      // the builder's own stale-detection assertion fails first, but
+      // this pins the same fact from the Dart side.
+      for (final eid in vitalWithoutPersonIds.keys) {
+        expect(vitalEventIds.contains(eid), isTrue,
+            reason: '$eid is declared vitalEventsWithoutPersonIds but is '
+                'not itself in vitalEventIds');
+        final ev = events.firstWhere((e) => e['id'] == eid);
+        expect((ev['personIds'] as List), isEmpty,
+            reason: '$eid now has personIds — '
+                'vitalEventsWithoutPersonIds says it has none, stale');
+      }
+      expect(vitalWithoutPersonIds.keys.toSet(), {'john_baptist_born'},
+          reason: 'the measured exception set — a change here means a '
+              'new vital event lost its personIds, or this one gained '
+              'some, either of which needs eyes, not a silent pass');
+
+      // The measured count this slice found: 61 events with a
+      // non-empty personIds, 10 of them vital (9 with personIds plus
+      // john_baptist_born with none), 52 declared non-vital.
+      expect(
+        events.where((e) => (e['personIds'] as List).isNotEmpty).length,
+        61,
+      );
+      expect(vitalEventIds.length, 10);
+      expect(nonVitalEventIds.length, 52);
+    });
+
     test(
         "the contested band's note names assets/family_tree.json, not "
         'only assets/bible_timeline.json, in all three locales',

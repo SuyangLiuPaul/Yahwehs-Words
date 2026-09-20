@@ -16474,6 +16474,72 @@ has never seen this repo.
       CI run `35522198792` had not concluded inside this iteration's
       watch budget (still `in_progress` at last check) — next
       iteration's step 0 should check it before picking anything else.
+      (Logged by the next iteration: `35522552904` concluded `success`
+      — nothing to fix.)
+
+      **2026-09-21 slice, landed after being stranded uncommitted by
+      the iteration that built it** (see `queue:19043`'s third
+      recurrence, filed above, for the full account of the stranding
+      itself). The work: closes the gap the `c264f210` slice's own
+      comment admitted — cross-surface year checking only ever swept
+      events matched by id convention or hand-added to
+      `EXTRA_VITAL_EVENT_KINDS`, "not guaranteed exhaustive." The
+      builder now partitions every `bible_timeline.json` event with a
+      non-empty `personIds` into exactly one of: vital (id-convention
+      or `EXTRA_VITAL_EVENT_KINDS`), declared non-vital with a one-line
+      reason (new `NON_VITAL_EVENT_IDS`, 52 entries), or the one
+      declared vital-with-no-personIds exception (`john_baptist_born`,
+      no John-the-Baptist person in `family_tree.json` to compare
+      against). An event outside all three fails the build. Recomputed
+      independently rather than trusting the diff: 98 timeline events,
+      61 with non-empty `personIds`, 10 vital (9 with personIds + the
+      one exception), 52 declared non-vital — all four asserted in a
+      new `test/bible_chronology_test.dart` case that recomputes the
+      partition from the raw JSONs, not from the builder's own output
+      read back at itself.
+
+      **One real defect found in the stranded code before landing it,
+      fixed here rather than shipped as written**: the `wilderness_40`
+      reason argued its event's `year` "is not a stated year for any
+      one of" Aaron or Miriam — false for Miriam, whose
+      `family_tree.json` `deathYear` (BC 1406) is an EXACT match to
+      the event's own year. The classification (non-vital) still
+      holds — the event narrates a collective 40-year span, not a
+      claim that Miriam died in it, and Miriam's presence in
+      `personIds` doesn't change that — but the reason as written was
+      wrong and now says so correctly. Folded in two more exact
+      agreements the stranded draft hadn't recorded, strengthening
+      rather than undermining their non-vital classification:
+      `david_king`'s year (BC 1010) matches Saul's `deathYear` exactly,
+      `kingdom_divided`'s year (BC 931) matches Solomon's exactly —
+      both narrate the death in passing but name a different person in
+      `personIds`, so no cross-surface disagreement is being hidden by
+      leaving either non-vital.
+
+      Refuted before committing: six claims attacked (the four counts;
+      "no unswept event asserts a point birth/death" via a keyword
+      sweep of all 52 non-vital reasons; the three exact year-matches;
+      the reasoning that non-vital still holds despite them;
+      `john_baptist_born` being the sole empty-`personIds` vital event;
+      the `enoch_walks` classification against Gen 5:24's death
+      negation). Five held outright; the sixth broke only a phrase I
+      used summarizing to the refuter ("personIds names someone OTHER
+      than…" as one unifying rule for all three year-matched events) —
+      the shipped `wilderness_40` reason string never made that claim,
+      it already used the correct collective-not-per-person framing
+      distinct from `david_king`/`kingdom_divided`'s named-person
+      framing, so nothing shipped needed changing.
+      `tools/build_bible_chronology.py` re-run and its output diffed
+      against the stranded asset: byte-identical, confirming the
+      ratchet regenerates cleanly. The new Dart test proved red first
+      by dropping one id (`ascension`) from the built asset's
+      `nonVitalEventIds` and confirming the specific failure, then
+      restored and confirmed green. `flutter analyze` clean; full
+      suite green (run in foreground, not backgrounded — the exact
+      trap this slice was stranded by). No `lib/` change, so no build
+      and no deploy.
+
+      Checkbox stays open; the chart item spans many slices.
 
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
@@ -19094,6 +19160,22 @@ so the bundle-size answer stays on the record.
       before moving on) already covers this; the recurrence is that a
       background call was reached for anyway, not that the fix doesn't
       work.
+
+      **Recurred a third time, 2026-09-21, ~03:23–03:34, on the
+      chronology-chart's `_meta.vitalEventClassification` slice.** That
+      hour's stage fully implemented the change (builder additions,
+      the additive `assets/bible_chronology.json` diff, the new Dart
+      test), ran `flutter test` and ended the turn at 03:34:23 with
+      `rc=0`, logging exactly: *"Test run is in progress; stopping here
+      until the monitor notifies me of completion."* Same shape as the
+      2026-09-20 recurrence above — a one-shot invocation waiting on a
+      notification that has no later turn to arrive into — and the
+      work again sat uncommitted (mtimes 03:30–03:33) until the
+      following hour's `NEXT_TASK.md` found, verified and landed it.
+      The fix above still isn't the gap; reaching for a background
+      call under time pressure near the end of a stage is. Filed, not
+      fixed here — the fix lives outside this repo, in the loop's own
+      prompt/orchestration.
 
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &
