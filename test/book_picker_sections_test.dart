@@ -208,7 +208,7 @@ void main() {
     // The same chapter grid the grid view drills into.
     await tester.tap(find.text('14').first);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Zechariah  14'), findsOneWidget);
+    expect(find.text('Zechariah 14'), findsOneWidget);
 
     await tester.tap(find.text('2').first);
     await tester.pump(const Duration(milliseconds: 300));
@@ -228,7 +228,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('1').first);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('Obadiah  1'), findsOneWidget);
+    expect(find.text('Obadiah 1'), findsOneWidget);
   });
 
   testWidgets('a book the division table does not know is still listed',

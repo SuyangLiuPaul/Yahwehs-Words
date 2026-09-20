@@ -122,13 +122,16 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     // Verse-step for 使徒行传 15 — legitimate, the user asked for it.
-    expect(find.text('使徒行传  15'), findsOneWidget);
+    // 2026-09-20: the verse step's header is the chapter step's now —
+    // one line, 'book chapter', with a verse count badge — so the old
+    // two-space subtitle is gone. What it proves is unchanged.
+    expect(find.text('使徒行传 15'), findsOneWidget);
 
     // Now the reader moves elsewhere (search hit / cross-ref / swipe).
     mp.setCurrentChapter(book: '列王纪下', chapter: 3);
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('使徒行传  15'), findsNothing,
+    expect(find.text('使徒行传 15'), findsNothing,
         reason: 'the picker must not offer a chapter the reader left');
   });
 
@@ -155,12 +158,15 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('15').first);
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('使徒行传  15'), findsOneWidget);
+    // 2026-09-20: the verse step's header is the chapter step's now —
+    // one line, 'book chapter', with a verse count badge — so the old
+    // two-space subtitle is gone. What it proves is unchanged.
+    expect(find.text('使徒行传 15'), findsOneWidget);
 
     mp.setCurrentChapter(book: '列王纪下', chapter: 3);
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('使徒行传  15'), findsNothing,
+    expect(find.text('使徒行传 15'), findsNothing,
         reason: 'the picker must not offer a chapter the reader left');
   });
 
@@ -181,7 +187,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text('15').first);
       await tester.pump(const Duration(milliseconds: 300));
-      expect(find.text('使徒行传  15'), findsOneWidget);
+      // 2026-09-20: the verse step's header is the chapter step's now
+      // — one line, 'book chapter', with a verse count badge — so the
+      // old two-space subtitle is gone. What it proves is unchanged.
+      expect(find.text('使徒行传 15'), findsOneWidget);
     }
 
     testWidgets('across a book change', (tester) async {
@@ -192,7 +201,7 @@ void main() {
       mp.setCurrentChapter(book: '列王纪下', chapter: 3);
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('列王纪下  3'), findsOneWidget,
+      expect(find.text('列王纪下 3'), findsOneWidget,
           reason: 'the grid must FOLLOW the pane across a book change, '
               'not drop the verse-step and bounce out to the chapters '
               'strip — that was the superseded v1.2.76 behaviour');
@@ -208,8 +217,8 @@ void main() {
       mp.setCurrentChapter(book: '使徒行传', chapter: 14);
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('使徒行传  14'), findsOneWidget);
-      expect(find.text('使徒行传  15'), findsNothing);
+      expect(find.text('使徒行传 14'), findsOneWidget);
+      expect(find.text('使徒行传 15'), findsNothing);
     });
 
     testWidgets('and again on the full-screen route', (tester) async {
@@ -235,7 +244,7 @@ void main() {
       mp.setCurrentChapter(book: '列王纪下', chapter: 3);
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('列王纪下  3'), findsOneWidget);
+      expect(find.text('列王纪下 3'), findsOneWidget);
     });
   });
 }

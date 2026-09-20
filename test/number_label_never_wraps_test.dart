@@ -17,14 +17,18 @@ void main() {
 
   group('verse picker chips', () {
     // 詩篇 119 has 176 verses, so the grid is full of three-character
-    // labels. The chip sits in a SizedBox of an exact `tileW`, so a
-    // label wider than the tile wrapped one character per line: "125"
-    // came out as 1/2/5 down a column, and on the iPad even two-digit
+    // labels. The tile is laid out at an exact width by the grid, so a
+    // label wider than it wrapped one character per line: "125" came
+    // out as 1/2/5 down a column, and on the iPad even two-digit
     // numbers split in half.
+    //
+    // 2026-09-20: `_VersePickerChip` became `_verseTile` when the verse
+    // step was rebuilt on the chapter step's grid. The rule did not
+    // change and neither did these two tests, only the name they read.
     late final String source = read('lib/widgets/book_chapter_picker.dart');
 
     test('the chip label is told not to wrap', () {
-      final chip = source.substring(source.indexOf('class _VersePickerChip'));
+      final chip = source.substring(source.indexOf('Widget _verseTile('));
       expect(chip, contains('maxLines: 1'),
           reason: 'a verse number must occupy exactly one line');
       expect(chip, contains('softWrap: false'),
@@ -32,7 +36,7 @@ void main() {
     });
 
     test('and is shrunk to fit rather than truncated', () {
-      final chip = source.substring(source.indexOf('class _VersePickerChip'));
+      final chip = source.substring(source.indexOf('Widget _verseTile('));
       expect(chip, contains('BoxFit.scaleDown'),
           reason: 'ellipsising a verse number would render "1…", which '
               'is worse than a small "176" — the number IS the content');

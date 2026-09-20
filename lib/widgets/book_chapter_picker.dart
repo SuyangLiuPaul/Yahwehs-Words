@@ -584,102 +584,181 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
       // Keeps the FIRST part, so a tap lands at the start of the verse.
       if (verses.isEmpty || verses.last.verse != v.verse) verses.add(v);
     }
+    // 2026-09-20, the owner, with the two screens side by side:
+    // 「chapter design better than verse can you improve this page」.
+    //
+    // The chapter grid is square tiles on a fixed-column grid, the
+    // current chapter filled in the primary colour, and a header that
+    // names the book with a count badge. The verse step was none of
+    // that: wide pills in a Wrap, no current-verse state at all, and
+    // `Top` sitting in the same run as the numbers at double width, so
+    // the first row never lined up with the rest.
+    //
+    // This is the chapter step's geometry, its tile and its header,
+    // with the two things only the verse step needs: the count is
+    // verses, and `Top` is a full-width row of its own above the grid
+    // rather than a tile that breaks the column rhythm.
+    final currentVerse = (widget.currentBook == book &&
+            widget.currentChapter == chapter)
+        ? mainProvider.currentVerse?.verse
+        : null;
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
           child: BooksGlassSurface(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 6),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded),
-                    tooltip:
-                        uiStrings['back']?[locale] ?? 'Back',
-                    onPressed: _backFromVerseStep,
-                  ),
-                  Expanded(
-                    child: Text(
-                      uiStrings['versePickerTitle']?[locale] ??
-                          'Pick a verse',
-                      style: TextStyle(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                        fontSize: settings.fontSize,
-                        fontWeight: FontWeight.w700,
-                        color: scheme.onSurface,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: _backFromVerseStep,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(Icons.arrow_back_rounded,
+                        size: settings.fontSize * 1.1,
+                        color: scheme.onSurface),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '$book $chapter',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: settings.fontSize * 1.1,
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurface,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${verses.length} '
+                        '${uiStrings['versesShort']?[locale] ?? 'v'}',
+                        style: TextStyle(
+                          fontSize: settings.fontSize * 0.75,
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
+        // The whole chapter, from the top — the one destination that is
+        // not a verse number, so it is not shaped like one.
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '$book  $chapter',
-              style: TextStyle(
-                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 2).clamp(12.0, 16.0),
-                color: scheme.onSurfaceVariant,
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+          child: SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              key: const Key('versePicker.top'),
+              onPressed: () => _onVersePicked(mainProvider, 0),
+              icon: Icon(Icons.vertical_align_top_rounded,
+                  size: settings.fontSize * 0.95),
+              label: Text(
+                uiStrings['versePickerTop']?[locale] ?? 'Top',
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: settings.fontSize * 0.9,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                    color: scheme.outlineVariant.withValues(alpha: 0.6)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),
         ),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            child: LayoutBuilder(
-              builder: (gridCtx, constraints) {
-                final w = constraints.maxWidth;
-                final cols = w < 360
-                    ? 6
-                    : w < 480
-                        ? 7
-                        : w < 640
-                            ? 8
-                            : w < 800
-                                ? 10
-                                : 12;
-                const gap = 6.0;
-                final tileW = (w - gap * (cols - 1)) / cols;
-                return Wrap(
-                  spacing: gap,
-                  runSpacing: gap,
-                  children: [
-                    SizedBox(
-                      width: tileW * 2 + gap,
-                      child: _VersePickerChip(
-                        label: uiStrings['versePickerTop']?[locale] ??
-                            'Top',
-                        color: scheme.surfaceContainerHigh,
-                        fg: scheme.onSurface,
-                        onTap: () => _onVersePicked(mainProvider, 0),
-                      ),
-                    ),
-                    for (final v in verses)
-                      SizedBox(
-                        width: tileW,
-                        child: _VersePickerChip(
-                          label: '${v.verse}',
-                          color: scheme.primaryContainer,
-                          fg: scheme.onPrimaryContainer,
-                          onTap: () =>
-                              _onVersePicked(mainProvider, v.verse),
-                        ),
-                      ),
-                  ],
-                );
+          child: LayoutBuilder(builder: (context, constraints) {
+            // The chapter grid's own sizing, so the two steps line up.
+            final tileTarget = 56.0 * settings.menuScale;
+            final cols =
+                (constraints.maxWidth / tileTarget).floor().clamp(4, 10);
+            return GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: cols,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: verses.length,
+              itemBuilder: (context, index) {
+                final v = verses[index];
+                return _verseTile(context, mainProvider, settings,
+                    v.verse, v.verse == currentVerse, scheme);
               },
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
+  /// One verse number, drawn exactly as [_gridChapterTile] draws a
+  /// chapter — same radius, same border, same filled current state.
+  Widget _verseTile(
+      BuildContext context,
+      MainProvider mainProvider,
+      AppSettings settings,
+      int verse,
+      bool selected,
+      ColorScheme scheme) {
+    return Material(
+      color: selected ? scheme.primary : scheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(10),
+      elevation: selected ? 1.5 : 0,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _onVersePicked(mainProvider, verse),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: selected
+                  ? scheme.primary
+                  : scheme.outlineVariant.withValues(alpha: 0.4),
+              width: 1,
+            ),
+          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(4),
+          // 詩篇 119 reaches 176: never wrap a number, shrink it.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '$verse',
+              maxLines: 1,
+              softWrap: false,
+              style: TextStyle(
+                fontSize: settings.fontSize * 0.95,
+                fontFamily: settings.fontFamily,
+                fontFamilyFallback: kCjkFontFallback,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: selected ? scheme.onPrimary : scheme.onSurface,
+              ),
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -1484,60 +1563,3 @@ class BooksGlassSurface extends StatelessWidget {
 /// Small tappable verse-number chip used in the verse picker
 /// modal. Mirrors the styling of the chapter chips so users
 /// can transfer their muscle memory.
-class _VersePickerChip extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color fg;
-  final VoidCallback onTap;
-  const _VersePickerChip({
-    required this.label,
-    required this.color,
-    required this.fg,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        constraints: const BoxConstraints(minWidth: 38, minHeight: 36),
-        // horizontal was 10: on a narrow panel tileW lands near 44, so
-        // 20 px of padding left 24 px for a label like "176".
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        // 2026-08-23, from iPad and web: 詩篇 119 rendered every verse
-        // number down a column — "125" became 1/2/5 on three lines,
-        // and on the iPad even two-digit numbers broke in half. The
-        // chip is laid out at an exact `tileW` by the Wrap above, so
-        // when the tile is narrower than the number the Text simply
-        // wrapped, one character per line, and the row grew instead.
-        //
-        // Chip labels are 1-3 characters; they must never wrap. Say so
-        // (`softWrap: false`, `maxLines: 1`) and let FittedBox shrink
-        // the rare 3-digit number instead of breaking it. Same remedy
-        // as the dashboard quick-link tiles — a character count is not
-        // a width, so do not try to predict which numbers fit.
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            maxLines: 1,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: fg,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

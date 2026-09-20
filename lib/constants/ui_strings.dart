@@ -2861,6 +2861,13 @@ const uiStrings = {
     'zh-Hant': '選擇經節',
     'en': 'Pick a verse',
   },
+  // The count badge on the verse step's header, beside 'ch' on the
+  // chapter step's.
+  'versesShort': {
+    'zh-Hans': '节',
+    'zh-Hant': '節',
+    'en': 'v',
+  },
   'versePickerTop': {
     'zh-Hans': '本章开头',
     'zh-Hant': '本章開頭',
@@ -7123,14 +7130,14 @@ const uiStrings = {
   // Era subtitles — one short line of orientation per section
   // (description + date range), shown under the section header.
   'familyTreeEraSubAntediluvian': {
-    'en': 'Ten generations from Adam to Noah · AM 0 – 1656',
-    'zh-Hans': '从亚当到挪亚十代 · 创世以来 0 – 1656 年',
-    'zh-Hant': '從亞當到挪亞十代 · 創世以來 0 – 1656 年',
+    'en': 'Nine generations from Adam to Lamech · AM 0 – 1656',
+    'zh-Hans': '从亚当到拉麦九代 · 创世以来 0 – 1656 年',
+    'zh-Hant': '從亞當到拉麥九代 · 創世以來 0 – 1656 年',
   },
   'familyTreeEraSubPostFlood': {
-    'en': 'Shem to Terah, post-Flood patriarchs · ~BC 2400 – 2000',
-    'zh-Hans': '闪到他拉，洪水后的列祖 · 约公元前 2400 – 2000',
-    'zh-Hant': '閃到他拉，洪水後的列祖 · 約公元前 2400 – 2000',
+    'en': 'Noah to Eber, post-Flood patriarchs · ~BC 2948 – 1817',
+    'zh-Hans': '挪亚到希伯，洪水后的列祖 · 约公元前 2948 – 1817',
+    'zh-Hant': '挪亞到希伯，洪水後的列祖 · 約公元前 2948 – 1817',
   },
   'familyTreeEraSubPatriarchs': {
     'en': 'Abraham, Isaac, Jacob & the twelve tribes · ~BC 2200 – 1700',
@@ -7138,19 +7145,19 @@ const uiStrings = {
     'zh-Hant': '亞伯拉罕、以撒、雅各與十二支派 · 約公元前 2200 – 1700',
   },
   'familyTreeEraSubMosaic': {
-    'en': 'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1500 – 1400',
-    'zh-Hans': '大祭司亚伦、律法颁布者摩西、米利暗 · 约公元前 1500 – 1400',
-    'zh-Hant': '大祭司亞倫、律法頒布者摩西、米利暗 · 約公元前 1500 – 1400',
+    'en': 'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1850 – 1405',
+    'zh-Hans': '大祭司亚伦、律法颁布者摩西、米利暗 · 约公元前 1850 – 1405',
+    'zh-Hant': '大祭司亞倫、律法頒布者摩西、米利暗 · 約公元前 1850 – 1405',
   },
   'familyTreeEraSubDavidic': {
-    'en': 'Perez through Boaz & Ruth to Jesse, father of David · ~BC 1900 – 1050',
-    'zh-Hans': '法勒斯经波阿斯和路得到大卫之父耶西 · 约公元前 1900 – 1050',
-    'zh-Hant': '法勒斯經波阿斯和路得到大衛之父耶西 · 約公元前 1900 – 1050',
+    'en': 'Perez through Boaz & Ruth to Jesse, father of David · ~BC 1880 – 1005',
+    'zh-Hans': '法勒斯经波阿斯和路得到大卫之父耶西 · 约公元前 1880 – 1005',
+    'zh-Hant': '法勒斯經波阿斯和路得到大衛之父耶西 · 約公元前 1880 – 1005',
   },
   'familyTreeEraSubKings': {
-    'en': 'Kings of Judah from David to Jeconiah · BC 1010 – 586',
-    'zh-Hans': '犹大列王，从大卫到耶哥尼雅 · 公元前 1010 – 586',
-    'zh-Hant': '猶大列王，從大衛到耶哥尼雅 · 公元前 1010 – 586',
+    'en': 'Kings of Judah from David to Jeconiah · ~BC 1040 – 560',
+    'zh-Hans': '犹大列王，从大卫到耶哥尼雅 · 约公元前 1040 – 560',
+    'zh-Hant': '猶大列王，從大衛到耶哥尼雅 · 約公元前 1040 – 560',
   },
   'familyTreeEraSubExile': {
     'en': 'Shealtiel through Matthan to Joseph (Matthew 1:13–16)',
@@ -7163,9 +7170,9 @@ const uiStrings = {
     'zh-Hant': '路加福音 3:23–31 所記馬利亞的家譜（拿單 → … → 希里 → 馬利亞）',
   },
   'familyTreeEraSubNt': {
-    'en': 'The earthly family of Jesus the Messiah · ~BC 5 – AD 30',
-    'zh-Hans': '弥赛亚耶稣的地上家庭 · 约公元前 5 – 公元 30',
-    'zh-Hant': '彌賽亞耶穌的地上家庭 · 約公元前 5 – 公元 30',
+    'en': 'The earthly family of Jesus the Messiah · ~BC 30 – AD 48',
+    'zh-Hans': '弥赛亚耶稣的地上家庭 · 约公元前 30 – 公元 48',
+    'zh-Hant': '彌賽亞耶穌的地上家庭 · 約公元前 30 – 公元 48',
   },
   'familyTreeExpandAll': {
     'en': 'Expand all',
