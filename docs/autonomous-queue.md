@@ -19237,6 +19237,11 @@ so the bundle-size answer stays on the record.
       default so it never auto-backgrounds in the first place, rather
       than relying on a stage to correctly handle it after the fact.
 
+      Pushed as `1f91bdf5`. CI run `35538933875` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check, ~07:37) — next iteration's step 0
+      should check it before picking anything else.
+
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &
       Faith/Sermons & Studies/P.Eric Sermon/Spiritual Vision/`) was
