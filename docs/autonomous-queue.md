@@ -3666,10 +3666,10 @@ Read-only pass: no lib/asset/test change, no version bump, no deploy.
       Bible-software module's source edition) that may not be
       practically obtainable.
 
-      Pushed as `6d05f958`. **CI run `35587264249` had not concluded
-      within this iteration's ~8-minute watch budget** (still
-      `in_progress` after two rounds of polling) — next iteration's
-      step 0 should check it before taking a new item.
+      Pushed as `6d05f958`. CI run `35587264249` had not concluded
+      within this iteration's ~8-minute watch budget (still
+      `in_progress` after two rounds of polling); checked again right
+      after pushing this note and it had finished: **success**.
 
 - [x] **The word-tap corpus printed 14 verses with a stray ASCII bracket in
       them, and 2 verses were missing a character of scripture. Fixed
