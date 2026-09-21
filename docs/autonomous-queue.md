@@ -8807,6 +8807,11 @@ has never seen this repo.
       editions) — not introduced by this edit, out of this item's
       hour-sized scope to redesign, but filed below so v3's audit isn't
       trusted past what it actually checks.
+
+      Pushed as `c8c9f976`. CI run `35548647342` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
 - [ ] **`ACCOUNTED_FOR_TEXT` in `tools/audit_biblexg_notes.py` is
       chapter-granular and edition-agnostic, so a reason recorded for
       one edition's difference in a chapter silently also explains away
