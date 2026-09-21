@@ -19397,6 +19397,11 @@ so the bundle-size answer stays on the record.
       test-isolation flake, not confirmed root-caused (n=4 is evidence,
       not proof).
 
+      Pushed as `03c0926a`. CI run `35558966433` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check, ~13:57) — next iteration's step 0
+      should check it before picking anything else.
+
       `flutter analyze`: clean. Not deployed — tooling only, nothing
       user-visible changed.
 
