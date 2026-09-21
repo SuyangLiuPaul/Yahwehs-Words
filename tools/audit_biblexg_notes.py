@@ -177,87 +177,139 @@ def normalise(note: str) -> str:
 # each with the reason established by reading the node. Keyed by the
 # publisher's own label, which for a packed node is not the verse the
 # note ends up on.
+#
+# Edition-scoped: keyed (edition, lang, ref). Every entry below was
+# verified by reading the v2-cache node — "verified for v2" is not
+# evidence for v3, which was imported from a later upstream state, so
+# none of these is registered for 'v3'. A v3 run that wants the same
+# verse accounted for needs its own entry, checked against the v3 cache.
 ACCOUNTED_FOR = {
-    ('tw', '哥林多前書 15:11'): 'upstream revision — adds the gloss 「福音」',
-    ('tw', '彼得前書 3:10'): 'publisher packs 3:10-12 in one node; the '
-                            '詩34.12-16 citation is on our 3:12',
-    ('tw', '以弗所書 3:15'): 'publisher packs 3:15-16 in one node; the '
-                            '參2.18註 citation is on our 3:16',
-    ('tw', '馬太福音 16:3'): 'upstream labels 16:13 as verseIndex 3; the '
-                            '參可8.27 citation is on our 16:13',
-    ('cn', '哥林多前书 15:11'): 'upstream revision — adds the gloss 「福音」',
-    ('cn', '马太福音 7:11'): 'upstream revision moved 參路11.9-13 here; ours '
-                            'still carries it on 路加福音 11:9',
-    ('cn', '路加福音 11:9'): 'upstream revision moved 參太7.7-8 to 馬太福音 '
-                            '7:11; ours predates it',
-    ('cn', '马太福音 1:16'): 'empty <cite></cite>, discarded on purpose',
-    ('cn', '马太福音 23:36'): 'empty <cite></cite>, discarded on purpose',
-    ('cn', '马太福音 27:50'): 'empty <cite></cite>, discarded on purpose',
-    ('cn', '提摩太后书 3:3'): 'empty <cite></cite>, discarded on purpose',
-    ('tw', '路加福音 9:5'): 'printed 二版 sets our gloss 「作為警告。」 in '
-                           '12pt note type against 17pt scripture around '
-                           'it; commit 23ca186e wrapped it in <note:> on '
-                           'that evidence — publisher tw has none here',
-    ('tw', '約翰福音 12:25'): 'printed 二版 sets our gloss 「保留」 in 12pt '
-                             'note type against 17pt scripture around it; '
-                             'commit 23ca186e wrapped it in <note:> on '
-                             'that evidence — publisher tw has none here',
-    ('tw', '加拉太書 3:7'): 'printed 二版 sets 「稱義」 at 12pt here while '
-                           '3:8/3:11 set the same two characters at 17pt '
-                           'body; commit 23ca186e wrapped it in <note:> '
-                           'on that evidence — publisher tw has none here',
-    ('tw', '加拉太書 3:9'): 'same ruling as 3:7 — 「稱義」 at 12pt, commit '
-                           '23ca186e — publisher tw has none here',
+    ('v2', 'tw', '哥林多前書 15:11'): 'upstream revision — adds the gloss 「福音」',
+    ('v2', 'tw', '彼得前書 3:10'): 'publisher packs 3:10-12 in one node; the '
+                                  '詩34.12-16 citation is on our 3:12',
+    ('v2', 'tw', '以弗所書 3:15'): 'publisher packs 3:15-16 in one node; the '
+                                  '參2.18註 citation is on our 3:16',
+    ('v2', 'tw', '馬太福音 16:3'): 'upstream labels 16:13 as verseIndex 3; the '
+                                  '參可8.27 citation is on our 16:13',
+    ('v2', 'cn', '哥林多前书 15:11'): 'upstream revision — adds the gloss 「福音」',
+    ('v2', 'cn', '马太福音 7:11'): 'upstream revision moved 參路11.9-13 here; '
+                                  'ours still carries it on 路加福音 11:9',
+    ('v2', 'cn', '路加福音 11:9'): 'upstream revision moved 參太7.7-8 to '
+                                  '馬太福音 7:11; ours predates it',
+    ('v2', 'cn', '马太福音 1:16'): 'empty <cite></cite>, discarded on purpose',
+    ('v2', 'cn', '马太福音 23:36'): 'empty <cite></cite>, discarded on purpose',
+    ('v2', 'cn', '马太福音 27:50'): 'empty <cite></cite>, discarded on purpose',
+    ('v2', 'cn', '提摩太后书 3:3'): 'empty <cite></cite>, discarded on purpose',
+    ('v2', 'tw', '路加福音 9:5'): 'printed 二版 sets our gloss 「作為警告。」 '
+                                 'in 12pt note type against 17pt scripture '
+                                 'around it; commit 23ca186e wrapped it in '
+                                 '<note:> on that evidence — publisher tw '
+                                 'has none here',
+    ('v2', 'tw', '約翰福音 12:25'): 'printed 二版 sets our gloss 「保留」 in '
+                                   '12pt note type against 17pt scripture '
+                                   'around it; commit 23ca186e wrapped it '
+                                   'in <note:> on that evidence — '
+                                   'publisher tw has none here',
+    ('v2', 'tw', '加拉太書 3:7'): 'printed 二版 sets 「稱義」 at 12pt here '
+                                 'while 3:8/3:11 set the same two '
+                                 'characters at 17pt body; commit 23ca186e '
+                                 'wrapped it in <note:> on that evidence — '
+                                 'publisher tw has none here',
+    ('v2', 'tw', '加拉太書 3:9'): 'same ruling as 3:7 — 「稱義」 at 12pt, '
+                                 'commit 23ca186e — publisher tw has none '
+                                 'here',
 }
 
 # Chapters whose note TEXT differs from the publisher's current file, each
-# with the authority that settled it. Keyed (lang, book, chapter).
+# with the authority that settled it. Keyed (edition, lang, book, chapter).
 #
 # Every one of these was read against a third source before being written
 # down — the printed 《新約聖經 梁家鏗譯本（註釋本）》2025 第二版, or the
 # publisher's other edition. None is a defect of ours, and none is fixed
 # here: adopting an upstream revision by guess is rewriting scripture.
+#
+# Per-note, not merely per-chapter: 'missing' and 'extra' are the exact
+# normalised (markup- and whitespace-stripped) multisets audit_text()
+# computes as (theirs - mine) and (mine - theirs) for that chapter,
+# captured from a scratch run at the time each reason was written. A
+# reason only silences the difference it was actually checked against —
+# if the SAME chapter later shows a different missing/extra multiset (a
+# further upstream edit, or a second unrelated note diverging), that is
+# new and must fall through to unexplained, not be waved through by an
+# old chapter-level match. All entries below are 'v2' — each was read
+# against the v2 cache; verified-for-v2 is not evidence for v3.
 ACCOUNTED_FOR_TEXT = {
     # Upstream revisions since our import. Same question as the 427
     # Traditional / 86 Simplified wording differences — §四之二 of the
     # publisher letter, not a repair.
-    ('tw', '哥林多前書', '15'): 'upstream revision adds the gloss 「福音」',
-    ('cn', '哥林多前书', '15'): 'upstream revision adds the gloss 「福音」',
-    ('cn', '马太福音', '7'): 'upstream moved 參路11.9-13 to 7:11; ours predates it',
-    ('cn', '路加福音', '11'): 'upstream merged 參太7.7-8 and 參徒1-2章 into one '
-                             'note on 11:13; ours predates it',
+    ('v2', 'tw', '哥林多前書', '15'): {
+        'missing': ['福音'], 'extra': [],
+        'reason': 'upstream revision adds the gloss 「福音」'},
+    ('v2', 'cn', '哥林多前书', '15'): {
+        'missing': ['福音'], 'extra': [],
+        'reason': 'upstream revision adds the gloss 「福音」'},
+    ('v2', 'cn', '马太福音', '7'): {
+        'missing': ['参路11.9-13。'], 'extra': [],
+        'reason': 'upstream moved 參路11.9-13 to 7:11; ours predates it'},
+    ('v2', 'cn', '路加福音', '11'): {
+        'missing': ['参太7.7-11，徒1-2章。'],
+        'extra': ['参太7.7-8。', '参徒1-2章。'],
+        'reason': 'upstream merged 參太7.7-8 and 參徒1-2章 into one note '
+                  'on 11:13; ours predates it'},
     # Upstream revisions that post-date the PRINTED 2025 second edition,
     # which is the authority for our Traditional. Ours matches the print.
-    ('tw', '以弗所書', '3'): "3:15 — printed 註釋本 sets 「參 4.6，」, which is "
-                            'what we ship; the publisher\'s current tw adds '
-                            '「、16」. Ours is not Simplified-sourced: 3:16 '
-                            'ships their tw\'s 「參2.18註」 against their cn\'s 注',
-    ('tw', '啟示錄', '20'): "20:4 — publisher's own tw prints 「參啟1.2注」 with "
-                           'the Simplified 注, against 註 everywhere else in '
-                           'their own file and in the printed 註釋本. Ours '
-                           'reads 註 and is the one that matches the print',
+    ('v2', 'tw', '以弗所書', '3'): {
+        'missing': ['參4.6、16'], 'extra': ['參4.6，'],
+        'reason': "3:15 — printed 註釋本 sets 「參 4.6，」, which is what "
+                  "we ship; the publisher's current tw adds 「、16」. Ours "
+                  "is not Simplified-sourced: 3:16 ships their tw's "
+                  "「參2.18註」 against their cn's 注"},
+    ('v2', 'tw', '啟示錄', '20'): {
+        'missing': ['即他殉道的見證，參啟1.2注，'],
+        'extra': ['即他殉道的見證，參啟1.2註，'],
+        'reason': "20:4 — publisher's own tw prints 「參啟1.2注」 with the "
+                  "Simplified 注, against 註 everywhere else in their own "
+                  "file and in the printed 註釋本. Ours reads 註 and is "
+                  "the one that matches the print"},
     # Our edition punctuates where the current upstream does not. Same
     # class as the 307 tw / 46 cn punctuation differences the verse
     # proofread already counted — 腓立比書 2:6-11 is the known example.
-    ('tw', '提摩太前書', '3'): '3:16 — the hymn is unpunctuated upstream and '
-                              'set as punctuated lines by us, note included',
-    ('cn', '提摩太前书', '3'): '3:16 — the hymn is unpunctuated upstream and '
-                              'set as punctuated lines by us, note included',
-    ('tw', '雅各書', '2'): '2:8 — trailing 「，」; upstream drops it, we keep it',
-    ('cn', '雅各书', '2'): '2:8 — trailing 「，」; upstream drops it, we keep it',
-    ('tw', '啟示錄', '7'): '7:17 — trailing 「。」; upstream drops it, we keep it',
-    ('cn', '启示录', '7'): '7:17 — trailing 「。」; upstream drops it, we keep it',
+    ('v2', 'tw', '提摩太前書', '3'): {
+        'missing': ['或作藉著靈稱義'], 'extra': ['或作藉著靈稱義，'],
+        'reason': '3:16 — the hymn is unpunctuated upstream and set as '
+                  'punctuated lines by us, note included'},
+    ('v2', 'cn', '提摩太前书', '3'): {
+        'missing': ['或作借着灵称义'], 'extra': ['或作借着灵称义，'],
+        'reason': '3:16 — the hymn is unpunctuated upstream and set as '
+                  'punctuated lines by us, note included'},
+    ('v2', 'tw', '雅各書', '2'): {
+        'missing': ['參利19.18'], 'extra': ['參利19.18，'],
+        'reason': '2:8 — trailing 「，」; upstream drops it, we keep it'},
+    ('v2', 'cn', '雅各书', '2'): {
+        'missing': ['参利19.18'], 'extra': ['参利19.18，'],
+        'reason': '2:8 — trailing 「，」; upstream drops it, we keep it'},
+    ('v2', 'tw', '啟示錄', '7'): {
+        'missing': ['啟21.4'], 'extra': ['啟21.4。'],
+        'reason': '7:17 — trailing 「。」; upstream drops it, we keep it'},
+    ('v2', 'cn', '启示录', '7'): {
+        'missing': ['参启21.4'], 'extra': ['参启21.4。'],
+        'reason': '7:17 — trailing 「。」; upstream drops it, we keep it'},
     # Printed 二版's 12pt note type vs 17pt scripture — commit 23ca186e
     # (2026-08-12), see the fourth "Known non-defects" bullet above.
     # tw-only: publisher tw has none of these; cn already carried the
     # equivalent note before v2 shipped, so cn's figures do not move.
-    ('tw', '路加福音', '9'): '9:5 — 「作為警告。」 at 12pt in the print, '
-                            'wrapped in <note:> by 23ca186e',
-    ('tw', '約翰福音', '12'): '12:25 — 「保留」 at 12pt in the print, '
-                             'wrapped in <note:> by 23ca186e',
-    ('tw', '加拉太書', '3'): '3:7 and 3:9 — 「稱義」 at 12pt in the print '
-                            '(both occurrences), wrapped in <note:> by '
-                            '23ca186e',
+    ('v2', 'tw', '路加福音', '9'): {
+        'missing': [], 'extra': ['作為警告。'],
+        'reason': '9:5 — 「作為警告。」 at 12pt in the print, wrapped in '
+                  '<note:> by 23ca186e'},
+    ('v2', 'tw', '約翰福音', '12'): {
+        'missing': [], 'extra': ['保留'],
+        'reason': '12:25 — 「保留」 at 12pt in the print, wrapped in '
+                  '<note:> by 23ca186e'},
+    ('v2', 'tw', '加拉太書', '3'): {
+        'missing': [], 'extra': ['稱義', '稱義'],
+        'reason': '3:7 and 3:9 — 「稱義」 at 12pt in the print (both '
+                  'occurrences), wrapped in <note:> by 23ca186e'},
 }
 
 
@@ -308,8 +360,8 @@ def ours(path: str) -> dict:
     return out
 
 
-def audit(lang: str, asset: str, book_index: int, refresh: bool,
-          cache_dir: str) -> int:
+def audit(edition: str, lang: str, asset: str, book_index: int,
+          refresh: bool, cache_dir: str) -> int:
     shipped = ours(asset)
     unexplained = 0
     fewer = more = 0
@@ -325,7 +377,7 @@ def audit(lang: str, asset: str, book_index: int, refresh: bool,
             if len(mine) == len(theirs):
                 continue
             ref = f'{name} {chapter}:{label}'
-            reason = ACCOUNTED_FOR.get((lang, ref))
+            reason = ACCOUNTED_FOR.get((edition, lang, ref))
             direction = 'FEWER' if len(mine) < len(theirs) else 'MORE'
             if len(mine) < len(theirs):
                 fewer += 1
@@ -345,10 +397,17 @@ def audit(lang: str, asset: str, book_index: int, refresh: bool,
     return unexplained
 
 
-def audit_text(lang: str, asset: str, book_index: int, refresh: bool,
-               cache_dir: str) -> int:
+def audit_text(edition: str, lang: str, asset: str, book_index: int,
+               refresh: bool, cache_dir: str) -> int:
     """Compare what the notes SAY, per chapter. See the module docstring
-    for why this is keyed on the chapter and not on the verse."""
+    for why this is keyed on the chapter and not on the verse.
+
+    A recorded reason only covers the exact missing/extra multiset it was
+    checked against (ACCOUNTED_FOR_TEXT's 'missing'/'extra'); a chapter
+    matches 'ok' only when today's difference is exactly that one, so a
+    reason verified for one note pair cannot silently wave through some
+    other, unrelated difference that shows up later in the same chapter.
+    """
     mine_by_chapter: dict = {}
     for (book, chapter, _), notes in ours(asset).items():
         counter = mine_by_chapter.setdefault((book, chapter), Counter())
@@ -369,11 +428,14 @@ def audit_text(lang: str, asset: str, book_index: int, refresh: bool,
             if mine == theirs:
                 continue
             differing += 1
-            reason = ACCOUNTED_FOR_TEXT.get((lang, name, chapter))
             missing = list((theirs - mine).elements())
             extra = list((mine - theirs).elements())
-            if reason:
-                print(f'  ok  {name} {chapter}: {reason}')
+            entry = ACCOUNTED_FOR_TEXT.get((edition, lang, name, chapter))
+            matches = (entry is not None
+                       and sorted(missing) == sorted(entry['missing'])
+                       and sorted(extra) == sorted(entry['extra']))
+            if matches:
+                print(f'  ok  {name} {chapter}: {entry["reason"]}')
             else:
                 unexplained += 1
                 print(f'  ** {name} {chapter}: our notes do not say what the '
@@ -400,17 +462,17 @@ def main() -> int:
     total = 0
     print(f'== Do we carry every note? (count, per verse) [{edition}]')
     print(f'Traditional (tw-*.json → {tr_asset})')
-    total += audit('tw', tr_asset, 2, refresh, cache_dir)
+    total += audit(edition, 'tw', tr_asset, 2, refresh, cache_dir)
     print()
     print(f'Simplified (cn-*.json → {cn_asset})')
-    total += audit('cn', cn_asset, 1, refresh, cache_dir)
+    total += audit(edition, 'cn', cn_asset, 1, refresh, cache_dir)
     print()
     print('== Do they say the same thing? (text, per chapter)')
     print('Traditional')
-    total += audit_text('tw', tr_asset, 2, refresh, cache_dir)
+    total += audit_text(edition, 'tw', tr_asset, 2, refresh, cache_dir)
     print()
     print('Simplified')
-    total += audit_text('cn', cn_asset, 1, refresh, cache_dir)
+    total += audit_text(edition, 'cn', cn_asset, 1, refresh, cache_dir)
     print()
     if total:
         print(f'FAIL — {total} places where our editorial notes do not '

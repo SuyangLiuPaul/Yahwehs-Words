@@ -190,9 +190,11 @@ def main() -> int:
             n.strip() for n in tr_notes] == pub_tw
         v2_matches_pub_cn = pub_cn is not None and [
             n.strip() for n in v2_notes] == pub_cn
+        accounted_tw = ACCOUNTED_FOR_TEXT.get(('v2', 'tw', book_tr, chapter))
+        accounted_cn = ACCOUNTED_FOR_TEXT.get(('v2', 'cn', book_cn, chapter))
         settled = (SETTLED_BY_PRINTED_EDITION.get((book_tr, chapter, verse))
-                   or ACCOUNTED_FOR_TEXT.get(('tw', book_tr, chapter))
-                   or ACCOUNTED_FOR_TEXT.get(('cn', book_cn, chapter)))
+                   or (accounted_tw['reason'] if accounted_tw else None)
+                   or (accounted_cn['reason'] if accounted_cn else None))
         if tr_matches_pub_tw and v2_matches_pub_cn:
             publisher_only_count += 1
             print('   => PUBLISHER-INTERNAL: our TR matches their own tw, '

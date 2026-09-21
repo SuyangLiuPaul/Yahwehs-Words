@@ -8812,24 +8812,73 @@ has never seen this repo.
       inside this iteration's ~6-minute watch budget (still
       `in_progress` at last check) — next iteration's step 0 should
       check it before picking anything else.
-- [ ] **`ACCOUNTED_FOR_TEXT` in `tools/audit_biblexg_notes.py` is
-      chapter-granular and edition-agnostic, so a reason recorded for
-      one edition's difference in a chapter silently also explains away
-      any *other*, unrelated note-text differences the OTHER edition has
-      in that same chapter.** Found 2026-09-21 while closing the item
-      above: v3's 路加福音 9, 約翰福音 12 and 加拉太書 3 each have several
-      v3-only note differences (from the 2,209-footnote
-      `adopt_official_ljk.py` apparatus) beyond the 4 spans this queue
-      already settled for v2/v3 alike, and now all of them report "ok"
-      under those 3 chapters' single reason string. Nothing is asserted
-      falsely — no reason text claims to cover more than it does — but
-      `--edition v3`'s "unexplained" tally can no longer be read as a
-      complete census for these 3 chapters. Needs either
-      edition-scoping the two dicts (key on `(edition, lang, …)`) or
-      moving `ACCOUNTED_FOR_TEXT` to per-note rather than per-chapter
-      matching before v3's audit is used to certify anything. Low
-      urgency: v3 is already known broadly unsettled (219 chapters
-      differ) and not yet the shipped edition.
+- [x] **DONE 2026-09-21 — both `ACCOUNTED_FOR` and `ACCOUNTED_FOR_TEXT`
+      in `tools/audit_biblexg_notes.py` are now edition-scoped, and
+      `ACCOUNTED_FOR_TEXT` matches per-note, not per-chapter.** Did both
+      halves the item asked for, not just the cheaper one:
+      1. **Edition-scoped** both dicts to `(edition, lang, ref)` /
+         `(edition, lang, book, chapter)`; `audit()`/`audit_text()` now
+         take `edition` and look up with it, no unscoped fallback. All
+         30 existing entries — **15 `ACCOUNTED_FOR`, 15
+         `ACCOUNTED_FOR_TEXT`**, counted with `len()` against both the
+         pre-fix and post-fix module (not by eye — the plan's own "13"
+         for `ACCOUNTED_FOR_TEXT` was itself an eye-count and was wrong)
+         — re-keyed under `'v2'` only, since each was verified against
+         the v2 cache. No entry added or dropped in the re-key.
+      2. **Per-note matching**: each `ACCOUNTED_FOR_TEXT` entry is now a
+         dict carrying the exact `missing`/`extra` normalised-note
+         multisets it was checked against (dumped from a scratch run,
+         not hand-typed), plus `reason`. `audit_text()` prints `ok` only
+         when today's `(theirs - mine)`/`(mine - theirs)` sets match the
+         recorded ones exactly (`sorted()` multiset comparison); anything
+         else in the same chapter now falls through to unexplained.
+      Both were landed together — (2) did not need deferring.
+
+      **Measured, not estimated:**
+      `--edition v2` still exits 0, 0 unexplained on both passes, output
+      **byte-identical** to before (`diff` against a captured pre-change
+      run showed no difference) — the per-note narrowing did not reveal
+      any v2 chapter whose reason had been over-covering.
+      `--edition v3` now exits 1 with unexplained counts **720/726**
+      (Pass 1, tw/cn — was 720/724) and **219/219** (Pass 2, text —
+      was 211/213); total FAIL count **1890** (was 1868); `grep '  ok  '`
+      on a full v3 run is empty — confirmed by re-running, not assumed.
+      The 22-line gap (1890−1868) is exactly the count of `  ok  ` lines
+      that fired under v3 before this fix and do not now (re-derived by
+      `grep -c` on the before/after v3 runs, not computed by subtraction
+      alone).
+
+      **Coupled consumer checked, not just noted:** `audit_biblexg_v2_vs_tr.py`
+      imports `ACCOUNTED_FOR_TEXT` and did two positional `.get()`s with
+      the old 3-tuple key (:194-195) — updated to `('v2', 'tw'/'cn',
+      book, chapter)` and to pull `['reason']` out of the now-dict value
+      before use. Its full output captured before and after: **byte-
+      identical** (`diff` clean).
+
+      New test `test/test_audit_biblexg_notes.py` (7 cases, all
+      monkeypatched — no corpus or network I/O, runs in ~1ms) proves
+      both halves: edition-scoping (a `'v2'`-only reason does not
+      silence the same mismatch under `'v3'`) and per-note matching (a
+      chapter-level reason keyed correctly still refuses to cover a
+      *different* missing/extra multiset in the same chapter). Ran
+      against the pre-fix module first (`git stash` on just the two
+      tool files) — all 7 errored (`TypeError: … takes 5 positional
+      arguments but 6 were given`, since the old functions had no
+      `edition` parameter) — then against the fix, where all 7 pass.
+      That is the "proven red" the acceptance criteria asked for, not
+      asserted.
+
+      Module docstring's "Result as of 2026-09-21" figures re-checked
+      against a fresh v2 run rather than carried forward — unchanged
+      (tw 1,138/1,135, 9 chapters; cn 1,133/1,134, 6 chapters; 0
+      unexplained both passes), because v2 is exactly what this fix does
+      not touch.
+
+      `flutter analyze` clean, full `flutter test` suite green
+      (+3492 ~1, all pass) — no Dart was touched, this is the loop's
+      standing per-iteration safety net, not evidence about this change.
+      Tooling-only: no asset under `assets/` touched, no build, no
+      deploy needed.
 
 ## P1 — Bible study correctness
 
