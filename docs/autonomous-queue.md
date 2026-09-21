@@ -19707,6 +19707,13 @@ so the bundle-size answer stays on the record.
       auto-backgrounded call, not a stage-ending background hand-off —
       see `queue:19136`'s own lesson): 3505 tests, 1 skipped, exit 0.
 
+      Pushed as `ca471095`. CI run `35631619065` confirmed `success`:
+      the `Pre-place PDFium native asset` step printed `Pre-placed
+      .dart_tool/hooks_runner/shared/pdfium_dart/build/chromium_7811/
+      linux-x64/libpdfium.so` and cost ~1s; `Test` ran 5m51s
+      (17:24:12Z-17:30:03Z) with no PDFium download error, confirming
+      the pre-place worked rather than the suite being skipped.
+
 ## P3 — known but blocked or deferred
 
 - [ ] **This loop's own tooling defect: `flutter test` backgrounded
