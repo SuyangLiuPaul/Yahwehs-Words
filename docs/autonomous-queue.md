@@ -272,6 +272,12 @@ reported. Work these top-down before P2.
       blocked on the user for the actual product decision — not
       ticked.
 
+      Pushed as `52d6fd0d`. **CI run `35579066211` had not concluded
+      within this iteration's ~6-minute watch budget** (still
+      `in_progress` on the `analyze-and-test` job after ~7 minutes of
+      polling) — next iteration's step 0 should check it before taking
+      a new item.
+
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
       was written ONLY on an explicit pause/stop/seek/seekOverall, never
