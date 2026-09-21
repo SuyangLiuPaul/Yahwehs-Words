@@ -9239,6 +9239,12 @@ has never seen this repo.
       with if only one is asked about: it is structurally impossible
       Chinese punctuation, not a house-style question.
 
+      Pushed as `f899f4ba`. CI run `35641067977` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` was clean
+      locally and no Dart file changed (docs + one Python tool script
+      only), so nothing is expected to fail; the next iteration's step 0
+      should confirm this run's conclusion rather than assume it.
+
 - [ ] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued
