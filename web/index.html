@@ -1100,6 +1100,45 @@
       }, 1000);
     })();
   </script>
+  <script>
+    // START THE ENGINE IN SINGLE-ENTRY HISTORY. 2026-09-21.
+    //
+    // A prod crash on v1.6.28, iOS home-screen web app, at boot:
+    // "Null check operator used on a null value". Mapped against the
+    // deployed main.dart.js, the throwing frame is not the app's; it is
+    // the Flutter engine's MultiEntriesBrowserHistory.tearDown()
+    // (engine/.../navigation/history.dart, Flutter 3.44.2):
+    //
+    //     final stateMap = currentState! as Map<dynamic, dynamic>;
+    //
+    // This app always runs in SINGLE-entry history — GetMaterialApp
+    // with `home:`, and docs/autonomous-queue.md explains why it must
+    // stay that way. But on a cold open `history.state` is null, and
+    // the engine's createHistoryForExistingState() only picks
+    // single-entry when the state already carries its tag; otherwise it
+    // builds a MULTI-entry history, tags the state, and tears it down a
+    // moment later when the navigator asks for single-entry. That
+    // teardown reads the state back with `!`. On iOS it came back null,
+    // the handoff threw half-done, and the session was left holding a
+    // disposed history — URL sync and Back quietly broken until reload.
+    //
+    // Tagging the page's own entry as the engine's ORIGIN entry before
+    // the engine starts makes it choose single-entry at once. The
+    // constructor then does exactly what it did after the teardown —
+    // re-tag this entry as origin, push the flutter entry on top — so
+    // the history the reader ends up with is the same, minus the one
+    // step that could throw. `{origin: true}` is the engine's own shape
+    // (_wrapOriginState / _isOriginEntry); `test/web_history_seed_test`
+    // pins both halves. A state someone else already set (a reload
+    // lands on {flutter: true}) is left alone.
+    (function () {
+      try {
+        if (window.history && window.history.state == null) {
+          window.history.replaceState({ origin: true, state: null }, '');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
