@@ -19,17 +19,13 @@ on our side, `〔…〕` and `（…）` on the tagged side. Punctuation, quotat
 marks and note wording differ freely between two imports and are not
 scripture.
 
-WHAT COMES OUT, as of 2026-09-08 (`ece056b7`), over 31,102 verses: 322 verses
-differ, and all but the seven repaired and the one queued under UNSETTLED are
-one of
-
-STALE as of 2026-09-21: `50dcc102` (2026-09-09, "Adopt the publisher's
-current text…") replaced 8,566 verses the day after the count above was
-taken, and a re-run now reads 190 differing verses, 19 "tagged reads more"
-(not the implicit ≤18 above), including 6 new unexamined ids and 5
-EXPLAINED/UNSETTLED entries that no longer read long. See
-`docs/autonomous-queue.md`'s 2026-09-21 entry for the ids; this docstring's
-category breakdown below is otherwise still representative.
+WHAT COMES OUT, as of 2026-09-21 (previous pin: `ece056b7`, 2026-09-08, 322
+verses — moved the next day by `50dcc102`'s adoption of the publisher's
+current text, then re-triaged here against the fresh count), over 31,102
+verses: 190 verses differ, 19 of which read "tagged longer" and are
+itemised below (seventeen EXPLAINED as benign, two UNSETTLED and queued for
+the user). All but the seven repaired (`repair_tagged_witness_losses.py`)
+and those nineteen are one of
 
   * an orthographic variant the two imports set differently — 阿/啊, 它/他/她,
     复/覆, 吗/么, 糟/蹧, 做/作, 吧/罢, 喇/啦, 逿/趟;
@@ -94,14 +90,11 @@ revelation""".split()
 #     `git log -S`)
 EXPLAINED = {
     # Note and parenthesis restructuring — no character is missing.
-    "006019002": "或名示巴 is a note in ours, a parenthesis in the tagged",
     "018014014": "或译：改变 is a note in ours, a parenthesis in the tagged",
     "018020019": "或译：强取房屋… is a note in ours, a parenthesis in the tagged",
-    "064001014": "the v.15 marker is a note in ours, a parenthesis in the tagged",
     "019078061": "note marker placement; 手中 vs 中手 is the tagged transposition",
     # Duplicated or transposed runs on the TAGGED side. Ours matches the print.
     "007016017": "tagged 心所藏的中",
-    "009001007": "tagged 给哈拿以",
     "010020003": "tagged 把王从前",
     "011010029": "tagged 买的来车",
     "011021026": "tagged 可憎的恶的事",
@@ -111,25 +104,45 @@ EXPLAINED = {
     "026005009": "tagged 可的事憎",
     "026032020": "tagged 被杀的中人",
     "042023041": "tagged 我们所的受",
-    "018010021": "約伯記 10:21 is folded into 10:20 here and marked 见上节",
+    # A verse the reading asset folds into its neighbour under different
+    # versification. Nothing is lost, it is one cell over.
+    "042020030": ("路 20:30/31 versification shift: our text carries "
+                   "第三个也娶过她 in v31, tagged (and witness 7a2dc43) put "
+                   "it in v30"),
+    # Split-bracket apparatus, same shape as 太 18:10 / 太 23:13 / 可 15:27 /
+    # 路 23:16 / 約 5:3 / 徒 24:6 (queue: 馬太福音 17:21 item): the OPENING of
+    # 〔有古卷在此有… lands at the end of one verse and the next verse closes
+    # it. Ours keeps the whole bracket in v29; tagged splits it across
+    # 28/29. Witness 7a2dc43 agrees with the split.
+    "044028028": "徒 28:28/29 split-bracket apparatus, opening half",
+    "044028029": "徒 28:28/29 split-bracket apparatus, closing half",
+    # Tagged-side transposition (子女 vs 女子). Witness 7a2dc43 reads 女子,
+    # matching ours; the tagged corpus is the outlier here.
+    "007021022": "tagged transposes 女子 to 子女; witness 7a2dc43 agrees with ours",
 }
 
-# Not a loss — the characters match as a multiset — but the ORDER differs from
-# the print, and that is not something an unattended run should decide.
+# Not a loss — the characters match as a multiset — but the ORDER differs
+# from the print, or the character is a real discrepancy the frozen asset
+# cannot fix, and neither is something an unattended run should decide.
 #
-# 阿摩司書 6:8. We read 「主雅偉指着自己起誓，萬軍之神〈原文有雅偉〉說」. The
-# print, witness A, witness B and the tagged corpus all read 「主耶和華萬軍之
-# 神指着自己起誓說」, with 萬軍之神 BEFORE the oath and no note.
-#
-# It is filed here rather than repaired because the evidence points at a
-# deliberate choice by this edition, not a corruption: the Hebrew is
-# נִשְׁבַּע אֲדֹנָי יְהוִה בְּנַפְשׁוֹ נְאֻם יְהוָה אֱלֹהֵי צְבָאוֹת, where
-# "YHWH God of hosts" follows "by himself" and attaches to נְאֻם — our order,
-# not the print's. The note 「原文有雅偉」 marks exactly the second יְהוָה that
-# the print renders as 神 alone. Reordering it would undo the divine-name
-# restoration this whole edition exists to make. Queued for the user.
+# 阿摩司書 6:8 (030006008) was queued here until 2026-09-21: `50dcc102`
+# adopted the publisher's current text, which moved 萬軍之神 to precede the
+# oath — matching the print, both external witnesses and the tagged corpus.
+# That resolves the question this entry was queued to ask, so it is retired
+# rather than carried forward.
 UNSETTLED = {
-    "030006008": "萬軍之神 precedes the oath in the print and follows it here",
+    # 民數記 32:38. Ours: …巴力免（尼波、巴力免，名字是改了的）、西比瑪…
+    # Tagged and witness 7a2dc43 both read …巴力免、西比瑪（尼波、巴力免，
+    # 名字是改了的）…, i.e. 西比瑪 before the parenthesis. Multiset-identical,
+    # order differs from the print — same shape as the retired 030006008
+    # entry above, so queued the same way rather than silently reordered.
+    "004032038": "西比瑪 precedes the parenthesis in the print and follows it here",
+    # 撒母耳記下 2:23. Ours reads 枪𨱔; tagged and witness 7a2dc43 both read
+    # 枪鐏. This is a real, single-character discrepancy, not an artifact —
+    # but `assets/cuvs-yhwh.json` is frozen, so it cannot be repaired here.
+    # Same verse as the open CANDIDATE already tabled under queue:8768 in
+    # `audit_tagged_rendered_extras.py`; do not file it there again.
+    "010002023": "枪𨱔 (ours) vs 枪鐏 (tagged, witness 7a2dc43); cross-ref queue:8768, frozen asset",
 }
 
 

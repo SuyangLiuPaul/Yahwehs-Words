@@ -9064,32 +9064,89 @@ has never seen this repo.
 
       Pushed as `2a6f5702`. CI run `35553817141` concluded `success`.
 
-- [ ] **2026-09-21 audit re-run: `audit_tagged_running_text.py`'s pinned
-      baseline (322 differing verses, `ece056b7`, 2026-09-08) is stale by
-      a day and needs re-triage, not because it grew but because the
-      corpus underneath it moved.** `50dcc102` ("Adopt the publisher's
-      current text…", 2026-09-09) replaced 8,566 of 31,102 verses in
-      `assets/cuvs-yhwh.json` the day after that pin. A fresh run now
-      reports **190** differing verses (not 322), with the "tagged reads
-      MORE than we do" class at **19** (was implicitly ≤18): 13 of the
-      17 `EXPLAINED` ids still hold, the 1 `UNSETTLED` id still holds,
-      and there are **6 NEW, unexamined** ids: `004032038` (民數記
-      32:38, tagged adds 西比玛), `007021022` (士師記 21:22, tagged adds
-      子), `010002023` (撒母耳記下 2:23, tagged adds 鐏 — same verse as
-      the open CANDIDATE above, consistent with it), `042020030` (路加
-      福音 20:30, tagged adds 第三個也娶過她 — likely the SAME
-      versification-shift already `EXPLAINED` at `044028028`'s sibling
-      entry in `audit_tagged_rendered_extras.py`, just not yet added to
-      *this* script's own `EXPLAINED` table), `044028028`/`044028029`
-      (使徒行傳 28:28/29, tagged adds the 有古卷 apparatus wording — same
-      shape). Separately, **5 EXPLAINED/UNSETTLED entries "no longer read
-      long"** and should be removed or re-verified: `006019002`,
-      `009001007`, `018010021`, `030006008`, `064001014`. Exit code is 1.
-      Refuted independently (agent re-ran the script, confirmed the exact
-      output). **Not repaired: `assets/cuvs-yhwh.json`/`-tr.json` are
-      frozen** — this is bookkeeping (updating `EXPLAINED`/`UNSETTLED` in
-      the script itself, which is not a frozen asset) for a future pass,
-      plus re-verifying the docstring's now-stale "322" headline.
+- [x] **2026-09-21 audit re-run and re-triage of `audit_tagged_running_text.py`,
+      completed.** Original stale-pin note (322 verses, `ece056b7`,
+      2026-09-08) kept below for provenance:
+
+      > `50dcc102` ("Adopt the publisher's current text…", 2026-09-09)
+      > replaced 8,566 of 31,102 verses in `assets/cuvs-yhwh.json` the day
+      > after that pin. A fresh run now reports **190** differing verses
+      > (not 322), with the "tagged reads MORE than we do" class at **19**
+      > (was implicitly ≤18): 13 of the 17 `EXPLAINED` ids still hold, the
+      > 1 `UNSETTLED` id still holds, and there are **6 NEW, unexamined**
+      > ids: `004032038` (民數記 32:38, tagged adds 西比玛), `007021022`
+      > (士師記 21:22, tagged adds 子), `010002023` (撒母耳記下 2:23,
+      > tagged adds 鐏 — same verse as the open CANDIDATE under
+      > `queue:8768`), `042020030` (路加福音 20:30, tagged adds 第三個也
+      > 娶過她), `044028028`/`044028029` (使徒行傳 28:28/29, tagged adds
+      > the 有古卷 apparatus wording). Separately, **5 EXPLAINED/UNSETTLED
+      > entries "no longer read long"**: `006019002`, `009001007`,
+      > `018010021`, `030006008`, `064001014`.
+
+      **Each of the six new ids, read against witness `7a2dc43` (31,103
+      Traditional verses, the same one `audit_tagged_rendered_extras.py`
+      already uses):**
+
+      * `042020030` — EXPLAINED, versification shift. Our v31 carries the
+        text (第三个也娶过她); witness agrees with tagged's earlier v30
+        boundary. Nothing missing, one verse over.
+      * `044028028`/`044028029` — EXPLAINED, split-bracket apparatus, same
+        shape as 太 18:10 / 太 23:13 / 可 15:27 / 路 23:16 / 約 5:3 / 徒 24:6
+        (the established class in `docs/autonomous-queue.md` ~line 4931 and
+        `audit_tagged_rendered_extras.py`'s own `EXPLAINED` table): ours
+        keeps the whole 〔有古卷在此有：…〕 in v29; tagged splits the
+        opener into v28. Witness splits the same way tagged does.
+      * `007021022` — EXPLAINED, tagged-side transposition (子女 vs 女子).
+        Witness reads 女子, agreeing with ours; tagged is the outlier.
+      * `004032038` — UNSETTLED, queued for the user. Witness AND tagged
+        both place 西比瑪 before the parenthetical aside; ours places it
+        after. Multiset-identical, order only — same shape as the retired
+        `030006008` entry below, so queued rather than silently reordered
+        (the asset is frozen regardless).
+      * `010002023` — UNSETTLED. Witness AND tagged both read 枪鐏; ours
+        reads 枪𨱔. A real single-character discrepancy, not an artifact —
+        but unfixable while `assets/cuvs-yhwh.json` is frozen. Same verse
+        as the open CANDIDATE already tabled under `queue:8768`; not filed
+        twice.
+
+      **The five "no longer reads long" entries, traced with `git show
+      <rev>:assets/cuvs-yhwh.json` / `assets/tagged/cuvs-yhwh/*.json`
+      across every commit that touched either file 2026-09-08→HEAD, not
+      assumed:**
+
+      * `006019002`, `018010021`, `030006008`, `064001014` — each changed
+        exactly once in that window, at `50dcc102`, and the tagged side
+        never moved. Clean `50dcc102` fixes. `030006008` (Amos 6:8) is the
+        entry that was UNSETTLED, queued for the user because the order
+        looked like a deliberate divine-name-restoration choice; `50dcc102`
+        adopted the publisher's text, which puts 萬軍之神 before the oath —
+        matching the print, both prior external witnesses, and the tagged
+        corpus. **That answers the queued question**; the order concern is
+        resolved, not silently dropped.
+      * `009001007` — NOT a single-commit fix; a refuter caught an initial
+        overclaim here. `50dcc102` first matched ours to the (then-current)
+        tagged reading (都双分给哈拿以). `91fb0538` ("fifth thaw", 2026-09-13)
+        reverted ours to 都以双分给哈拿 as part of a 6-id word-order repair,
+        which reintroduced the mismatch against the still-unchanged tagged
+        side. `3e80211c` (2026-09-14, "撒母耳記上1:7's tagged run kept the
+        pre-repair word order") then edited the TAGGED corpus itself to
+        都以双分给哈拿, matching ours as it stands at HEAD. The asset is
+        correct today; the fix that makes it correct is `3e80211c` acting
+        on the tagged corpus, not `50dcc102` acting on ours.
+
+      All of the above (the six classifications and the five commit
+      traces) were checked by an independent refuter agent, which
+      re-derived each from source rather than trusting this pass's
+      numbers; it confirmed four of five commit-attribution claims and
+      caught the `009001007` overclaim above before it was committed.
+
+      **Not repaired: `assets/cuvs-yhwh.json`/`-tr.json` are frozen** —
+      this was bookkeeping in the script only (`EXPLAINED`/`UNSETTLED`
+      dicts, docstring headline). `flutter analyze` clean; full suite
+      green via `tools/run_test_chunks.py` (6/6 chunks). Re-running
+      `python3 tools/audit_tagged_running_text.py` now exits **0**: 190
+      differ, 19 tagged-longer, 17 of 17 EXPLAINED, 2 of 2 UNSETTLED, 0
+      new, 0 stale.
 
 - [ ] **2026-09-21 audit re-run: `audit_tagged_quote_balance.py`'s
       top-level headline (2,487/33/4/604) still matches its 2026-09-08
@@ -9226,11 +9283,9 @@ has never seen this repo.
       remain untouched and frozen throughout.
 
       Pushed as `f07ac6f9`. CI run `35596636614` was still `in_progress`
-      after the ~6-minute watch budget — local `flutter analyze` (clean)
-      and the full suite via `tools/run_test_chunks.py` (6/6 chunks pass)
-      both passed before the push; the next iteration's step 0 should
-      confirm this run's conclusion rather than assume it from the local
-      result.
+      after the ~6-minute watch budget; `be58ace5` filed a note asking the
+      next step 0 to confirm it. **Confirmed 2026-09-21: `success`.**
+      (`35597255159`, `be58ace5` itself, also `success`.)
 
 ## P1 — Bible study correctness
 
