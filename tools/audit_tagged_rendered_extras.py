@@ -36,7 +36,14 @@ so far from what this docstring said the day before):
  30,698  tagged line matches ideograph for ideograph
      18  PASS the guard and read long   <- this file
 
-and the 18 split:
+STALE as of 2026-09-21: a re-run reads 381 / 30,704 / 17. The 17th used to
+be 18 because `041015012` (可 15:12) has since been independently fixed by
+`edbbfa4b`'s 2026-09-09 omission repair, so only `010002023` remains an
+open CANDIDATE — this docstring's own CANDIDATE count below is now 1, not
+2 (the code's `CANDIDATE` dict still lists both; see
+`docs/autonomous-queue.md`'s 2026-09-21 entry for the cleanup this needs).
+
+and the 18 split (17 as of 2026-09-21, see above):
 
      10  note formatting only — identical once notes are stripped from both
          sides. This edition writes a translator note as `<note: …>` in the

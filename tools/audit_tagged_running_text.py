@@ -23,6 +23,14 @@ WHAT COMES OUT, as of 2026-09-08 (`ece056b7`), over 31,102 verses: 322 verses
 differ, and all but the seven repaired and the one queued under UNSETTLED are
 one of
 
+STALE as of 2026-09-21: `50dcc102` (2026-09-09, "Adopt the publisher's
+current text…") replaced 8,566 verses the day after the count above was
+taken, and a re-run now reads 190 differing verses, 19 "tagged reads more"
+(not the implicit ≤18 above), including 6 new unexamined ids and 5
+EXPLAINED/UNSETTLED entries that no longer read long. See
+`docs/autonomous-queue.md`'s 2026-09-21 entry for the ids; this docstring's
+category breakdown below is otherwise still representative.
+
   * an orthographic variant the two imports set differently — 阿/啊, 它/他/她,
     复/覆, 吗/么, 糟/蹧, 做/作, 吧/罢, 喇/啦, 逿/趟;
   * a verse our edition folds into its neighbour and marks 「见上节」;

@@ -8767,30 +8767,47 @@ has never seen this repo.
 
 - [ ] **The 2026-09-09 publisher-text adoption introduced two new
       discrepancies against both the official 和合本 and our own tagged
-      corpus.** `50dcc102` ("Adopt the publisher's current text, then
-      repair it against the official 和合本") replaced 8,566 verses in
-      `assets/cuvs-yhwh.json` / `-tr.json`. Running
-      `tools/audit_tagged_rendered_extras.py` afterwards surfaced two ids
-      where the newly adopted text now reads against both witnesses —
-      confirmed by an independent refuter, not just re-derived by me:
+      corpus — one of the two is now FIXED.** `50dcc102` ("Adopt the
+      publisher's current text, then repair it against the official
+      和合本") replaced 8,566 verses in `assets/cuvs-yhwh.json` / `-tr.json`.
+      Running `tools/audit_tagged_rendered_extras.py` afterwards surfaced
+      two ids where the newly adopted text now reads against both
+      witnesses — confirmed by an independent refuter, not just
+      re-derived by me:
 
       | id | ours (post-adoption) | official `7a2dc43` | tagged corpus |
       |---|---|---|---|
       | `010002023` 撒下 2:23 | 枪**𨱔**刺入 | 槍**鐏**刺入 | 枪**鐏**刺入 |
-      | `041015012` 可 15:12 | 「那么，」 | 「那**麼樣**，」 | 「那**么样**，」 |
+      | `041015012` 可 15:12 | ~~「那么，」~~ **FIXED** | 「那**麼樣**，」 | 「那**么样**，」 |
+
+      **2026-09-21 re-run of the audit:** `041015012` no longer reads
+      long — `assets/cuvs-yhwh.json` now reads `那么样`, matching both
+      witnesses. It was restored as one of the 8 verses in the
+      2026-09-09 `edbbfa4b` omission repair ("馬可福音 15:12" in that
+      commit's list), landed the same day as this item was filed but
+      apparently not cross-referenced against it at the time. Only
+      `010002023` (撒下 2:23, 𨱔 vs 鐏) remains open — `tools/
+      audit_tagged_rendered_extras.py`'s `CANDIDATE` table still lists
+      both ids; a future pass should move `041015012` into a
+      REGRESSION-style tracking table (like the DUPLICATION/
+      supplied-words ones in the same file) so a re-import that
+      reintroduces `那么，` is caught, and update the docstring's "2
+      CANDIDATE" to "1".
 
       Both `50dcc102^` (the commit right before the adoption) and the two
       independent witnesses agree with each other and disagree only with
       the newly adopted text, so this is something the adoption
       introduced, not a pre-existing defect in either witness. Character
       counts confirmed by direct grep: `assets/cuvs-yhwh.json` has 𨱔×1,
-      鐏×0; the tagged corpus combined has 鐏×1, 𨱔×0.
+      鐏×0; the tagged corpus combined has 鐏×1, 𨱔×0 (as of 2026-09-09;
+      not re-checked for 010002023 this pass beyond the audit's own
+      output, which still lists it as CANDIDATE).
 
       **Filed, not repaired: `assets/cuvs-yhwh.json` and `-tr.json` are
       frozen.** `test/cuvs_yhwh_frozen_test.dart` pins both by hash; every
       thaw so far has been lifted by the owner, in his own commit, for
-      the publisher's own text — never by this loop. Two candidate
-      repairs are ready (鐏 for 𨱔; 那么样 for 那么) but that decision, and
+      the publisher's own text — never by this loop. One candidate
+      repair remains (鐏 for 𨱔 at `010002023`) but that decision, and
       whether it counts as "the publisher's own text" the way the two
       prior thaws did, belongs to the owner. Held in `tools/
       audit_tagged_rendered_extras.py`'s `CANDIDATE` table so a future
@@ -9046,6 +9063,167 @@ has never seen this repo.
       deploy needed.
 
       Pushed as `2a6f5702`. CI run `35553817141` concluded `success`.
+
+- [ ] **2026-09-21 audit re-run: `audit_tagged_running_text.py`'s pinned
+      baseline (322 differing verses, `ece056b7`, 2026-09-08) is stale by
+      a day and needs re-triage, not because it grew but because the
+      corpus underneath it moved.** `50dcc102` ("Adopt the publisher's
+      current text…", 2026-09-09) replaced 8,566 of 31,102 verses in
+      `assets/cuvs-yhwh.json` the day after that pin. A fresh run now
+      reports **190** differing verses (not 322), with the "tagged reads
+      MORE than we do" class at **19** (was implicitly ≤18): 13 of the
+      17 `EXPLAINED` ids still hold, the 1 `UNSETTLED` id still holds,
+      and there are **6 NEW, unexamined** ids: `004032038` (民數記
+      32:38, tagged adds 西比玛), `007021022` (士師記 21:22, tagged adds
+      子), `010002023` (撒母耳記下 2:23, tagged adds 鐏 — same verse as
+      the open CANDIDATE above, consistent with it), `042020030` (路加
+      福音 20:30, tagged adds 第三個也娶過她 — likely the SAME
+      versification-shift already `EXPLAINED` at `044028028`'s sibling
+      entry in `audit_tagged_rendered_extras.py`, just not yet added to
+      *this* script's own `EXPLAINED` table), `044028028`/`044028029`
+      (使徒行傳 28:28/29, tagged adds the 有古卷 apparatus wording — same
+      shape). Separately, **5 EXPLAINED/UNSETTLED entries "no longer read
+      long"** and should be removed or re-verified: `006019002`,
+      `009001007`, `018010021`, `030006008`, `064001014`. Exit code is 1.
+      Refuted independently (agent re-ran the script, confirmed the exact
+      output). **Not repaired: `assets/cuvs-yhwh.json`/`-tr.json` are
+      frozen** — this is bookkeeping (updating `EXPLAINED`/`UNSETTLED` in
+      the script itself, which is not a frozen asset) for a future pass,
+      plus re-verifying the docstring's now-stale "322" headline.
+
+- [ ] **2026-09-21 audit re-run: `audit_tagged_quote_balance.py`'s
+      top-level headline (2,487/33/4/604) still matches its 2026-09-08
+      pin exactly — no drift there — but the docstring's SECONDARY
+      breakdown ("1,244 identical / 1,245 no marks / 1 differently, only
+      詩篇 11:1") is now completely different.** A fresh run reports
+      **2,476** identical, **9** no-marks-at-all, and **5** differently —
+      and the "differently" set is not a superset of the old one: 詩篇
+      11:1 no longer appears in it at all, replaced by `amos 3:12`,
+      `amos 9:13`, `deuteronomy 27:26`, `matthew 17:26`, `psalms 39:1`.
+      The likely cause, per an independent refuter's check of `git log`,
+      is the same `50dcc102` adoption (2026-09-09, one day after this
+      docstring's pin) rewriting a large share of the reading asset's own
+      quotation-mark placement to track the tagged corpus more closely
+      (1,245 bare verses collapsing to 9 is consistent with the reading
+      asset gaining marks it previously lacked). This breakdown is NOT
+      gated by the script's exit code (only the 4 close-before-open
+      events are — those still match `EXPLAINED` and exit is 0), so
+      nothing would have caught this drift on its own. **Not investigated
+      further this pass — report-only.** A future iteration should read
+      the 5 new "differently" verses (amos 3:12, amos 9:13, deuteronomy
+      27:26, matthew 17:26, psalms 39:1) against the official witness to
+      classify them the way `010002023`/`041015012` were classified above,
+      and refresh the docstring's stale "1,244/1,245/1" figures.
+
+- [ ] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
+      (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
+      — but sampling strongly suggests this is a large uncatalogued
+      backlog of the same known-benign pattern, not 304 fresh
+      misattributions.** The script has no pinned baseline in its own
+      docstring (unlike the tagged-corpus audits above) and, as far as
+      this pass could tell, has not previously been run to a documented
+      conclusion — its two prior commits (`1760c581`, `d03c81d2`) each
+      fixed a small, specifically-named set of verses (9, then 3) using a
+      narrower detector; this run is the first record of what the
+      CURRENT, broader "「…「X說：」…no closing」" heuristic finds over
+      the WHOLE corpus. Raw counts: **182** "attribution INSIDE a
+      quotation" hits in `assets/cuvs-yhwh-tr.json`, **182** in
+      `assets/cuvs-yhwh.json` (same verse set, different script), plus
+      **7** in the witness-diff section (4 unexplained) — **304** lines
+      flagged UNEXPLAINED total against **39** ids in
+      `EXPLAINED`/`WITNESS_DIFF_EXPLAINED`/`TAGGED_EXPLAINED` combined.
+
+      Two independent samples (this pass: ~40 ids from
+      Leviticus/Numbers/Jeremiah/Kings; a separate refuter agent, told to
+      pick DIFFERENT books specifically to try to break the finding: 24
+      ids from Ezekiel/Isaiah/Haggai/Zechariah/Joshua/Ruth/2 Samuel) read
+      every sampled verse's actual text and found **zero** genuine
+      reader-visible misattributions. Every one fell into a handful of
+      already-partially-catalogued, linguistically ordinary patterns:
+      the prophetic messenger formula (`雅偉如此説：`/`主雅偉如此説：`,
+      "Thus says Yahweh," a prophet quoting God's own speech inside his
+      own report), the command-to-speak formula (`你曉諭以色列人説：`,
+      "Tell the Israelites:", pervasive throughout Leviticus/Numbers'
+      legal formulae), third-party relay (a speaker quoting what someone
+      else said, already `EXPLAINED` for 14 ids), and self-quotation
+      (a speaker quoting his own earlier words or thought). The script's
+      own `EXPLAINED` table already carves out exactly these categories
+      by name — it was just never expanded past a first, much smaller
+      hand-picked set once the pattern's true population (apparently
+      concentrated in Ezekiel, Jeremiah, Isaiah, Leviticus and Numbers)
+      turned out to be two orders of magnitude larger.
+
+      **This is a real audit failure (exit 1) that nothing gates, and it
+      is NOT safe to wave off as "probably fine" without doing the work**
+      — sampling found no counterexample, but neither sample was
+      exhaustive, and a genuine new misattribution could still be sitting
+      among the 304. **Not repaired or triaged this pass — report-only,
+      and this file audits the FROZEN `assets/cuvs-yhwh*.json` files, so
+      even a confirmed genuine hit could not be fixed in the asset
+      without the owner's thaw.** What the tractable next step actually
+      is: read all 304 ids (or at minimum the ~150 unique verse refs,
+      since both editions repeat the same set), sort each into an
+      existing `EXPLAINED` category or a new one, and expand the table —
+      one careful pass, not a fan-out, since a wrong classification here
+      would misfile the one real defect, if any exists, as benign.
+
+- [ ] **2026-09-21 audit re-run: `audit_ljk_tr_forms.py`'s class C
+      ("for the translator", judgement-call Traditional-glyph choices,
+      reported not repaired) reads 212 today; the commit that introduced
+      the tool (`c6461080`) recorded 211 after the same commit's own
+      class A/D repairs.** Classes A (Simplified survivors) and D (舊字形
+      stragglers) both still read 0, consistent with those two classes
+      having been mechanically repaired and staying fixed. The +1 in
+      class C was not investigated this pass (out of the ~5-minute
+      time-box) — candidate causes not ruled out: the 2026-09-14
+      footnote adoption from the official site, or `52b7919e`'s
+      divine-name edits to the tagged corpus (unlikely, since this tool
+      reads `biblexg-v2/v3`, not `cuvs-yhwh`). Low priority: class C is
+      reported-only by design (`--report`, never `--write`), so no
+      behaviour depends on this count being current — flagged so the
+      next person who runs this tool is not surprised by a number that
+      moved without a known cause.
+
+- [x] **2026-09-21 — re-ran the 8 corpus audits that CI does not gate**
+      (`docs/autonomous-queue.md` fallback instruction, `NOTHING
+      ACTIONABLE` pass). Correction to that pass's own framing first: it
+      said CI gates 4 audits; it actually gates **3**
+      (`audit_p0.py`, `audit_strongs_tagging.py`, `audit_divine_name.py`
+      `--check`) — `audit_originals_compounds.py --check` is never
+      invoked in `flutter-ci.yml`, only its unit test is, confirmed by an
+      independent refuter re-reading the workflow file directly. Results
+      of the 8, time-boxed to a few minutes each:
+
+        * `audit_tagged_running_text.py` — **drifted**, filed above (322→190,
+          6 new unexamined, 5 stale).
+        * `audit_tagged_rendered_extras.py` — **drifted**, filed in the
+          updated `queue:8768`-area item above (386/18→381/17; one of the
+          two open CANDIDATEs, `041015012`, turned out to already be fixed
+          by `edbbfa4b`, just never cross-referenced against this item).
+        * `audit_tagged_quote_balance.py` — **top-level headline agrees**
+          (2,487/33/4/604 exact); **secondary breakdown drifted**, filed
+          above (1,244/1,245/1 → 2,476/9/5, differs-list changed identity).
+        * `audit_strongs_gloss_refs.py` — **agrees exactly** with its pinned
+          baseline (339 unresolvable of 8,536 cited, 91.5% hit rate).
+        * `audit_trivia_claims.py` — **agrees**: 36/36 mechanically-checkable
+          claims pass, same as its by-construction pass/fail.
+        * `audit_speaker_attribution.py` — **no prior baseline to drift
+          from; first documented full run.** Fails (304 unexplained of
+          which sampling found none likely genuine) — filed above.
+        * `audit_originals_alignment.py` — **agrees exactly**: 91 of 1,189
+          chapters misaligned, 1,626 verses affected, matching the pinned
+          `queue` entry from the original `build_versification_map.py` work.
+        * `audit_ljk_tr_forms.py` — **minor drift**, filed above (class C
+          211→212, classes A/D still 0).
+
+      All four numeric claims above (the CI-gating correction, the
+      running-text and quote-balance drift figures, and the speaker-
+      attribution sample results) were checked by an independent refuter
+      agent that re-ran every script itself rather than trusting this
+      pass's numbers; it could not break any of them and found no
+      counterexample in its own, differently-chosen sample for the
+      speaker-attribution claim. No asset was touched. `assets/cuvs-yhwh*.json`
+      remain untouched and frozen throughout.
 
 ## P1 — Bible study correctness
 

@@ -55,6 +55,18 @@ close — and ask what the FROZEN reading asset does at the same reference:
            Psalm 11 not at all, so there is no third line. Left alone under the
            使徒行傳 9:29 rule in docs/cuv-yhwh-publisher-notes.md.
 
+STALE as of 2026-09-21: this breakdown is not gated by the script's exit
+code (only the close-before-open events above are) and nobody re-ran it
+between 2026-09-08 and now. A fresh run reads 2,476 / 9 / 5 — not
+1,244 / 1,245 / 1 — and the "differs" set is not a superset of the old
+one: 詩篇 11:1 is no longer in it at all, replaced by amos 3:12, amos
+9:13, deuteronomy 27:26, matthew 17:26 and psalms 39:1. The likely cause
+is the same `50dcc102` adoption (2026-09-09, one day after this pin)
+rewriting much of the reading asset's own quotation-mark placement to
+track the tagged corpus more closely — 1,245 bare verses collapsing to 9
+is consistent with that. Not re-classified this pass; see
+`docs/autonomous-queue.md`'s 2026-09-21 entry.
+
 So the 2,480-verse headline is not a defect population at all, and the queue
 was right to say "do not sweep it". Half of it is the frozen edition's own
 house style, half of it is punctuation only the tagged corpus carries, and the
