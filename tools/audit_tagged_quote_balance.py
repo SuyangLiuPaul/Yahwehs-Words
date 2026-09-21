@@ -27,6 +27,10 @@ On that premise, as of 2026-09-08 (`ece056b7`), over 31,102 verses:
       604  opens still on the stack at the end of their book
             (deuteronomy 115, leviticus 90, luke 83, ezekiel 70, exodus 60)
 
+Re-run 2026-09-22: unchanged, all four figures. This block is the only part
+of the script's output gated by its exit code, and it has held since
+`a1406c21`.
+
 The queue entry said 2,480. It is not reproducible at any commit: the figure
 was 2,485 (35 books, 9 events) from `d03c81d2` through the parent of
 `a1406c21`, and became 2,487 (33 books, 4 events) AT `a1406c21` itself, which
@@ -37,40 +41,92 @@ unclosed-opens count (604) and the top-five book list never moved.
 
 WHAT THE 2,490 VERSES ACTUALLY ARE. Take every `“` that does not close in its
 own verse — 1,886 that close in a LATER verse of the same book, 604 that never
-close — and ask what the FROZEN reading asset does at the same reference:
+close — and ask what the FROZEN reading asset does at the same reference, as
+of 2026-09-22 (`ece056b7` is stale here; see below):
 
-    1,244  the reading asset punctuates the verse identically. This edition's
+    2,476  the reading asset punctuates the verse identically. This edition's
            own text, in a file this repo is not allowed to edit. Not an import
            artifact of any kind.
-    1,245  the reading asset carries no quotation mark in that verse at all.
-           The tagged corpus is a separate transcription line and punctuates
-           4,043 verses the reading text leaves bare; there is no second
-           reading to compare against, so there is nothing to repair towards.
-        1  詩篇 11:1 — the ONLY verse in the whole population where the two
-           imports punctuate the same verse differently, and it is a
-           disagreement about SCOPE rather than a lost mark. The frozen edition
-           closes the taunt at the end of 11:1 (`…飛往你的山去。”`); the tagged
-           corpus runs it through 11:3 (`…還能做甚麼呢？”`). Both are complete
-           quotations; neither has lost anything. Blob `7a2dc43` punctuates
-           Psalm 11 not at all, so there is no third line. Left alone under the
-           使徒行傳 9:29 rule in docs/cuv-yhwh-publisher-notes.md.
+        9  the reading asset carries no quotation mark in that verse at all.
+           The tagged corpus is a separate transcription line; there is no
+           second reading to compare against, so there is nothing to repair
+           towards.
+        5  the reading asset punctuates the verse DIFFERENTLY. All five
+           marks the `50dcc102` adoption (2026-09-09, "Adopt the
+           publisher's current text") placed or moved in the reading asset
+           on 2026-09-08's parent commit — checked against `50dcc102^`, the
+           tagged corpus, and the independent Traditional witness `7a2dc43`
+           one verse at a time, since the three don't move together here
+           the way `docs/autonomous-queue.md`'s `queue:8768` item found for
+           `010002023`:
 
-STALE as of 2026-09-21: this breakdown is not gated by the script's exit
-code (only the close-before-open events above are) and nobody re-ran it
-between 2026-09-08 and now. A fresh run reads 2,476 / 9 / 5 — not
-1,244 / 1,245 / 1 — and the "differs" set is not a superset of the old
-one: 詩篇 11:1 is no longer in it at all, replaced by amos 3:12, amos
-9:13, deuteronomy 27:26, matthew 17:26 and psalms 39:1. The likely cause
-is the same `50dcc102` adoption (2026-09-09, one day after this pin)
-rewriting much of the reading asset's own quotation-mark placement to
-track the tagged corpus more closely — 1,245 bare verses collapsing to 9
-is consistent with that. Not re-classified this pass; see
-`docs/autonomous-queue.md`'s 2026-09-21 entry.
+             amos 9:13          reading reads `说：”日子将到` — a CLOSING
+                                 mark opening the sentence, which no
+                                 Chinese quotation convention produces; that
+                                 much holds regardless of any witness.
+                                 `50dcc102^` and the witness agree with each
+                                 other (neither has a mark here at all — the
+                                 tagged corpus is the one with a pre-existing
+                                 mark, and normally-so, per the 9-bare class
+                                 above). The tagged corpus's own EXPLAINED
+                                 entry below already calls this exact `说：”`
+                                 shape REPAIRED on its own side. The adoption
+                                 put the same broken shape onto the reading
+                                 side, where it is now reader-visible in the
+                                 frozen pane. Filed as its own P0 item
+                                 alongside `010002023` — see
+                                 docs/autonomous-queue.md.
+             deuteronomy 27:26  reading reads `阿们。’”`; `50dcc102^`, the
+                                 witness and the tagged corpus all three read
+                                 `阿们！’` with the outer `“` left open (this
+                                 edition's own running-speech convention,
+                                 the same one named at `ruth 1:17` below). A
+                                 true 3-way match broken only by the
+                                 adoption, which also changed `！`→`。` in the
+                                 same edit — a real copy-edit, not obviously
+                                 a mechanical slip, so this is filed as a
+                                 disagreement for the asset's owner to rule
+                                 on, not asserted as a bug. Filed alongside
+                                 amos 9:13.
+             matthew 17:26      reading closes `...免税了。”`; `50dcc102^`,
+                                 the witness and the tagged corpus all three
+                                 leave it open (`(2,1)` opens/closes on all
+                                 three). A true 3-way match broken only by
+                                 the adoption. Filed alongside amos 9:13.
+             psalms 39:1        reading closes `...勒住我的口。”`.
+                                 `50dcc102^` and the tagged corpus agree
+                                 with each other (both open, unclosed,
+                                 `(1,0)`) — the witness is silent here (no
+                                 mark at all, `(0,0)`, the normal 9-bare
+                                 pattern), so this is a 2-way match plus a
+                                 non-contradicting third source, weaker
+                                 evidence than deuteronomy 27:26 or matthew
+                                 17:26 but still only the adoption changed
+                                 it. Filed alongside amos 9:13.
+
+           The fifth, amos 3:12, is the opposite shape and is NOT filed as a
+           defect: `50dcc102` gave the reading asset both `“` and `”`,
+           matching witness `7a2dc43` exactly (`…不過如此。」`), where
+           `50dcc102^` had had no mark at all. The tagged corpus is the one
+           behind here — it has the opener but never picked up the closer
+           the publisher's edit added. Not reader-visible (the frozen pane
+           is correct); a tagged-corpus repair, not swept this pass.
+
+           詩篇 11:1, the sole "differs" verse at the 2026-09-08 pin, left
+           the set for an unrelated reason: `50dcc102` moved the READING
+           side onto the tagged corpus's own punctuation (closing the taunt
+           at 11:1 instead of running it to 11:3), so the two lines now
+           agree there and it no longer appears here. Nothing was repaired
+           in the sense of either line moving to match a third source; the
+           2026-09-08 disagreement simply stopped existing.
 
 So the 2,480-verse headline is not a defect population at all, and the queue
-was right to say "do not sweep it". Half of it is the frozen edition's own
-house style, half of it is punctuation only the tagged corpus carries, and the
-residue is one verse that needs the publisher rather than a script.
+was right to say "do not sweep it". The great majority is the frozen
+edition's own house style or punctuation only the tagged corpus carries; the
+five-verse residue is four verses where the 2026-09-09 adoption alone moved
+the frozen reading's punctuation (filed for the owner, not swept — see
+above) and one verse where the tagged corpus, not the frozen reading, is
+behind.
 
 THE TRACTABLE CUT the queue named — the close-before-open events — is real,
 and it splits cleanly down the same line. Four of the nine are marks the FROZEN
@@ -132,7 +188,14 @@ EXPLAINED = {
         "REPAIRED (twice over) — `说：”` at the second speech colon was a "
         "closing mark where an opening one belongs."
     ),
-    "amos 9:13": "REPAIRED — the same `说：”` shape.",
+    "amos 9:13": (
+        "REPAIRED — the same `说：”` shape. The FROZEN reading asset carries "
+        "the same shape again as of the 2026-09-09 `50dcc102` adoption "
+        "(`说：”日子将到`, a closer opening the sentence) — that is a separate, "
+        "reader-visible defect on the reading side, filed as its own P0 item "
+        "alongside `010002023` (see docs/autonomous-queue.md), not fixed by "
+        "this line's own repair."
+    ),
     "amos 9:15": "REPAIRED by 9:13's substitution; the closer now has its open.",
     "mark 5:34": (
         "`耶稣对她说：‘女儿…痊愈了。”` — a level-2 opener closed by a level-1 "

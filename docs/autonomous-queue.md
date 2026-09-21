@@ -9177,29 +9177,67 @@ has never seen this repo.
       confirm this run's conclusion rather than assume it from the local
       result.
 
-- [ ] **2026-09-21 audit re-run: `audit_tagged_quote_balance.py`'s
-      top-level headline (2,487/33/4/604) still matches its 2026-09-08
-      pin exactly — no drift there — but the docstring's SECONDARY
-      breakdown ("1,244 identical / 1,245 no marks / 1 differently, only
-      詩篇 11:1") is now completely different.** A fresh run reports
-      **2,476** identical, **9** no-marks-at-all, and **5** differently —
-      and the "differently" set is not a superset of the old one: 詩篇
-      11:1 no longer appears in it at all, replaced by `amos 3:12`,
-      `amos 9:13`, `deuteronomy 27:26`, `matthew 17:26`, `psalms 39:1`.
-      The likely cause, per an independent refuter's check of `git log`,
-      is the same `50dcc102` adoption (2026-09-09, one day after this
-      docstring's pin) rewriting a large share of the reading asset's own
-      quotation-mark placement to track the tagged corpus more closely
-      (1,245 bare verses collapsing to 9 is consistent with the reading
-      asset gaining marks it previously lacked). This breakdown is NOT
-      gated by the script's exit code (only the 4 close-before-open
-      events are — those still match `EXPLAINED` and exit is 0), so
-      nothing would have caught this drift on its own. **Not investigated
-      further this pass — report-only.** A future iteration should read
-      the 5 new "differently" verses (amos 3:12, amos 9:13, deuteronomy
-      27:26, matthew 17:26, psalms 39:1) against the official witness to
-      classify them the way `010002023`/`041015012` were classified above,
-      and refresh the docstring's stale "1,244/1,245/1" figures.
+- [x] **2026-09-21 audit re-run of `audit_tagged_quote_balance.py`'s
+      secondary breakdown — CLASSIFIED 2026-09-22, one item filed
+      below.** Read all five "differently" verses (`amos 3:12`, `amos
+      9:13`, `deuteronomy 27:26`, `matthew 17:26`, `psalms 39:1`) against
+      `50dcc102^` (pre-adoption reading), the tagged corpus, and witness
+      `7a2dc43`, per-verse — not a re-derivation of the 2026-09-21 note,
+      a first classification of it. Four of the five (amos 9:13,
+      deuteronomy 27:26, matthew 17:26, psalms 39:1) are the `50dcc102`
+      adoption alone moving the frozen reading asset's punctuation away
+      from where `50dcc102^` and the tagged corpus (and, for two of the
+      four, the witness too) had agreed — filed as its own P0 item below
+      rather than buried here, since amos 9:13 is reader-visible in the
+      frozen pane (a `”` opening a sentence, the same shape the tagged
+      corpus's own `EXPLAINED` table already calls REPAIRED on its own
+      side). The fifth, amos 3:12, is the opposite shape and is not a
+      reading-asset defect at all: the adoption brought the reading into
+      agreement with witness `7a2dc43`; the tagged corpus is the one
+      lagging (has the opener, never picked up the closer) — a
+      tagged-corpus repair, not swept this pass. 詩篇 11:1's departure
+      from the "differs" set is now explained too: the adoption moved the
+      reading side onto the tagged corpus's own punctuation, so the two
+      lines simply stopped disagreeing there — not a repair against a
+      third source. Two rounds of an independent refuter attacked the
+      per-verse claims; the first round caught two real overclaims (the
+      "3-way consensus" framing didn't hold for amos 9:13 or psalms 39:1
+      as originally drafted — psalms 39:1's witness is silent, not
+      agreeing, at that verse) and both were corrected before the second
+      round verified all five numeric/logic claims exactly, including
+      ruling out "the amos 9:13 closer closes an earlier Amos 9 opener"
+      by checking every verse 9:1–9:13 in all three sources. Full
+      per-verse writeup, with the counts, now lives in
+      `tools/audit_tagged_quote_balance.py`'s docstring (replacing the
+      stale "1,244/1,245/1" breakdown and the 2026-09-21 note this
+      supersedes) — read it there rather than here. Script still exits 0,
+      headline still 2487/33/4/604, unchanged. No asset touched; no Dart
+      changed.
+
+- [ ] **The 2026-09-09 publisher-text adoption moved the frozen reading
+      asset's quotation-mark punctuation at 4 more verses away from where
+      it, the tagged corpus, and (for 2 of the 4) the independent witness
+      had all agreed before the adoption — one of the four is
+      reader-visible as a backwards mark.** Same `50dcc102` commit as
+      `010002023`/`041015012` above, found while classifying
+      `audit_tagged_quote_balance.py`'s "differs" set (see the ticked item
+      immediately above for the verification trail):
+
+      | id | ref | `50dcc102^` / witness / tagged agree on | current frozen reading | shape |
+      |---|---|---|---|---|
+      | `030009013` | amos 9:13 | no mark at all (both `50dcc102^` and witness `7a2dc43` are silent there; tagged's pre-existing opener is the normal, unrelated 9-bare pattern) | `说：”日子将到…` — a **closing** mark opening the clause | reader-visible, self-evidently backwards regardless of any witness; the tagged corpus's own `EXPLAINED` table in `audit_tagged_quote_balance.py` already calls this exact `说：”` shape REPAIRED on its own side |
+      | `005027026` | deut 27:26 | `阿们！’`, outer `“` left open (this edition's running-speech convention) | `阿们。’”` — punctuation changed `！`→`。` **and** the outer quote closed | true 3-way match broken only by the adoption; the punctuation change is a real copy-edit, not obviously a mechanical slip |
+      | `040017026` | matt 17:26 | `(2,1)` opens/closes — second speech left open | `(2,2)` — second speech now closed | true 3-way match broken only by the adoption |
+      | `019039001` | psalms 39:1 | `50dcc102^` and tagged both `(1,0)`; witness is silent (`(0,0)`), not contradicting | `(1,1)` — closed | 2-way match plus a non-contradicting third source; weaker than the two above but still only the adoption changed it |
+
+      **Filed, not repaired: `assets/cuvs-yhwh.json` and `-tr.json` are
+      frozen.** Same status as `010002023` above — a candidate the owner
+      may thaw the freeze for, or may leave, since two of the four (deut
+      27:26's wording change, and the general possibility that the
+      publisher genuinely re-punctuated these four on purpose) cannot be
+      ruled out from the assets alone. amos 9:13 is the one worth leading
+      with if only one is asked about: it is structurally impossible
+      Chinese punctuation, not a house-style question.
 
 - [ ] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
