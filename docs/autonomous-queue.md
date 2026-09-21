@@ -9225,6 +9225,13 @@ has never seen this repo.
       speaker-attribution claim. No asset was touched. `assets/cuvs-yhwh*.json`
       remain untouched and frozen throughout.
 
+      Pushed as `f07ac6f9`. CI run `35596636614` was still `in_progress`
+      after the ~6-minute watch budget — local `flutter analyze` (clean)
+      and the full suite via `tools/run_test_chunks.py` (6/6 chunks pass)
+      both passed before the push; the next iteration's step 0 should
+      confirm this run's conclusion rather than assume it from the local
+      result.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
