@@ -382,22 +382,29 @@ void main() {
         contains("'/jesus-teachings',"));
   });
 
-  test('the home page leads to it, at the bottom', () {
-    // 「可以就直接放在最下面 home page的」. A SOURCE-LEVEL guard: the
-    // dashboard needs the whole app standing to pump, and what can go
-    // wrong quietly here is the wiring and the order, both of which are
-    // readable in the source. The card must come after every section
-    // the reader arranges and before the footer.
+  test('the home page leads to it, inside Featured', () {
+    // 2026-09-21, moved the morning after it shipped at the foot of the
+    // page: 「耶稣教导放在诗歌下面年代前面 featured那边」 — under Songs,
+    // above the chronology chart.
+    //
+    // A SOURCE-LEVEL guard: the dashboard needs the whole app standing
+    // to pump, and what can go wrong quietly here is the wiring and the
+    // ORDER, both of which are readable in the source.
     final src = File('lib/pages/dashboard_page.dart').readAsStringSync();
-    final sections = src.indexOf('..._buildOrderedSections(');
-    final card = src.indexOf('_JesusTeachingsCard(locale: locale)');
-    final footer = src.indexOf('_HomeFooter(locale: locale, scheme: scheme)');
-    expect(card, greaterThan(0), reason: 'the home card is gone');
-    expect(card, greaterThan(sections),
-        reason: 'the card must sit below the reader\'s own sections');
-    expect(card, lessThan(footer),
-        reason: 'the card must sit above the footer');
-    expect(src, contains('pushPage(const JesusTeachingsPage(), '
-        'routeName: kJesusTeachingsRoute)'));
+    final featured = src.indexOf('case DashboardSection.featured:');
+    final songs = src.indexOf("routeName: '/songs'");
+    final card = src.indexOf("ValueKey('home.jesusTeachings')");
+    final chronology = src.indexOf("routeName: '/chronology'");
+    expect(featured, greaterThan(0));
+    expect(card, greaterThan(featured),
+        reason: 'the card must live inside the Featured section, so the '
+            'reader can reorder and hide it with everything else');
+    expect(card, greaterThan(songs), reason: 'it goes under Songs');
+    expect(card, lessThan(chronology),
+        reason: 'it goes above the chronology chart');
+    expect(src, contains('routeName: kJesusTeachingsRoute'));
+    // And it is a Featured card, not a one-off: the old foot-of-page
+    // widget is gone rather than left behind unused.
+    expect(src, isNot(contains('_JesusTeachingsCard')));
   });
 }

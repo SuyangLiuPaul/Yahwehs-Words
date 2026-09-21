@@ -614,12 +614,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 isWide: isWide,
                 headerSize: headerSize,
               ),
-              // 主耶稣的教导, 2026-09-21: 「可以就直接放在最下面 home page
-              // 的」. Below every section the reader arranges and above the
-              // footer, so it is the last thing on the page and not one of
-              // the blocks Settings → Dashboard layout reorders or hides.
-              const SizedBox(height: 20),
-              _JesusTeachingsCard(locale: locale),
               const SizedBox(height: 28),
               _HomeFooter(locale: locale, scheme: scheme),
             ],
@@ -918,6 +912,29 @@ class _DashboardPageState extends State<DashboardPage> {
               scheme: scheme,
               settings: settings,
               onTap: () => pushPage(const SongsPage(), routeName: '/songs'),
+            ),
+            const SizedBox(height: 8),
+            // 主耶稣的教导, 2026-09-21. It opened at the foot of the page
+            // for a day — 「可以就直接放在最下面 home page的」 — and moved
+            // here the next morning: 「耶稣教导放在诗歌下面年代前面 featured
+            // 那边」. Under Songs, above the chronology chart.
+            //
+            // Being IN the section is the point of the move, not a detail
+            // of it: Featured is reorderable and hideable in Settings →
+            // Dashboard layout, and a card pinned below every section
+            // answered to neither control.
+            _FeaturedCard(
+              key: const ValueKey('home.jesusTeachings'),
+              icon: Icons.record_voice_over_outlined,
+              title: uiStrings['jesusTeachings']?[locale] ??
+                  'The Teachings of the Lord Jesus',
+              subtitle: uiStrings['jesusTeachingsHomeHint']?[locale] ?? '',
+              scheme: scheme,
+              settings: settings,
+              onTap: () => pushPage(
+                const JesusTeachingsPage(),
+                routeName: kJesusTeachingsRoute,
+              ),
             ),
             const SizedBox(height: 8),
             // 2026-09-03: the chronology chart, Featured because the
@@ -1225,77 +1242,6 @@ class _DashboardPageState extends State<DashboardPage> {
 /// page's footer, but phrased at the app level ("app updated {time}")
 /// rather than "this page updated" — Home isn't editorial content
 /// the way the attributions page is.
-/// The door to 主耶稣的教导, at the foot of the home page.
-///
-/// A full-width card rather than one more tile in the Explore grid: the
-/// owner asked for it at the bottom of the page by itself, and a tile
-/// there would have been the eighth of eight identical squares. It says
-/// what is behind it in one line, so it earns the tap without a count
-/// that would have to be kept in step with the dataset.
-class _JesusTeachingsCard extends StatelessWidget {
-  final String locale;
-  const _JesusTeachingsCard({required this.locale});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final title = uiStrings['jesusTeachings']?[locale] ??
-        'The Teachings of the Lord Jesus';
-    return LiquidGlassButton(
-      key: const ValueKey('home.jesusTeachings'),
-      onTap: () =>
-          pushPage(const JesusTeachingsPage(), routeName: kJesusTeachingsRoute),
-      borderRadius: 18,
-      padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
-      semanticLabel: title,
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.record_voice_over_outlined,
-                color: scheme.onPrimaryContainer, size: 22),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  uiStrings['jesusTeachingsHomeHint']?[locale] ?? '',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: scheme.onSurfaceVariant,
-                    height: 1.35,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Icon(Icons.chevron_right_rounded,
-              color: scheme.onSurfaceVariant, size: 22),
-        ],
-      ),
-    );
-  }
-}
-
 class _HomeFooter extends StatelessWidget {
   final String locale;
   final ColorScheme scheme;
@@ -1362,6 +1308,7 @@ class _FeaturedCard extends StatelessWidget {
   final AppSettings settings;
   final VoidCallback onTap;
   const _FeaturedCard({
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
