@@ -9245,6 +9245,8 @@ has never seen this repo.
       only), so nothing is expected to fail; the next iteration's step 0
       should confirm this run's conclusion rather than assume it.
 
+      **Confirmed 2026-09-22: `gh run view 35641067977` → `success`.**
+
 - [ ] **`026033010`'s Traditional-Chinese text opens its quotation with
       `「` but closes it with `』` (the inner-quote closer) instead of
       `」`.** Found as a side-effect of the speaker-attribution
@@ -9328,6 +9330,8 @@ has never seen this repo.
       CI-workflow edit adding one `python3 test/...` step, and docs), so
       nothing is expected to fail; the next iteration's step 0 should
       confirm this run's conclusion rather than assume it.
+
+      **Confirmed 2026-09-22: `gh run view 35658053260` → `success`.**
 
 - [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
@@ -9432,22 +9436,82 @@ has never seen this repo.
       file changed, so nothing is expected to fail; the next iteration's
       step 0 should confirm this run's conclusion rather than assume it.
 
-- [ ] **2026-09-21 audit re-run: `audit_ljk_tr_forms.py`'s class C
-      ("for the translator", judgement-call Traditional-glyph choices,
-      reported not repaired) reads 212 today; the commit that introduced
-      the tool (`c6461080`) recorded 211 after the same commit's own
-      class A/D repairs.** Classes A (Simplified survivors) and D (舊字形
-      stragglers) both still read 0, consistent with those two classes
-      having been mechanically repaired and staying fixed. The +1 in
-      class C was not investigated this pass (out of the ~5-minute
-      time-box) — candidate causes not ruled out: the 2026-09-14
-      footnote adoption from the official site, or `52b7919e`'s
-      divine-name edits to the tagged corpus (unlikely, since this tool
-      reads `biblexg-v2/v3`, not `cuvs-yhwh`). Low priority: class C is
-      reported-only by design (`--report`, never `--write`), so no
-      behaviour depends on this count being current — flagged so the
-      next person who runs this tool is not surprised by a number that
-      moved without a known cause.
+      **Confirmed 2026-09-22: `gh run view 35649792107` → `success`.**
+
+- [x] **2026-09-22 — the 211→212 class-C drift is pinned to one commit,
+      one row, and both candidate causes the previous pass named are
+      ruled out.** Bisected across the 5 relevant commits in throwaway
+      worktrees, running the CURRENT `tools/audit_ljk_tr_forms.py`
+      against each old asset pair (`--repo <worktree>`) so the
+      instrument stayed constant:
+
+        | commit | class A | class C | class D |
+        |---|---|---|---|
+        | `c6461080` (baseline) | 0 | **211** | 0 |
+        | `b35dfce4` | 0 | **212** | 0 |
+        | `ff226ddc` | 0 | 212 | 0 |
+        | `ebea3499` | 0 | 212 | 0 |
+        | `a4912a0b` (=HEAD state) | 0 | 212 | 0 |
+
+      Unambiguous single step at `b35dfce4`; the other three commits
+      move nothing.
+
+      **The specific new row**, found by diffing the full judgement list
+      between `c6461080` and `b35dfce4` on (id, book, chapter, verse,
+      char, majority) — ignoring the trailing occurrence-count field,
+      which shifts for ~60 unrelated 里/裡 rows because `b35dfce4` also
+      added unrelated 里/裡-containing verse text elsewhere, moving the
+      majority tally denominator without changing the row set: id
+      `41006010`, 馬可福音 6:10, character `借` flagged against the
+      file's majority `藉` (108 occurrences elsewhere).
+
+      **What it actually is** (confirmed by an independent refuter that
+      re-ran the bisect and the row-diff itself): NOT new Traditional
+      wording. `biblexg-v3-tr.json` already contained 6:10, byte-identical,
+      before and after `b35dfce4` — the commit's own message says it
+      backfilled `biblexg-v3.json` (Simplified), which had only 52 of
+      Mark 6's 56 verses against the Traditional file's 56. Before the
+      commit, `simplified.get('41006010')` returned `None`, `len(s) !=
+      len(t)` was never reached, and the row was silently skipped by
+      every classifier in the script — not counted, not absent because
+      it was fine, just invisible to the alignment. Backfilling the
+      Simplified side made the pair alignable for the first time, and
+      the pre-existing Traditional 借 was correctly flagged as the same
+      class of judgement call as the other 16 借/藉 rows already in the
+      report. **It is a real judgement-call hit that the tool could not
+      see until now — not a defect introduced by the commit, and not an
+      artifact of the tool's own logic changing.**
+
+      **Both named candidate causes struck:**
+        * *52b7919e's divine-name edits* — ruled out, and the refuter's
+          re-read of `tools/audit_ljk_tr_forms.py:83-84` confirms it
+          reads only `assets/biblexg-v3.json` / `-v3-tr.json`; it never
+          opens `cuvs-yhwh*`. The only commit touching this tool file in
+          `c6461080..HEAD` is `52b7919e`, and its 53-line diff is
+          entirely inside `write_report()` (markdown prose about the
+          乙類 table) — the `OLD_FORMS`/`SIMPLIFIED_ONLY` tables and the
+          survivor/judgement/straggler loops are byte-identical, so the
+          **211 baseline and the 212 reading are directly comparable**;
+          this is real corpus drift, not an instrument artifact.
+        * *the 2026-09-14 footnote adoption* — ruled out because that
+          adoption **is** `c6461080` itself (2026-09-14 17:08), the
+          commit that recorded the 211 baseline. It is the floor of the
+          measurement, not a change on top of it.
+
+      **Side finding, noted here rather than fixed** (out of scope for
+      a report-only audit item, and too small to warrant its own queue
+      entry): `52b7919e`'s own
+      prose edit says 衞/衛 and 羣/群 are 港台用字習慣, not 舊字形, and
+      should not appear in the 乙類 table — but it only edited the
+      `write_report()` description text; `OLD_FORMS` in the same file
+      still maps `'衞':'衛'` and `'羣':'群'`, so the classifier and its
+      own report text now disagree about what these two pairs are. Does
+      not change any count in this repo (class D read 0 at every bisect
+      point, so neither pair is currently triggering), but the next
+      person to run `--write` should know the dict and the prose no
+      longer agree.
+
+      No asset touched — class C stays report-only by design.
 
 - [x] **2026-09-21 — re-ran the 8 corpus audits that CI does not gate**
       (`docs/autonomous-queue.md` fallback instruction, `NOTHING
