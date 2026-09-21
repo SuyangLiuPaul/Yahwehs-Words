@@ -181,6 +181,54 @@ reported. Work these top-down before P2.
       audit actually examined — all three corrected in the tool's
       docstring and above before commit.
 
+      **2026-09-21 re-measurement — the pattern still holds, and the
+      118 figure is confirmed at HEAD, not carried forward.** Ran
+      `tools/audit_songs_snapshot_churn.py --history 10`, covering all
+      nine sync commits that landed since `413eef71`: `f3260418`
+      (09-11), `8f38fdef` (09-12), `1d338f19` (09-13), `a079c9ad`
+      (09-14), `fe9879ee` (09-15), `eb59f280` (09-16), `6ed23bf6`
+      (09-17), `2fe12376` (09-18), `105a234a` (09-19). Every boundary
+      shows the identical restamp signature — `timestamp_only: 118`,
+      `{cgdc:63, cahaya:47, ydh:5, setapak:2, fydt:1}`, `content_changed:
+      0` — with one exception: the `413eef71` to `f3260418` boundary
+      (09-10/09-11) also added one brand-new `fydt` song (628 to 629
+      catalogue total), otherwise the same 118-song signature. Then
+      re-measured directly at HEAD (`105a234a`'s content, `_meta.
+      generatedAt` 2026-09-18T20:19:04Z, 629 songs, 5 distinct
+      `updatedAt` values total): the chronologically newest value is
+      still `2026-09-18T20:19:04Z`, shared by exactly **118** songs,
+      same source split `{cahaya:47, cgdc:63, fydt:1, setapak:2,
+      ydh:5}` — the 118 figure is re-confirmed, not assumed. (The
+      largest-by-*count* group is actually 418 songs at an OLDER
+      timestamp, 2026-09-07T21:08:31Z, split cdc:206/fydt:212 — it does
+      not sort to the top of "recent" because a newest-first sort goes
+      by timestamp, not group size; noted so a future reader does not
+      mistake 418 for the top-of-list count.)
+
+      **Possible second drift, checked rather than asserted: the sync
+      has NOT stopped, but there is a real gap since `105a234a`
+      (09-19).** No commit touches `assets/songs.json` on 2026-09-10 —
+      but `gh run list` shows that day's scheduled run
+      (`34447966563`) completed `success`, meaning it found no diff to
+      commit, not that it failed to run. 2026-09-20's scheduled run
+      (`35496958152`) DID generate a real diff (its own log: "1 file
+      changed, 140 insertions(+), 140 deletions(-)") but its `git push`
+      was rejected non-fast-forward ("! [rejected] main -> main (fetch
+      first)") because another commit landed on `main` between its
+      checkout and its push, so that day's refresh was computed but
+      never reached the repo — overall run `conclusion: failure`. As of
+      this check (2026-09-21 ~05:06 UTC) no run for today had appeared
+      yet at all, about 3 hours after the `0 2 * * *` (02:00 UTC)
+      schedule, though `gh api .../actions/workflows` reports the
+      workflow `"state":"active"` — worth the next iteration's step 0
+      re-checking rather than assuming either a fixed push race or a
+      stuck schedule. Independently re-verified (not just trusting the
+      tool's own summary): a separate agent re-derived Claim 1 from
+      three of the nine commit pairs by its own row-level JSON diff,
+      re-derived Claim 2 by its own grouping of HEAD's `updatedAt`
+      values, and independently re-ran the `gh run` / `git log` checks
+      for Claim 3 — all three **CONFIRMED**, no correction needed.
+
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
       was written ONLY on an explicit pause/stop/seek/seekOverall, never
@@ -8808,10 +8856,7 @@ has never seen this repo.
       hour-sized scope to redesign, but filed below so v3's audit isn't
       trusted past what it actually checks.
 
-      Pushed as `c8c9f976`. CI run `35548647342` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `c8c9f976`. CI run `35548647342` concluded `success`.
 - [x] **DONE 2026-09-21 — both `ACCOUNTED_FOR` and `ACCOUNTED_FOR_TEXT`
       in `tools/audit_biblexg_notes.py` are now edition-scoped, and
       `ACCOUNTED_FOR_TEXT` matches per-note, not per-chapter.** Did both
@@ -8880,10 +8925,7 @@ has never seen this repo.
       Tooling-only: no asset under `assets/` touched, no build, no
       deploy needed.
 
-      Pushed as `2a6f5702`. CI run `35553817141` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `2a6f5702`. CI run `35553817141` concluded `success`.
 
 ## P1 — Bible study correctness
 
@@ -16398,10 +16440,7 @@ has never seen this repo.
       foreground, all green (see this iteration's commit for the count).
       Checkbox stays open; the chart item spans many slices.
 
-      Pushed as `be27d1f9`. CI run `35504113254` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `be27d1f9`. CI run `35504113254` concluded `success`.
 
       **2026-09-20/21 slice — a dozen Judahite kings' `birthYear` held
       their accession year instead, three fathers therefore "born"
@@ -16508,10 +16547,7 @@ has never seen this repo.
 
       Checkbox stays open; the chart item spans many slices.
 
-      Pushed as `7d5161ad`. CI run `35515675165` had not concluded
-      inside this iteration's ~7-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `7d5161ad`. CI run `35515675165` concluded `success`.
 
       (Logged by the next iteration: `35515675165` concluded `success`
       — nothing to fix.)
@@ -16602,11 +16638,9 @@ has never seen this repo.
       in the foreground: **success**.
 
       Follow-up docs-only commit `e9321836` (this note) pushed; its own
-      CI run `35522198792` had not concluded inside this iteration's
-      watch budget (still `in_progress` at last check) — next
-      iteration's step 0 should check it before picking anything else.
-      (Logged by the next iteration: `35522552904` concluded `success`
-      — nothing to fix.)
+      CI run `35522198792` concluded `success`.
+      (Also logged by the next iteration: `35522552904` concluded
+      `success` — nothing to fix.)
 
       **2026-09-21 slice, landed after being stranded uncommitted by
       the iteration that built it** (see `queue:19043`'s third
@@ -16670,10 +16704,7 @@ has never seen this repo.
       trap this slice was stranded by). No `lib/` change, so no build
       and no deploy.
 
-      Pushed as `9cad9aff`. CI run `35530495568` had not concluded
-      inside this iteration's ~8-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `9cad9aff`. CI run `35530495568` concluded `success`.
 
       **Commit-message artifact, not a code defect**: the commit's
       prose body has a stray trailing `EOF` / `)` and one missing
@@ -17095,10 +17126,7 @@ has never seen this repo.
       Asset + code + test only, no version bump, no deploy. Checkbox
       stays open; the chart item spans many slices.
 
-      Pushed as `73f2208b`. CI run `35333416041` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `73f2208b`. CI run `35333416041` concluded `success`.
 
       **2026-09-18 slice — the chart said Enoch died. Scripture says he
       didn't.** `assets/bible_chronology.json` carried two contradictory
@@ -17234,10 +17262,7 @@ has never seen this repo.
       own guard rail. Checkbox stays open; the chart item spans many
       slices.
 
-      Pushed as `e12fde79`. CI run `35349603110` had not concluded inside
-      this iteration's ~6-minute watch budget (still `in_progress` at
-      last check, ~6 min after push) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `e12fde79`. CI run `35349603110` concluded `success`.
 
       **2026-09-19 slice — the app states two different BC years for the
       same person, on two different pages, and neither page said why.**
@@ -17320,15 +17345,13 @@ has never seen this repo.
       contested-band note is longer). Checkbox stays open; the chart
       item spans many slices.
 
-      Pushed as `31d84c66`. CI run `35359435072` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else. **Confirmed green on the
-      next iteration's step 0**: the remote was renamed to
-      `SuyangLiuPaul/Yahwehs-Words`; the old `SuyangLiuPaul/YsWords` path
-      still resolves via GitHub's rename redirect, so step 0 works either
-      way — both `daf95628` (run `35360103640`) and `31d84c66` (run
-      `35359435072`) concluded **success**.
+      Pushed as `31d84c66`. CI run `35359435072` concluded `success`.
+      **Confirmed on the next iteration's step 0**: the remote was
+      renamed to `SuyangLiuPaul/Yahwehs-Words`; the old
+      `SuyangLiuPaul/YsWords` path still resolves via GitHub's rename
+      redirect, so step 0 works either way — both `daf95628` (run
+      `35360103640`) and `31d84c66` (run `35359435072`) concluded
+      **success**.
 
       **2026-09-19 slice — the era strip names endpoints the bands do
       not have.** Same defect class as the Enoch/Adam/family-tree-offset
@@ -19249,10 +19272,7 @@ so the bundle-size answer stays on the record.
       Both suites (7 push-retry tests, 7 pull-guard tests) pass locally
       and are now CI gates.
 
-      Pushed as `5ff64133`. CI run `35511004260` had not concluded
-      inside this iteration's ~6.5-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `5ff64133`. CI run `35511004260` concluded `success`.
 
 ## P3 — known but blocked or deferred
 
@@ -19397,10 +19417,7 @@ so the bundle-size answer stays on the record.
       test-isolation flake, not confirmed root-caused (n=4 is evidence,
       not proof).
 
-      Pushed as `03c0926a`. CI run `35558966433` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check, ~13:57) — next iteration's step 0
-      should check it before picking anything else.
+      Pushed as `03c0926a`. CI run `35558966433` concluded `success`.
 
       `flutter analyze`: clean. Not deployed — tooling only, nothing
       user-visible changed.
