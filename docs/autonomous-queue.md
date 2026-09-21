@@ -19346,10 +19346,59 @@ so the bundle-size answer stays on the record.
       default so it never auto-backgrounds in the first place, rather
       than relying on a stage to correctly handle it after the fact.
 
-      Pushed as `1f91bdf5`. CI run `35538933875` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check, ~07:37) — next iteration's step 0
-      should check it before picking anything else.
+      Pushed as `1f91bdf5`. CI run `35538933875` confirmed `success`
+      (checked 2026-09-21).
+
+      **2026-09-21, in-repo half landed — the out-of-repo half (the
+      loop's own prompt/orchestration) is still open, so this item stays
+      unchecked.** Built `tools/run_test_chunks.py` + `test/
+      test_run_test_chunks.py`, wired as two new CI gates
+      (`--check`, plus the unit tests) right after the queue-parser
+      steps, `flutter test --reporter expanded` left byte-identical.
+      Discovers `test/**/*_test.dart`, partitions into N chunks by
+      greedy largest-first bin-packing on each file's **byte size** —
+      stated plainly as a heuristic *proxy* for runtime, not a
+      guarantee, since no per-file runtime was ever measured — and
+      `--chunk I --of N` runs one chunk in the foreground via `flutter
+      test <files> --reporter compact`, printing `CHUNK I/N: PASS|FAIL`.
+      `--check` asserts full coverage with no duplicate and no empty
+      chunk; it needs no `flutter` invocation, so it runs on every CI
+      push. Deliberately does not pin the suite's file count or runtime
+      anywhere the tree can drift under it — this item's own text
+      already shows a "~11.5 min" figure and a "120 files" figure going
+      stale.
+
+      Dogfooded on the real suite at `--of 6`. The refuter (see this
+      item's standing instruction to attack claim-heavy changes) caught
+      an overclaim before commit: the first `--chunk 0` invocation was
+      run *without* an explicit Bash-tool `timeout`, exceeded the
+      harness's 120s default, and auto-backgrounded — the same trigger
+      this whole item is about. That attempt was killed (`TaskStop`,
+      never counted) and redone with an explicit 600000ms timeout,
+      after which all 6 chunks completed in the foreground with their
+      exit code checked. So the accurate claim is narrower than "no
+      chunk had to be backgrounded": **the tool's partition alone does
+      not keep a chunk under the harness's default timeout — the caller
+      still has to pass an explicit `timeout` per chunk, as this item's
+      own dogfooding instruction already specified.** The tool removes
+      re-deriving *which files go in which chunk*; it does not remove
+      the need to invoke each chunk with an explicit timeout, which is
+      exactly the discipline the four recurrences above show failing
+      under time pressure. That gap is still open and still outside
+      this repo's reach (loop prompt/orchestration).
+
+      Chunk 2 failed once on `sermon_list_audio_signal_test.dart`'s
+      `MissingPluginException` (an audioplayers `EventChannel`, not
+      touched by this change), then passed on 3 further runs of the
+      *identical* file composition, and the same file passes standalone
+      in isolation. Composition was held constant across all 4 chunk-2
+      runs, so the 1-in-4 failure is not attributable to this tool's
+      grouping — consistent with a pre-existing intermittent
+      test-isolation flake, not confirmed root-caused (n=4 is evidence,
+      not proof).
+
+      `flutter analyze`: clean. Not deployed — tooling only, nothing
+      user-visible changed.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
@@ -19389,10 +19438,8 @@ so the bundle-size answer stays on the record.
       it — the test against the real queue only asserts depth balances
       and no open item is reported inside a details block.
 
-      Pushed as `c37988f7`. CI run `35543663693` had not concluded
-      inside this iteration's ~6-minute watch budget (still
-      `in_progress` at last check) — next iteration's step 0 should
-      check it before picking anything else.
+      Pushed as `c37988f7`. CI run `35543663693` confirmed `success`
+      (checked 2026-09-21).
 
 - [x] **EC018 / EC019 sermon transcripts — T7 checked, DONE 2026-09-05,
       open question moved to the user.** T7 (`/Volumes/T7/02 Church &

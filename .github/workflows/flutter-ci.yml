@@ -271,6 +271,18 @@ jobs:
       - name: Queue open-items parser unit tests
         run: python3 test/test_queue_open_items.py
 
+      # Coverage gate for tools/run_test_chunks.py (added 2026-09-21, see
+      # queue:19259). This is a local/loop foreground-chunking tool, not a
+      # CI replacement — it never replaces the whole-suite `flutter test`
+      # step below. `--check` only asserts the partition covers every
+      # discovered test file exactly once, with no duplicates and no
+      # empty chunk; no `flutter` invocation needed, so it's a cheap gate.
+      - name: Test-chunk partition coverage check
+        run: python3 tools/run_test_chunks.py --check
+
+      - name: Test-chunk partitioner unit tests
+        run: python3 test/test_run_test_chunks.py
+
       - name: Test
         run: flutter test --reporter expanded
 
