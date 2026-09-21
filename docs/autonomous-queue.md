@@ -8767,20 +8767,64 @@ has never seen this repo.
       in v2-tr — the audit script and the typography fix drifted apart.
       Filed below.
 
-- [ ] **`tools/audit_biblexg_notes.py --edition v2` reports 4 unexplained
-      diffs that predate this session** (路加福音 9:5, 約翰福音 12:25,
-      加拉太書 3:7, 加拉太書 3:9 — all "we have MORE notes than the
-      publisher"), contradicting its own docstring's "0 unexplained as
-      of 2026-08-11." Root cause: `tools/audit_printed_typography.py`
-      wrapped these 4 in `<note:>` in `assets/biblexg-v2-tr.json`
-      afterwards (per the comment at `test/
-      biblexg_verse_integrity_test.dart:501-509`), and `ACCOUNTED_FOR`
-      in `audit_biblexg_notes.py` was never given the matching 4 entries.
-      Cosmetic — the asset is already correct, only the audit tool's
-      bookkeeping is stale — but it means the tool no longer proves what
-      its own docstring claims. Add the 4 entries to `ACCOUNTED_FOR`,
-      citing the printed-typography ruling, and fix the docstring's
-      stale "0 of either" claim.
+- [x] **DONE 2026-09-21 — `tools/audit_biblexg_notes.py --edition v2` now
+      exits 0.** The item's own prescription undercounted: a fresh run
+      found **7** unexplained, not 4 — 4 in Pass 1 (counts, keyed by
+      verse in `ACCOUNTED_FOR`) and a separate **3** in Pass 2 (text, keyed
+      by chapter in `ACCOUNTED_FOR_TEXT`; 加拉太書 3:7+3:9 collapse into
+      one chapter key there). Added all 7 — four `ACCOUNTED_FOR` rows and
+      three `ACCOUNTED_FOR_TEXT` rows — citing commit `23ca186e`
+      (2026-08-12, confirmed by `git log`/`git show`: it wraps exactly
+      these 4 spans, and nothing else, in `<note:…>` in
+      `assets/biblexg-v2-tr.json`) and the printed 二版's per-occurrence
+      12pt note vs 17pt scripture type size. Docstring's two stale
+      claims fixed: the "0 unexplained as of 2026-08-11" line and the
+      "6 chapters per edition" line (now tw 9 chapters / cn 6 —only tw
+      moved; cn was never touched by this class). Added a 4th "Known
+      non-defects" bullet for this class.
+
+      Also corrected: **the date was wrong, and not where the item
+      claimed.** This item's own text above never stated a repair date
+      (checked — no "2026-09-03" appears near it). The wrong date lived
+      in `docs/p0-drift-2026-09-08.md:25` ("moved into `<note:>` on
+      2026-09-03"); fixed to 2026-08-12 there.
+
+      **Side effect on `--edition v3`, found by the refuter, not by the
+      plan:** `ACCOUNTED_FOR`/`ACCOUNTED_FOR_TEXT` are keyed by
+      `(lang, verse-or-chapter)`, not by edition, so these entries also
+      suppress the same 4 verses under `--edition v3` — v3's own
+      unexplained count moved too (Pass 1: 724→720; total FAIL:
+      1875→1868), which the plan had assumed would stay put. Checked
+      this is not masking a v3-specific defect for these exact 4 spans:
+      `assets/biblexg-v3-tr.json` already carries the identical
+      `<note:…>` wrapping at the same 4 verses. But `ACCOUNTED_FOR_TEXT`
+      is chapter-granular, and v3's 路加福音 9 / 約翰福音 12 / 加拉太書 3
+      each carry *other*, still-open v3-only note differences (a richer
+      2,209-footnote apparatus these 3 chapters happen to touch) that
+      the new chapter-level reason now also swallows as "ok" alongside
+      the 4 genuinely-settled ones. Pre-existing tool architecture (the
+      same is already true of the '哥林多前書 15' entry shared by both
+      editions) — not introduced by this edit, out of this item's
+      hour-sized scope to redesign, but filed below so v3's audit isn't
+      trusted past what it actually checks.
+- [ ] **`ACCOUNTED_FOR_TEXT` in `tools/audit_biblexg_notes.py` is
+      chapter-granular and edition-agnostic, so a reason recorded for
+      one edition's difference in a chapter silently also explains away
+      any *other*, unrelated note-text differences the OTHER edition has
+      in that same chapter.** Found 2026-09-21 while closing the item
+      above: v3's 路加福音 9, 約翰福音 12 and 加拉太書 3 each have several
+      v3-only note differences (from the 2,209-footnote
+      `adopt_official_ljk.py` apparatus) beyond the 4 spans this queue
+      already settled for v2/v3 alike, and now all of them report "ok"
+      under those 3 chapters' single reason string. Nothing is asserted
+      falsely — no reason text claims to cover more than it does — but
+      `--edition v3`'s "unexplained" tally can no longer be read as a
+      complete census for these 3 chapters. Needs either
+      edition-scoping the two dicts (key on `(edition, lang, …)`) or
+      moving `ACCOUNTED_FOR_TEXT` to per-note rather than per-chapter
+      matching before v3's audit is used to certify anything. Low
+      urgency: v3 is already known broadly unsettled (219 chapters
+      differ) and not yet the shipped edition.
 
 ## P1 — Bible study correctness
 

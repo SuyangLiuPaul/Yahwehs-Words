@@ -34,7 +34,7 @@ against the count of `<note:…>` markers in our shipped
                       scripture. This is the defect worth finding.
   ours > publisher  → we invented one.
 
-Result as of 2026-08-11 — 0 of either that is not accounted for below.
+Result as of 2026-09-21 — 0 of either that is not accounted for below.
 
 **Pass 2 — text, per chapter.** Pass 1 says a note is there; it does not
 say it points anywhere near the right place. A wrong cross-reference is
@@ -54,9 +54,11 @@ Both sides are normalised by stripping HTML (`<mark class="hebrew">`,
 and removing whitespace. Neither carries meaning in a citation, and
 leaving them in reports 33 differences that are all markup.
 
-Result as of 2026-08-11 — 1,134/1,135 tw and 1,133/1,134 cn note
-strings, **6 chapters per edition whose text differs, and not one of
-them is a defect of ours.** All are listed in ACCOUNTED_FOR_TEXT below.
+Result as of 2026-09-21 — tw 1,138/1,135 note strings (9 chapters
+differ), cn 1,133/1,134 note strings (6 chapters differ), and not one
+of them is a defect of ours. All are listed in ACCOUNTED_FOR_TEXT
+below. (The tw side moved from the 2026-08-11 baseline of 1,134/1,135,
+6 chapters — see the fourth bullet below; cn did not move.)
 
 Known non-defects, all verified individually rather than waved through:
 
@@ -72,6 +74,16 @@ Known non-defects, all verified individually rather than waved through:
     verse texts, and some of those moved a cross-reference with them —
     哥林多前書 15:11, 馬太福音 7:11 / 路加福音 11:9. Adopting them is the
     open question in §四之二 of the publisher letter, not a repair.
+  • An editor's gloss the printed 2025 第二版 sets in 12pt note type
+    while the scripture around it is 17pt, per-occurrence (加拉太書 3:7
+    and 3:9 set 稱義 at 12pt while 3:8 and 3:11 set the same two
+    characters as 17pt body) — commit `23ca186e` (2026-08-12) wrapped
+    all four spans (路加福音 9:5, 約翰福音 12:25, 加拉太書 3:7, 3:9) in
+    `<note:…>` in `assets/biblexg-v2-tr.json` on that evidence. tw-only:
+    the publisher's own electronic tw-*.json carries none of these
+    four, because it is not set from the printed page; cn already had
+    the equivalent wording as a note before v2 shipped, so this class
+    does not touch the cn figures above.
 
 Usage:  python3 tools/audit_biblexg_notes.py [--edition v2|v3] [--refresh]
 
@@ -182,6 +194,20 @@ ACCOUNTED_FOR = {
     ('cn', '马太福音 23:36'): 'empty <cite></cite>, discarded on purpose',
     ('cn', '马太福音 27:50'): 'empty <cite></cite>, discarded on purpose',
     ('cn', '提摩太后书 3:3'): 'empty <cite></cite>, discarded on purpose',
+    ('tw', '路加福音 9:5'): 'printed 二版 sets our gloss 「作為警告。」 in '
+                           '12pt note type against 17pt scripture around '
+                           'it; commit 23ca186e wrapped it in <note:> on '
+                           'that evidence — publisher tw has none here',
+    ('tw', '約翰福音 12:25'): 'printed 二版 sets our gloss 「保留」 in 12pt '
+                             'note type against 17pt scripture around it; '
+                             'commit 23ca186e wrapped it in <note:> on '
+                             'that evidence — publisher tw has none here',
+    ('tw', '加拉太書 3:7'): 'printed 二版 sets 「稱義」 at 12pt here while '
+                           '3:8/3:11 set the same two characters at 17pt '
+                           'body; commit 23ca186e wrapped it in <note:> '
+                           'on that evidence — publisher tw has none here',
+    ('tw', '加拉太書 3:9'): 'same ruling as 3:7 — 「稱義」 at 12pt, commit '
+                           '23ca186e — publisher tw has none here',
 }
 
 # Chapters whose note TEXT differs from the publisher's current file, each
@@ -221,6 +247,17 @@ ACCOUNTED_FOR_TEXT = {
     ('cn', '雅各书', '2'): '2:8 — trailing 「，」; upstream drops it, we keep it',
     ('tw', '啟示錄', '7'): '7:17 — trailing 「。」; upstream drops it, we keep it',
     ('cn', '启示录', '7'): '7:17 — trailing 「。」; upstream drops it, we keep it',
+    # Printed 二版's 12pt note type vs 17pt scripture — commit 23ca186e
+    # (2026-08-12), see the fourth "Known non-defects" bullet above.
+    # tw-only: publisher tw has none of these; cn already carried the
+    # equivalent note before v2 shipped, so cn's figures do not move.
+    ('tw', '路加福音', '9'): '9:5 — 「作為警告。」 at 12pt in the print, '
+                            'wrapped in <note:> by 23ca186e',
+    ('tw', '約翰福音', '12'): '12:25 — 「保留」 at 12pt in the print, '
+                             'wrapped in <note:> by 23ca186e',
+    ('tw', '加拉太書', '3'): '3:7 and 3:9 — 「稱義」 at 12pt in the print '
+                            '(both occurrences), wrapped in <note:> by '
+                            '23ca186e',
 }
 
 
