@@ -9245,7 +9245,21 @@ has never seen this repo.
       only), so nothing is expected to fail; the next iteration's step 0
       should confirm this run's conclusion rather than assume it.
 
-- [ ] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
+- [ ] **`026033010`'s Traditional-Chinese text opens its quotation with
+      `「` but closes it with `』` (the inner-quote closer) instead of
+      `」`.** Found as a side-effect of the speaker-attribution
+      classification pass above, by an independent refuter agent
+      checking a different thing entirely — nothing in this repo's
+      audits currently checks bracket-style consistency (`「」` vs
+      `『』`) at the pairing level, only nesting depth. Text: `「人子啊！
+      你要對以色列家説：你們常説，我們的過犯罪惡在我們身上，我們必因此消
+      滅，怎能存活呢？』`. `assets/cuvs-yhwh-tr.json` is FROZEN (publisher
+      declined corrections, 2026-09-02) — this cannot be fixed in the
+      asset. Worth a wider one-off scan of both frozen files for the same
+      `「…』` / `『…」` cross-bracket-close pattern before deciding whether
+      it's one verse or a class; not done this pass.
+
+- [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued
       backlog of the same known-benign pattern, not 304 fresh
@@ -9295,6 +9309,52 @@ has never seen this repo.
       since both editions repeat the same set), sort each into an
       existing `EXPLAINED` category or a new one, and expand the table —
       one careful pass, not a fan-out, since a wrong classification here
+      would misfile the one real defect, if any exists, as benign.
+
+      **2026-09-22 — done, down to rc=1/6-UNEXPLAINED (was 304).** Read
+      every one of the 141 remaining unique ids in book order (Leviticus
+      → Numbers → the small books → Jeremiah → Ezekiel) against its full
+      verse text, not just the truncated audit context, and sorted each
+      into an `EXPLAINED` category: extended the existing 4 (third-party
+      relay; divine messenger formula, now explicitly covering the "word
+      of Yahweh came to me" variant and a human king's identical formula
+      for himself, e.g. `便哈達如此説：`; citation formula; instruction-to-
+      speak) and added 3 new named ones the old table had no bucket for —
+      a speaker's own "聽我説：" rhetorical address to listeners (7 ids), a
+      poetic oracle's third-person self-reference mid-speech (2 ids, e.g.
+      Balaam's `比珥的兒子巴蘭説：`), and a speaker citing their own earlier
+      words in the first person (4 ids). `EXPLAINED` grew from 39 to 180
+      ids.
+
+      Left UNEXPLAINED on purpose, per the "don't misfile the one real
+      defect" rule above:
+        * `023040006` (Isaiah 40:6, both editions) — a 3-way dialogue
+          (`有人聲説：「你喊叫吧！」有一個説：「我喊叫甚麼呢？」「説：凡有
+          血氣的盡都如草…」`) whose final `説：` has no clear on-screen
+          subject; could not confidently place it. Needs a closer look,
+          ideally comparing against another edition's structure for this
+          verse.
+        * The 4 witness-diff ids (`004026004`, `011018021`, `012009032`,
+          `012010006`) — deliberately not adjudicated. They live in the
+          FROZEN `assets/cuvs-yhwh*.json` (publisher declined
+          corrections, 2026-09-02), so even a confirmed defect there is
+          the owner's to repair, not this loop's. `011018021` in
+          particular reads like a real one (`…就當順從巴力。▮眾民一言不
+          答。` looks like narration trapped inside Elijah's quotation) —
+          left as a filed candidate, not resolved.
+
+      A general-purpose refuter agent independently re-read all 7 ids in
+      the two brand-new smallest categories plus a 12-id Ezekiel sample
+      from the extended instruction-to-speak bucket, hunting specifically
+      for a trapped clause that narrates a DIFFERENT speaker's words
+      rather than the same speaker's own — found zero disputes. It also
+      flagged, unprompted, that `026033010` opens its quote with `「` but
+      closes with `』` (wrong bracket style, not a speaker-attribution
+      defect) — filed as its own item below since nothing was checking
+      for that.
+
+      Not touched: any Dart file (tool + docs only, per this item's own
+      guard rails) or either `assets/cuvs-yhwh*.json` (read-only).
       would misfile the one real defect, if any exists, as benign.
 
 - [ ] **2026-09-21 audit re-run: `audit_ljk_tr_forms.py`'s class C

@@ -40,19 +40,68 @@ EDITIONS = (
 # Verse ids where an attribution sits inside a quotation and is CORRECT: the
 # trapped 說： is spoken BY the current speaker — reporting what someone else
 # said, quoting scripture, or issuing an instruction — rather than being the
-# narrator attributing a reply. All 39 were read individually on 2026-08-24.
+# narrator attributing a reply. 180 were read individually: the first 39 on
+# 2026-08-24, the remaining 141 (of a 142-verse backlog; one, 023040006, is
+# left UNEXPLAINED — see queue:9248) on 2026-09-22.
 EXPLAINED = {
-    # The speaker relays what a third party said (「我聽見你父親…說：」).
-    '001027006', '001050004', '001050016', '002019003', '005001006',
-    '005001034', '005002026', '005003023', '029002017', '042024044',
+    # The speaker relays what a third party said (「我聽見你父親…說：」),
+    # including a prophet quoting an accusation or thought back at its own
+    # speakers (「你們說：我們要像外邦人…」) and a letter's addressee list
+    # standing in for its (separately quoted) contents.
+    '001027006', '001050004', '001050016', '002019003', '004022010',
+    '004023007', '004024012', '005001006', '005001034', '005002026',
+    '005003023', '026020032', '026020049', '029002017', '042024044',
     '044002029', '044009013', '044025024', '045010006',
-    # A prophet relays the divine-speech formula inside his own quotation.
-    '002008020', '037001013', '037002002', '037002014', '037002021',
-    '038004006', '044021011', '045014011',
-    # A citation formula (經上記著說 / 摩西寫著說) inside a quotation.
-    '040002005', '040022043', '040023029', '042020028', '044023005',
-    # An instruction to speak, inside the speaker's own words.
+    # A prophet relays the divine-speech formula inside his own quotation
+    # (雅偉/主雅偉/神如此說, 雅偉的話臨到我說), including the same formula
+    # used reflexively by a human king through his own messenger — same
+    # shape, not a claim of divinity (011020002, 011020005: 便哈達如此說).
+    '002008020', '011013002', '011013021', '011020002', '011020005',
+    '012007001', '012009012', '014020015', '014024020', '023038001',
+    '023038005', '024013009', '024019015', '024024005', '024026002',
+    '024027002', '024027016', '024028002', '024028011', '024028013',
+    '024029004', '024029010', '024029021', '024029025', '024030002',
+    '024032006', '024032014', '024033002', '024033020', '024034002',
+    '024034013', '024035013', '024035018', '024037007', '024038002',
+    '024038017', '024039016', '024042009', '024044002', '024044011',
+    '024045002', '026007002', '026007005', '026011005', '026016059',
+    '026020003', '026020027', '026020039', '026020040', '026021009',
+    '026024006', '026024020', '026028002', '026030002', '026034002',
+    '026034011', '026034017', '026034020', '026036022', '026036033',
+    '026036037', '026037009', '026038014', '026039001', '026043018',
+    '026044009', '037001002', '037002002', '037002011', '037002014',
+    '037002021', '038004006', '044021011', '045014011',
+    # A citation formula (經上記著說 / 摩西寫著說 / 一條律例乃是這樣說)
+    # inside a quotation.
+    '004019002', '040002005', '040022043', '040023029', '042020028',
+    '044023005',
+    # An instruction to speak, inside the speaker's own words — mostly
+    # 「你曉諭/吩咐/告訴…說：」 handing Moses or a prophet the exact wording
+    # to deliver to a third party.
+    '003001002', '003004002', '003007023', '003007029', '003012002',
+    '003015002', '003017008', '003017014', '003018002', '003019002',
+    '003020002', '003021001', '003021017', '003022002', '003022018',
+    '003023002', '003023010', '003023024', '003023034', '003025002',
+    '003027002', '004005006', '004005012', '004006002', '004006023',
+    '004008002', '004009010', '004015002', '004015018', '004018026',
+    '004033051', '004034002', '004035010', '006020002', '011012023',
+    '011020009', '012004013', '012020005', '014018025', '023022015',
+    '024021003', '024025030', '026006011', '026017012', '026021028',
+    '026022024', '026028012', '026031002', '026032002', '026033002',
+    '026033010', '026036001', '026037004', '026039017', '038002004',
     '042011002', '042013032',
+    # The current speaker addresses listeners with "hear me, [I] say:"
+    # (聽我説：/當聽我説：) before continuing their OWN speech — a
+    # rhetorical formula, not an attribution to someone else.
+    '004016008', '004020010', '008002008', '014013004', '014015002',
+    '014020020', '014029005',
+    # An oracle's poetic convention of naming the speaker in the third
+    # person mid-poem before continuing their own words (巴蘭説：/
+    # 以色列的美歌者説：) — self-reference, not narrator misattribution.
+    '004024015', '010023001',
+    # The current speaker quotes their own earlier or parallel words in
+    # the first person ("我說：…") — trivially correct by definition.
+    '004023026', '023038010', '026016006', '026023043',
     # Revelation's letter formula, 「你要寫信給…的使者，說：「那…的，說：」.
     # The nested 「-inside-「 there is a separate, already-filed level-marking
     # item; it is not a misattribution.
