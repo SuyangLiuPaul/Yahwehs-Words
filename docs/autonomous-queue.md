@@ -253,6 +253,25 @@ reported. Work these top-down before P2.
       values, and independently re-ran the `gh run` / `git log` checks
       for Claim 3 — all three **CONFIRMED**, no correction needed.
 
+      **2026-09-21, the "worth the next iteration's step 0 re-checking"
+      follow-up above: checked, answer is the push race fix works and
+      the schedule is not stuck.** Today's scheduled run `35573996955`
+      logged `✓ pushed` via `scripts/push_songs_snapshot.py` and landed
+      `53e647a9` on `main`. Nothing further to chase on that thread.
+
+      **2026-09-21: added a characterization test for the sort code
+      this item is about**, `test/songs_sort_order_test.dart`. It pins
+      today's behaviour (default `'recent'`, no persistence across a
+      remount, and the ordering invariant each of the four sort keys'
+      doc comment on `_sort` already states) without picking either
+      option above — whichever the user eventually chooses will have
+      to change exactly this code, and now does so as a visible red
+      assertion rather than silently. Proven able to fail: reversed the
+      `'title'` comparator by hand, confirmed the test goes red, then
+      restored the file (`git diff` empty before committing). Still
+      blocked on the user for the actual product decision — not
+      ticked.
+
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
       was written ONLY on an explicit pause/stop/seek/seekOverall, never
