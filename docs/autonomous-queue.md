@@ -9355,7 +9355,12 @@ has never seen this repo.
 
       Not touched: any Dart file (tool + docs only, per this item's own
       guard rails) or either `assets/cuvs-yhwh*.json` (read-only).
-      would misfile the one real defect, if any exists, as benign.
+
+      Pushed as `faf565a7`. CI run `35649792107` was still `in_progress`
+      after the ~6-minute watch budget — the audit tool runs standalone
+      Python, not through `flutter analyze`/`flutter test`, and no Dart
+      file changed, so nothing is expected to fail; the next iteration's
+      step 0 should confirm this run's conclusion rather than assume it.
 
 - [ ] **2026-09-21 audit re-run: `audit_ljk_tr_forms.py`'s class C
       ("for the translator", judgement-call Traditional-glyph choices,
