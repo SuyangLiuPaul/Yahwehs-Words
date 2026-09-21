@@ -19503,6 +19503,8 @@ so the bundle-size answer stays on the record.
       verdict was "claim survives," with the two above already softened
       to match.
 
+      Pushed as `20b56e60`. CI run `35570903801` confirmed `success`.
+
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
       (`queue:14246`'s note, whose own line number will drift — grep
