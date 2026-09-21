@@ -19663,6 +19663,50 @@ so the bundle-size answer stays on the record.
 
       Pushed as `5ff64133`. CI run `35511004260` concluded `success`.
 
+- [x] **Tier 5 tooling: `Flutter CI` failed outright before a single test
+      ran — FIXED 2026-09-22.** Run `35614939558` attempt 1 (repo
+      `SuyangLiuPaul/Yahwehs-Words`, head `5e3843ee`) failed the whole
+      job with `Failed to download PDFium: ... pdfium-linux-x64.tgz`;
+      attempt 2 of the same commit succeeded, so the underlying commit
+      was fine and the blip was transient (upstream non-200 on one GET,
+      cause not otherwise diagnosed). `pdfium_dart` 0.2.5's
+      `hook/build.dart` does exactly one un-retried
+      `http.Client().get()` for that tgz and throws on any non-200, with
+      no cache between CI runs to make the miss rare.
+
+      **Fix**: new `Pre-place PDFium native asset` step in
+      `flutter-ci.yml`, right before `Test`. Guards on `pubspec.lock`'s
+      pinned `pdfium_dart` version (`0.2.5` today) before doing
+      anything — the release tag `chromium/7811` this step downloads
+      from is hardcoded per pdfium_dart version, not derived from the
+      lockfile, so **whoever bumps `pdfium_dart` past 0.2.5 must
+      re-derive that tag and update this step**, or a version mismatch
+      just prints a `::warning::` and falls back to the hook's own
+      unretried download (loud skip, not a silent break). On a version
+      match it `curl --retry 5`s the same tgz straight into
+      `.dart_tool/hooks_runner/shared/pdfium_dart/build/chromium_7811/
+      linux-x64/libpdfium.so`, which is `input.outputDirectoryShared`'s
+      resolved path — the hook's own `if (await output.exists()) return;`
+      guard then makes its download a no-op. Retries the download only;
+      `flutter test` itself is never wrapped in a retry (that would mask
+      genuine flakes and risk the 15-minute job timeout on two ~7-minute
+      attempts).
+
+      This item is entangled with `queue:19136` below (a loop stage
+      wrote this exact fix at 01:58 the same morning and ended the turn
+      with it uncommitted, not because of a backgrounded `flutter test`
+      this time but because the stage simply stopped after editing the
+      workflow) — see that item's newest recurrence note for the
+      process side; this entry is the CI-fix side.
+
+      Verified against the real tree, not asserted: `pubspec.lock` still
+      pins `0.2.5`; the new step sits at line 314, immediately before
+      `Test` at line 334; `timeout-minutes: 15` unchanged. `flutter
+      analyze` clean (no Dart touched). Full `flutter test` run
+      foreground (via `TaskOutput` blocking on the harness's
+      auto-backgrounded call, not a stage-ending background hand-off —
+      see `queue:19136`'s own lesson): 3505 tests, 1 skipped, exit 0.
+
 ## P3 — known but blocked or deferred
 
 - [ ] **This loop's own tooling defect: `flutter test` backgrounded
@@ -19869,6 +19913,24 @@ so the bundle-size answer stays on the record.
       to match.
 
       Pushed as `20b56e60`. CI run `35570903801` confirmed `success`.
+
+      **Recurred a fifth time, 2026-09-22 ~01:54–01:58.** That hour's
+      stage implemented the PDFium CI hardening (see the Tier-5 item
+      above this section, "`Flutter CI` failed outright before a single
+      test ran") — a workflow-only change, no `flutter test` involved —
+      and ended the turn with `.github/workflows/flutter-ci.yml` dirty
+      and nothing committed. Different trigger from the first four
+      recurrences (no background test call to blame this time; the
+      stage just stopped after the edit), but the same shape: a
+      finished, verified change left uncommitted in a shared checkout.
+      Unlike the 2026-09-20/21 recurrences, this one cost only one
+      iteration rather than risking a cross-session clobber, because
+      `git status` showed exactly one dirty path with a matching mtime
+      and no untracked files — there was no ownership ambiguity to
+      untangle before landing it. Still filed here rather than treated
+      as one-off: the underlying gap (a stage ending its turn before
+      committing work it already finished) is unchanged and still
+      outside this repo's reach.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect

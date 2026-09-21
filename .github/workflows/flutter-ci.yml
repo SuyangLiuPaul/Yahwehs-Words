@@ -283,6 +283,54 @@ jobs:
       - name: Test-chunk partitioner unit tests
         run: python3 test/test_run_test_chunks.py
 
+      # 2026-09-22: pre-place PDFium's native asset before `flutter test`
+      # triggers its build hook. Run 35614939558 failed the whole suite
+      # before a single test ran, with `Failed to download PDFium: ...
+      # pdfium-linux-x64.tgz` — pdfium_dart 0.2.5's hook/build.dart does ONE
+      # unretried `http.Client().get()` for that tgz (hook/build.dart:52-55)
+      # and throws on any non-200. The release still had the asset when
+      # checked the same day via the GitHub API, and the failing commit was
+      # docs-only with a green parent on the same tree — an upstream blip,
+      # not a deletion, and the first failure in the last 100 runs of this
+      # workflow.
+      #
+      # The hook's own guard, `if (await output.exists()) return;`
+      # (hook/build.dart:45), makes the download a no-op once the file is
+      # there. `input.outputDirectoryShared` resolves to
+      # `.dart_tool/hooks_runner/shared/pdfium_dart/build/` — confirmed
+      # against this repo's own local tree — under
+      # `chromium_7811/linux-x64/libpdfium.so` for this runner's target
+      # (hook/build.dart:17-19, 108-113). Nothing in this workflow caches
+      # `.dart_tool` between runs, so this step re-fetches every run same as
+      # the hook would; the only difference is retry.
+      #
+      # The release tag `chromium/7811` is hardcoded per pdfium_dart version,
+      # not derived from pubspec.lock, so it goes stale the moment
+      # pdfium_dart is bumped past 0.2.5. The version check below turns that
+      # into a loud skip (the hook's own unretried download still runs)
+      # rather than a silent no-op or a break of its own — whoever bumps the
+      # dependency needs to re-derive the tag and update this step, not
+      # have CI quietly stop protecting against this blip.
+      - name: Pre-place PDFium native asset (retry the upstream download)
+        run: |
+          set -e
+          LOCKED=$(awk '/^  pdfium_dart:$/{f=1} f==1 && /^    version:/{print; exit}' pubspec.lock | sed -E 's/.*"(.*)".*/\1/')
+          if [ "$LOCKED" != "0.2.5" ]; then
+            echo "::warning::pdfium_dart is locked at '$LOCKED', not the 0.2.5 this step was written for (release tag chromium/7811 is hardcoded per-version in the hook). Skipping pre-place; the hook's own unretried download will run instead."
+            exit 0
+          fi
+          DEST_DIR=".dart_tool/hooks_runner/shared/pdfium_dart/build/chromium_7811/linux-x64"
+          DEST="$DEST_DIR/libpdfium.so"
+          mkdir -p "$DEST_DIR"
+          TMP=$(mktemp -d)
+          curl -fL --retry 5 --retry-all-errors --retry-delay 5 \
+            -o "$TMP/pdfium-linux-x64.tgz" \
+            "https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F7811/pdfium-linux-x64.tgz"
+          tar -xzf "$TMP/pdfium-linux-x64.tgz" -C "$TMP" lib/libpdfium.so
+          mv "$TMP/lib/libpdfium.so" "$DEST"
+          rm -rf "$TMP"
+          echo "Pre-placed $DEST"
+
       - name: Test
         run: flutter test --reporter expanded
 
