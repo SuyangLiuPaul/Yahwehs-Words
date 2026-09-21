@@ -85,6 +85,36 @@ void main() {
       messenger.setMockMethodCallHandler(
           MethodChannel(name), (call) async => null);
     }
+
+    // Each `AudioPlayer()` ALSO opens a per-instance EventChannel named
+    // with a random uuid — `xyz.luan/audioplayers/events/<uuid>` — that
+    // the three fixed names above cannot predict or pre-register. Its
+    // 'listen' call throws MissingPluginException from inside
+    // `EventChannel.receiveBroadcastStream`'s own `onListen`, which
+    // reports it straight to `FlutterError.reportError` rather than
+    // through the stream's `onError` — so it lands async, on whichever
+    // test happens to be running when it fires, and failed exactly one
+    // run in five (`docs/autonomous-queue.md`, the run_test_chunks
+    // dogfooding note) purely on that timing. `allMessagesHandler`
+    // sees every outbound channel name, so it can recognise the shape
+    // and answer it the same way `setMockMethodCallHandler` above
+    // answers the three fixed channels — a real encoded success(null)
+    // envelope, not a bare null (a bare null reply is itself what
+    // decodes back into MissingPluginException).
+    const audioEventsPrefix = 'xyz.luan/audioplayers/events/';
+    const codec = StandardMethodCodec();
+    messenger.allMessagesHandler = (channel, handler, message) {
+      if (handler == null && channel.startsWith(audioEventsPrefix)) {
+        return Future<ByteData?>.value(codec.encodeSuccessEnvelope(null));
+      }
+      if (handler != null) return handler(message);
+      return messenger.delegate.send(channel, message);
+    };
+  });
+
+  tearDownAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .allMessagesHandler = null;
   });
 
   // ── 1. The claim is derived, not written down ──────────────────

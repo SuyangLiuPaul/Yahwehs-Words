@@ -106,6 +106,30 @@ Highest tier since 2026-08-24. Anything the user hit on the phone, the
 iPad, the Mi Pad or the web build. Crash reports mailed in count as
 reported. Work these top-down before P2.
 
+- [x] **2026-09-21 FIXED (already landed before this queue entry existed)
+      — a prod, user-device crash on boot: v1.6.28, iOS home-screen web
+      app, "Null check operator used on a null value" inside the
+      engine's `MultiEntriesBrowserHistory.tearDown()`.** Filed
+      retroactively — `a7bd1ace` ("web: start the engine in
+      single-entry history") fixed this and `docs/autonomous-queue.md`
+      had no record of it at all; grep for `MultiEntriesBrowserHistory`
+      only found `queue:12487`, inside the unrelated Forward/`.router`
+      item. Fix + regression coverage: `a7bd1ace`,
+      `test/web_history_seed_test.dart`. Landed by the concurrent
+      human session, not this loop.
+
+      **Verified NOT deployed anywhere as of this entry**: `curl`ed
+      `dev--yswords.netlify.app`, `qat--yswords.netlify.app` and
+      `yswords.netlify.app` — the seed marker `START THE ENGINE IN
+      SINGLE-ENTRY` is absent from all three `index.html`; all three
+      still served the pre-fix v1.6.28 build. Deliberately **not**
+      deployed by this loop: the human session that authored `a7bd1ace`
+      has cut a release after every one of its own feature commits
+      today (`e95dc34f`→`b2a8093e`, `9ce6a9df`→`19aa8f69`) and will
+      most likely cut the release for this fix itself; deploying it
+      here under an already-published version number risks colliding
+      with that.
+
 - [ ] **Songs page's default "recent" sort surfaces the wrong songs —
       found by this loop's audit, not reported from a device.**
       **BLOCKED — needs a user decision** (see the two options spelled
@@ -19421,6 +19445,63 @@ so the bundle-size answer stays on the record.
 
       `flutter analyze`: clean. Not deployed — tooling only, nothing
       user-visible changed.
+
+      **2026-09-21, the flake above root-caused and hardened
+      (test-only) — this item still stays `[ ]`; its out-of-repo half
+      (the loop's own prompt/orchestration) is unchanged.** Verbatim
+      exception, captured by rerunning `--chunk 2 --of 6` to a failure
+      (run 5 of 5 that hour): `MissingPluginException(No implementation
+      found for method listen on channel
+      xyz.luan/audioplayers/events/0a6a6e60-4694-45d8-865f-19752bfd3a27)`,
+      inside `sermon_list_audio_signal_test.dart`'s "the sermons list
+      renders the count and the audio clause" — correcting the prior
+      note's guess of "an audioplayers `EventChannel`" to the specific
+      one: `audioplayers` 6.8.1 opens a PER-`AudioPlayer`-INSTANCE
+      `EventChannel` named with a random uuid
+      (`audioplayers_platform_interface-7.2.0/lib/src/
+      audioplayers_platform.dart:242`), which the file's `setUpAll`
+      cannot pre-register since it only knows 3 fixed channel names.
+      Flutter's own `EventChannel.receiveBroadcastStream` reports that
+      channel's unmocked `'listen'` failure straight to
+      `FlutterError.reportError`, bypassing the stream's own `onError`
+      (`packages/flutter/lib/src/services/platform_channel.dart:710-721`)
+      — so the failure's timing is async relative to `pump()`/test
+      boundaries, consistent with (though not fully traced through
+      `flutter_test`'s per-test zone bookkeeping) why it hit 1 run in 5
+      rather than every run or none.
+
+      Fix, test-only, no `lib/` change: `setUpAll` now also installs
+      `TestDefaultBinaryMessengerBinding...defaultBinaryMessenger
+      .allMessagesHandler`, which sees every outbound channel name
+      (unlike the fixed-name mocks) and answers any unregistered
+      channel matching `xyz.luan/audioplayers/events/` with a properly
+      codec-encoded `encodeSuccessEnvelope(null)` — a bare null reply is
+      itself what decodes into `MissingPluginException`, verified
+      against `MethodChannel._invokeMethod`. Falls back to the
+      already-registered handler (so the 3 existing fixed-channel mocks
+      still work; verified they receive their handler via `send()`'s
+      existing `_outboundHandlers` lookup, not bypassed) or the real
+      delegate for everything else. `tearDownAll` resets it to null;
+      each `flutter test` file gets its own VM isolate, so this cannot
+      leak into another file in the same chunk.
+
+      Reproduced pre-fix at 1 failure in 5 runs of `--chunk 2 --of 6`
+      (PASS ×4, FAIL ×1, exact channel/test above). Post-fix, the same
+      composition ran 6 further consecutive times, all PASS, and
+      grepping all 6 logs for the channel-name substring and for
+      "EXCEPTION CAUGHT BY SERVICES LIBRARY" found zero hits — but n=6
+      is corroboration of the mechanistic fix, not statistical proof on
+      its own (P(0 failures in 6 | a true ~20% rate) ≈ 0.26); the
+      mechanism check (point 4 above) is what the claim actually rests
+      on. Standalone file run and all 6 chunks of the full suite also
+      pass; `flutter analyze` (whole repo): clean.
+
+      Refuted before commit: the causal chain and the fix's mechanism
+      (handler delegation, envelope encoding, isolate boundaries) were
+      independently verified against the cited Flutter/flutter_test/
+      audioplayers source rather than taken on the description's word;
+      verdict was "claim survives," with the two above already softened
+      to match.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
