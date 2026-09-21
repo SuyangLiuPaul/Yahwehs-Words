@@ -8809,6 +8809,13 @@ has never seen this repo.
       the tagged corpus at that id still reads 鐏, not 𨱔 — unchanged,
       still open, still frozen-asset territory for the owner.
 
+      Pushed as `c03e93cc`. CI run `35614422098` was still `in_progress`
+      after the ~6-minute watch budget — local `python3 tools/
+      audit_tagged_rendered_extras.py` exits 0 and no Dart file changed,
+      so the full suite was not run for this iteration per the task's own
+      guard rails; the next iteration's step 0 should confirm this run's
+      conclusion rather than assume it from the local result.
+
       Both `50dcc102^` (the commit right before the adoption) and the two
       independent witnesses agree with each other and disagree only with
       the newly adopted text, so this is something the adoption
