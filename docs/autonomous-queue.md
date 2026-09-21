@@ -9259,6 +9259,69 @@ has never seen this repo.
       `「…』` / `『…」` cross-bracket-close pattern before deciding whether
       it's one verse or a class; not done this pass.
 
+      **2026-09-22 — wider scan done: it's a class, but a narrower and
+      murkier one than either "one verse" or a flat count suggests.
+      `tools/audit_quote_bracket_style.py` (report-only, never writes an
+      asset; unit tests in `test/test_audit_quote_bracket_style.py`, wired
+      into CI) runs a book-scoped LIFO bracket stack, verse order, over
+      both frozen files — reusing `audit_tagged_quote_balance.py`'s
+      established premise that a per-verse-only check misses cross-verse
+      quotations, which is exactly what happened at planning: the per-verse
+      model that produced "4" is the SAME stack, just reset every verse,
+      and it provably only sees same-verse pairs.**
+
+      Book-scoped, it finds **28** raw mismatches in each file, over the
+      **same 28** span ids in both `cuvs-yhwh.json` and `cuvs-yhwh-tr.json`
+      (independently re-derived by a refuter agent from the raw JSON, not
+      taken from the tool's own output — all 5 load-bearing counts/ids
+      confirmed, including this one). Splitting those 28 by whether any
+      OTHER, unrelated bracket character sits in the same verse span (a
+      second inner quote whose own opener or closer is missing, entangling
+      the LIFO read) separates **9 ISOLATED** events — one open, one close,
+      nothing else in the span, the shape this item actually described —
+      from **19 CONFOUNDED** ones, where the "mismatch" is a symptom of a
+      missing mark elsewhere, not a same-shape sibling of `026033010`. The
+      19 are not classified further this pass; untangling which mark is
+      actually missing needs the same verse-by-verse reading
+      `audit_speaker_attribution.py`'s 141-id backlog took, not a scan.
+
+      Of the 9 isolated: 4 are same-verse (what the per-verse model already
+      found); the book-scoped stack alone sees the other 5, which span
+      2–11 verses. All 9 agree character-for-character with the
+      independently-transcribed tagged word-tap corpus at both their open
+      and close verse (checked for all 9, not sampled) — two separate
+      transcriptions of this edition agree, so this is not an import-side
+      artifact of either line.
+
+      **But the isolated bucket cannot be asserted as "8 more of
+      `026033010`'s defect."** The independent Traditional witness (git
+      blob `7a2dc43`) was checked against all 9, and at **`026033010`
+      itself** — the verse this item was filed for — the witness reads
+      `你們常說：『我們的過犯罪惡…`, with an inner `『` before 我們的過犯罪惡
+      that both `cuvs-yhwh-tr.json` and the tagged corpus lack entirely
+      (`你們常説，我們的過犯罪惡…`, plain comma). As bracket CHARACTERS the
+      verse still reads "one `「`, one `』`, nothing else" — the isolated
+      shape — but the witness shows the real defect is a **missing inner
+      opener**, with the outer `「` simply staying open past this verse per
+      this edition's own cross-verse convention, not a wrong-glyph swap at
+      all. Two different underlying defects produce the identical LIFO
+      signature, and nothing mechanical here can tell them apart for the
+      other 8 either — the witness disagrees with our structure at every
+      one of the 9, but not in the same way each time (sometimes no mark
+      at all where we open, sometimes a self-contained close mid-verse
+      where we run the quote on for several more).
+
+      **Answer to "one verse or a class": a class of 9 by LIFO signature
+      (28 by raw signature before separating out the confounded ones), but
+      not a class of one defect** — distinguishing "wrong closing glyph"
+      from "missing opening glyph of the other style" needs an editorial
+      call this loop is not positioned to make, and the assets are frozen
+      regardless. Left `[ ]` for the same reason `queue:8768`/`queue:9217`
+      were: filed with full evidence for the owner, not resolved. All 5
+      counting/quoting claims above were independently re-derived by a
+      refuter agent from the raw JSON (not the tool's own output) before
+      this was written — see the commit for the transcript.**
+
 - [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued

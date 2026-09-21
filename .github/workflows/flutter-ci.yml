@@ -237,6 +237,18 @@ jobs:
       - name: Songs-snapshot-churn audit unit tests
         run: python3 test/test_audit_songs_snapshot_churn.py
 
+      # Unit tests for tools/audit_quote_bracket_style.py's pure
+      # scan_book()/per_verse_mismatches()/span_mark_totals()/
+      # group_by_book() functions (added 2026-09-22, queue:9248's wider
+      # scan). Like audit_tagged_quote_balance.py and
+      # audit_speaker_attribution.py — its two closest siblings, both over
+      # the same two frozen assets — the tool itself stays out of CI; only
+      # this test file is wired in. Synthetic fixtures only: never
+      # assets/cuvs-yhwh*.json, never the tagged corpus, never the
+      # `7a2dc43` witness blob, so this is safe unconditionally.
+      - name: Quote-bracket-style audit unit tests
+        run: python3 test/test_audit_quote_bracket_style.py
+
       # Unit tests for scripts/push_songs_snapshot.py (added 2026-09-20,
       # fixing the sync-songs.yml push race — see that script's own
       # comment for the incident). Safe on a bare runner: every test
