@@ -25,7 +25,8 @@ import 'package:yahwehs_words/providers/main_provider.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<void> pumpSearch(WidgetTester tester, Size size) async {
+  Future<void> pumpSearch(WidgetTester tester, Size size,
+      {bool pushed = false}) async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     addTearDown(tester.view.reset);
     tester.view.devicePixelRatio = 1.0;
@@ -42,10 +43,30 @@ void main() {
           }),
           ChangeNotifierProvider(create: (_) => AppSettings()),
         ],
-        child: const MaterialApp(home: SearchPage()),
+        child: MaterialApp(
+          home: pushed
+              ? Builder(
+                  builder: (ctx) => Scaffold(
+                    body: Center(
+                      child: TextButton(
+                        onPressed: () => Navigator.of(ctx).push(
+                            MaterialPageRoute<void>(
+                                builder: (_) => const SearchPage())),
+                        child: const Text('open search'),
+                      ),
+                    ),
+                  ),
+                )
+              : const SearchPage(),
+        ),
       ),
     );
     await tester.pump(const Duration(milliseconds: 100));
+    if (pushed) {
+      await tester.tap(find.text('open search'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+    }
     await tester.pump(const Duration(milliseconds: 400));
   }
 
@@ -94,6 +115,39 @@ void main() {
     expect(tester.takeException(), isNull);
     final field = tester.getSize(find.byType(TextField).first);
     expect(field.width, greaterThan(80));
+    await teardown(tester);
+  });
+
+  // 2026-09-21, from a photo of an older reader's phone: the field was a
+  // thumb's width. That phone was an iPhone in Display Zoom — 320 wide —
+  // and the page was PUSHED, as it always is in the app, so Home and the
+  // language menu both showed beside help and filter. The test above
+  // mounts the page as the root, where Home already hides itself, so it
+  // never saw the real bar.
+  //
+  // Measured the same day on the pushed page at 320, with the rule
+  // switched off and on: the field was 36 px — the sliver in the photo —
+  // and is 132 px once `kRoomyAppBarWidth` drops the two conveniences.
+  // A standard 390 phone keeps both.
+  testWidgets('pushed on a Display Zoom iPhone, the field gets the room',
+      (tester) async {
+    await pumpSearch(tester, const Size(320, 693), pushed: true);
+    expect(tester.takeException(), isNull);
+    expect(find.byIcon(Icons.home_rounded), findsNothing,
+        reason: 'Home beside the back arrow is the first thing to go');
+    expect(find.byIcon(Icons.language_rounded), findsNothing,
+        reason: 'the language menu is in Settings and on the home page');
+    final field = tester.getSize(find.byType(TextField).first);
+    expect(field.width, greaterThan(120),
+        reason: 'the field is still a sliver: ${field.width} px');
+    await teardown(tester);
+  });
+
+  testWidgets('a standard phone keeps Home and the language menu',
+      (tester) async {
+    await pumpSearch(tester, const Size(390, 844), pushed: true);
+    expect(find.byIcon(Icons.home_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.language_rounded), findsOneWidget);
     await teardown(tester);
   });
 }

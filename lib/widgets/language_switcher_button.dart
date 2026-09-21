@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
+import 'package:yahwehs_words/utils/app_bar_room.dart';
 
 /// One-tap interface-language switcher, extracted from the version
 /// that first shipped on the Home dashboard (2026-08-02 field
@@ -23,6 +24,13 @@ class LanguageSwitcherButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.watch<AppSettings>();
     final locale = settings.locale;
+    // On a narrow screen a SUB-page gives this room back to its own
+    // title or field: the language is in Settings, and the home page's
+    // bar — which is never crowded — keeps this button at every width.
+    // See `kRoomyAppBarWidth`.
+    if (appBarIsCramped(context) && Navigator.of(context).canPop()) {
+      return const SizedBox.shrink();
+    }
     return PopupMenuButton<String>(
       tooltip:
           uiStrings['interfaceLanguage']?[locale] ?? 'Interface Language',

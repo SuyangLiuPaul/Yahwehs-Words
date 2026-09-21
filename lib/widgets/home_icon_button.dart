@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
+import 'package:yahwehs_words/utils/app_bar_room.dart';
 import 'package:provider/provider.dart';
 
 /// AppBar leading button that pops the navigator stack down to the
@@ -24,6 +25,10 @@ class HomeIconButton extends StatelessWidget {
     final settings = context.watch<AppSettings>();
     final canPop = Navigator.of(context).canPop();
     if (!canPop) return const SizedBox.shrink();
+    // On a narrow screen the back arrow beside it already goes home one
+    // step at a time, and the room is worth more to the page's own
+    // title or field. See `kRoomyAppBarWidth`.
+    if (appBarIsCramped(context)) return const SizedBox.shrink();
     return IconButton(
       icon: const Icon(Icons.home_rounded),
       tooltip: uiStrings['home']?[settings.locale] ?? 'Home',
