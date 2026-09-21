@@ -8786,13 +8786,28 @@ has never seen this repo.
       2026-09-09 `edbbfa4b` omission repair ("馬可福音 15:12" in that
       commit's list), landed the same day as this item was filed but
       apparently not cross-referenced against it at the time. Only
-      `010002023` (撒下 2:23, 𨱔 vs 鐏) remains open — `tools/
-      audit_tagged_rendered_extras.py`'s `CANDIDATE` table still lists
-      both ids; a future pass should move `041015012` into a
-      REGRESSION-style tracking table (like the DUPLICATION/
-      supplied-words ones in the same file) so a re-import that
-      reintroduces `那么，` is caught, and update the docstring's "2
-      CANDIDATE" to "1".
+      `010002023` (撒下 2:23, 𨱔 vs 鐏) remains open.
+
+      **2026-09-22 tooling cleanup:** `041015012` moved out of `tools/
+      audit_tagged_rendered_extras.py`'s `CANDIDATE` table into a new
+      `REPAIRED_OMISSION` table (same shape as `REPAIRED_DUPLICATION` /
+      `REPAIRED_SUPPLIED`), merged into `main()`'s regression gate, so a
+      future re-import that drops `样` again prints `REGRESSION
+      041015012` and exits 1 instead of silently reading as unexamined
+      new drift. This is deliberately unlike the RETIRED-2026-09-09
+      class the same docstring already declines to track for regression:
+      those nine stopped reading long because the *publisher's* upstream
+      text changed convention, which a re-import can't undo; this one
+      stopped reading long because *our own* `edbbfa4b` commit patched
+      the reading asset directly, which a future wholesale re-import
+      could plausibly overwrite. Docstring census refreshed from a fresh
+      run: 381 / 30,704 / 17 (10 note-only + 7 real: 4 note wording + 2
+      versification + 1 CANDIDATE). The audit now exits 0 again, for a
+      real reason — its only remaining output is the one open
+      `010002023` CANDIDATE below. `010002023`'s counts re-verified this
+      pass by direct grep: `assets/cuvs-yhwh.json` still has 𨱔×1, 鐏×0;
+      the tagged corpus at that id still reads 鐏, not 𨱔 — unchanged,
+      still open, still frozen-asset territory for the owner.
 
       Both `50dcc102^` (the commit right before the adoption) and the two
       independent witnesses agree with each other and disagree only with

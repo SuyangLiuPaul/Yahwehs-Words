@@ -27,37 +27,32 @@ duplication artifacts with "ours is right, do not repair towards the tagged
 copy", which is true of the reading text and says nothing about what the sheet
 prints. Seven of those dismissed artifacts were on screen.
 
-WHAT COMES OUT, over 31,102 verses (re-measured 2026-09-09, after `50dcc102`
+WHAT COMES OUT, over 31,102 verses (re-measured 2026-09-22, after `50dcc102`
 "Adopt the publisher's current text…" replaced 8,566 verses in the reading
 asset — see the retirement note below the tables for why these figures moved
-so far from what this docstring said the day before):
+so far from what this docstring said the day before, and REPAIRED_OMISSION
+below for the one entry that moved again since):
 
-    386  hidden by the guard, sheet falls back to the reader's verse
- 30,698  tagged line matches ideograph for ideograph
-     18  PASS the guard and read long   <- this file
+    381  hidden by the guard, sheet falls back to the reader's verse
+ 30,704  tagged line matches ideograph for ideograph
+     17  PASS the guard and read long   <- this file
 
-STALE as of 2026-09-21: a re-run reads 381 / 30,704 / 17. The 17th used to
-be 18 because `041015012` (可 15:12) has since been independently fixed by
-`edbbfa4b`'s 2026-09-09 omission repair, so only `010002023` remains an
-open CANDIDATE — this docstring's own CANDIDATE count below is now 1, not
-2 (the code's `CANDIDATE` dict still lists both; see
-`docs/autonomous-queue.md`'s 2026-09-21 entry for the cleanup this needs).
-
-and the 18 split (17 as of 2026-09-21, see above):
+and the 17 split:
 
      10  note formatting only — identical once notes are stripped from both
          sides. This edition writes a translator note as `<note: …>` in the
          reading asset and inlines it as `〔…〕` in the tagged corpus, and the
          two imports word them differently.
-      8  still read long, of which
+      7  still read long, of which
           4  divine-name or cross-reference NOTE WORDING (unchanged by the
              adoption)
           2  a versification / apparatus-placement shift the adoption made TO
              our own reading asset, moving where a sentence or a bracket
              attaches relative to the tagged corpus's placement, with no text
              lost on either side — see EXPLAINED
-          2  CANDIDATE — the adoption's own new discrepancies, filed as a P0
-             item, not repaired here (the asset is frozen) — see CANDIDATE
+          1  CANDIDATE — the adoption's own remaining new discrepancy, filed
+             as a P0 item, not repaired here (the asset is frozen) — see
+             CANDIDATE
 
 and one class that USED to be here and is not any more, kept in a table so a
 re-import that brings one back is reported as a REGRESSION:
@@ -69,6 +64,19 @@ re-import that brings one back is reported as a REGRESSION:
          witness lines were read for each and the Hebrew was found to be
          carried independently by `assets/originals/` — so deleting the word
          from the sheet costs the app no Strong's number. See that file.
+      1  可 15:12, where the reading asset read 那么 short of the tagged
+         corpus's and the official witness's 那么样. Repaired 2026-09-09,
+         `edbbfa4b`/`repair_publisher_adoption_omissions.py` (one of 8
+         verses that commit restored the same day `50dcc102`'s adoption
+         opened this as a CANDIDATE, landed but not cross-referenced
+         against it until this 2026-09-22 cleanup). Given a REGRESSION
+         table, unlike the RETIRED-2026-09-09 class right below: that
+         class stopped reading long because the PUBLISHER changed its own
+         bracket/note convention out from under us, which a re-import
+         cannot un-happen, while this one stopped reading long because
+         OUR OWN commit edited the reading asset — a later re-import that
+         overwrites the reading asset with an unrepaired publisher import
+         again could plausibly bring `那么` straight back.
 
 RETIRED 2026-09-09: nine entries that used to sit in EXPLAINED — six of the
 〔有古卷在此有…〕 split-bracket family (太 18:11, 太 23:14, 可 15:28, 路 23:17,
@@ -170,7 +178,19 @@ EXPLAINED = {
 # publisher character, in his own commit.
 CANDIDATE = {
     "010002023": "撒下 2:23 — ours reads 枪𨱔, witness+tagged agree on 枪鐏",
-    "041015012": "可 15:12 — ours reads 那么, witness+tagged agree on 那么样",
+}
+
+# The one verse the same 2026-09-09 adoption dropped text from, repaired the
+# same day. Kept here rather than deleted so a re-import that drops `那么样`
+# back to `那么` is reported as a REGRESSION, not a new unexamined hit.
+# Unlike the RETIRED-2026-09-09 class in the module docstring — which
+# stopped reading long because the PUBLISHER changed its own bracket/note
+# convention, an external move a re-import can't undo — this one stopped
+# reading long because OUR OWN repair commit changed the reading asset, so
+# a later re-import that overwrites it with an unrepaired publisher import
+# again could plausibly bring the omission straight back.
+REPAIRED_OMISSION = {
+    "041015012": "tagged read 那么样; ours read 那么 before edbbfa4b's repair",
 }
 
 # The four supplied words, repaired 2026-09-03. Kept here rather than deleted
@@ -256,7 +276,7 @@ def main():
     print(f"  note formatting only: {len(note_only)}")
     print(f"  reads long on scripture: {len(real)}")
 
-    repaired = {**REPAIRED_DUPLICATION, **REPAIRED_SUPPLIED}
+    repaired = {**REPAIRED_DUPLICATION, **REPAIRED_SUPPLIED, **REPAIRED_OMISSION}
     known = repaired.keys() | EXPLAINED.keys() | CANDIDATE.keys()
     regressed = [h for h in real if h[0] in repaired]
     candidates_hit = [h for h in real if h[0] in CANDIDATE]
