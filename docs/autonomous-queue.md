@@ -9322,6 +9322,13 @@ has never seen this repo.
       refuter agent from the raw JSON (not the tool's own output) before
       this was written — see the commit for the transcript.**
 
+      Pushed as `1645d2fe`. CI run `35658053260` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` was clean
+      locally and no Dart file changed (a new Python tool + its test, a
+      CI-workflow edit adding one `python3 test/...` step, and docs), so
+      nothing is expected to fail; the next iteration's step 0 should
+      confirm this run's conclusion rather than assume it.
+
 - [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued
