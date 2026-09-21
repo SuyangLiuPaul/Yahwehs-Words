@@ -3539,10 +3539,11 @@ Read-only pass: no lib/asset/test change, no version bump, no deploy.
       `tools/release_web.sh` was off-limits this hour to avoid re-bumping
       `pubspec.yaml` out from under it).
 
-- [ ] **`assets/csb.json` John 5:4 has an orphaned `]` with no matching
-      `[` anywhere in that verse or the two before it** — STILL OPEN, asset
-      unchanged; this iteration measured the upstream module and got a
-      refuter verdict against editing (recorded below), not just a guess.
+- [x] **`assets/csb.json` John 5:4 has an orphaned `]` with no matching
+      `[` anywhere in that verse or the two before it** — CLOSED
+      2026-09-21 as upstream noise, no scripture missing, asset
+      unchanged. Outside witness obtained (see bottom of this item);
+      previous rounds' internal-only argument is superseded by it.
 
       **Part A fixed, verified working:** `tools/import_csb.py::_creds()`
       was regexing a `DB, USER, PW = '...', '...', '...'` literal out of
@@ -3599,6 +3600,71 @@ Read-only pass: no lib/asset/test change, no version bump, no deploy.
       witness or close this as "upstream loss, unrecoverable, publisher
       question" the way the `[ ]` below already does for John 5:3's
       missing clause.
+
+      **2026-09-21 — outside witness obtained, item closed.** Fetched
+      John 5:1-9 CSB from two publisher-licensed digital reading sites
+      that read from Holman's own CSB feed, not this app's database:
+      biblegateway.com and biblehub.com. Both report the same thing:
+      **CSB 2017's actual main-text verse 3 is `Within these lay a
+      large number of the disabled — blind, lame, and paralyzed.`** —
+      word-for-word what `assets/csb.json` already has, with no missing
+      3b clause — **and verse 4 does not exist as numbered main text at
+      all.** The whole 3b-4 span is a footnote keyed to a marker after
+      "paralyzed.": *"Some mss include vv. 3b-4: —waiting for the
+      moving of the water, 4 because an angel would go down into the
+      pool from time to time and stir up the water. Then the first one
+      who got in after the water was stirred up recovered from
+      whatever ailment he had."* The back half of that footnote, from
+      "because an angel" on, is word-for-word what this asset carries
+      as verse 4.
+
+      **What this settles and what it doesn't.** It settles the
+      question the prior round's refuter left open and that this
+      round's own escalation-worry raised: our verse 3 is **not**
+      missing scripture. CSB 2017's real verse 3 has no 3b clause in
+      its main text either — the clause exists only inside a footnote,
+      in every edition these two sites reflect. So the omitted/blank-
+      verse carve-out does not apply here; this stays a punctuation-
+      class defect. The `]` is very likely a leftover of the source
+      theWord module folding that footnote's second half into the
+      main-verse stream as a synthetic "verse 4" and losing the
+      opening bracket in the process — the same shape as the three
+      *matched* disputed-passage brackets already in this asset
+      (Mark 16:8/20, John 7:52/8:11, Acts 24:7/8), just missing its
+      other half.
+
+      **What it does NOT fully settle, said plainly rather than
+      rounded up.** This round's own refuter (asked to break the
+      conclusion, not bless it) flagged two real gaps, and both stand:
+      (1) biblegateway.com and biblehub.com most plausibly draw on the
+      same Holman-controlled digital feed, so this is one corroborating
+      witness family, not two independent ones — weaker than the "an
+      actual CSB 2017 print or PDF page" the previous round asked for,
+      though it is genuinely outside the local MariaDB module and
+      satisfies "not another derivation from this same DB table."
+      (2) A theWord module compiling from a physical CSB edition could
+      still follow that edition's own inline-bracket convention for
+      disputed passages independent of how Holman's own web reader
+      typesets it — that possibility isn't ruled out by two website
+      renders. Neither gap changes the verse-3-is-complete finding,
+      which is corroborated by measurement from *inside* this same
+      corpus too (John 5:4 is the sole unpaired bracket across all
+      31,102 rows — a transcription-loss signature, not a convention).
+      It does mean "no print/PDF witness, do not treat this as fully
+      certain" is the honest summary, not "confirmed beyond doubt."
+
+      **Action taken: none, by design.** No asset edit — reconstructing
+      an opening-bracket position from a digital footnote transcription
+      would be guessing at a print edition's typesetting, which is
+      exactly the kind of reconstruction the standing scripture-accuracy
+      rule forbids. `test/csb_asset_test.dart`'s pin of the 7 unbalanced
+      brackets (unchanged since last round) still matches; verified
+      again this round. If a literal CSB 2017 print/PDF page for John
+      5:3-4 ever surfaces, it settles gap (2) outright; short of that,
+      this item is closed rather than left open indefinitely for a
+      witness class (print/PDF of a specific 1990s-2017-descended
+      Bible-software module's source edition) that may not be
+      practically obtainable.
 
 - [x] **The word-tap corpus printed 14 verses with a stray ASCII bracket in
       them, and 2 verses were missing a character of scripture. Fixed
