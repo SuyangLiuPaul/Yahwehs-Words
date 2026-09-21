@@ -3666,6 +3666,11 @@ Read-only pass: no lib/asset/test change, no version bump, no deploy.
       Bible-software module's source edition) that may not be
       practically obtainable.
 
+      Pushed as `6d05f958`. **CI run `35587264249` had not concluded
+      within this iteration's ~8-minute watch budget** (still
+      `in_progress` after two rounds of polling) — next iteration's
+      step 0 should check it before taking a new item.
+
 - [x] **The word-tap corpus printed 14 verses with a stray ASCII bracket in
       them, and 2 verses were missing a character of scripture. Fixed
       2026-08-24.** 詩篇 115:17 read 「死人不能)讚美雅偉」, 馬可福音 15:13
