@@ -8880,6 +8880,11 @@ has never seen this repo.
       Tooling-only: no asset under `assets/` touched, no build, no
       deploy needed.
 
+      Pushed as `2a6f5702`. CI run `35553817141` had not concluded
+      inside this iteration's ~6-minute watch budget (still
+      `in_progress` at last check) — next iteration's step 0 should
+      check it before picking anything else.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
