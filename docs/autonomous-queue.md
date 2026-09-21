@@ -19714,6 +19714,12 @@ so the bundle-size answer stays on the record.
       (17:24:12Z-17:30:03Z) with no PDFium download error, confirming
       the pre-place worked rather than the suite being skipped.
 
+      Follow-up `4a783e15` (this queue note itself) was still
+      `in_progress` as CI run `35632512137` after the ~6-minute watch
+      budget — docs-only, no Dart or workflow file changed, so nothing
+      is expected to fail; the next iteration's step 0 should confirm
+      this run's conclusion rather than assume it.
+
 ## P3 — known but blocked or deferred
 
 - [ ] **This loop's own tooling defect: `flutter test` backgrounded
