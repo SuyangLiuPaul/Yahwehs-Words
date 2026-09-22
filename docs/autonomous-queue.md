@@ -8518,6 +8518,10 @@ has never seen this repo.
       `flutter analyze`: clean, no Dart file touched. No Python test
       exists for `proofread_biblexg.py`; none touched.
 
+      Pushed as `2a8f34c6`. CI run `35683027861` was still `in_progress`
+      past the ~6-minute watch budget; next iteration's step 0 should
+      confirm it before picking a new item.
+
 
 - [ ] **Then rebuild the Traditional from the corrected Simplified.**
       Only after the Simplified matches the publisher. Our Traditional
