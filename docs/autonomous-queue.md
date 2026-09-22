@@ -9686,10 +9686,12 @@ has never seen this repo.
       reason. Docs + `tools/` only — no deploy.
 
       Pushed as `b6bd459c`. CI run `35671999873` → `success` (confirmed
-      after a second watch pass; the docs-only follow-up fixing the P1
-      header, `cfc69359`, has its own run `35672531469` still
-      `in_progress` as of this note — next iteration's step 0 should
-      confirm it if this note is still here).
+      after a second watch pass). Two docs-only follow-ups on top — restoring
+      a P1 section header this item's own first edit had accidentally
+      deleted (`cfc69359`, run `35672531469`), then this note itself
+      (`14a70e7d`, run `35672665205`) — were both still `in_progress` past
+      the watch budget; next iteration's step 0 should confirm both if
+      this note is still here.
 
 ## P1 — Bible study correctness
 
