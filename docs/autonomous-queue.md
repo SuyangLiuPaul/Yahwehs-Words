@@ -8458,6 +8458,66 @@ has never seen this repo.
       shipped. Per-book distribution line regenerated from a fresh run,
       not hand-bumped. `assets/` untouched — docs only.
 
+      **v3 MEASURED — 2026-09-22 (report-only, no repair).** Re-ran
+      `tools/proofread_biblexg.py` against `assets/biblexg-v3.json` — the
+      asset every reader actually sees now (`bible_versions.dart:384-388`
+      puts v2/v2-tr in `disabledVersions`) — against the same cached
+      publisher source that produced 88/7,786 (55 files,
+      `~/.cache/yswords/ljk-source`, not re-fetched). **v2 control
+      reproduced exactly**: 7,920 comparable / 7,786 identical / 46
+      punctuation / 88 wording / 0 absent — the letter's six quoted sites
+      are unchanged and correct for the asset they describe.
+
+      **v3 gives a different picture: 7,917 comparable / 7,888 identical
+      (99%) / 5 punctuation / 24 wording / 3 "absent."** Diffed the two
+      verse-key sets directly rather than trusting the printed totals: of
+      v2's 88 diverging verses, 80 now MATCH the publisher in v3 —
+      resolved not by us guessing, but because v3 already carries the
+      translator's own 2026-09-17 WhatsApp reply to a draft of this same
+      letter (`tools/apply_ljk_2026_09_17.py`, committed `ebea3499`
+      2026-09-18 — his rulings on 太13:3/13:18, 路23:34, 提後3:15,
+      徒8:40/41, 太21:44, 約12:36) plus earlier repairs
+      (`repair_verse_numbering.py`'s NA28/UBS5 verse joins,
+      `repair_biblexg_mark6.py`'s Mark 6 restoration). **8 of v2's 88
+      remain unresolved in v3, and 19 divergences are new** (16 wording +
+      3 the tool reports "absent"). A refuter independently recomputed
+      all of this from the raw JSON rather than trusting the report text
+      and confirmed the mechanism for each class:
+
+      - The 3 "absent" verses are not missing scripture. 使徒行傳8:41 and
+        腓立比書1:2 are merged byte-for-byte into 8:40 and 1:1 in v3 (a
+        known, deliberate join — `repair_verse_numbering.py` records the
+        publisher's own chapter-end footnote naming the same 40/41 split,
+        rejoined so the app's English-keyed cross-reference system can
+        still find it). 哥林多後書13:13 is not merged — it survives
+        verbatim under key 13:14 in v3, a clean NA28/UBS5 verse-boundary
+        renumber the publisher's own footnote on 13:12 explains.
+      - 8 of the new diffs are 羅馬書 5:3-4, 8:19/23/25/28, 15:4-5 — a
+        coherent revision (毅力→耐力 throughout, "急不及待"→"翹首以待"
+        glossed to ἀποκαραδοκία/ἀπεκδέχεται, 8:28 argues συνεργέω/εἰς
+        ἀγαθόν against 和合本 by name with cross-references back to the
+        other verses in this cluster) — not corruption; the footnotes
+        are too internally consistent to be copy-paste debris.
+      - The remaining new diffs (提後3:15, 可6:7, 太13:3/13:18) are also
+        the translator's own 2026-09-17 revisions per
+        `apply_ljk_2026_09_17.py`.
+
+      **New information for whoever sends the letter, not something this
+      pass may act on:** the letter's status header says 「最後更新
+      2026-09-03」 and 定稿，可以寄出, dated BEFORE the translator's
+      2026-09-17 WhatsApp reply that `apply_ljk_2026_09_17.py` already
+      applied to the shipped asset. Whether that reply already answers
+      part of what §四/§四之二 ask, or is a separate informal channel that
+      doesn't substitute for the letter, is not this loop's call —
+      flagging it alongside the existing "has it been sent?" question is.
+      `assets/` untouched this pass; the letter's own numbers (88/7,786/
+      etc.) are NOT edited — they correctly describe v2, which is what
+      they say they describe, and v2 remains bit-for-bit what `git log`
+      says it was on 2026-09-06.
+
+      `flutter analyze`: clean, no Dart file touched. No Python test
+      exists for `proofread_biblexg.py`; none touched.
+
 
 - [ ] **Then rebuild the Traditional from the corrected Simplified.**
       Only after the Simplified matches the publisher. Our Traditional
@@ -9747,6 +9807,12 @@ has never seen this repo.
       Pushed as `19fdbced`. CI run `35678261116` was still `in_progress`
       past the ~6-minute watch budget; next iteration's step 0 should
       confirm it before picking a new item.
+
+      **Confirmed 2026-09-22: CI run `35678261116` (`19fdbced`) →
+      success, and the follow-up queue-note commit `78d14987`
+      (`35678695449`) → success too.** Both were the last two runs left
+      unconfirmed; `gh run list` now shows five consecutive successes on
+      `main` through HEAD. Nothing red to chase.
 
 ## P1 — Bible study correctness
 
