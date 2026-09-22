@@ -21362,7 +21362,8 @@ so the bundle-size answer stays on the record.
       test's claim is about which 3 files, not the order a directory walk
       happens to visit them in. Re-ran locally (passed), `flutter
       analyze` clean, full suite green (3641 passed, 1 skipped) again,
-      pushed as a second commit, watched to conclusion.
+      pushed as a second commit (`d2a47464`), watched to conclusion: **run
+      `35792289307` concluded `success`.**
 
 - [ ] **17 other test files call `Directory(...).listSync(recursive:
       true)` with no `.sort()`** (`grep -rln "listSync(recursive: true)"
