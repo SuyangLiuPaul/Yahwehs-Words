@@ -180,6 +180,68 @@ and quoted.**
       paragraph for the recurrence's full account. Test-only; no
       `lib/` change, no deploy.
 
+- [x] **2026-09-23 — fallback iteration (test coverage): `localizedRole()`
+      (`lib/utils/biblical_role.dart`) had zero test references and the
+      same unrecognised-`zh-*`-falls-to-English bug already fixed for
+      `shortBookName()` and `relativeTime()`.**
+
+      Census, so the fallback call is auditable: CI green (`57319872` /
+      run `35769959955`, five prior runs also `success`). `NEXT_TASK.md`
+      read all 21 open items across tiers 1–6: BUGS' one open item
+      (`queue:213`) needs a product decision upstream in yswords-data;
+      P2's two items are a branch-scale `.router` migration (13th
+      consecutive deferral) and a fix living outside this repo; P3's two
+      actionable items both need a licensing/hosting answer the user
+      hasn't given; P1 is empty; all 13 open P0 items are frozen-asset
+      or awaiting a publisher reply, none omits/blanks verse text. The
+      single highest-leverage unblocker, per `NEXT_TASK.md`: **have the
+      two publisher letters (`docs/和合本雅伟版-请教出版方.md`,
+      `docs/梁家鏗譯本-請教出版方.md`) been sent, and is there a reply?**
+      They gate 8 of the 13 open P0 items.
+
+      Took the fallback's *second* option (widen coverage) — the audit
+      option was taken two hours prior with a clean tree.
+
+      Added `test/biblical_role_test.dart` (31 cases): all 25 map keys ×
+      zh-Hans/zh-Hant/en, a dataset-coverage guard (every distinct `role`
+      value actually present in `assets/family_tree.json`, re-derived
+      independently — 25, matching the map's 25 keys exactly, zero
+      unmapped) so a future dataset addition fails CI instead of shipping
+      raw English silently, unknown-role passthrough, case-insensitivity,
+      empty-string round-trip, and the fix itself (`'zh'` / `'zh-XX'` →
+      Simplified, not English). Run against the **unfixed** helper first,
+      as this repo's standing practice: 2 cases went red (`'zh'`,
+      `'zh-XX'`), both restored to green by the fix — `map[role.upper
+      ()]?[locale] ?? role` (exact-match, `?? role` = raw English)
+      replaced with `locale == 'zh-Hant' → Hant; startsWith('zh') → Hans;
+      else → role unchanged` (`en` still returns the role verbatim,
+      unchanged, deliberate).
+
+      A refuter independently re-derived the 25/25 dataset-coverage
+      count (confirmed), re-checked test-coverage-before was genuinely
+      zero including two widget tests that render the surfaces but don't
+      reach this code path at runtime (confirmed via lcov, `LH:0` both
+      runs), confirmed `AppSettings.locale` is reachable unvalidated via
+      three paths including cross-device sync (not just the 3-item UI
+      dropdown), and — importantly — **refuted** the draft's "third
+      helper in this exact bug-class family" framing: `shortBookName`'s
+      prior fix was actually about following the reading-version's
+      script rather than the UI locale (no locale-keyed map involved),
+      and `relativeTime`'s original bug had the opposite shape (an
+      inclusive `startsWith('zh')` check with no Hant branch, not an
+      exact-match miss). The refuter also found three *other* live,
+      unfixed instances of the actual bug pattern while checking — filed
+      below in P3 rather than fixed inline, to keep this iteration to
+      its one assigned item. Softened the test file's own doc comment
+      to drop the overclaimed framing before commit.
+
+      `flutter analyze` clean (43.7s). Full suite run as 6 foreground
+      chunks via `tools/run_test_chunks.py`, exit code checked per
+      chunk — all 6 `CHUNK N/6: PASS`. No deploy: pure util + test
+      change, edge-case locale value with no reported sighting; dev is
+      already at `pubspec.yaml`'s `1.6.30`, 2 commits behind HEAD, well
+      inside the 6-iteration deploy-anyway threshold.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -21235,6 +21297,27 @@ so the bundle-size answer stays on the record.
       analyze` clean, full suite green (2678) both before and after.
       Pushed as `1feb8b5d`, watched to completion: **run `34192392272`
       concluded `success`.**
+
+- [ ] **Three more live instances of the same locale-fallback bug class
+      just fixed in `biblical_role.dart` (queue:183, 2026-09-23), found
+      by that item's own refuter, not yet fixed:**
+      `lib/utils/font_catalog.dart:61` (`label[locale] ?? label['en'] ??
+      key`), `lib/pages/help_page.dart:95`
+      (`uiStrings[labelKey]?[locale] ?? uiStrings[labelKey]?['en'] ??
+      labelKey`), and `lib/widgets/bible_reading_pane.dart:9118`
+      (`uiStrings[labelKey]?[locale] ?? labelKey`). All three key a map
+      by exact-match `locale` string with no `zh-Hant`/`startsWith('zh')`
+      branch, so a bare `'zh'` or unrecognised `zh-XX` tag (reachable via
+      `AppSettings`'s unvalidated `setLocale`/SharedPreferences-load/
+      `_applyUserPrefsBlob` paths, incl. cross-device sync — see
+      `lib/models/app_settings.dart:1034,1537,1877`) falls through to
+      English rather than Simplified, same symptom as the three already
+      fixed (`shortBookName`, `relativeTime`, `localizedRole` — though
+      the refuter also found the "same bug class" framing between those
+      three overclaimed code-shape identity; treat each site on its own
+      merits, don't assume a shared fix mechanically applies). Not fixed
+      this hour to keep that iteration to its one assigned item; take
+      each site individually next, with its own test.
 
 ## Blocked on the user — do not attempt
 

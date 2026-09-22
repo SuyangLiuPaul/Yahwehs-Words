@@ -1,6 +1,13 @@
 /// Translate dataset role strings (English uppercase canonical
 /// values) into the user's UI locale. Pass-through for unknown
 /// roles so we never lose information.
+///
+/// `AppSettings.locale` is assigned with no validation on an imported
+/// settings blob (`fromMap`) or the SharedPreferences load (see
+/// `lib/models/app_settings.dart:1034,1537,1877`), so an unrecognised
+/// `zh-*` tag must still land on Simplified rather than falling through
+/// to the raw English dataset value — same convention as
+/// `relative_time.dart`'s `relativeTime()`.
 String localizedRole(String role, String locale) {
   const map = {
     'PATRIARCH': {'zh-Hans': '族长', 'zh-Hant': '族長'},
@@ -30,5 +37,9 @@ String localizedRole(String role, String locale) {
     'CARPENTER': {'zh-Hans': '木匠', 'zh-Hant': '木匠'},
   };
   if (locale == 'en') return role;
-  return map[role.toUpperCase()]?[locale] ?? role;
+  final entry = map[role.toUpperCase()];
+  if (entry == null) return role;
+  if (locale == 'zh-Hant') return entry['zh-Hant'] ?? role;
+  if (locale.startsWith('zh')) return entry['zh-Hans'] ?? role;
+  return role;
 }
