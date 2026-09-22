@@ -1,5 +1,6 @@
 // ignore: depend_on_referenced_packages
 import 'package:characters/characters.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'package:yahwehs_words/utils/version_mapper.dart' show toEnglish;
 
@@ -27,7 +28,7 @@ String shortBookName(String localizedBook, String locale) {
   final englishBook = toEnglish(localizedBook) ?? localizedBook;
   if (locale.startsWith('zh')) {
     final hant = locale == 'zh-Hant';
-    final m = hant ? _shortBooksHant : _shortBooksHans;
+    final m = hant ? shortBooksHant : shortBooksHans;
     final v = m[englishBook];
     if (v != null) return v;
     // Fallback: last character of the localized name. For
@@ -38,10 +39,20 @@ String shortBookName(String localizedBook, String locale) {
         : localizedBook.characters.last;
   }
   // English / other locales — 3-letter abbreviation.
-  final v = _shortBooksEn[englishBook];
+  final v = shortBooksEn[englishBook];
   return v ??
       (englishBook.length >= 3 ? englishBook.substring(0, 3) : englishBook);
 }
+
+/// Exposed only so `test/short_book_name_test.dart` can assert the 66
+/// canonical books all hit the map rather than the fallback branch —
+/// not meant for use outside this file otherwise.
+@visibleForTesting
+const Map<String, String> shortBooksEn = _shortBooksEn;
+@visibleForTesting
+const Map<String, String> shortBooksHans = _shortBooksHans;
+@visibleForTesting
+const Map<String, String> shortBooksHant = _shortBooksHant;
 
 const Map<String, String> _shortBooksEn = {
   'Genesis': 'Gen', 'Exodus': 'Exo', 'Leviticus': 'Lev',

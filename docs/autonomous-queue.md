@@ -100,6 +100,62 @@ and quoted.**
       present. CI confirmed green on `12dc2557` afterwards, not just
       assumed.
 
+- [x] **2026-09-22 — CI confirmation + fallback iteration (test coverage).**
+      Folding in the housekeeping `462ea3a0` asked for: the five most
+      recent `main` runs, including `35701060820` (`c068a837`), all
+      concluded `success` — the "still in progress after watch budget"
+      note is resolved, no red run.
+
+      Took `NEXT_TASK.md`'s call: tiers 1–6 all genuinely blocked this
+      pass (BUGS' one open item needs a product call upstream in
+      yswords-data; P2's two open items are a branch-scale `.router`
+      migration deferred by design and a fix living outside this repo;
+      P3's two actionable items both need a licensing/hosting answer;
+      P1 had zero open items; P0's 13 open items are all frozen-asset or
+      awaiting the publisher). Took the fallback's *second* option
+      (widen test coverage) since the audit re-run was already taken the
+      prior hour (`c068a837`).
+
+      Added `test/short_book_name_test.dart`: `shortBookName()`
+      (`lib/utils/short_book_name.dart`) renders the compact book label
+      on two real reader surfaces and had zero test references before
+      this. Pins, against the real maps (not a hand-typed copy): all
+      three abbreviation maps (`en`/`zh-Hans`/`zh-Hant`) cover exactly
+      the 66-book canon from `canonLastChapter` with no duplicate keys
+      or values; the round trip through the *localized* name each real
+      caller actually passes (`toLocale(book, 'cuvs-yhwh'|'cuvs-tr')`)
+      resolves to the map, not the fallback branch; an already-English
+      name still works under a zh locale; empty input returns empty; an
+      unknown book (`Barnabas`/`巴拿巴`, confirmed absent from every
+      alias table) degrades via the fallback without throwing. The three
+      maps were renamed `_shortBooksEn/Hans/Hant` →
+      `shortBooksEn/Hans/Hant` + `@visibleForTesting` (visibility only,
+      same precedent as `sermon_library_service.dart` — no logic
+      changed) so the test can assert against the real maps instead of
+      a second hand-typed copy that could silently drift from them.
+
+      **Filed below, not fixed this hour:** `shortBookName()` takes the
+      *UI locale*, while its three call sites pass a *version-localized*
+      book name — a reader on a Traditional reading version with a
+      Simplified UI locale (or vice versa) gets a short-form label drawn
+      from the wrong script beside the long-form header. Confirmed by a
+      refuter tracing all three call sites and a real asset record
+      (`assets/cuvs-yhwh.json`'s `book` field), not asserted from the
+      docstring alone.
+
+      Seven factual claims (66-entry/no-dup counts, the `toLocale`
+      branch logic, `toEnglish`'s Genesis passthrough, the Barnabas
+      fallback trace, and the locale-vs-version finding itself) were
+      given to an independent refuter before commit; all seven survived
+      adversarial re-checking against source, none refuted or found
+      imprecise.
+
+      `flutter analyze` clean (both the two touched files and the whole
+      repo, 47s). `flutter test` run as 6 foreground chunks via
+      `tools/run_test_chunks.py`, exit code checked per chunk — all 6
+      `CHUNK N/6: PASS`. No deploy — test + a visibility-only rename,
+      nothing user-visible changed.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -9997,6 +10053,37 @@ has never seen this repo.
       `docs/p0-drift-2026-09-22.md`.
 
 ## P1 — Bible study correctness
+
+- [ ] **`shortBookName()` (`lib/utils/short_book_name.dart`) is keyed
+      off the UI locale, not the reading version — so a reader whose UI
+      locale doesn't match their reading version's script can see a
+      compact book label in the wrong script next to the correct
+      long-form header.** Found 2026-09-22 while adding
+      `test/short_book_name_test.dart`. The user's standing rule (see
+      `[[feedback_book_name_localization]]` in memory, enforced
+      elsewhere by `localeAwareBookName(book, locale, version)`) is that
+      book names follow the *reading version*, not the UI locale. This
+      function skips that: all three call sites —
+      `dashboard_page.dart:2061` (its own doc comment: "Localised book
+      name for the current version") and `bible_reading_pane.dart:6383`
+      /`:7497` (`currentVerse.book`, populated straight from the
+      per-version asset JSON — confirmed `assets/cuvs-yhwh.json` stores
+      `"book": "创世纪"`, Simplified, in the verse record) — already pass
+      a version-localized name in. `shortBookName` then reverse-maps it
+      back to English via `toEnglish` and re-localizes by `locale`
+      alone, discarding which script the input was actually in.
+      Concrete case: reading version `cuvs-yhwh-tr` (book field
+      Traditional `創世紀`) with UI locale `zh-Hans` → reverse-mapped to
+      `Genesis` → `shortBooksHans['Genesis'] = '创'` (Simplified) shown
+      below/beside a Traditional long-form header. Not fixed this hour
+      because a uniform fix needs a `version` parameter threaded through
+      all three call sites, and `dashboard_page.dart` may not have the
+      version in scope at that point — checked, not assumed, by an
+      independent refuter tracing all three sites plus the real asset
+      record. `test/short_book_name_test.dart` pins the *current*
+      behaviour with an explicit comment pointing at this item, so
+      fixing this will need that test updated too, not just the
+      production code.
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
       prose instead of the misattributing generic phrasing; the false
