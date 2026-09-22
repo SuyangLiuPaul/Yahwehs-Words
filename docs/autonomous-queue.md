@@ -10091,6 +10091,12 @@ has never seen this repo.
       script-neutral, so it isn't currently wrong. Left alone deliberately;
       refactoring the two together was scope creep for this item.
 
+      Pushed as `e199f30b`. CI run `35728227809` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      6-chunk suite were clean locally, so nothing is expected to fail;
+      the next iteration's step 0 should confirm this run's conclusion
+      rather than assume it.
+
 - [ ] **`reading_stats_page.dart:614`'s private `_relativeTime()` duplicates
       `lib/utils/relative_time.dart`'s old `startsWith('zh')` pattern** —
       the exact duplication the shared helper's own header says it was
