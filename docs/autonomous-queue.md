@@ -10060,6 +10060,48 @@ has never seen this repo.
 
 ## P1 — Bible study correctness
 
+- [x] **Fixed 2026-09-22: `relativeTime()` (`lib/utils/relative_time.dart`)
+      now renders Traditional glyphs for `zh-Hant` instead of Simplified.**
+      Same class of bug as the `shortBookName()` fix directly below it (UI
+      copy following the UI locale's *language* — `startsWith('zh')` — not
+      its *script*), caught by writing the file's first tests. Fix adds an
+      `isTraditional = locale == 'zh-Hant'` branch for the "just now",
+      "less than a minute", minutes and hours buckets: 刚刚→剛剛,
+      不到一分钟前→不到一分鐘前, 分钟→分鐘, 小时→小時. The day bucket
+      (`天前`) needs no branch — 天/前 are unchanged by simplification
+      (confirmed by an adversarial refuter call, which also confirmed the
+      four glyph substitutions and traced the fallback for an unrecognised
+      `zh-*` tag). Reader-visible on two real screens: the "Edited 5 分钟前"
+      note tag (`library_page.dart:705`) and recent-search rows
+      (`search_page.dart:2793`), both fed by `AppSettings.locale`.
+      `AppSettings.locale` isn't validated against an allowlist on every
+      path that can set it — `fromMap` (~:1877), `setLocale()` (~:1033) and
+      the SharedPreferences load path (~:1536) all assign an arbitrary
+      string with no check — so an unrecognised `zh-*` tag needed a defined
+      outcome: it now degrades to Simplified (the old universal behaviour)
+      rather than silently landing on English, and that's pinned by a test.
+      `test/relative_time_test.dart` added (20 cases, all 5 buckets × en /
+      zh-Hans / zh-Hant, plus clock-skew and pluralisation edge cases); run
+      first against the unfixed code to confirm 5 zh-Hant cases actually
+      failed before the fix landed. `flutter analyze` clean, full suite
+      green (6 chunks, all PASS). **Filed, not fixed — see the entry
+      immediately below this one:** `reading_stats_page.dart:614` has a
+      private duplicate `_relativeTime()` with the same `startsWith('zh')`
+      branch structure, but its strings (今天/昨天/`N 天前`) are
+      script-neutral, so it isn't currently wrong. Left alone deliberately;
+      refactoring the two together was scope creep for this item.
+
+- [ ] **`reading_stats_page.dart:614`'s private `_relativeTime()` duplicates
+      `lib/utils/relative_time.dart`'s old `startsWith('zh')` pattern** —
+      the exact duplication the shared helper's own header says it was
+      extracted to kill (2026-05-24). Not a live bug today: its only
+      strings are 今天/昨天/`N 天前`/an ISO date, all script-invariant, so
+      a zh-Hant reader sees correct output. Worth collapsing onto the
+      shared `relativeTime()` if that file is touched again, but a
+      day-granularity stats page doesn't need the shared helper's
+      second/minute/hour buckets, so this is a dedupe, not a bugfix — low
+      priority.
+
 - [x] **Fixed 2026-09-22: `shortBookName()` now takes an optional
       `version` param and follows the reading version's script, not the
       UI locale, when given one.** Was: keyed off `locale` alone, so a
