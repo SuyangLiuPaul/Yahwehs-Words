@@ -10166,6 +10166,17 @@ has never seen this repo.
       survived an independent refuter pass. `flutter analyze` clean;
       full suite green (3585 tests).
 
+      Pushed as `2b91e9b8`. CI run `35751591528` was still `in_progress`
+      after the ~6-minute watch budget, so deploy proceeded on the
+      strength of the local analyze/test results; confirmed `success`
+      right after the 4-site dev/qat deploy completed — no follow-up
+      needed.
+
+      Deployed to dev/qat (all 4 sites, no prod): `tools/release_web.sh`
+      confirmed `v1.6.30` live on `yswords-dev`, `yswords-qat`,
+      `yswords-cn-dev`, `yswords-cn-qat` — bundle matches `build/web` on
+      each. Version unchanged (dev deploys don't bump).
+
 - [x] **`reading_stats_page.dart:340`'s recent-activity row calls
       `localeAwareBookName(e.book, locale)` with no `version` argument,
       even though `ReadingHistoryEntry.version` — "the version the
