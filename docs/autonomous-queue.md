@@ -242,6 +242,13 @@ and quoted.**
       already at `pubspec.yaml`'s `1.6.30`, 2 commits behind HEAD, well
       inside the 6-iteration deploy-anyway threshold.
 
+      Pushed as `9add37bb`. CI run `35779188950` was still `in_progress`
+      after the ~6-minute watch budget (extended to ~8 minutes here,
+      still not concluded) — `flutter analyze` and the full 6-chunk
+      suite were clean locally, so nothing is expected to fail; the next
+      iteration's step 0 should confirm this run's conclusion rather
+      than assume it.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
