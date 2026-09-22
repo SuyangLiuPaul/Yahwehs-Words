@@ -9933,6 +9933,63 @@ has never seen this repo.
       past the ~6-minute watch budget; next iteration's step 0 should
       confirm it before picking a new item.
 
+- [x] **2026-09-22 (second pass) — re-ran all 26 `tools/audit_*.py`
+      (26, not 22 — `audit_biblexg_notes`, `audit_note_placement`,
+      `audit_print_witness`, `audit_speaker_attribution` were already
+      covered by the same-day `b6bd459c` pass but the count there said
+      22), the 4 `--check` modes and the 5 CI-gated Python unit tests.
+      Full table in `docs/p0-drift-2026-09-22.md`. Headline: 24 of 26
+      confirm the `b6bd459c` baseline from a few hours earlier exactly;
+      one genuine, explained drift (`audit_untranslated_hant.py`,
+      +19 fields/+6 identical, pinned to commit `a7c35696`'s chronology
+      rewrite — an independent refuter recomputed the delta directly
+      from that commit's diff and got an exact match); one baseline
+      write-up error found and corrected (see next item). Also
+      re-confirmed, per `NEXT_TASK.md`'s specific ask: `queue:133`'s
+      songs-snapshot restamp signature (118 songs, same per-source
+      split) is unchanged by this session's own `afa5a12b` sync.
+      Two smaller corrections filed in the report only (no docstring or
+      asset edit): `audit_printed_typography.py` and
+      `audit_ljk_tr_forms.py` both actually run to completion on this
+      machine (a local cache satisfies the first; the second needs no
+      external input at all), contradicting `NEXT_TASK.md`'s guess that
+      both were UNRUNNABLE.
+
+      An independent refuter agent checked the two claims with a root-
+      cause shape (the mislabeling below, and the `a7c35696` attribution)
+      plus the "both scripts actually run" framing. It broke the third:
+      my first draft said both scripts read the same print-XML cache;
+      `audit_ljk_tr_forms.py` doesn't reference that cache at all (reads
+      `assets/biblexg-v3{,-tr}.json` only) — corrected in the report and
+      in this entry before commit. The other two held.
+
+      `flutter analyze`/`flutter test` not run — Python + docs only, no
+      `lib/` or `test/*.dart` file touched. No deploy — nothing
+      user-facing changed.
+
+- [ ] **`audit_note_placement.py`'s one ATTACHED ELSEWHERE finding is
+      `004001050` (民數記 1:50), not 那鴻書 3:4 — the `b6bd459c` entry
+      immediately above mislabels its own finding.** `assets/cuvs-yhwh-tr.json`
+      is unchanged since that pass (`git log b6bd459c..HEAD --
+      assets/cuvs-yhwh.json assets/cuvs-yhwh-tr.json` is empty), so this
+      is the same finding, restated correctly — not new drift. 那鴻書 3:4
+      lives only in the script's `UNSETTLED` dict, which gates the
+      DIFFERENT OCCURRENCE list, never the ATTACHED ELSEWHERE list the
+      "1" actually came from; the two are structurally disjoint in the
+      script (confirmed by an independent refuter re-reading the source
+      and re-running the script). 民數記 1:50: our note names 擡 (a
+      variant of 抬, not folded to it by `opencc t2s`) and sits after the
+      whole phrase; the print's note names 抬 and sits immediately after
+      it — same word, different character named, different placement
+      convention, so neither of the script's two false-positive guards
+      fires. Not misleading to a reader in practice (the note still
+      names its own referent), but unverified against the print until
+      this pass. **Cannot be repaired — `assets/cuvs-yhwh-tr.json` is
+      frozen** (publisher declined further corrections, 2026-09-02); if
+      ever thawed, either normalize the note to name 抬 or add
+      `004001050` to the script's `EXPLAINED` dict. Full writeup
+      `docs/p0-drift-2026-09-22.md`.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
