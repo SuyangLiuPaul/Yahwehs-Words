@@ -9685,9 +9685,11 @@ has never seen this repo.
       full suite was not run; `flutter analyze` was not run for the same
       reason. Docs + `tools/` only — no deploy.
 
-      Pushed as `b6bd459c`. CI run `35671999873` was still `in_progress`
-      after the ~6-minute watch budget; the next iteration's step 0 should
-      confirm this run's conclusion rather than assume it.
+      Pushed as `b6bd459c`. CI run `35671999873` → `success` (confirmed
+      after a second watch pass; the docs-only follow-up fixing the P1
+      header, `cfc69359`, has its own run `35672531469` still
+      `in_progress` as of this note — next iteration's step 0 should
+      confirm it if this note is still here).
 
 ## P1 — Bible study correctness
 
