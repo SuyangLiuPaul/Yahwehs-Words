@@ -249,6 +249,8 @@ and quoted.**
       iteration's step 0 should confirm this run's conclusion rather
       than assume it.
 
+      **2026-09-23 confirmed:** run `35779188950` concluded `success`.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -21325,6 +21327,27 @@ so the bundle-size answer stays on the record.
       merits, don't assume a shared fix mechanically applies). Not fixed
       this hour to keep that iteration to its one assigned item; take
       each site individually next, with its own test.
+
+      **2026-09-23: two of the three sites fixed.**
+      `lib/utils/font_catalog.dart:60` (`FontOption.labelFor`) and
+      `lib/pages/help_page.dart:94` (`HelpKeyRow.label`) both now branch
+      `locale == 'zh-Hant'` → Traditional, else `startsWith('zh')` →
+      Simplified, else the original exact-match chain — same convention
+      as `localizedRole()`, with every existing terminal fallback (`??
+      label['en'] ?? key` / `?? labelKey`) preserved. New tests
+      `test/font_catalog_label_test.dart` and
+      `test/help_key_row_label_test.dart` were run against the unfixed
+      helpers first: exactly 4 cases went red (2 per file — bare `'zh'`
+      and an arbitrary `'zh-XX'`), everything else passed unchanged. A
+      refuter independently checked the unvalidated-locale claim, the
+      before/after behaviour characterization, the preserved terminal
+      fallbacks, and the red-case count — all confirmed. `flutter
+      analyze` clean; full suite green (3640 passed, 1 skipped).
+      `lib/widgets/bible_reading_pane.dart:9118` **remains unfixed** — it
+      is an inline `uiStrings[labelKey]?[locale] ?? labelKey` expression
+      inside a `metaRow` closure buried in a 9,000+-line widget file, a
+      different shape needing either an extraction refactor or a widget
+      test, not a one-line helper fix. Take it next, on its own.
 
 ## Blocked on the user — do not attempt
 

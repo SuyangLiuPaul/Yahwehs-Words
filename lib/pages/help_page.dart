@@ -91,8 +91,17 @@ class HelpKeyRow {
   final String keys;
   final String labelKey;
 
-  String label(String locale) =>
-      uiStrings[labelKey]?[locale] ?? uiStrings[labelKey]?['en'] ?? labelKey;
+  // Same unrecognised-`zh-*`-locale fix as `font_catalog.dart:labelFor` —
+  // `AppSettings.locale` is unvalidated (see
+  // `lib/models/app_settings.dart:1034,1537,1877`), so route a bare
+  // `'zh'` or `'zh-XX'` to Simplified instead of exact-matching past it
+  // to English.
+  String label(String locale) {
+    final entry = uiStrings[labelKey];
+    if (locale == 'zh-Hant') return entry?['zh-Hant'] ?? entry?['en'] ?? labelKey;
+    if (locale.startsWith('zh')) return entry?['zh-Hans'] ?? entry?['en'] ?? labelKey;
+    return entry?[locale] ?? entry?['en'] ?? labelKey;
+  }
 }
 
 class HelpKeyGroup {

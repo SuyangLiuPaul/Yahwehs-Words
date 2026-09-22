@@ -57,8 +57,17 @@ class FontOption {
     this.category = FontCategory.englishSerif,
   });
 
-  String labelFor(String locale) =>
-      label[locale] ?? label['en'] ?? key;
+  // `AppSettings.locale` is assigned with no validation on the
+  // `setLocale`, SharedPreferences-load and `fromMap` paths (see
+  // `lib/models/app_settings.dart:1034,1537,1877`), so an unrecognised
+  // `zh-*` tag is reachable here. Route it to Simplified rather than
+  // exact-matching past it to `label['en']` — same convention as
+  // `biblical_role.dart`'s `localizedRole()`.
+  String labelFor(String locale) {
+    if (locale == 'zh-Hant') return label['zh-Hant'] ?? label['en'] ?? key;
+    if (locale.startsWith('zh')) return label['zh-Hans'] ?? label['en'] ?? key;
+    return label[locale] ?? label['en'] ?? key;
+  }
 }
 
 enum FontCategory { bundled, englishSerif, englishSans, chinese, system }
