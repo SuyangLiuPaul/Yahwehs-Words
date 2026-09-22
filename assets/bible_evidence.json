@@ -16,7 +16,8 @@
       "Strong": 90,
       "Circumstantial": 39
     },
-    "generatedAt": "2026-05-22T22:08:38Z"
+    "generatedAt": "2026-05-22T22:08:38Z",
+    "correctionsFromSword": "2026-09-21, brought over from Yahweh's Sword: the Tel Dan Stele is 但丘石碑 (Tel Dan), not 但以理石碑 (Daniel); an ossuary holds bones, so 骨灰罐/骨灰盒 became 藏骨罐/骸骨箱, the terms this file already used 34 times elsewhere; and 25 academicSources lists lost their mojibake (AmÃ©lie → Amélie). Sword's zh-Hant variant table was NOT taken: it and this file's own s2tw repairs disagree (Sword turns 石製 into 石制), and this file's are the ones pinned by bible_evidence_traditional_test."
   },
   "evidences": [
     {
@@ -114,8 +115,8 @@
       "icon": "🪨",
       "title": {
         "en": "Tel Dan Stele",
-        "zh-Hans": "但以理石碑",
-        "zh-Hant": "但以理石碑"
+        "zh-Hans": "但丘石碑",
+        "zh-Hant": "但丘石碑"
       },
       "summary": {
         "en": "The first confirmed extra-biblical reference to the 'House of David,' corroborating the existence of the Davidic dynasty.",
@@ -124,8 +125,8 @@
       },
       "description": {
         "en": "The Tel Dan Stele is a 9th-century BCE Aramaic inscription discovered in 1993 by Gila Cook at Tel Dan in northern Israel. The fragmentary basalt stele contains the phrase 'bytdwd' (בית דוד) — meaning 'House of David' — making it the first and most significant archaeological confirmation of the biblical David outside of the Bible itself.\n\nThe inscription appears to have been erected by Hazael, king of Aram-Damascus, commemorating his victory over the 'king of Israel' and the 'king of the House of David.' Prior to this discovery, critical scholars frequently argued that David was a legendary figure with no historical basis.\n\nThe stele is now held in the Israel Museum in Jerusalem. Its publication in 1993 by Avraham Biran and Joseph Naveh in the Israel Exploration Journal was immediately recognized as a landmark discovery in biblical archaeology.",
-        "zh-Hans": "但以理石碑是一块公元前9世纪的亚兰文铭文，1993年由吉拉·库克在以色列北部的但（Dan）遗址出土。这块残缺的玄武岩石碑上刻有「bytdwd」字样，意为「大卫家」，是迄今在圣经以外首次且最重要的有关大卫王朝的考古证据。\n\n该铭文似为亚兰-大马士革王哈薛所立，记录其击败「以色列王」与「大卫家之王」的胜利。此前，批判学者常以缺乏圣经外证据为由，主张大卫只是传说人物，而非历史真实存在的君王。\n\n石碑现藏于耶路撒冷以色列博物馆。1993年，亚伯拉罕·比兰与约瑟夫·纳维在《以色列探索期刊》发表的研究报告，被立即公认为圣经考古学的里程碑式发现。",
-        "zh-Hant": "但以理石碑是一塊公元前9世紀的亞蘭文銘文，1993年由吉拉·庫克在以色列北部的但（Dan）遺址出土。這塊殘缺的玄武岩石碑上刻有「bytdwd」字樣，意為「大衛家」，是迄今在聖經以外首次且最重要的有關大衛王朝的考古證據。\n\n該銘文似為亞蘭-大馬士革王哈薛所立，記錄其擊敗「以色列王」與「大衛家之王」的勝利。此前，批判學者常以缺乏聖經外證據為由，主張大衛只是傳說人物，而非歷史真實存在的君王。\n\n石碑現藏於耶路撒冷以色列博物館。1993年，亞伯拉罕·比蘭與約瑟夫·納維在《以色列探索期刊》發表的研究報告，被立即公認為聖經考古學的里程碑式發現。"
+        "zh-Hans": "但丘石碑是一块公元前9世纪的亚兰文铭文，1993年由吉拉·库克在以色列北部的但（Dan）遗址出土。这块残缺的玄武岩石碑上刻有「bytdwd」字样，意为「大卫家」，是迄今在圣经以外首次且最重要的有关大卫王朝的考古证据。\n\n该铭文似为亚兰-大马士革王哈薛所立，记录其击败「以色列王」与「大卫家之王」的胜利。此前，批判学者常以缺乏圣经外证据为由，主张大卫只是传说人物，而非历史真实存在的君王。\n\n石碑现藏于耶路撒冷以色列博物馆。1993年，亚伯拉罕·比兰与约瑟夫·纳维在《以色列探索期刊》发表的研究报告，被立即公认为圣经考古学的里程碑式发现。",
+        "zh-Hant": "但丘石碑是一塊公元前9世紀的亞蘭文銘文，1993年由吉拉·庫克在以色列北部的但（Dan）遺址出土。這塊殘缺的玄武岩石碑上刻有「bytdwd」字樣，意為「大衛家」，是迄今在聖經以外首次且最重要的有關大衛王朝的考古證據。\n\n該銘文似為亞蘭-大馬士革王哈薛所立，記錄其擊敗「以色列王」與「大衛家之王」的勝利。此前，批判學者常以缺乏聖經外證據為由，主張大衛只是傳說人物，而非歷史真實存在的君王。\n\n石碑現藏於耶路撒冷以色列博物館。1993年，亞伯拉罕·比蘭與約瑟夫·納維在《以色列探索期刊》發表的研究報告，被立即公認為聖經考古學的里程碑式發現。"
       },
       "scripturalCorrelation": {
         "en": "The phrase 'bytdwd' (בית דוד) — 'House of David' — carved into the basalt stele is the precise terminology used in the Hebrew Bible when referring to the Davidic royal dynasty. 2 Samuel 7:16 records God's covenant with David: 'Your house and your kingdom will endure forever before me; your throne will be established forever.'\n\nThe stele's Aramaic usage of this exact dynastic designation demonstrates that 'House of David' was a recognized, historically documented political entity in the ancient Near East — not a retrospective theological construct. An enemy king commemorated his military victories against 'the House of David' using the same language the Bible itself employs, confirming the dynasty's historical reality within the same century that the biblical text places it.",
@@ -333,7 +334,7 @@
         "https://yswords-data.netlify.app/images/evidence/cyrus_cylinder_3.jpg"
       ],
       "academicSources": [
-        "Kuhrt, AmÃ©lie. \"The Cyrus Cylinder and Achaemenid Imperial Policy.\" JSOT 25 (1983): 83–97.",
+        "Kuhrt, Amélie. \"The Cyrus Cylinder and Achaemenid Imperial Policy.\" JSOT 25 (1983): 83–97.",
         "Briant, Pierre. From Cyrus to Alexander. Eisenbrauns, 2002."
       ],
       "confidenceLevel": "Strong",
@@ -378,7 +379,7 @@
         "zh-Hant": "1906"
       },
       "location": {
-        "en": "Hattusa (BoÄazkale), Turkey",
+        "en": "Hattusa (Boğazkale), Turkey",
         "zh-Hans": "哈图沙（博阿兹卡莱），土耳其",
         "zh-Hant": "哈圖沙（博阿茲卡萊），土耳其"
       },
@@ -502,7 +503,7 @@
       ],
       "academicSources": [
         "Dearman, J. Andrew, ed. Studies in the Mesha Inscription and Moab. Scholars Press, 1989.",
-        "Lemaire, AndrÃ©. \"House of David Restored in Moabite Inscription.\" BAR 20.3 (1994): 30–37.",
+        "Lemaire, André. \"House of David Restored in Moabite Inscription.\" BAR 20.3 (1994): 30–37.",
         "Smelik, K. A. D. \"The Inscription of King Mesha.\" COS 2 (2000): 137–138."
       ],
       "confidenceLevel": "Definitive",
@@ -737,8 +738,8 @@
       "icon": "⚱️",
       "title": {
         "en": "Caiaphas Ossuary",
-        "zh-Hans": "该亚法骨灰罐",
-        "zh-Hant": "該亞法骨灰罐"
+        "zh-Hans": "该亚法藏骨罐",
+        "zh-Hant": "該亞法藏骨罐"
       },
       "summary": {
         "en": "A limestone bone box discovered in Jerusalem in 1990, inscribed 'Joseph son of Caiaphas' — almost certainly the ossuary of the high priest who presided over Jesus' trial, as recorded in the Gospels.",
@@ -838,7 +839,7 @@
         "https://yswords-data.netlify.app/images/evidence/temple_warning_inscription_3.jpg"
       ],
       "academicSources": [
-        "Clermont-Ganneau, Charles. \"Une stÃ¨le du Temple de JÃ©rusalem.\" Revue archÃ©ologique 23 (1872): 214–234.",
+        "Clermont-Ganneau, Charles. \"Une stèle du Temple de Jérusalem.\" Revue archéologique 23 (1872): 214–234.",
         "Bickerman, Elias J. \"The Warning Inscriptions of Herod's Temple.\" JQR 37 (1947): 387–405.",
         "Levine, Lee I. The Ancient Synagogue. Yale University Press, 2000."
       ],
@@ -1007,7 +1008,7 @@
       "academicSources": [
         "Hoftijzer, Jacob, and G. van der Kooij. Aramaic Texts from Deir Alla. Brill, 1976.",
         "Moore, Michael S. The Balaam Traditions. Scholars Press, 1990.",
-        "Hackett, Jo Ann. The Balaam Text from Deir 'AllÄ. Scholars Press, 1984."
+        "Hackett, Jo Ann. The Balaam Text from Deir 'Allā. Scholars Press, 1984."
       ],
       "confidenceLevel": "Strong",
       "icon": "📝",
@@ -1064,7 +1065,7 @@
       ],
       "academicSources": [
         "Loffreda, Stanislao. Recovering Capharnaum. Franciscan Printing Press, 1985.",
-        "Corbo, Virgilio. Cafarnao I: Gli edifici della cittÃ . Franciscan Printing Press, 1975.",
+        "Corbo, Virgilio. Cafarnao I: Gli edifici della città. Franciscan Printing Press, 1975.",
         "Strange, James F., and Hershel Shanks. \"Synagogue Where Jesus Preached Found at Capernaum.\" BAR 9.6 (1983): 24–31."
       ],
       "confidenceLevel": "Definitive",
@@ -1164,7 +1165,7 @@
         "zh-Hant": "1878年（購得） / 1930年（出版）"
       },
       "location": {
-        "en": "BibliothÃ¨que nationale de France, Paris",
+        "en": "Bibliothèque nationale de France, Paris",
         "zh-Hans": "法国国家图书馆，巴黎",
         "zh-Hant": "法國國家圖書館，巴黎"
       },
@@ -1176,7 +1177,7 @@
         "https://yswords-data.netlify.app/images/evidence/nazareth_inscription_3.jpg"
       ],
       "academicSources": [
-        "Cumont, Franz. \"Un rescrit impÃ©rial sur la violation de sÃ©pulture.\" Revue historique 163 (1930): 241–266.",
+        "Cumont, Franz. \"Un rescrit impérial sur la violation de sépulture.\" Revue historique 163 (1930): 241–266.",
         "Clarysse, Willy, and Mark Depauw. \"The Nazareth Inscription Reconsidered.\" Analecta Papyrologica (2020).",
         "Finegan, Jack. The Archaeology of the New Testament. Princeton University Press, 1992."
       ],
@@ -1555,7 +1556,7 @@
       ],
       "academicSources": [
         "Jeremias, Joachim. Die Wiederentdeckung von Bethesda. Vandenhoeck & Ruprecht, 1966.",
-        "Duprez, Antoine. JÃ©sus et les dieux guÃ©risseurs. Gabalda, 1970."
+        "Duprez, Antoine. Jésus et les dieux guérisseurs. Gabalda, 1970."
       ],
       "confidenceLevel": "Definitive",
       "icon": "💧",
@@ -2609,7 +2610,7 @@
         "https://yswords-data.netlify.app/images/evidence/bodmer_papyri_3.jpg"
       ],
       "academicSources": [
-        "Martin, Victor. Papyrus Bodmer II: Ãvangile de Jean. Bibliotheca Bodmeriana, 1956.",
+        "Martin, Victor. Papyrus Bodmer II: Évangile de Jean. Bibliotheca Bodmeriana, 1956.",
         "Comfort, Philip W. Encountering the Manuscripts. Broadman & Holman, 2005."
       ],
       "confidenceLevel": "Definitive",
@@ -2771,7 +2772,7 @@
         "https://yswords-data.netlify.app/images/evidence/murabba_at_scrolls_0.jpg"
       ],
       "academicSources": [
-        "Benoit, Pierre, et al. Les Grottes de Murabba'Ã¢t. DJD 2. Oxford University Press, 1961.",
+        "Benoit, Pierre, et al. Les Grottes de Murabba'ât. DJD 2. Oxford University Press, 1961.",
         "Yadin, Yigael. Bar-Kokhba. Random House, 1971."
       ],
       "confidenceLevel": "Definitive",
@@ -3588,7 +3589,7 @@
         "https://yswords-data.netlify.app/images/evidence/mari_tablets_0.jpg"
       ],
       "academicSources": [
-        "Parrot, AndrÃ©. Mission archÃ©ologique de Mari. Geuthner, 1956.",
+        "Parrot, André. Mission archéologique de Mari. Geuthner, 1956.",
         "Freedman, David Noel, ed. Anchor Bible Dictionary. Vol. 4. Doubleday, 1992."
       ],
       "confidenceLevel": "Strong",
@@ -3744,7 +3745,7 @@
         "https://yswords-data.netlify.app/images/evidence/esarhaddon_prism_0.jpg"
       ],
       "academicSources": [
-        "Borger, Rykle. Die Inschriften Asarhaddons. Archiv fÃ¼r Orientforschung Beiheft 9, 1956.",
+        "Borger, Rykle. Die Inschriften Asarhaddons. Archiv für Orientforschung Beiheft 9, 1956.",
         "Cogan, Mordechai, and Hayim Tadmor. II Kings. Anchor Bible. Doubleday, 1988."
       ],
       "confidenceLevel": "Definitive",
@@ -4652,7 +4653,7 @@
         "https://yswords-data.netlify.app/images/evidence/quarantine_laws_3.jpg"
       ],
       "academicSources": [
-        "Pasteur, Louis. Germ Theory. AcadÃ©mie de MÃ©decine, 1878.",
+        "Pasteur, Louis. Germ Theory. Académie de Médecine, 1878.",
         "McMillen, S. I. None of These Diseases. Revell, 1984.",
         "Rosen, George. A History of Public Health. Johns Hopkins University Press, 1993."
       ],
@@ -4760,7 +4761,7 @@
         "https://yswords-data.netlify.app/images/evidence/pleiades_binding_0.jpg"
       ],
       "academicSources": [
-        "Robichon, C., and A. PÃªtre. \"On the Pleiades Star Cluster.\" A&A 315 (1996): 549–557.",
+        "Robichon, C., and A. Pêtre. \"On the Pleiades Star Cluster.\" A&A 315 (1996): 549–557.",
         "Ross, Hugh. The Creator and the Cosmos. NavPress, 2001."
       ],
       "confidenceLevel": "Circumstantial",
@@ -4906,7 +4907,7 @@
         "zh-Hant": "約西元前2千年"
       },
       "discoveryDate": {
-        "en": "17th century (RÃ¸mer) / 19th century confirmed",
+        "en": "17th century (Rømer) / 19th century confirmed",
         "zh-Hans": "17世纪（罗默）/ 19世纪确认",
         "zh-Hant": "17世紀（羅默）/ 19世紀確認"
       },
@@ -4923,7 +4924,7 @@
         "https://yswords-data.netlify.app/images/evidence/light_has_path_3.png"
       ],
       "academicSources": [
-        "RÃ¸mer, Ole. \"DÃ©monstration touchant le mouvement de la lumiÃ¨re.\" Journal des SÃ§avans (1676).",
+        "Rømer, Ole. \"Démonstration touchant le mouvement de la lumière.\" Journal des Sçavans (1676).",
         "Hawking, Stephen. A Brief History of Time. Bantam Books, 1988."
       ],
       "confidenceLevel": "Circumstantial",
@@ -5032,7 +5033,7 @@
         "https://yswords-data.netlify.app/images/evidence/ossuary_of_james_0.jpg"
       ],
       "academicSources": [
-        "Lemaire, AndrÃ©. \"Burial Box of James the Brother of Jesus.\" BAR 28.6 (2002): 24–33.",
+        "Lemaire, André. \"Burial Box of James the Brother of Jesus.\" BAR 28.6 (2002): 24–33.",
         "Shanks, Hershel, and Ben Witherington III. The Brother of Jesus. HarperSanFrancisco, 2003."
       ],
       "confidenceLevel": "Circumstantial",
@@ -5049,8 +5050,8 @@
       },
       "description": {
         "en": "The 'James Ossuary' came to public attention in 2002 when it was published by André Lemaire. It is a limestone burial box dating to the 1st century CE. Its inscription, 'James, son of Joseph, brother of Jesus,' immediately sparked immense interest due to its potential connection to James, the brother of Jesus of Nazareth, mentioned in the New Testament.\n\nIf fully authenticated, the ossuary would be the earliest archaeological artifact directly referencing Jesus of Nazareth. However, its provenance is disputed, and the inscription's authenticity, particularly the 'brother of Jesus' part, has been subject to intense debate and legal proceedings, with some scholars believing it to be a forgery or an alteration added to an otherwise authentic ossuary.\n\nThe Israel Antiquities Authority initially declared the inscription a forgery in 2003, leading to a high-profile trial. While the court did not definitively rule on the authenticity of the inscription, it acquitted the defendants of forgery charges, leaving the academic community divided. Despite the controversy, it remains a significant artifact that continues to fuel discussions about early Christian archaeology and the historical Jesus.",
-        "zh-Hans": "“雅各骸骨箱”于2002年由安德烈·勒梅尔公布后引起了公众关注。它是一个可追溯到公元1世纪的石灰石骨灰盒。其铭文“雅各，约瑟的儿子，耶稣的兄弟”因其可能与新约圣经中提及的拿撒勒人耶稣的兄弟雅各有关而立即引起了巨大兴趣。\n\n如果完全被证实，这个骸骨箱将是直接提及拿撒勒人耶稣的最早考古文物。然而，其来源存在争议，铭文的真实性，特别是“耶稣的兄弟”部分，一直受到激烈的辩论和法律诉讼，一些学者认为它是伪造的，或是在一个真实的骸骨箱上添加的改动。\n\n以色列文物管理局最初在2003年宣布该铭文为伪造，导致了一场备受瞩目的审判。尽管法院未能就铭文的真实性作出明确裁决，但它宣告被告伪造罪名不成立，使得学术界对此意见不一。尽管存在争议，它仍然是一件重要的文物，继续引发关于早期基督教考古学和历史上的耶稣的讨论。",
-        "zh-Hant": "“雅各骸骨箱”於2002年由安德烈·勒梅爾公佈後引起了公眾關注。它是一個可追溯到公元1世紀的石灰石骨灰盒。其銘文“雅各，約瑟的兒子，耶穌的兄弟”因其可能與新約聖經中提及的拿撒勒人耶穌的兄弟雅各有關而立即引起了巨大興趣。\n\n如果完全被證實，這個骸骨箱將是直接提及拿撒勒人耶穌的最早考古文物。然而，其來源存在爭議，銘文的真實性，特別是“耶穌的兄弟”部分，一直受到激烈的辯論和法律訴訟，一些學者認為它是偽造的，或是在一個真實的骸骨箱上添加的改動。\n\n以色列文物管理局最初在2003年宣佈該銘文為偽造，導致了一場備受矚目的審判。儘管法院未能就銘文的真實性作出明確裁決，但它宣告被告偽造罪名不成立，使得學術界對此意見不一。儘管存在爭議，它仍然是一件重要的文物，繼續引發關於早期基督教考古學和歷史上的耶穌的討論。"
+        "zh-Hans": "“雅各骸骨箱”于2002年由安德烈·勒梅尔公布后引起了公众关注。它是一个可追溯到公元1世纪的石灰石骸骨箱。其铭文“雅各，约瑟的儿子，耶稣的兄弟”因其可能与新约圣经中提及的拿撒勒人耶稣的兄弟雅各有关而立即引起了巨大兴趣。\n\n如果完全被证实，这个骸骨箱将是直接提及拿撒勒人耶稣的最早考古文物。然而，其来源存在争议，铭文的真实性，特别是“耶稣的兄弟”部分，一直受到激烈的辩论和法律诉讼，一些学者认为它是伪造的，或是在一个真实的骸骨箱上添加的改动。\n\n以色列文物管理局最初在2003年宣布该铭文为伪造，导致了一场备受瞩目的审判。尽管法院未能就铭文的真实性作出明确裁决，但它宣告被告伪造罪名不成立，使得学术界对此意见不一。尽管存在争议，它仍然是一件重要的文物，继续引发关于早期基督教考古学和历史上的耶稣的讨论。",
+        "zh-Hant": "“雅各骸骨箱”於2002年由安德烈·勒梅爾公佈後引起了公眾關注。它是一個可追溯到公元1世紀的石灰石骸骨箱。其銘文“雅各，約瑟的兒子，耶穌的兄弟”因其可能與新約聖經中提及的拿撒勒人耶穌的兄弟雅各有關而立即引起了巨大興趣。\n\n如果完全被證實，這個骸骨箱將是直接提及拿撒勒人耶穌的最早考古文物。然而，其來源存在爭議，銘文的真實性，特別是“耶穌的兄弟”部分，一直受到激烈的辯論和法律訴訟，一些學者認為它是偽造的，或是在一個真實的骸骨箱上添加的改動。\n\n以色列文物管理局最初在2003年宣佈該銘文為偽造，導致了一場備受矚目的審判。儘管法院未能就銘文的真實性作出明確裁決，但它宣告被告偽造罪名不成立，使得學術界對此意見不一。儘管存在爭議，它仍然是一件重要的文物，繼續引發關於早期基督教考古學和歷史上的耶穌的討論。"
       },
       "scripturalCorrelation": {
         "en": "Acts 12:17 mentions James: 'But motioning to them with his hand to be silent, he described to them how the Lord had brought him out of the prison. And he said, 'Tell these things to James and to the brothers.' Then he departed and went to another place.' This refers to James, a prominent leader in the early Jerusalem church, often identified as the brother of Jesus.\n\nGalatians 1:19 also states, 'But I saw none of the other apostles except James the Lord’s brother.' The ossuary's inscription, if authentic, would provide an extra-biblical archaeological reference to this significant figure, connecting the biblical narrative to a tangible artifact from the 1st century CE, albeit with ongoing scholarly debate regarding its full authenticity.",
@@ -5625,7 +5626,7 @@
         "https://yswords-data.netlify.app/images/evidence/jehoiachin_rations_tablets_2.jpg"
       ],
       "academicSources": [
-        "Weidner, Ernst F. \"Jojachin, KÃ¶nig von Juda.\" Babylonische Inschriften. OLZ 22 (1919): 74–76.",
+        "Weidner, Ernst F. \"Jojachin, König von Juda.\" Babylonische Inschriften. OLZ 22 (1919): 74–76.",
         "Wiseman, D. J. Chronicles of Chaldaean Kings. British Museum, 1956."
       ],
       "confidenceLevel": "Definitive",
@@ -6276,7 +6277,7 @@
         "https://yswords-data.netlify.app/images/evidence/stele_of_zakkur_3.jpg"
       ],
       "academicSources": [
-        "Donner, Herbert, and Wolfgang RÃ¶llig. KanaanÃ¤ische und AramÃ¤ische Inschriften. Harrassowitz, 1966.",
+        "Donner, Herbert, and Wolfgang Röllig. Kanaanäische und Aramäische Inschriften. Harrassowitz, 1966.",
         "Kitchen, Kenneth A. On the Reliability of the Old Testament. Eerdmans, 2003."
       ],
       "confidenceLevel": "Definitive",
@@ -7266,7 +7267,7 @@
         "https://yswords-data.netlify.app/images/evidence/ant_behavior_science_3.jpg"
       ],
       "academicSources": [
-        "HÃ¶lldobler, Bert, and Edward O. Wilson. The Ants. Harvard University Press, 1990.",
+        "Hölldobler, Bert, and Edward O. Wilson. The Ants. Harvard University Press, 1990.",
         "Murphy, John. A History of Biblical Israel. Westminster John Knox, 2004."
       ],
       "confidenceLevel": "Strong",
@@ -9002,8 +9003,8 @@
         "https://yswords-data.netlify.app/images/evidence/tower_of_babel_3.jpg"
       ],
       "academicSources": [
-        "George, Andrew R. \"The Tower of Babel: Archaeology, History and Cuneiform Texts.\" Archiv fÃ¼r Orientforschung 51, 2005/2006.",
-        "Schmid, HansjÃ¶rg. Der Tempelturm Etemenanki in Babylon. Philipp von Zabern, 1995.",
+        "George, Andrew R. \"The Tower of Babel: Archaeology, History and Cuneiform Texts.\" Archiv für Orientforschung 51, 2005/2006.",
+        "Schmid, Hansjörg. Der Tempelturm Etemenanki in Babylon. Philipp von Zabern, 1995.",
         "Walton, John H. \"The Mesopotamian Background of the Tower of Babel Account.\" Bulletin for Biblical Research 5, 1995."
       ],
       "confidenceLevel": "Strong",
@@ -9323,7 +9324,7 @@
         "zh-Hant": "晚銅器時代/鐵器時代一期（約西元前1400–前1050年）"
       },
       "discoveryDate": {
-        "en": "1922–1932 (Schmidt/KjÃ¦r); 1981–1984 (Finkelstein); 2017–present (Stripling)",
+        "en": "1922–1932 (Schmidt/Kjær); 1981–1984 (Finkelstein); 2017–present (Stripling)",
         "zh-Hans": "1922–1932年（施密特/凯尔）；1981–1984年（芬克尔斯坦）；2017年至今（斯特里普林）",
         "zh-Hant": "1922–1932年（施密特/凱爾）；1981–1984年（芬克爾斯坦）；2017年至今（斯特里普林）"
       },
@@ -9342,7 +9343,7 @@
       "academicSources": [
         "Finkelstein, Israel. Shiloh: The Archaeology of a Biblical Site. Tel Aviv University, 1993.",
         "Stripling, Scott. \"The Israelite Tabernacle at Shiloh.\" Bible and Spade 29, 2016.",
-        "KjÃ¦r, Hans. \"The Excavation of Shilo 1929.\" Journal of the Palestine Oriental Society 10, 1930."
+        "Kjær, Hans. \"The Excavation of Shilo 1929.\" Journal of the Palestine Oriental Society 10, 1930."
       ],
       "confidenceLevel": "Strong",
       "icon": "⛺",
@@ -9492,7 +9493,7 @@
         "zh-Hant": "西元1世紀"
       },
       "discoveryDate": {
-        "en": "1968–1981 (Corbo); 2009–present (VÃ¶rÃ¶s)",
+        "en": "1968–1981 (Corbo); 2009–present (Vörös)",
         "zh-Hans": "1968–1981年（科尔博）；2009年至今（沃罗斯）",
         "zh-Hant": "1968–1981年（科爾博）；2009年至今（沃羅斯）"
       },
@@ -9509,7 +9510,7 @@
         "https://yswords-data.netlify.app/images/evidence/john_baptist_machaerus_3.jpg"
       ],
       "academicSources": [
-        "VÃ¶rÃ¶s, GyÅzÅ. Machaerus I–III: History, Archaeology and Architecture of the Fortified Herodian Royal Palace. Edizioni Terra Santa, 2013–2019.",
+        "Vörös, Győző. Machaerus I–III: History, Archaeology and Architecture of the Fortified Herodian Royal Palace. Edizioni Terra Santa, 2013–2019.",
         "Josephus, Flavius. Antiquities of the Jews, Book XVIII.5.2, c. 93 CE.",
         "Piccirillo, Michele. \"Machaerus.\" Anchor Bible Dictionary Vol. 4. Doubleday, 1992."
       ],
@@ -9725,7 +9726,7 @@
         "zh-Hant": "1863年（伍德，大英博物館）；1895年至今（奧地利持續發掘）"
       },
       "location": {
-        "en": "Ephesus (SelÃ§uk), Turkey",
+        "en": "Ephesus (Selçuk), Turkey",
         "zh-Hans": "土耳其以弗所（今塞尔丘克）",
         "zh-Hant": "土耳其以弗所（今塞爾丘克）"
       },
@@ -9790,7 +9791,7 @@
         "https://yswords-data.netlify.app/images/evidence/prayer_of_nabonidus_0.jpg"
       ],
       "academicSources": [
-        "Milik, JÃ³zef T. \"PriÃ¨re de Nabonide et autres Ã©crits d'un cycle de Daniel.\" Revue Biblique 63, 1956.",
+        "Milik, Józef T. \"Prière de Nabonide et autres écrits d'un cycle de Daniel.\" Revue Biblique 63, 1956.",
         "Collins, John J. The Apocalyptic Imagination. Eerdmans, 1998.",
         "Beaulieu, Paul-Alain. The Reign of Nabonidus, King of Babylon 556–539 B.C. Yale University Press, 1989."
       ],
@@ -10678,8 +10679,8 @@
       },
       "discoveryDate": {
         "en": "Bethphage ossuary inscriptions (1923); Mount of Olives excavations ongoing",
-        "zh-Hans": "1923年（伯法吉骨灰盒铭文）；橄榄山发掘持续进行中",
-        "zh-Hant": "1923年（伯法吉骨灰盒銘文）；橄欖山發掘持續進行中"
+        "zh-Hans": "1923年（伯法吉骸骨箱铭文）；橄榄山发掘持续进行中",
+        "zh-Hant": "1923年（伯法吉骸骨箱銘文）；橄欖山發掘持續進行中"
       },
       "location": {
         "en": "Mount of Olives, Bethphage, Jerusalem",
@@ -10712,8 +10713,8 @@
       },
       "description": {
         "en": "Matthew 21:1-11, Mark 11:1-11, Luke 19:28-44, and John 12:12-19 all describe Jesus entering Jerusalem from the Mount of Olives, having begun at Bethphage and Bethany (modern al-Eizariya / Bethany-across-the-Jordan). The descent is described as a prophetic fulfillment of Zechariah 9:9 — the messianic king coming on a donkey.\n\nKey archaeological confirmations:\n\n(1) The Bethphage Stone (1923): at the Franciscan Bethphage church, a cubic stone bears 12th-century Crusader frescoes depicting the raising of Lazarus, the Jerusalem entry, and Jesus mounting the donkey. Its location identifies the traditional mounting place, and the site's 2nd-century Christian veneration precedes Constantinian-era construction — indicating continuous local memory.\n\n(2) The Mount of Olives Herodian road: excavations have identified sections of the Roman-period road descending from the Mount of Olives summit past Gethsemane and across the Kidron Valley into the city via the Eastern (Golden) Gate area. This is the route Gospel narratives imply.\n\n(3) Ossuary inscriptions: Bethphage ossuary caves excavated in the 19th-20th centuries preserved Jewish burials with inscriptions including the name 'Lazarus' (Eleazar) — confirming the village's character as a Jewish settlement exactly as the Gospels describe.\n\n(4) Bethany (al-Eizariya): traditional Tomb of Lazarus site, venerated from at least the 4th century, with Byzantine church remains and a Crusader-era church above them — located 3 km east of Jerusalem on the Bethany-Jerusalem Roman road, matching Gospel topography.\n\n(5) Pilgrim traffic at Passover: Josephus (War 6.422-427) estimates Passover pilgrim numbers in the hundreds of thousands, confirming the crowd scenes the Gospels depict. Pilgrims typically approached Jerusalem from the east via the Jericho road, which enters the city precisely via the Mount of Olives route — the standard pilgrimage approach.",
-        "zh-Hans": "马太福音21:1-11、马可福音11:1-11、路加福音19:28-44和约翰福音12:12-19都描述耶稣从橄榄山进入耶路撒冷，起点为伯法其与伯大尼（现代al-Eizariya）。下山过程被描述为撒迦利亚书9:9的预言性应验——弥赛亚王骑驴来临。\n\n关键考古证实：\n\n（1）伯法其石（1923年）：方济各会伯法其教堂内一块立方体石头，带12世纪十字军壁画，描绘拉撒路复活、入耶路撒冷和耶稣上驴。其位置标明传统骑上之处，该地公元2世纪基督徒崇敬早于君士坦丁时期建造——指明连续的本地记忆。\n\n（2）橄榄山希律时代道路：发掘辨识出从橄榄山顶经客西马尼下至汲沦谷、经东门（金门）区进城的罗马期道路段。这正是福音叙事所暗示的路径。\n\n（3）骨灰盒铭文：19-20世纪发掘的伯法其骨灰盒洞穴保存了带「拉撒路」（以利亚撒）等名字的犹太埋葬——证实该村庄确为福音所述的犹太聚落。\n\n（4）伯大尼（al-Eizariya）：传统「拉撒路之墓」所在地，至少从4世纪即受崇敬，拜占庭教堂遗迹与十字军教堂叠压其上——位于耶路撒冷以东3公里的伯大尼-耶路撒冷罗马道上，与福音地理吻合。\n\n（5）逾越节朝圣人流：约瑟夫（《犹太战记》6.422-427）估计逾越节朝圣者数以十万计，证实福音所描绘的人群场景。朝圣者通常从东经耶利哥路接近耶路撒冷，正经橄榄山路线入城——标准朝圣进路。",
-        "zh-Hant": "馬太福音21:1-11、馬可福音11:1-11、路加福音19:28-44和約翰福音12:12-19都描述耶穌從橄欖山進入耶路撒冷，起點為伯法其與伯大尼（現代al-Eizariya）。下山過程被描述為撒迦利亞書9:9的預言性應驗——彌賽亞王騎驢來臨。\n\n關鍵考古證實：\n\n（1）伯法其石（1923年）：方濟各會伯法其教堂內一塊立方體石頭，帶12世紀十字軍壁畫，描繪拉撒路復活、入耶路撒冷和耶穌上驢。其位置標明傳統騎上之處，該地公元2世紀基督徒崇敬早於君士坦丁時期建造——指明連續的本地記憶。\n\n（2）橄欖山希律時代道路：發掘辨識出從橄欖山頂經客西馬尼下至汲淪谷、經東門（金門）區進城的羅馬期道路段。這正是福音敘事所暗示的路徑。\n\n（3）骨灰盒銘文：19-20世紀發掘的伯法其骨灰盒洞穴保存了帶「拉撒路」（以利亞撒）等名字的猶太埋葬——證實該村莊確為福音所述的猶太聚落。\n\n（4）伯大尼（al-Eizariya）：傳統「拉撒路之墓」所在地，至少從4世紀即受崇敬，拜占庭教堂遺蹟與十字軍教堂疊壓其上——位於耶路撒冷以東3公里的伯大尼-耶路撒冷羅馬道上，與福音地理吻合。\n\n（5）逾越節朝聖人流：約瑟夫（《猶太戰記》6.422-427）估計逾越節朝聖者數以十萬計，證實福音所描繪的人群場景。朝聖者通常從東經耶利哥路接近耶路撒冷，正經橄欖山路線入城——標準朝聖進路。"
+        "zh-Hans": "马太福音21:1-11、马可福音11:1-11、路加福音19:28-44和约翰福音12:12-19都描述耶稣从橄榄山进入耶路撒冷，起点为伯法其与伯大尼（现代al-Eizariya）。下山过程被描述为撒迦利亚书9:9的预言性应验——弥赛亚王骑驴来临。\n\n关键考古证实：\n\n（1）伯法其石（1923年）：方济各会伯法其教堂内一块立方体石头，带12世纪十字军壁画，描绘拉撒路复活、入耶路撒冷和耶稣上驴。其位置标明传统骑上之处，该地公元2世纪基督徒崇敬早于君士坦丁时期建造——指明连续的本地记忆。\n\n（2）橄榄山希律时代道路：发掘辨识出从橄榄山顶经客西马尼下至汲沦谷、经东门（金门）区进城的罗马期道路段。这正是福音叙事所暗示的路径。\n\n（3）骸骨箱铭文：19-20世纪发掘的伯法其骸骨箱洞穴保存了带「拉撒路」（以利亚撒）等名字的犹太埋葬——证实该村庄确为福音所述的犹太聚落。\n\n（4）伯大尼（al-Eizariya）：传统「拉撒路之墓」所在地，至少从4世纪即受崇敬，拜占庭教堂遗迹与十字军教堂叠压其上——位于耶路撒冷以东3公里的伯大尼-耶路撒冷罗马道上，与福音地理吻合。\n\n（5）逾越节朝圣人流：约瑟夫（《犹太战记》6.422-427）估计逾越节朝圣者数以十万计，证实福音所描绘的人群场景。朝圣者通常从东经耶利哥路接近耶路撒冷，正经橄榄山路线入城——标准朝圣进路。",
+        "zh-Hant": "馬太福音21:1-11、馬可福音11:1-11、路加福音19:28-44和約翰福音12:12-19都描述耶穌從橄欖山進入耶路撒冷，起點為伯法其與伯大尼（現代al-Eizariya）。下山過程被描述為撒迦利亞書9:9的預言性應驗——彌賽亞王騎驢來臨。\n\n關鍵考古證實：\n\n（1）伯法其石（1923年）：方濟各會伯法其教堂內一塊立方體石頭，帶12世紀十字軍壁畫，描繪拉撒路復活、入耶路撒冷和耶穌上驢。其位置標明傳統騎上之處，該地公元2世紀基督徒崇敬早於君士坦丁時期建造——指明連續的本地記憶。\n\n（2）橄欖山希律時代道路：發掘辨識出從橄欖山頂經客西馬尼下至汲淪谷、經東門（金門）區進城的羅馬期道路段。這正是福音敘事所暗示的路徑。\n\n（3）骸骨箱銘文：19-20世紀發掘的伯法其骸骨箱洞穴保存了帶「拉撒路」（以利亞撒）等名字的猶太埋葬——證實該村莊確為福音所述的猶太聚落。\n\n（4）伯大尼（al-Eizariya）：傳統「拉撒路之墓」所在地，至少從4世紀即受崇敬，拜占庭教堂遺蹟與十字軍教堂疊壓其上——位於耶路撒冷以東3公里的伯大尼-耶路撒冷羅馬道上，與福音地理吻合。\n\n（5）逾越節朝聖人流：約瑟夫（《猶太戰記》6.422-427）估計逾越節朝聖者數以十萬計，證實福音所描繪的人群場景。朝聖者通常從東經耶利哥路接近耶路撒冷，正經橄欖山路線入城——標準朝聖進路。"
       },
       "scripturalCorrelation": {
         "en": "The Synoptic and Johannine accounts all locate the entry via the Mount of Olives from Bethphage/Bethany — a route archaeologically confirmed as the primary Roman-era pilgrim road from Jericho. The specific place-names (Bethphage, Bethany, Mount of Olives, Kidron) are all excavated, dated, and located exactly where the Gospels place them.\n\nZechariah 9:9's prophecy specifies the king coming 'humble and mounted on a donkey, on a colt, the foal of a donkey' — and Matthew 21:5 explicitly cites this fulfillment. The Gospel accounts' conformity to verifiable 1st-century Passover pilgrimage practice (large crowds, eastern approach, Mount of Olives descent) grounds the event in authentic Second Temple reality.",
@@ -10789,7 +10790,7 @@
         "zh-Hant": "約西元50年"
       },
       "discoveryDate": {
-        "en": "Philippi excavations (Ãcole franÃ§aise d'AthÃ¨nes 1914-present)",
+        "en": "Philippi excavations (École française d'Athènes 1914-present)",
         "zh-Hans": "公元1914年至今（法国雅典学院在腓立比发掘）",
         "zh-Hant": "西元1914年至今（法國雅典學院在腓立比發掘）"
       },
@@ -10863,7 +10864,7 @@
       ],
       "academicSources": [
         "Koester, Craig. Revelation: A New Translation with Introduction and Commentary. Anchor Yale Bible, 2014.",
-        "Saffrey, Henri-Dominique. \"Patmos et les origines chrÃ©tiennes.\" MÃ©langes Pierre LÃ©vÃªque, 1975.",
+        "Saffrey, Henri-Dominique. \"Patmos et les origines chrétiennes.\" Mélanges Pierre Lévêque, 1975.",
         "Kraft, Heinrich. Die Offenbarung des Johannes. Mohr Siebeck, 1974."
       ],
       "confidenceLevel": "Strong",
@@ -11260,8 +11261,8 @@
         "https://yswords-data.netlify.app/images/evidence/stoning_of_stephen_3.jpg"
       ],
       "academicSources": [
-        "Vincent, Louis-Hugues, and F.-M. Abel. JÃ©rusalem Nouvelle. Gabalda, 1914-26.",
-        "Bovon, FranÃ§ois. \"The Dossier on Stephen, the First Martyr.\" Harvard Theological Review 96, 2003.",
+        "Vincent, Louis-Hugues, and F.-M. Abel. Jérusalem Nouvelle. Gabalda, 1914-26.",
+        "Bovon, François. \"The Dossier on Stephen, the First Martyr.\" Harvard Theological Review 96, 2003.",
         "Murphy-O'Connor, Jerome. The Holy Land: An Oxford Archaeological Guide. Oxford University Press, 2008."
       ],
       "confidenceLevel": "Strong",
@@ -11317,7 +11318,7 @@
       ],
       "academicSources": [
         "Kaplan, Jacob, and Haya Ritter-Kaplan. \"Jaffa.\" In New Encyclopedia of Archaeological Excavations in the Holy Land. Israel Exploration Society, 1993.",
-        "PeilstÃ¶cker, Martin, and Aaron A. Burke, eds. The History and Archaeology of Jaffa 1. Cotsen Institute, 2011.",
+        "Peilstöcker, Martin, and Aaron A. Burke, eds. The History and Archaeology of Jaffa 1. Cotsen Institute, 2011.",
         "Bauckham, Richard. \"Tabitha of Joppa.\" In Gospel Women. Eerdmans, 2002."
       ],
       "confidenceLevel": "Strong",
@@ -11416,7 +11417,7 @@
         "zh-Hant": "以弗所阿爾忒彌斯神廟（伍德1869年；大英博物館1904-05年；奧地利學院1965年至今）"
       },
       "location": {
-        "en": "Ephesus (SelÃ§uk), Turkey",
+        "en": "Ephesus (Selçuk), Turkey",
         "zh-Hans": "以弗所（塞尔丘克），土耳其",
         "zh-Hant": "以弗所（塞爾丘克），土耳其"
       },
