@@ -164,6 +164,22 @@ and quoted.**
 
       **Confirmed 2026-09-22:** `35709759469` concluded `success`.
 
+- [x] **2026-09-23 — Tier 5, landed the sixth `queue:20645` recurrence's
+      stranded work (test coverage).** The prior hour's stage wrote
+      `test/format_searched_text_test.dart` (full characterization
+      coverage of `formatSearchText()`, the highlighter behind every
+      text-search result row — one call site, `search_page.dart:1977`,
+      confirmed by grep, and zero test references before this file) then
+      backgrounded `flutter test` and ended its turn waiting on a
+      notification that never arrives under `claude -p`. Verified this
+      hour rather than trusted: the file matches the implementation,
+      `flutter test test/format_searched_text_test.dart` passes (14/14,
+      foreground), `flutter analyze` clean, and the test proven able to
+      fail — one assertion broken by hand, confirmed red, restored, `git
+      diff` empty before committing. See `queue:20645`'s own new
+      paragraph for the recurrence's full account. Test-only; no
+      `lib/` change, no deploy.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -20863,6 +20879,27 @@ so the bundle-size answer stays on the record.
       untangle before landing it. Still filed here rather than treated
       as one-off: the underlying gap (a stage ending its turn before
       committing work it already finished) is unchanged and still
+      outside this repo's reach.
+
+      **Recurred a sixth time, 2026-09-23 ~03:34–03:44.** That hour's
+      stage wrote `test/format_searched_text_test.dart` (295 lines,
+      mtime 2026-09-23 03:37:09) — full characterization coverage of
+      `formatSearchText()`, the highlighter behind every text-search
+      result row — started `flutter test` in the background, and ended
+      its turn with, verbatim from `run.log`: *"I'll pause here and
+      wait for the background chunk-0 test run to finish; the harness
+      will notify me automatically when it completes."* Under
+      `claude -p` there is no later turn for that notification to
+      arrive into, so the file sat untracked and uncommitted for the
+      rest of the hour. Same shape as all five prior recurrences: a
+      finished, correct change stranded by reaching for a background
+      call near the end of a stage. Landed the following hour: the
+      file matched the implementation, `flutter test
+      test/format_searched_text_test.dart` passed (14/14, foreground),
+      `flutter analyze` was clean, and the test was proven able to fail
+      (one assertion broken by hand, confirmed red, restored, `git
+      diff` empty before committing) before this note and the fix were
+      committed together. The underlying gap is still open and still
       outside this repo's reach.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
