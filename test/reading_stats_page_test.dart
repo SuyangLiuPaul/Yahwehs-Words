@@ -106,6 +106,91 @@ void main() {
     expect(find.byType(ListView), findsNothing);
   });
 
+  /// A single recent entry with the given book/version, under the given
+  /// UI locale. Coverage is seeded to match so the page doesn't hit its
+  /// empty state.
+  Map<String, Object> seededEntry({
+    required String book,
+    required String version,
+    required String locale,
+  }) {
+    final scoped = ProfileService.instance.scopedKey;
+    final at = DateTime(2026, 9, 1, 8, 0);
+    return {
+      'locale': locale,
+      scoped(ReadingHistoryService.coverageBaseKey): jsonEncode({
+        book: [5]
+      }),
+      scoped(ReadingHistoryService.logBaseKey): jsonEncode([
+        {'b': book, 'c': 5, 'v': version, 't': at.millisecondsSinceEpoch},
+      ]),
+      scoped(ReadingHistoryService.sinceBaseKey): at.millisecondsSinceEpoch,
+    };
+  }
+
+  testWidgets(
+      'a recent entry follows the version it was read in, not the UI locale',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await ProfileService.instance.init();
+    // Traditional CUVS entry under a Simplified UI locale: the row must
+    // render Traditional glyphs, following e.version rather than locale.
+    await pumpWith(
+        tester,
+        seededEntry(
+            book: 'John', version: 'cuvs-yhwh-tr', locale: 'zh-Hans'));
+
+    expect(find.textContaining('約翰福音 5'), findsOneWidget,
+        reason: 'book names follow the reading version, not the UI locale');
+    expect(find.textContaining('约翰福音 5'), findsNothing,
+        reason: 'must not fall back to the Simplified locale default');
+  });
+
+  testWidgets('an English-version entry renders English under a zh locale',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await ProfileService.instance.init();
+    await pumpWith(
+        tester, seededEntry(book: 'John', version: 'kjv', locale: 'zh-Hans'));
+
+    expect(find.textContaining('John 5'), findsOneWidget,
+        reason: 'KJV is English source text regardless of UI locale');
+    // The By-book aggregate row (bare "约翰福音", no chapter) is still
+    // locale-driven and expected here — only the chapter-suffixed
+    // recent-row form must be absent.
+    expect(find.textContaining('约翰福音 5'), findsNothing);
+  });
+
+  testWidgets('an entry with no stored version falls back to the UI locale',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await ProfileService.instance.init();
+    // '' is what legacy entries (written before `v` existed) decode to
+    // via ReadingHistoryEntry.fromJson's default.
+    await pumpWith(
+        tester, seededEntry(book: 'John', version: '', locale: 'zh-Hans'));
+
+    expect(find.textContaining('约翰福音 5'), findsOneWidget,
+        reason: 'an empty version must degrade to today\'s locale-driven '
+            'behaviour, not an empty or English label');
+  });
+
+  testWidgets(
+      "the By-book aggregate stays locale-driven even when a recent entry "
+      "isn't", (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await ProfileService.instance.init();
+    // A KJV recent entry (English row) alongside a Simplified locale:
+    // the By-book row for John must still read in Simplified, because
+    // it aggregates across versions and has no single one to follow.
+    await pumpWith(
+        tester, seededEntry(book: 'John', version: 'kjv', locale: 'zh-Hans'));
+
+    expect(find.textContaining('约翰福音'), findsOneWidget,
+        reason: 'the By-book row is an aggregate and must not pick up the '
+            "recent entry's version");
+  });
+
   testWidgets('nothing on the page counts consecutive days', (tester) async {
     SharedPreferences.setMockInitialValues({});
     await ProfileService.instance.init();

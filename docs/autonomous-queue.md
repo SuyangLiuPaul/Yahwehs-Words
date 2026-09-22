@@ -10146,7 +10146,27 @@ has never seen this repo.
       judgment call (no in-screen script clash to point at on this page,
       unlike the `shortBookName` case) — see the P1 item below this one.
 
-- [ ] **`reading_stats_page.dart:340`'s recent-activity row calls
+- [x] **Fixed 2026-09-23: recent-activity row now passes `e.version` to
+      `localeAwareBookName`, following the reading version's script
+      (standing rule) rather than the UI locale.** `e.version == ''`
+      (legacy entries pre-dating this field) degrades to the old
+      locale-driven output unchanged — `localeAwareBookName` already
+      treated an empty/null version as "fall back to locale". The
+      `_BookRow` aggregate ("By book") was deliberately left
+      locale-driven: it has no single version to follow. Docstring on
+      `ReadingHistoryEntry.version` extended to state the consequence
+      honestly: a reader who switches versions between reads sees a
+      mixed-script — possibly mixed-language — recent list. 4 new
+      widget-test cases in `test/reading_stats_page_test.dart` (Traditional
+      entry under Simplified locale, English entry under Chinese locale,
+      empty-version fallback, and pinning `_BookRow`'s locale-driven
+      behaviour so a later sweep doesn't "fix" it too). Two factual
+      claims (version was read nowhere else in `lib/`; `e.book` is
+      already canonical English so `zhToEn` is a no-op here) both
+      survived an independent refuter pass. `flutter analyze` clean;
+      full suite green (3585 tests).
+
+- [x] **`reading_stats_page.dart:340`'s recent-activity row calls
       `localeAwareBookName(e.book, locale)` with no `version` argument,
       even though `ReadingHistoryEntry.version` — "the version the
       chapter was opened in" (`reading_history_service.dart:~72`) —

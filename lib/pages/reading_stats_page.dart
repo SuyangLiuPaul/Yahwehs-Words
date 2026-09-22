@@ -339,7 +339,7 @@ class _Report extends StatelessWidget {
             leading: Icon(Icons.chevron_right,
                 size: 18, color: scheme.onSurfaceVariant),
             title: Text(
-              '${localeAwareBookName(e.book, locale)} ${e.chapter}',
+              '${localeAwareBookName(e.book, locale, e.version)} ${e.chapter}',
               style: TextStyle(
                 fontFamily: settings.fontFamily,
                 fontFamilyFallback: kCjkFontFallback,

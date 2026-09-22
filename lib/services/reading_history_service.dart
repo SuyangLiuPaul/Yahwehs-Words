@@ -72,6 +72,16 @@ class ReadingHistoryEntry {
   /// The version the chapter was opened in, for display only. Coverage
   /// deliberately ignores it: reading John 3 in NASB and again in CUVS
   /// is one chapter covered, not two.
+  ///
+  /// The stats page's recent-activity row renders its book name in
+  /// THIS version's script rather than the UI locale's, per the app's
+  /// standing rule that book names follow the reading version. Empty
+  /// (legacy entries written before this field existed) falls back to
+  /// the locale. Consequence: a reader who switches versions between
+  /// reads sees a mixed-script — possibly mixed-language — recent
+  /// list, e.g. "Genesis 3" (read in KJV) above "约翰福音 4" (read in
+  /// CUVS). The "By book" aggregate above it stays locale-driven on
+  /// purpose: it has no single version to follow.
   final String version;
   final DateTime at;
 
