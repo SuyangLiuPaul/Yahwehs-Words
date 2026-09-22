@@ -162,6 +162,8 @@ and quoted.**
       the next iteration's step 0 should confirm this run's conclusion
       rather than assume it.
 
+      **Confirmed 2026-09-22:** `35709759469` concluded `success`.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -10097,16 +10099,76 @@ has never seen this repo.
       the next iteration's step 0 should confirm this run's conclusion
       rather than assume it.
 
-- [ ] **`reading_stats_page.dart:614`'s private `_relativeTime()` duplicates
-      `lib/utils/relative_time.dart`'s old `startsWith('zh')` pattern** —
-      the exact duplication the shared helper's own header says it was
-      extracted to kill (2026-05-24). Not a live bug today: its only
-      strings are 今天/昨天/`N 天前`/an ISO date, all script-invariant, so
-      a zh-Hant reader sees correct output. Worth collapsing onto the
-      shared `relativeTime()` if that file is touched again, but a
-      day-granularity stats page doesn't need the shared helper's
-      second/minute/hour buckets, so this is a dedupe, not a bugfix — low
-      priority.
+      **Confirmed 2026-09-22:** `35728227809` concluded `success`.
+
+- [x] **Fixed 2026-09-22: `reading_stats_page.dart:614`'s private
+      `_relativeTime()`/`_isoDate()` duplication is gone — moved to
+      `lib/utils/relative_time.dart` as public `relativeDay()` +
+      `isoDate()`, imported by the page.** Not a collapse onto the shared
+      `relativeTime()`: that helper buckets by elapsed seconds/minutes/
+      hours (`刚刚`/`N 分钟前`), while the stats page deliberately wants
+      day granularity only (`今天`/`昨天`/`N 天前`/ISO date) — swapping
+      call sites in would have been a real UI regression dressed as a
+      dedupe, so `relativeDay()` stays a second, sibling formatter with
+      that reasoning recorded in its docstring.
+
+      **Also fixed, not just relocated — a real bug caught while moving
+      it, confirmed by an adversarial refuter:** the old
+      `DateTime.now().difference(at).inDays` measured *elapsed* time, so
+      a chapter opened at 23:30 and viewed at 08:00 the next morning
+      (8.5h elapsed) misreported "今天"/"Today" for something read
+      yesterday. First fix (truncate both sides to local midnight via
+      `DateTime(y,m,d)` before differencing) was ALSO wrong: the refuter
+      found that on a DST spring-forward day (a 23-hour local day), two
+      midnights 2 calendar days apart are only 47 elapsed hours, which
+      `Duration.inDays` truncates to 1 — mislabeling a 2-day-old reading
+      as "Yesterday". Final fix builds `DateTime.utc(y, m, d)` from each
+      side's local y/m/d fields before differencing: UTC has no DST, so
+      the subtraction is pure date arithmetic, always an exact 24h
+      multiple, regardless of what the local clock did on the days in
+      between. Both bugs and the final fix are pinned in
+      `test/relative_time_test.dart`.
+
+      `test/relative_time_test.dart` extended (12 new cases: today/
+      yesterday/2-days/29-day and 30-day boundaries, the elapsed-vs-
+      calendar regression, the DST regression, a clock-skew future, an
+      unrecognised `zh-XX` tag, ISO zero-padding, and the no-`now`
+      default-clock path). Rendered output confirmed byte-identical to
+      the pre-move code for every non-boundary case. `flutter analyze`
+      clean; full suite green (6 chunks, all PASS, run twice — once
+      before the DST fix, once after).
+
+      **Filed, not fixed — a second instance of the version-vs-locale
+      class, same shape as the `shortBookName()` fix in `c6a1d393`:**
+      `reading_stats_page.dart:340` calls
+      `localeAwareBookName(e.book, locale)` with no `version`, even
+      though `ReadingHistoryEntry.version` exists. Needs its own
+      judgment call (no in-screen script clash to point at on this page,
+      unlike the `shortBookName` case) — see the P1 item below this one.
+
+- [ ] **`reading_stats_page.dart:340`'s recent-activity row calls
+      `localeAwareBookName(e.book, locale)` with no `version` argument,
+      even though `ReadingHistoryEntry.version` — "the version the
+      chapter was opened in" (`reading_history_service.dart:~72`) —
+      exists on every entry and is currently used for no display at
+      all.** Found while moving `_relativeTime()`
+      (`docs/autonomous-queue.md` item immediately above this one).
+      `localeAwareBookName` (`lib/utils/version_mapper.dart:22`) is
+      documented as wanting to be "driven by the reading `currentVersion`
+      so book names match the verse text the user is reading" — this is
+      the same class as the `shortBookName()` fix in `c6a1d393`, but
+      *not* the same fix: that one had a live, provable UI-visible clash
+      (a Traditional long-form header beside a Simplified short-form
+      abbreviation on the same screen). This page shows no verse text at
+      all, so there is nothing on-screen to clash with the book name —
+      the open question is a judgment call, not a bug: should a
+      *history* list follow the UI locale (what the reader's phone is
+      set to right now) or the version each chapter was actually opened
+      in (which can differ entry-to-entry if the reader switches
+      versions between reads)? Either is defensible; pick one and make
+      `ReadingHistoryEntry.version`'s "for display only" docstring true
+      by actually using it, or update the docstring if the UI-locale
+      choice is kept deliberately.
 
 - [x] **Fixed 2026-09-22: `shortBookName()` now takes an optional
       `version` param and follows the reading version's script, not the

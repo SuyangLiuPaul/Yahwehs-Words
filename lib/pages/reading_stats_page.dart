@@ -42,6 +42,8 @@ import 'package:yahwehs_words/utils/app_nav.dart' show pushPage;
 import 'package:yahwehs_words/utils/jump_to_reference.dart'
     show resolveAndPrepareJump, showJumpResultSnackBar;
 import 'package:yahwehs_words/utils/reference_parser.dart' show BibleReference;
+import 'package:yahwehs_words/utils/relative_time.dart'
+    show relativeDay, isoDate;
 import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
@@ -345,7 +347,7 @@ class _Report extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              _relativeTime(e.at, locale),
+              relativeDay(e.at, locale),
               style: TextStyle(
                 fontFamily: settings.fontFamily,
                 fontFamilyFallback: kCjkFontFallback,
@@ -378,7 +380,7 @@ class _PeriodLine extends StatelessWidget {
         : (uiStrings['readingStatsSince']?[locale] ??
                 'Covers reading recorded on this device since {date}. '
                     'Anything you read before then is not counted.')
-            .replaceAll('{date}', _isoDate(d));
+            .replaceAll('{date}', isoDate(d));
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -603,25 +605,3 @@ class _BookRow extends StatelessWidget {
   }
 }
 
-String _isoDate(DateTime d) =>
-    '${d.year.toString().padLeft(4, '0')}-'
-    '${d.month.toString().padLeft(2, '0')}-'
-    '${d.day.toString().padLeft(2, '0')}';
-
-/// Coarse "how long ago", to the day. Deliberately not minute-accurate:
-/// the exact second a chapter was opened is neither interesting nor
-/// something the dwell-gated record can claim precisely.
-String _relativeTime(DateTime at, String locale) {
-  final days = DateTime.now().difference(at).inDays;
-  final zh = locale.startsWith('zh');
-  if (days <= 0) {
-    return zh ? '今天' : 'Today';
-  }
-  if (days == 1) {
-    return zh ? '昨天' : 'Yesterday';
-  }
-  if (days < 30) {
-    return zh ? '$days 天前' : '$days days ago';
-  }
-  return _isoDate(at);
-}

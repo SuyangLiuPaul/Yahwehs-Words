@@ -60,3 +60,60 @@ String _justNow(String locale) {
   if (locale == 'zh-Hant') return '剛剛';
   return locale.startsWith('zh') ? '刚刚' : 'just now';
 }
+
+/// 2026-09-22: moved out of `reading_stats_page.dart`'s private
+/// `_relativeTime` so it stops re-duplicating [relativeTime]'s
+/// `locale.startsWith('zh')` branching. It is a SECOND formatter beside
+/// [relativeTime], not a caller of it: [relativeTime] buckets by elapsed
+/// seconds/minutes/hours down to "just now"; this one only cares which
+/// *calendar day* something fell on, because the stats page's own
+/// docstring says "the exact second a chapter was opened is neither
+/// interesting nor something the dwell-gated record can claim precisely."
+/// Collapsing the two would trade 今天/昨天/ISO-date for 刚刚/N 分钟前 on a
+/// page that deliberately wants day granularity — do not do that.
+///
+/// Buckets, all script-invariant so no `isTraditional` branch is needed:
+///   same calendar day (incl. clock-skew futures) → "今天" / "Today"
+///   previous calendar day                        → "昨天" / "Yesterday"
+///   2-29 calendar days back                       → "N 天前" / "N days ago"
+///   30+ calendar days back                        → an ISO date via [isoDate]
+///
+/// Compares calendar dates, not elapsed `Duration.inDays`: a chapter
+/// opened at 23:30 and viewed at 08:00 the next morning is 8.5 elapsed
+/// hours, which `inDays` would round down to 0 and misreport as "today"
+/// when it was actually read yesterday.
+///
+/// The day-count itself is done via [DateTime.utc] built from [at] and
+/// [now]'s local `year`/`month`/`day` fields, NOT via two local midnights
+/// (`DateTime(y, m, d)`) differenced directly: a local midnight-to-midnight
+/// `Duration` is only 24h apart on an ordinary day. On the 23-hour day a
+/// DST region loses each spring, two local midnights 2 calendar days apart
+/// are only 47 elapsed hours, and `Duration.inDays` truncates that to 1 —
+/// which would put a reading from two days ago in the "Yesterday" bucket.
+/// [DateTime.utc] has no DST, so differencing two UTC instants built from
+/// the same y/m/d numbers is pure date arithmetic: always an exact
+/// multiple of 24h, regardless of what the local clock did on the days
+/// in between.
+///
+/// [at] is expected to be a local `DateTime` (as `ReadingHistoryEntry.at`
+/// is), and [now] defaults to the real local clock — pass it explicitly
+/// only from a test.
+String relativeDay(DateTime at, String locale, {DateTime? now}) {
+  final today = now ?? DateTime.now();
+  final startOfToday = DateTime.utc(today.year, today.month, today.day);
+  final startOfAt = DateTime.utc(at.year, at.month, at.day);
+  final days = startOfToday.difference(startOfAt).inDays;
+  final zh = locale.startsWith('zh');
+  if (days <= 0) return zh ? '今天' : 'Today';
+  if (days == 1) return zh ? '昨天' : 'Yesterday';
+  if (days < 30) return zh ? '$days 天前' : '$days days ago';
+  return isoDate(at);
+}
+
+/// `YYYY-MM-DD`, zero-padded. Used by [relativeDay]'s 30+ day fallback and
+/// by `reading_stats_page.dart`'s period line ("Covers reading recorded
+/// on this device since {date}").
+String isoDate(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-'
+    '${d.month.toString().padLeft(2, '0')}-'
+    '${d.day.toString().padLeft(2, '0')}';
