@@ -9470,6 +9470,12 @@ has never seen this repo.
       been awaiting the user's send for weeks; sending them unblocks more of
       this queue than any further code change could.
 
+      Pushed as `70c15a53`. CI run `35694449731` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` was clean locally
+      and no Dart file changed (a Python tool + its test + docs only), so
+      nothing is expected to fail; the next iteration's step 0 should
+      confirm this run's conclusion rather than assume it.
+
 - [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued
