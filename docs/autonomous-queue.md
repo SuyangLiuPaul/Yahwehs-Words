@@ -9850,6 +9850,10 @@ has never seen this repo.
       went to prod 13 minutes before this plan was written; nothing
       user-visible changed here).
 
+      Pushed as `52407957`. CI run `35688579674` was still `in_progress`
+      past the ~6-minute watch budget; next iteration's step 0 should
+      confirm it before picking a new item.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
