@@ -9685,6 +9685,12 @@ has never seen this repo.
       full suite was not run; `flutter analyze` was not run for the same
       reason. Docs + `tools/` only — no deploy.
 
+      Pushed as `b6bd459c`. CI run `35671999873` was still `in_progress`
+      after the ~6-minute watch budget; the next iteration's step 0 should
+      confirm this run's conclusion rather than assume it.
+
+## P1 — Bible study correctness
+
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
       prose instead of the misattributing generic phrasing; the false
       "one CHAIN link" comment is corrected.** `abraham` and `shem` each
