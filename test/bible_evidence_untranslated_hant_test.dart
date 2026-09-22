@@ -156,6 +156,11 @@ void main() {
     // at authoring time and corrected by hand; the strings ship as
     // literals and nothing converts anything at run time. The claim
     // holds.
+    // `Directory.listSync`'s enumeration order is filesystem-dependent —
+    // stable-ish on macOS/APFS, not guaranteed on Linux/ext4 (the CI
+    // runner) — so sort before comparing; the claim is about which 3
+    // files, not the order a directory walk happens to visit them in.
+    hits.sort();
     expect(hits, [
       'lib/constants/help_topics.dart',
       'lib/constants/search_synonyms.dart',

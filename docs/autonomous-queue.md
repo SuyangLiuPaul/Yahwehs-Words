@@ -21349,6 +21349,42 @@ so the bundle-size answer stays on the record.
       different shape needing either an extraction refactor or a widget
       test, not a one-line helper fix. Take it next, on its own.
 
+      **Pushed as `924890df`; watching CI caught an unrelated failure**:
+      `test/bible_evidence_untranslated_hant_test.dart` (`nothing renders
+      these to Traditional at run time`) failed on the `ubuntu-latest`
+      runner — `Directory('lib').listSync(recursive: true)` returned its
+      3 hits in a different order than the Mac (`lib/models/strongs.dart`
+      first instead of `lib/constants/help_topics.dart`), and the test
+      asserted the literal list order. The prior run (`8bdea5ab`) passed
+      this same test, so it's a genuine environment difference (ext4 vs
+      APFS directory-entry order), not something this iteration's own
+      change touched. Fixed by sorting `hits` before the `expect` — the
+      test's claim is about which 3 files, not the order a directory walk
+      happens to visit them in. Re-ran locally (passed), `flutter
+      analyze` clean, full suite green (3641 passed, 1 skipped) again,
+      pushed as a second commit, watched to conclusion.
+
+- [ ] **17 other test files call `Directory(...).listSync(recursive:
+      true)` with no `.sort()`** (`grep -rln "listSync(recursive: true)"
+      test/ | xargs grep -L '\.sort()'`, 2026-09-23, found while fixing
+      the CI failure above — not itself verified to be broken, since most
+      probably use the listing for counting or an unordered search rather
+      than asserting exact order): `update_service_test.dart`,
+      `selectable_text_scroll_test.dart`, `nested_scrollable_test.dart`,
+      `projection_page_test.dart`, `safe_item_scroll_test.dart`,
+      `ziji_typo_test.dart`, `china_build_email_signin_test.dart`,
+      `log_diag_test.dart`, `sermon_library_orphaned_test.dart`,
+      `support_email_test.dart`, `forensic_logging_audit_test.dart`,
+      `image_asset_audit_test.dart`, `song_share_button_test.dart`,
+      `reader_route_leak_test.dart`, `reactive_builder_const_test.dart`,
+      `ai_key_required_test.dart`, `reading_plans_stay_removed_test.dart`,
+      `reduced_motion_test.dart`, `image_network_audit_test.dart`. Worth
+      an actual read of each (not just a grep) to find any that, like
+      `bible_evidence_untranslated_hant_test.dart` did, assert an exact
+      ordered list rather than a set/count — those are latent
+      Mac-passes-CI-fails bugs waiting for their own unlucky directory
+      order.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
