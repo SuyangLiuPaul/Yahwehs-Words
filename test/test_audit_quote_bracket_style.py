@@ -10,7 +10,9 @@ witness blob, the pinned-set gate) is intentionally not exercised here, the
 same split `test_audit_songs_snapshot_churn.py` uses for its module.
 """
 
+import contextlib
 import importlib.util
+import io
 import os
 import unittest
 
@@ -120,6 +122,89 @@ class GroupByBook(unittest.TestCase):
         self.assertEqual(set(books), {"001", "002"})
         self.assertEqual(books["001"], [("001001001", "a"), ("001001002", "b")])
         self.assertEqual(books["002"], [("002001001", "c")])
+
+
+class ConfoundedClass(unittest.TestCase):
+    """`CONFOUNDED_CLASS` is the classification `queue:9314` asked for —
+    verified against synthetic fixtures here; verified against the real
+    28/9/19 split (via `main()`'s own exit-code gate) only when the frozen
+    assets are read, which this module deliberately does not do."""
+
+    VALID_CATEGORIES = {
+        "MISSING_INNER_OPENER",
+        "MISSING_INNER_CLOSER",
+        "EXTRA_INNER_OPENER",
+        "UNPLACED",
+    }
+
+    def test_has_exactly_19_entries(self):
+        self.assertEqual(len(qbs.CONFOUNDED_CLASS), 19)
+
+    def test_every_category_is_one_of_the_four_named_buckets(self):
+        self.assertTrue(set(qbs.CONFOUNDED_CLASS.values()) <= self.VALID_CATEGORIES)
+
+    def test_every_key_is_a_span_id_shape(self):
+        for span_id in qbs.CONFOUNDED_CLASS:
+            open_key, close_key = span_id.split("-")
+            self.assertEqual(len(open_key), 9)
+            self.assertEqual(len(close_key), 9)
+            self.assertLessEqual(open_key, close_key)
+
+
+class PrintConfounded(unittest.TestCase):
+    """`print_confounded` is the `--show-confounded` dump the acceptance
+    criteria asked for: every verse in the span (not just the open/close
+    endpoints), classified, for all three sources."""
+
+    def test_prints_every_verse_in_the_span_and_the_category(self):
+        by_id = {
+            "002008020": "「你清早起來，對他説：",
+            "002008021": "（中間一節，沒有標記）",
+            "002008023": "明天必有這神蹟。』」",
+        }
+        tagged = {"002008020": "TAGGED-020", "002008023": "TAGGED-023"}
+        witness = {"002008020": "WITNESS-020", "002008023": "WITNESS-023"}
+        confounded = [
+            {
+                "open_key": "002008020",
+                "close_key": "002008023",
+                "open_char": "「",
+                "close_char": "』",
+                "expected_close": "」",
+                "span_id": "002008020-002008023",
+                "totals": {"「": 1, "」": 1, "『": 0, "』": 1},
+            }
+        ]
+
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            qbs.print_confounded(confounded, by_id, tagged, witness)
+        out = buf.getvalue()
+
+        self.assertIn("002008020-002008023 [MISSING_INNER_OPENER]", out)
+        # The middle verse (021) has no tagged/witness entry but must still
+        # appear — the whole point of a span dump, not just the endpoints.
+        self.assertIn("中間一節", out)
+        self.assertIn("TAGGED-020", out)
+        self.assertIn("WITNESS-023", out)
+
+    def test_unclassified_span_is_labelled_rather_than_failing(self):
+        by_id = {"099099099": "x"}
+        confounded = [
+            {
+                "open_key": "099099099",
+                "close_key": "099099099",
+                "open_char": "「",
+                "close_char": "』",
+                "expected_close": "」",
+                "span_id": "099099099-099099099",
+                "totals": {},
+            }
+        ]
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            qbs.print_confounded(confounded, by_id, {}, {})
+        self.assertIn("[UNCLASSIFIED]", buf.getvalue())
 
 
 if __name__ == "__main__":

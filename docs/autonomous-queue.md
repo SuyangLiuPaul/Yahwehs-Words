@@ -9397,6 +9397,79 @@ has never seen this repo.
 
       **Confirmed 2026-09-22: `gh run view 35658053260` → `success`.**
 
+      **2026-09-22 — the 19 CONFOUNDED spans this item explicitly left
+      unclassified are now read verse-by-verse and classified, per
+      `NEXT_TASK.md`'s continuation of this item.**
+      `tools/audit_quote_bracket_style.py` gained `--show-confounded` (dumps
+      every verse in each span, not just the open/close endpoints, against
+      ours/tagged/witness) and `CONFOUNDED_CLASS`, a per-id classification
+      table into four named buckets:
+
+        * **MISSING_INNER_OPENER (3)** — witness has an inner `『` that ours
+          AND the tagged corpus both lack: `002008020-002008023` (出埃及記
+          8:20), `014020015-014020017` (歷代志下20:15),
+          `014034023-014034028` (歷代志下34:26).
+        * **MISSING_INNER_CLOSER (10)** — witness closes an inner `『` with
+          `』` at a specific verse ours AND tagged both lack:
+          `002033001-002033003`, `011001047-011001048`,
+          `011021021-011021024`, `024033024-024033026`,
+          `038007005-038007007`, `040022012-040022014`, and four repeats of
+          the SAME omission across Revelation's seven-letter formula
+          (Ephesus `066002001-066002007`, Smyrna `066002008-066002011`,
+          Thyatira `066002018-066002029`, Sardis `066003001-066003006`).
+        * **EXTRA_INNER_OPENER (1)** — `009002030-009002036` (撒母耳記上
+          2:36): ours AND tagged both insert a `『` witness lacks; witness
+          shows a specific alternative (the earlier opener running straight
+          through to one closer), which is what localizes this one.
+        * **UNPLACED (5)** — no source pins the defect, or the sources
+          disagree with each other: `024031010-024031011` (耶利米書31:10, an
+          anomalous adjacent `『』` with nothing between them and a witness
+          that has zero brackets in the whole passage), `038002004-038002005`
+          (撒迦利亞書2:4, three-way disagreement between ours/tagged/witness),
+          `038003007-038003010` (撒迦利亞書3:7, ours+tagged agree on an
+          opener witness lacks, but witness has no marks anywhere in the
+          span to say where a closer belongs), `038007009-038007014`
+          (撒迦利亞書7:9, a structural split — witness treats this as two
+          separate quotations, ours/tagged run one continuous one — not
+          reducible to a single missing/extra mark), and
+          `024042011-024042012` (耶利米書42:11, same LIFO signature as the
+          pinned isolated defect `026033010`, but that precedent's own
+          resolution is "missing opener," not "wrong glyph," so this can't
+          be asserted as either).
+
+      An independent refuter agent checked all 19 rows against the raw
+      JSON/tagged/witness data before this was written and forced two
+      reclassifications out of an initial draft that had all 19 confidently
+      placed: `038003007-038003010` moved from a claimed MISSING_INNER_CLOSER
+      (the refuter found no witness-confirmed closer position, unlike every
+      other row in that bucket) and `024042011-024042012` moved from a
+      claimed WRONG_GLYPH_CLOSE (the refuter caught that its only cited
+      precedent, `026033010`, actually argues the opposite conclusion). Both
+      are now UNPLACED. All other 17 rows, and the four count/structural
+      claims (28/9/19, and that the confounded id set is identical between
+      `cuvs-yhwh.json` and `cuvs-yhwh-tr.json`), were independently
+      re-verified and confirmed. Full per-id evidence is in the tool's
+      module docstring and `CONFOUNDED_CLASS`'s inline comments.
+
+      **Still filed, not repaired**: both frozen assets are read-only; this
+      pass is report-only by construction and touched no asset. The exit
+      code now gates on the confounded classification too (19 pinned ids),
+      not just the isolated 9, so a re-import or a detector bug in either
+      set fails loudly rather than re-measuring a different number silently.
+      `test/test_audit_quote_bracket_style.py` gained coverage for
+      `CONFOUNDED_CLASS`'s shape and the new `print_confounded` dump (both
+      synthetic-fixture only, per the file's existing house rule of never
+      touching the frozen assets from a test). No Dart file changed —
+      Python + docs only, so `flutter analyze`/the Dart suite were not run
+      this pass.
+
+      **For the user**: twelve of the thirteen open P0 items, the only open
+      BUGS item, and both open P2 items are all waiting on someone other
+      than this loop. Two drafted letters — `docs/和合本雅伟版-请教出版方.md`
+      and `docs/梁家鏗譯本-請教出版方.md` — are marked 定稿，可以寄出 and have
+      been awaiting the user's send for weeks; sending them unblocks more of
+      this queue than any further code change could.
+
 - [x] **2026-09-21 audit re-run: `audit_speaker_attribution.py` fails
       (exit 1) with 304 UNEXPLAINED ids against a 39-id `EXPLAINED` table
       — but sampling strongly suggests this is a large uncatalogued
