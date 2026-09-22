@@ -15,16 +15,22 @@ Witness B is folded to Simplified with opencc so all three sit in one script.
 Only CJK ideographs are compared, so punctuation and spacing never register.
 A hit is an insertion the two witnesses agree on, at the same place in our text.
 
-**The 26 running-text hits have now been read against the printed 1919, and 20
+**The running-text hits have now been read against the printed 1919, and most
 of them are not insertions at all.** The print agrees with the two witnesses,
-against us, at all but one — and that turns out to be the wrong question to
-ask. Where our text reads longer, it supplies a Chinese word for a word that
+against us, at all but a handful — and that turns out to be the wrong question
+to ask. Where our text reads longer, it supplies a Chinese word for a word that
 is IN the Greek and that the print leaves implicit: 就開始控告 renders ἤρξατο
 κατηγορεῖν where the print's 就告他說 drops ἤρξατο, and 等了多時，看見 renders
 both προσδοκώντων and θεωρούντων where the print renders one. Our own tagged
-corpus reads identically at all 20 and its Strong's numbers were checked
+corpus reads identically at these and its Strong's numbers were checked
 against assets/originals verse by verse. **Deleting any of them would remove a
 word the Greek has.**
+
+**As of 2026-09-22, this class is 692/561/131, not the 419/387/26 above** —
+`50dcc102`'s publisher-text adoption (2026-09-09) grew the raw counts, and
+`EXPLAINED`/`PENDING` grew to keep pace (131 and 1 entries): every running-text
+hit is still accounted for, 0 NEW. Run the script for the live figures; the
+paragraph above describes the reading, not a count to trust.
 
 **Why the clustering in 使徒行傳 and 哥林多後書 is still not explained.** The
 obvious story — one deliberate revision pass toward the original — was put to
@@ -33,15 +39,17 @@ witness error, and two 民數記 hits are bare aspect particles rendering nothin
 An equally good rival is that this edition was keyed from a LATER CUV printing
 rather than the 1919 sheets, which predicts the same scattered corrections and
 the same clustering with no editorial intent at all. Nothing in reach
-distinguishes them, so both are recorded and neither is asserted. Six are still
-open — see PENDING.
+distinguishes them, so both are recorded and neither is asserted. As of
+2026-09-22, 1 is still open — see PENDING (was six; five were resolved since,
+see the file's history rather than this prose for how).
 
 Hits are split in two, because they are not the same kind of thing:
 
   APPARATUS  the extra characters lie wholly inside a <note:…> marker, a
              [雅伟]-style bracket gloss, or a （原文是…） parenthesis. This
              edition's own editorial apparatus, which the witnesses simply do
-             not carry. 387 of the 419 hits, and none of them is a defect.
+             not carry. As of 2026-09-22, 561 of the 692 hits, and none of
+             them is a defect.
   RUNNING    the extra characters are in the verse itself. These are the ones
              that matter, and each has to be read individually.
 

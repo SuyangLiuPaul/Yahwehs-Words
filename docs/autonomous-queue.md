@@ -9565,7 +9565,125 @@ has never seen this repo.
       next step 0 to confirm it. **Confirmed 2026-09-21: `success`.**
       (`35597255159`, `be58ace5` itself, also `success`.)
 
-## P1 — Bible study correctness
+- [x] **2026-09-22 — re-ran all 22 `tools/audit_*.py` that CI does not
+      gate (the 4 gated ones are `audit_p0.py`, `audit_strongs_tagging.py`,
+      `audit_divine_name.py`, `audit_originals_compounds.py --check`;
+      confirmed by re-reading `flutter-ci.yml` directly, not assumed from
+      yesterday's pass). Wider set than yesterday's 8: today's also covers
+      `audit_biblexg_notes.py`, `audit_biblexg_v2_vs_tr.py`,
+      `audit_dropped_characters.py`, `audit_inserted_characters.py`,
+      `audit_lexicon_provenance.py`, `audit_ljk_tr_forms.py`,
+      `audit_note_placement.py`, `audit_print_witness.py`,
+      `audit_printed_typography.py`, `audit_publisher_adoption_drift.py`,
+      `audit_quote_bracket_style.py`, `audit_songs_snapshot_churn.py`,
+      `audit_strongs_alignment.py`, `audit_traditional_glyph_holes.py`,
+      `audit_untranslated_hant.py`, plus a re-run of yesterday's 8. Found
+      two real defects — in the AUDIT TOOLS, not the scripture — and one
+      small genuine structural finding the first defect had been hiding.
+      All live, in the foreground, exit codes checked; no asset touched.**
+
+      **`audit_print_witness.py` had been silently broken for 13 days.**
+      `STUB = "見上節"` (bare) stopped matching once `50dcc102`
+      (2026-09-09, the publisher-text adoption) wrapped all 70 of those
+      stub verses in `〔〕` brackets — `test/print_witness_alignment_test.dart`
+      was updated for the bracket the day before (09-08) and this file was
+      the one place the change never reached. Every run since has reported
+      **70 false `!! UNEXPLAINED` findings** (all 70 stub ids plus a
+      cascading content-check false positive), masking the script's exit
+      code and drowning out anything real underneath. Fixed: one line
+      (`STUB = "〔見上節〕"`). Confirmed by an independent refuter agent
+      before the fix (verified the JSON has 0 bare / 70 bracketed, traced
+      the single introducing commit, ran the Dart test) — VERDICT: holds.
+
+      **Once the noise cleared, 2 small genuine findings surfaced** —
+      previously invisible, not new drift:
+        * 約伯記 10:20-21 — the print merges them into one block (no text
+          between the two `{{verse|}}` markers); KJV keeps them separate,
+          agreeing with us. A fourth instance of the "print mis-divides,
+          our division is standard" class this file already tracked three
+          of (1 Chr 22, Mark 9:43/45, John 7:53).
+        * 路加福音 20:30 — the print folds 第三個 into v30 and leaves v31
+          as the bare seven-brothers summary; ours splits it one clause
+          earlier. Neither KJV alone nor the file's usual witnesses
+          settled it (KJV's v30 is a fuller independent clause matching
+          neither side); a second refuter pass checked `assets/nasb.json`
+          and `assets/leb.json` and both agree with OUR shorter division
+          exactly (`"and the second"`, bare) — added citing NASB+LEB,
+          not KJV, which is why the file's own witness-priority list is
+          worth remembering.
+      Both entries added to the script's own `CONTENT`/`MERGE_ONLY` dicts
+      with the specific evidence; docstring's stale "31,059 of 31,102,
+      43 exceptions" corrected to the live "31,053 of 31,102, 49
+      exceptions." The script now exits 0.
+
+      **`audit_inserted_characters.py`'s docstring prose was stale in the
+      other direction** — code, not narrative, had kept pace. It still
+      said "26 running-text hits… 20 of them… Six are still open," from
+      before `50dcc102` grew the corpus; the live run is 692 hits (561
+      apparatus / 131 running), and the script's own `EXPLAINED`/`PENDING`
+      tables already cover 130 and 1 of those 131 — 0 NEW, unchanged from
+      yesterday's finding for the same underlying data via
+      `audit_tagged_running_text.py`. Numbers in the docstring corrected
+      to match; no logic touched.
+
+      **`tools/reset_lexicon_orthography.py --measure`** (queue:5558's own
+      ask): **3,305** (羣 715, 衆 1174, 喫 1266, 牀 150) — unchanged from
+      the 2026-09-08 figure. The "+15, no commit responsible" drift from
+      that date has not recurred a third time.
+
+      **Everything else: MATCH, no drift.**
+        * `audit_biblexg_notes.py` — tw 1,138/1,135 (9 chapters differ),
+          cn 1,133/1,134 (6 chapters differ), 0 unexplained either side.
+        * `audit_biblexg_v2_vs_tr.py` — 9 candidates, 9 clean, 0 unexplained.
+        * `audit_dropped_characters.py` — 90 hits (7 apparatus / 83
+          running), 83 of 83 explained, 0 NEW.
+        * `audit_lexicon_provenance.py` — clean; opencc s2t plus the 24
+          known edits, nothing else.
+        * `audit_ljk_tr_forms.py` — class A 0, class C 212 (pinned to one
+          commit/row in the item above), class D 0.
+        * `audit_note_placement.py` — 1,025 printed notes, 110 checkable,
+          1 ATTACHED ELSEWHERE (那鴻書 3:4, already known).
+        * `audit_printed_typography.py` — 0 of the 12pt/17pt-note class
+          also present in the publisher's own Simplified.
+        * `audit_publisher_adoption_drift.py` — 0 fresh hits since
+          `50dcc102` beyond what the two character-level audits already
+          explain (needs `--dropped`/`--inserted` input files; not a
+          missing-input case, just piped from the two audits above).
+        * `audit_quote_bracket_style.py` — 28 raw, 9 isolated, matches the
+          9 pinned ids exactly.
+        * `audit_songs_snapshot_churn.py` — 118 timestamp-only, 0
+          added/removed/content-changed, 511 unchanged.
+        * `audit_strongs_alignment.py` — unchanged report list (informational,
+          no pinned pass/fail).
+        * `audit_tagged_quote_balance.py` — 2,487/33/4/604 headline and
+          2,476/9/5 breakdown, both exactly as pinned by its own
+          2026-09-22 re-run note already in the file.
+        * `audit_tagged_rendered_extras.py` — 381/30,704/17, the one open
+          CANDIDATE (`010002023`) unchanged.
+        * `audit_tagged_running_text.py` — 190 differ / 19 read long / 17
+          explained / 2 queued, matching yesterday's figures exactly.
+        * `audit_traditional_glyph_holes.py` — same mixed/clean/HOLE table
+          per asset as before, nothing newly flipped.
+        * `audit_trivia_claims.py` — 36 of 36 mechanically-checkable claims
+          pass.
+        * `audit_untranslated_hant.py` — 35,352 zh-Hant fields, 1,210
+          identical, 13 Simplified-only; no prior pinned baseline in its
+          own docstring to compare against (report-only tool, correctly
+          so — filed here as this run's baseline for next time).
+        * `audit_speaker_attribution.py`, `audit_originals_alignment.py`,
+          `audit_strongs_gloss_refs.py` — unchanged from yesterday's
+          entry, re-confirmed.
+
+      Both fixes (STUB constant, docstring numbers) and the two new
+      `CONTENT`/`MERGE_ONLY` entries were checked by two separate
+      adversarial refuter passes before committing — one on the STUB
+      root-cause claim, one specifically on the three new dict entries
+      and the Job 10:20-21 / Luke 20:30 classification, which caught a
+      wrong citation (KJV cited where NASB+LEB is what actually settles
+      Luke 20:30) before it shipped. `test/print_witness_alignment_test.dart`
+      re-run clean after the tool change. No Dart file changed, so the
+      full suite was not run; `flutter analyze` was not run for the same
+      reason. Docs + `tools/` only — no deploy.
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
       prose instead of the misattributing generic phrasing; the false

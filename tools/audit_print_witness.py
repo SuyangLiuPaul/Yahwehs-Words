@@ -8,14 +8,25 @@ ancestor can agree and both be late. Verses have been repaired, and proposed
 repairs refused, on the strength of "the print reads …". Nothing had ever
 checked that its verse ids point at the same verses ours do.
 
-**They do, in 31,059 of 31,102, and every one of the 43 exceptions is
-enumerated below.** Three are places the transcription divides verses
+**They do, in 31,053 of 31,102, and every one of the 49 exceptions is
+enumerated below.** Four are places the transcription divides verses
 differently from every other edition in this repo — 歷代志上 22, 馬可福音 9,
-and 約翰福音 7:53 — and in all three OUR division is the standard one, so this
-file exists mainly so that nobody reading the print later "corrects" our
-numbering to match a page that is wrong. (約翰三書 1:15 looks like a fourth
-and is not: there the print agrees with NASB and LEB against KJV, which is a
-real versification variant rather than a defect of the page.)
+約伯記 10:20-21, and 約翰福音 7:53 — and in all four OUR division is the
+standard one, so this file exists mainly so that nobody reading the print
+later "corrects" our numbering to match a page that is wrong. (約翰三書 1:15
+looks like a fifth and is not: there the print agrees with NASB and LEB
+against KJV, which is a real versification variant rather than a defect of
+the page. 路加福音 20:30 looks like a sixth and is not either: NASB and LEB
+both agree with our shorter division there too.)
+
+**2026-09-22: two of these — 約伯記 10:20-21 and 路加福音 20:30 — were
+invisible until today.** `STUB` (below) matched bare `見上節`; commit
+`50dcc102` (2026-09-09) wrapped every one of the 70 stubs in `〔〕` brackets
+to match the publisher's current text (`test/print_witness_alignment_test.dart`
+was updated the day before, 09-08, and this file was not), which put all 70
+into `merge_diff` as false `!! UNEXPLAINED` findings on every run since. The
+noise masked these two genuine, small, previously-unknown findings for
+thirteen days on a check nothing had re-run in that time.
 
 Check 1 is structural: do both editions number the same ids, and merge the
 same ids? Check 2 is content: for ids live on both sides, is it the same
@@ -47,7 +58,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import audit_note_placement as base  # noqa: E402
 
 CJK = re.compile(r"[一-鿿㐀-䶿]")
-STUB = "見上節"
+# 50dcc102 (2026-09-09) wrapped every "見上節" stub in full-width brackets
+# (matching test/print_witness_alignment_test.dart's 2026-09-08 update); this
+# constant was the one place that adoption never reached, which silently
+# broke both merge-stub checks below.
+STUB = "〔見上節〕"
 VERSE_MARK = re.compile(r"\{\{verse\|(\d+)\|(\d+)\}\}")
 # A continuation line is scripture only if it carries no wiki or HTML syntax
 # at all — the page footer after 約伯記 42:17 starts `}}<div…` and would
@@ -80,6 +95,11 @@ MERGE_ONLY = {
                  "print does not also make. Splitting it is a versification "
                  "change — every id, highlight and note anchored to 21:29 "
                  "moves — so it is the user's call, like 約翰三書 1:14.",
+    "018010021": "約伯記 10:21 — the page merges it into 10:20 (no text between "
+                 "the two `{{verse|}}` markers). KJV agrees with us in keeping "
+                 "them separate. The fourth instance of the class check 1's "
+                 "docstring said there were three of; found 2026-09-22 once "
+                 "STUB stopped masking it.",
 }
 
 # Live on both sides, but not the same verse. Two signals of different shape:
@@ -96,12 +116,28 @@ CONTENT = {
     "041009043": "馬可福音 9:43 — the page splits our 9:43 and gives its second "
                  "half the number 9:44, which belongs to the bracketed variant "
                  "「在那裏蟲是不死的，火是不滅的」. KJV agrees with us.",
+    "041009044": "馬可福音 9:44 — the print number, not our bracketed variant "
+                 "text; the other half of the split held above.",
     "041009045": "馬可福音 9:45 — the same split one pair later.",
+    "041009046": "馬可福音 9:46 — the print number, not our bracketed variant "
+                 "text; the other half of that split.",
+    "040017021": "馬太福音 17:21 — same convention as 044024006: the print "
+                 "sets 「至於這一類的鬼…」 as running text with a 或作 note; we "
+                 "set it as a 〔有古卷在此有21節：…〕 bracket. Not a division "
+                 "difference — the note-vs-text convention check 3 already "
+                 "strips.",
+    "042020030": "路加福音 20:30 — the print folds 第三個 into 30 and pushes "
+                 "the seven-brothers summary alone into 31; NASB and LEB both "
+                 "set 20:30 as the bare elliptical 「and the second」, agreeing "
+                 "with our shorter division. KJV does not help here — its 30 "
+                 "is a full independent clause matching neither side.",
     "042021029": "路加福音 21:29 — the other half of the merge held above.",
     "044024006": "使徒行傳 24:6 — convention, not division. Our 〔有古卷在此有："
                  "…〕 bracket runs from 24:6 into 24:7; the print sets the same "
                  "words as a note, which this check strips.",
     "064001014": "約翰三書 1:14 — carries verse 15 merged in. See ID_ONLY.",
+    "018010020": "約伯記 10:20 — the other half of the merge held below. KJV "
+                 "numbers 10:20 and 10:21 separately, agreeing with us.",
 }
 
 # One edition sets a textual variant as text and the other as apparatus, so
