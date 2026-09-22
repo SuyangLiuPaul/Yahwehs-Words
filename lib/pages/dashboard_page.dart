@@ -2058,7 +2058,7 @@ class _ContinueReadingHero extends StatelessWidget {
       shortLabel = info.shortLabel;
     }
     final shortBook =
-        book != null ? shortBookName(book!, locale) : null;
+        book != null ? shortBookName(book!, locale, currentVersion) : null;
     // Most informative first. The edition is context and goes before
     // the position does; the position is what the card is FOR, so the
     // last two candidates keep it and say nothing about the edition

@@ -266,14 +266,28 @@ const _englishVersionCodes = <String>{
   'wh',
 };
 
-String toLocale(String englishKey, String version) {
-  // Normalize before classifying so stored versions like " NASB" or
-  // "Nasb" still resolve correctly. Anything outside the English set
-  // falls through to the Chinese mapping (Simplified by default,
-  // Traditional when the version code ends with "-tr").
+/// Which script a reading version's book names render in: `'en'` for
+/// the source-English versions in [_englishVersionCodes], `'zh-Hant'`
+/// when the version code ends with `-tr`, `'zh-Hans'` otherwise. The
+/// single source of truth for version→script, so callers that need
+/// the script without a full book-name lookup (e.g. `shortBookName`)
+/// don't have to copy the `-tr` / English-set rule.
+///
+/// Normalizes before classifying so stored versions like " NASB" or
+/// "Nasb" still resolve correctly.
+String scriptForVersion(String version) {
   final v = version.trim().toLowerCase();
-  if (_englishVersionCodes.contains(v)) return englishKey;
-  return v.endsWith('-tr')
-      ? englishToChineseTraditional[englishKey] ?? englishKey
-      : englishToChinese[englishKey] ?? englishKey;
+  if (_englishVersionCodes.contains(v)) return 'en';
+  return v.endsWith('-tr') ? 'zh-Hant' : 'zh-Hans';
+}
+
+String toLocale(String englishKey, String version) {
+  switch (scriptForVersion(version)) {
+    case 'en':
+      return englishKey;
+    case 'zh-Hant':
+      return englishToChineseTraditional[englishKey] ?? englishKey;
+    default:
+      return englishToChinese[englishKey] ?? englishKey;
+  }
 }

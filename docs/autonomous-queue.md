@@ -10060,36 +10060,42 @@ has never seen this repo.
 
 ## P1 — Bible study correctness
 
-- [ ] **`shortBookName()` (`lib/utils/short_book_name.dart`) is keyed
-      off the UI locale, not the reading version — so a reader whose UI
-      locale doesn't match their reading version's script can see a
-      compact book label in the wrong script next to the correct
-      long-form header.** Found 2026-09-22 while adding
-      `test/short_book_name_test.dart`. The user's standing rule (see
-      `[[feedback_book_name_localization]]` in memory, enforced
-      elsewhere by `localeAwareBookName(book, locale, version)`) is that
-      book names follow the *reading version*, not the UI locale. This
-      function skips that: all three call sites —
-      `dashboard_page.dart:2061` (its own doc comment: "Localised book
-      name for the current version") and `bible_reading_pane.dart:6383`
-      /`:7497` (`currentVerse.book`, populated straight from the
-      per-version asset JSON — confirmed `assets/cuvs-yhwh.json` stores
-      `"book": "创世纪"`, Simplified, in the verse record) — already pass
-      a version-localized name in. `shortBookName` then reverse-maps it
-      back to English via `toEnglish` and re-localizes by `locale`
-      alone, discarding which script the input was actually in.
-      Concrete case: reading version `cuvs-yhwh-tr` (book field
-      Traditional `創世紀`) with UI locale `zh-Hans` → reverse-mapped to
-      `Genesis` → `shortBooksHans['Genesis'] = '创'` (Simplified) shown
-      below/beside a Traditional long-form header. Not fixed this hour
-      because a uniform fix needs a `version` parameter threaded through
-      all three call sites, and `dashboard_page.dart` may not have the
-      version in scope at that point — checked, not assumed, by an
-      independent refuter tracing all three sites plus the real asset
-      record. `test/short_book_name_test.dart` pins the *current*
-      behaviour with an explicit comment pointing at this item, so
-      fixing this will need that test updated too, not just the
-      production code.
+- [x] **Fixed 2026-09-22: `shortBookName()` now takes an optional
+      `version` param and follows the reading version's script, not the
+      UI locale, when given one.** Was: keyed off `locale` alone, so a
+      reader whose UI locale didn't match their reading version's script
+      could see a compact book label in the wrong script next to the
+      correct long-form header (e.g. `cuvs-yhwh-tr` reading + `zh-Hans`
+      UI → Traditional `創世紀` long form next to Simplified `创` short
+      form). Extracted the version→script rule (`_englishVersionCodes`
+      else `-tr` else Simplified) out of `toLocale()` into a new public
+      `scriptForVersion()` in `book_name_mapping.dart` so both functions
+      share one source of truth; `shortBookName(book, locale, [version])`
+      picks its abbreviation map from `scriptForVersion(version)` when
+      given, else falls back to the old `locale`-driven path byte-for-byte
+      (pinned by test). All three call sites now pass their version:
+      `dashboard_page.dart:2061` (`currentVersion`),
+      `bible_reading_pane.dart:6383`/`:7497` (`version`, both already
+      `mainProvider.renderedVersion`). Verified per-site (not assumed)
+      that the `book` string passed in each case is already rendered in
+      that version's own script — `currentVerse.book` traces back through
+      `MainProvider.setCurrentChapter` to the loaded verses for
+      `renderedVersion`; `dashboard_page.dart`'s `book` field is
+      documented and populated the same way — so passing `version`
+      doesn't introduce a new mismatch. `test/short_book_name_test.dart`
+      updated: stale "see queue item" wording replaced, new cases added
+      for the Traditional/Simplified/English mismatch matrix and the
+      null/empty-version fallback. `flutter analyze` clean, full suite
+      green (3549 tests), independent refuter found no live bug.
+      **One soft spot the refuter flagged, left as-is because it's
+      currently inert:** `dashboard_page.dart:2061` passes
+      `currentVersion` rather than `renderedVersion` — the two can
+      diverge for one frame during a version switch (documented race in
+      `main_provider.dart:426-449`) — but `_ContinueReadingHero` never
+      renders `book` (long form) and `shortBook` in the same string, so
+      the race has no visible effect today. Worth aligning to
+      `renderedVersion` for consistency with the other two call sites if
+      that code is ever touched, but not itself a queue item.
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
       prose instead of the misattributing generic phrasing; the false

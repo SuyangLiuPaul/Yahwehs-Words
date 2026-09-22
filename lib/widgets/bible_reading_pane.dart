@@ -6380,7 +6380,7 @@ class _MiniReaderHeader extends StatelessWidget {
             Expanded(
               child: Text(
                 MediaQuery.of(context).size.width < 390
-                    ? '${shortBookName(book, locale)} $chapter'
+                    ? '${shortBookName(book, locale, version)} $chapter'
                     : '$book $chapter',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -7494,7 +7494,7 @@ class _FloatingHeader extends StatelessWidget {
                                 final useShort = foldBookName;
                                 return Text(
                                   useShort
-                                      ? '${shortBookName(book, locale)} $chapter'
+                                      ? '${shortBookName(book, locale, version)} $chapter'
                                       : '$book $chapter',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,

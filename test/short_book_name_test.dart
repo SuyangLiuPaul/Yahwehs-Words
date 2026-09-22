@@ -96,9 +96,7 @@ void main() {
   });
 
   test('an unknown book name degrades via the fallback branch without '
-      'throwing — current behaviour, see queue item (shortBookName '
-      'takes the UI locale, not the reading version; a Traditional '
-      'reader with a Simplified UI can see a mismatched abbreviation)', () {
+      'throwing', () {
     // "Barnabas" / "巴拿巴" have no entry in any of the three maps
     // (checked: absent from englishToChinese, englishToChineseTraditional
     // and the _zhAliasToEn alias table), so these exercise the fallback
@@ -107,5 +105,38 @@ void main() {
     expect(shortBookName('巴拿巴', 'zh-Hans'), '巴'); // last character
     expect(shortBookName('巴拿巴', 'zh-Hant'), '巴');
     expect(() => shortBookName('X', 'zh-Hant'), returnsNormally);
+  });
+
+  group('optional [version] picks the abbreviation script, overriding a '
+      'mismatched UI locale — fixes the case filed 2026-09-22 where a '
+      'Traditional reading version under a Simplified UI locale (or vice '
+      'versa) showed an abbreviation in the wrong script next to the '
+      'correct long-form header', () {
+    test('Traditional book text + Simplified UI locale + -tr version '
+        '-> Traditional abbreviation', () {
+      expect(shortBookName('創世紀', 'zh-Hans', 'cuvs-yhwh-tr'), '創');
+    });
+
+    test('Simplified book text + Traditional UI locale + non-tr version '
+        '-> Simplified abbreviation', () {
+      expect(shortBookName('创世纪', 'zh-Hant', 'cuvs-yhwh'), '创');
+    });
+
+    test('English reading version under a zh-* UI locale '
+        '-> English abbreviation', () {
+      for (final version in ['kjv', 'nasb', 'leb', 'csb']) {
+        expect(shortBookName('Genesis', 'zh-Hans', version), 'Gen',
+            reason: version);
+        expect(shortBookName('Genesis', 'zh-Hant', version), 'Gen',
+            reason: version);
+      }
+    });
+
+    test('null or empty version reproduces today\'s locale-driven '
+        'behaviour byte-for-byte', () {
+      expect(shortBookName('創世紀', 'zh-Hant', null), '創');
+      expect(shortBookName('創世紀', 'zh-Hant', ''), '創');
+      expect(shortBookName('Genesis', 'en', null), 'Gen');
+    });
   });
 }

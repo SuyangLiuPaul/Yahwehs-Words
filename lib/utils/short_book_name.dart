@@ -2,6 +2,8 @@
 import 'package:characters/characters.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
+import 'package:yahwehs_words/constants/book_name_mapping.dart'
+    show scriptForVersion;
 import 'package:yahwehs_words/utils/version_mapper.dart' show toEnglish;
 
 /// Standard 1-character (or 2-3 char for paired) Chinese-Bible
@@ -20,14 +22,24 @@ import 'package:yahwehs_words/utils/version_mapper.dart' show toEnglish;
 /// AppBar on iPhone 12 mini was truncating "帖撒罗尼迦前书" to "帖..."
 /// which is unhelpful — the abbreviation "帖前" reads cleanly in the
 /// same width.
-String shortBookName(String localizedBook, String locale) {
+///
+/// [version] is the reading version whose script the abbreviation
+/// should match — pass it whenever [localizedBook] came from verse
+/// text so a Traditional book name doesn't get a Simplified
+/// abbreviation (or vice versa) purely because the UI locale differs
+/// from the reading version's script. Omitting it, or passing
+/// `null`/`''`, falls back to [locale]-driven behaviour, unchanged.
+String shortBookName(String localizedBook, String locale, [String? version]) {
   if (localizedBook.isEmpty) return localizedBook;
   // Reverse-map to canonical English, then look up the abbreviation
   // map for the user's locale. If the input was already English,
   // toEnglish returns it unchanged.
   final englishBook = toEnglish(localizedBook) ?? localizedBook;
-  if (locale.startsWith('zh')) {
-    final hant = locale == 'zh-Hant';
+  final script = (version != null && version.isNotEmpty)
+      ? scriptForVersion(version)
+      : (locale.startsWith('zh') ? locale : 'en');
+  if (script.startsWith('zh')) {
+    final hant = script == 'zh-Hant';
     final m = hant ? shortBooksHant : shortBooksHans;
     final v = m[englishBook];
     if (v != null) return v;
