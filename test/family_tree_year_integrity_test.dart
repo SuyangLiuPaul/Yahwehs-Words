@@ -28,6 +28,14 @@ import 'package:flutter_test/flutter_test.dart';
 /// `bible_chronology.json`'s `_meta.crossSystemParentLinks` — not trusted
 /// from either source alone, so a NEW cross-system link, or an inversion
 /// in a pair this test doesn't already know about, still fails.
+/// AM 0 as a BC year. 4114 since 2026-09-21, when Words took Yahweh's
+/// Sword's chronology, where it is derived: Abram's birth is 2166 BC by
+/// 1 Kings 6:1 and Exodus 12:40 counted back from Solomon's temple, and
+/// AM 1948 by Genesis 5 and 11. It was Ussher's 4004 before — and the
+/// era subtitles only matched while this test carried the same wrong
+/// constant as they did. `tools/build_bible_chronology.py` CREATION_BC.
+const _anchor = 4114;
+
 void main() {
   late List<Map<String, dynamic>> people;
   late Map<String, Map<String, dynamic>> byId;
@@ -52,9 +60,9 @@ void main() {
   });
 
   /// AM (Anno Mundi) and BC/AD share one signed timeline here, per
-  /// `test/family_tree_era_subtitle_test.dart`: `am - 4004` lands on the
+  /// `test/family_tree_era_subtitle_test.dart`: `am - _anchor` lands on the
   /// same line as this asset's `bc`-system years.
-  int signed(int year, String system) => system == 'am' ? year - 4004 : year;
+  int signed(int year, String system) => system == 'am' ? year - _anchor : year;
 
   /// Every fatherId/motherId link, recomputed independently from the raw
   /// asset: (childId, relation, parentId, childSigned, parentSigned).
@@ -152,10 +160,12 @@ void main() {
       final (childId, relation, parentId, childSigned, parentSigned) = l;
       expect(byId[parentId]!['id'], parentId);
       final gap = childSigned - parentSigned;
+      // Terah's age at each son's birth, on the derived anchor. They were
+      // -40 / -74 / -54 on Ussher's: every son born before his father.
       final expectedGap = {
-        'abraham': -40,
-        'haran': -74,
-        'nahor_younger': -54,
+        'abraham': 70, // Genesis 11:26, as written
+        'haran': 36, // a placement — see CROSS_SYSTEM_PARENT_LINKS
+        'nahor_younger': 56, // likewise
       }[childId];
       expect(gap, expectedGap,
           reason: '$childId/$parentId ($relation): recomputed gap $gap '

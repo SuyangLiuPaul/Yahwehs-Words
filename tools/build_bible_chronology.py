@@ -8,12 +8,13 @@ Two layers, one axis:
     states, chapters 5 and 11 for Adam → Abraham, 16 for Ishmael, and
     21, 25 and 35/47 for Isaac and Jacob, and 41, 45, 47 and 50 for
     Joseph (Adam → Joseph, with Ishmael a branch off Abraham). Every
-    year traces to a verse — directly, for most; Shem's, Abraham's and
-    Joseph's begetting-age figures are each chained together from
-    multiple verses instead, since no single verse states outright
-    what age their father was (see CHAIN and DERIVED_PEOPLE).
+    year traces to a verse — directly, for most; Shem's and Joseph's
+    begetting-age figures are each chained together from multiple
+    verses instead, since no single verse states outright what age
+    their father was (see CHAIN and DERIVED_PEOPLE). Abraham's was
+    chained too until 2026-09-21; Genesis 11:26 now states it (70).
   * EVENTS, read from `assets/bible_timeline.json` and PLACED on the
-    same Anno Mundi axis through the 4004 BC anchor, so the chart spans
+    same Anno Mundi axis through the 4114 BC anchor, so the chart spans
     Creation → Revelation exactly as the event list on the same page
     does. Nothing is re-dated on the way across; where both files date
     the same event the computed marker governs and the timeline's own
@@ -57,11 +58,27 @@ OUT = os.path.join(ROOT, "assets", "bible_chronology.json")
 # `assets/bible_timeline.json` dates its events in signed BC/AD years.
 # The chart's axis is Anno Mundi. Converting between them needs the
 # anchor and nothing else, and the anchor is `creationBc` on the active
-# scheme — 4004, Ussher. There is NO year zero: 1 BC is followed by
-# AD 1, so the two branches below are off by one from each other on
-# purpose. Checked at both ends in `test/bible_chronology_test.dart`:
-# AD 1 is AM 4004 and AD 95 (Revelation) is AM 4098.
-CREATION_BC = 4004
+# scheme. There is NO year zero: 1 BC is followed by AD 1, so the two
+# branches below are off by one from each other on purpose. Checked at
+# both ends in `test/bible_chronology_test.dart`: AD 1 is AM 4114 and
+# AD 95 (Revelation) is AM 4208.
+#
+# 4114, NOT USSHER'S 4004, since 2026-09-21 — the owner chose to put
+# Yahweh's Words on the same chronology as Yahweh's Sword, where this
+# number is derived rather than adopted. The chain runs back from the
+# one BC date the text lets us fix: Solomon's temple begun in 966 BC
+# (Thiele), which 1 Kings 6:1 puts 480 years after the Exodus (1446),
+# which Exodus 12:40 puts 430 years after Jacob entered Egypt; Jacob was
+# 130 then (Genesis 47:9), Isaac 60 at his birth (25:26), Abraham 100 at
+# Isaac's (21:5) — so Abram was born in 2166 BC. Genesis 5 and 11 put
+# that birth at AM 1948. 2166 + 1948 = 4114.
+#
+# What it buys is the end of a disagreement this file used to disclose
+# rather than fix: the Ussher anchor put Abram's birth 170 years away
+# from the family tree's, which already dated the patriarchs this way.
+# On 4114 the chart, the family tree and the timeline give one year for
+# every event they share.
+CREATION_BC = 4114
 
 
 def year_to_am(year):
@@ -69,13 +86,13 @@ def year_to_am(year):
         raise ValueError("there is no year zero")
     if year < 0:
         return CREATION_BC + year          # -4000 BC → AM 4
-    return CREATION_BC - 1 + year          # AD 1 → AM 4004
+    return CREATION_BC - 1 + year          # AD 1 → AM 4114
 
 
 def am_to_year(am):
     """The inverse of year_to_am — the signed BC/AD year an AM value
     lands on. Checked against the same two anchors year_to_am's own
-    docstring cites: am_to_year(4004) == 1 (AD 1) and am_to_year(4098)
+    docstring cites: am_to_year(4114) == 1 (AD 1) and am_to_year(4208)
     == 95 (Revelation, AD 95). Used by the cross-surface person-year
     sweep in build(), to convert an `am`-system family_tree.json year
     into the same signed-BC/AD space bible_timeline.json uses."""
@@ -107,21 +124,25 @@ def am_to_year(am):
 # they are two separate places the same two schemes happen to clash.
 CROSS_SYSTEM_PARENT_LINKS = {
     # (childId, relation): (parentId, expected childSigned - parentSigned)
+    #
+    # 2026-09-21: on the derived 4114 BC anchor these are ordinary ages
+    # at a son's birth, not a clash between two schemes — the old
+    # values (-40, -74, -54) put each son's birth BEFORE his father's.
     ("abraham", "father"): (
-        "terah", -40,
-        "terah is `am` (Genesis 11 genealogy); abraham is `bc` under "
-        "the late-date patriarchal scheme. Converted to one signed "
-        "timeline, abraham's birth lands 40 years before terah's — "
-        "the boundary where the two schemes meet, not a data error to "
-        "fix by moving either year."),
+        "terah", 70,
+        "Terah was 70 at Abram's birth, as Genesis 11:26 states — the "
+        "reading this chronology now takes (see CREATION_BC)."),
     ("haran", "father"): (
-        "terah", -74,
-        "Same terah/`am`-vs-`bc` boundary as abraham above; 74 years "
-        "on this line."),
+        "terah", 36,
+        "Haran's birth year is a placement, not a derivation, carried "
+        "over from the earlier late-date scheme. On this anchor it falls "
+        "in Terah's 36th year, before the 70th that Genesis 11:26 gives "
+        "for his sons — recorded as an open question, not adjusted, "
+        "because no verse states Haran's age."),
     ("nahor_younger", "father"): (
-        "terah", -54,
-        "Same terah/`am`-vs-`bc` boundary as abraham above; 54 years "
-        "on this line."),
+        "terah", 56,
+        "Same as Haran above: a placement, falling in Terah's 56th year "
+        "on this anchor. Open, not adjusted."),
 }
 
 
@@ -136,16 +157,19 @@ CROSS_SYSTEM_PARENT_LINKS = {
 # surfaced in the marker's detail sheet, so a reader sees the size of
 # the disagreement rather than being handed the winner silently.
 #
-# Measured deltas (timeline year → chronology marker, in years):
-#   creation      -4000 vs 4004 BC   →  the timeline rounds; 4 years
-#   enoch_walks   -3000 vs 3017 BC   →  the timeline rounds; 17 years
-#   flood         -2348 vs 2348 BC   →  exact agreement, 0 years
-#   abram_called  -2091 vs 1921 BC   →  170 years — a real scheme clash
-#   isaac_born    -2066 vs 1896 BC   →  170 years — the same clash
+# Measured deltas (timeline year → chronology marker, in years), on the
+# derived 4114 BC anchor since 2026-09-21:
+#   creation      -4114 vs 4114 BC   →  exact agreement
+#   enoch_walks   -3127 vs 3127 BC   →  exact agreement
+#   flood         -2458 vs 2458 BC   →  exact agreement
+#   abram_called  -2091 vs 2091 BC   →  exact agreement
+#   isaac_born    -2066 vs 2066 BC   →  exact agreement
 #
-# The last two are the late-date scheme `assets/family_tree.json` uses
-# for the patriarchs, already documented there as deliberately
-# unreconciled. It is not fudged here either: see CONTESTED below.
+# On the Ussher anchor these read 4, 17, 0, 170 and 170 years — the
+# last two the ~170-year clash with the family tree's patriarchal dates
+# that this file used to disclose (see CREATION_BC for why it closed).
+# The timeline's figure is still carried on each marker as `placedYear`,
+# so if the two files ever drift again the detail sheet shows it.
 DUPLICATES = {
     # timeline event id : chronology marker id it duplicates
     "creation": "creation",
@@ -223,12 +247,19 @@ CHAIN = [
     ("serug",       "reu",         32,    230,   ["Genesis 11:20"],                  ["Genesis 11:22", "Genesis 11:23"]),
     ("nahor_elder", "serug",       30,    148,   ["Genesis 11:22"],                  ["Genesis 11:24", "Genesis 11:25"]),
     ("terah",       "nahor_elder", 29,    205,   ["Genesis 11:24"],                  ["Genesis 11:32"]),
-    # Abram's birth is not Terah's 70th year. Genesis 11:26 names three
-    # sons at 70 (the eldest); Genesis 11:32 + 12:4 + Acts 7:4 together
-    # put Abram's birth in Terah's 130th year — Terah dies at 205 and
-    # Abram leaves Haran at 75.
-    ("abraham",     "terah",       130,   175,   ["Genesis 11:26", "Genesis 11:32",
-                                                  "Genesis 12:4", "Acts 7:4"],       ["Genesis 25:7"]),
+    # Abram in Terah's 70th year, as Genesis 11:26 says it.
+    #
+    # Until 2026-09-21 this row read 130, and the argument for it was
+    # real: Genesis 11:32 + 12:4 + Acts 7:4 have Abram leave Haran at 75
+    # after Terah's death at 205, which puts his birth in Terah's 130th
+    # year and makes 11:26's three sons at 70 an eldest-son statement.
+    # It is kept here because it is the stronger harmonisation of Acts
+    # 7:4 and should not be forgotten. It was changed because the owner
+    # put Words on Yahweh's Sword's chronology, which reads 11:26 as
+    # written — and on that reading the chain meets the patriarchs' BC
+    # dates exactly (see CREATION_BC), where 130 left them 60 years
+    # apart on any anchor.
+    ("abraham",     "terah",       70,    175,   ["Genesis 11:26"],                  ["Genesis 25:7"]),
     # Ishmael is the chain's first fork, not its next link: he is
     # Abraham's son, not Isaac's ancestor, so his row shares Abraham's
     # father and does not feed anything after it. Both figures are
@@ -348,28 +379,33 @@ DERIVED_PEOPLE = {
             "年歲。閃共活了 %d 年（%s）。"
         ),
     },
+    # Rewritten 2026-09-21 with the chain (see the abraham CHAIN row):
+    # 70 is now the figure drawn, stated by one verse, and the Acts 7:4
+    # harmonisation that gave 130 is named as the reading NOT drawn.
+    # The alternative is worded so that no "= N" or "N 岁生" form
+    # carries 130 — test/bible_chronology_test.dart reads the stated
+    # age out of this prose and checks it against the chart.
     "abraham": {
         "en": (
             "Genesis 11:26 states Terah was 70 when he begat Abram, "
-            "Nahor and Haran together — a birth-order note, not "
-            "Abram's own birth year. Terah died at 205 (Genesis "
-            "11:32); Abram left Haran at 75, after his father's death "
-            "(Genesis 12:4, Acts 7:4), so Terah was 205 − 75 = 130 "
-            "when Abraham was born. Abraham lived %d years (%s)."
+            "Nahor and Haran, and this chart reads it as written — on "
+            "that reading the patriarchs' dates meet the count from "
+            "Creation exactly. Genesis 11:32 with 12:4 and Acts 7:4 "
+            "can also be read to put Abram's birth sixty years later, "
+            "in Terah's 130th year; that reading is not drawn here. "
+            "Abraham lived %d years (%s)."
         ),
         "hans": (
-            "创世记 11:26 说他拉 70 岁生了亚伯兰、拿鹤、哈兰三个儿子，说的"
-            "是出生次序，不是亚伯兰本人的出生年。他拉死时 205 岁（创世记 "
-            "11:32）；亚伯兰离开哈兰时 75 岁，是在父亲死后（创世记 "
-            "12:4、使徒行传 7:4）——205 − 75 = 130，就是他拉生亚伯拉罕时"
-            "的年岁。亚伯拉罕共活了 %d 年（%s）。"
+            "创世记 11:26 说他拉 70 岁生了亚伯兰、拿鹤、哈兰，本图按字面采用；"
+            "按这一读法，列祖的年份与自创世起算的年数正好衔接。另有一种读法，"
+            "结合创世记 11:32、12:4 与使徒行传 7:4，把亚伯兰的出生推后六十年，"
+            "落在他拉一百三十岁那年；本图没有采用。亚伯拉罕共活了 %d 年（%s）。"
         ),
         "hant": (
-            "創世記 11:26 說他拉 70 歲生了亞伯蘭、拿鶴、哈蘭三個兒子，說的"
-            "是出生次序，不是亞伯蘭本人的出生年。他拉死時 205 歲（創世記 "
-            "11:32）；亞伯蘭離開哈蘭時 75 歲，是在父親死後（創世記 "
-            "12:4、使徒行傳 7:4）——205 − 75 = 130，就是他拉生亞伯拉罕時"
-            "的年歲。亞伯拉罕共活了 %d 年（%s）。"
+            "創世記 11:26 說他拉 70 歲生了亞伯蘭、拿鶴、哈蘭，本圖按字面採用；"
+            "按這一讀法，列祖的年份與自創世起算的年數正好銜接。另有一種讀法，"
+            "結合創世記 11:32、12:4 與使徒行傳 7:4，把亞伯蘭的出生推後六十年，"
+            "落在他拉一百三十歲那年；本圖沒有採用。亞伯拉罕共活了 %d 年（%s）。"
         ),
     },
     "joseph": {
@@ -591,32 +627,39 @@ SCHEMES = [
     {
         "id": "masoretic-ussher",
         "supported": True,
-        "creationBc": 4004,
-        "nameEn": "Masoretic text (Ussher anchor)",
-        "nameZhHans": "马所拉文本（乌雪锚点）",
-        "nameZhHant": "馬所拉文本（烏雪錨點）",
+        # The id still says "ussher" and is kept on purpose: it may be
+        # stored in a reader's preferences, and renaming it would reset
+        # their choice without telling them. What it NAMES changed on
+        # 2026-09-21 — see CREATION_BC.
+        "creationBc": CREATION_BC,
+        "nameEn": "Masoretic text (anchor derived from Scripture)",
+        "nameZhHans": "马所拉文本（经文推算锚点）",
+        "nameZhHant": "馬所拉文本（經文推算錨點）",
         "noteEn": (
             "Every year on this chart is counted in Anno Mundi — years "
             "since Creation — using the ages the Masoretic (Hebrew) text "
-            "gives in Genesis 5 and 11. Those intervals are what Scripture "
-            "states; the BC labels are not. They come from anchoring AM 0 "
-            "at 4004 BC, which is Ussher's date and the one the reference "
-            "chart uses. Read the AM column as the sourced figure and the "
-            "BC column as one scholar's placement of it."
+            "gives in Genesis 5 and 11. The BC labels come from anchoring "
+            "AM 0 at 4114 BC, and that anchor is derived, not adopted: "
+            "counting back from Solomon's temple (966 BC) through 1 Kings "
+            "6:1, Exodus 12:40 and the patriarchs' ages puts Abram's birth "
+            "in 2166 BC, which Genesis 11 puts at AM 1948. The same years "
+            "are used by the family tree and the timeline."
         ),
         "noteZhHans": (
             "本图的年份以「创世纪元」（AM，自创造起算的年数）计算，取自马所拉"
-            "（希伯来）文本创世记第 5、11 章所记的岁数。经文陈述的是这些间隔，"
-            "而非公元前年份；公元前标签来自把 AM 0 锚定在公元前 4004 年，那是"
-            "乌雪的定年，也是参考图所用的。请把 AM 一栏视为有经文出处的数字，"
-            "把公元前一栏视为某一位学者对它的定位。"
+            "（希伯来）文本创世记第 5、11 章所记的岁数。公元前标签来自把 AM 0 "
+            "锚定在公元前 4114 年；这个锚点是推算出来的，而非借用：从所罗门建殿"
+            "（公元前 966 年）起，按列王纪上 6:1、出埃及记 12:40 及列祖的岁数往回推，"
+            "亚伯兰生于公元前 2166 年，而创世记 11 章把这一年记在创世纪元 1948 年。"
+            "家谱与时间轴也用同一套年份。"
         ),
         "noteZhHant": (
             "本圖的年份以「創世紀元」（AM，自創造起算的年數）計算，取自馬所拉"
-            "（希伯來）文本創世記第 5、11 章所記的歲數。經文陳述的是這些間隔，"
-            "而非公元前年份；公元前標籤來自把 AM 0 錨定在公元前 4004 年，那是"
-            "烏雪的定年，也是參考圖所用的。請把 AM 一欄視為有經文出處的數字，"
-            "把公元前一欄視為某一位學者對它的定位。"
+            "（希伯來）文本創世記第 5、11 章所記的歲數。公元前標籤來自把 AM 0 "
+            "錨定在公元前 4114 年；這個錨點是推算出來的，而非借用：從所羅門建殿"
+            "（公元前 966 年）起，按列王紀上 6:1、出埃及記 12:40 及列祖的歲數往回推，"
+            "亞伯蘭生於公元前 2166 年，而創世記 11 章把這一年記在創世紀元 1948 年。"
+            "家譜與時間軸也用同一套年份。"
         ),
     },
     {
@@ -908,8 +951,8 @@ COMPUTED_NOTE = {
     "en": (
         "Left of this line every year is COMPUTED: it is the ages "
         "Scripture states, chained together — directly, for most; "
-        "Shem's, Abraham's and Joseph's are each chained together from "
-        "multiple verses instead — and each bar carries the "
+        "Shem's and Joseph's are each chained together from multiple "
+        "verses instead — and each bar carries the "
         "arithmetic. Right of it "
         "Scripture stops giving a continuous chain of ages, so there are "
         "no lifelines to draw — only events, PLACED on the BC/AD years "
@@ -919,7 +962,7 @@ COMPUTED_NOTE = {
     ),
     "zh-Hans": (
         "此线以左，每一个年份都是「推算」出来的：把经文所记的岁数逐代相连而"
-        "得——大多直接见于经文，闪、亚伯拉罕、约瑟三代则各自把多处经文串联"
+        "得——大多直接见于经文，闪、约瑟两代则各自把多处经文串联"
         "推得——每根横条都附着算式。此线以右，经文不再给出连续的年岁链条，因此没有"
         "生平横条可画——只有事件，按 assets/bible_timeline.json 的公元前后"
         "年份「定位」。那一段的底色会淡出，理由和没有记载卒年的横条淡出是同"
@@ -927,7 +970,7 @@ COMPUTED_NOTE = {
     ),
     "zh-Hant": (
         "此線以左，每一個年份都是「推算」出來的：把經文所記的歲數逐代相連而"
-        "得——大多直接見於經文，閃、亞伯拉罕、約瑟三代則各自把多處經文串聯"
+        "得——大多直接見於經文，閃、約瑟兩代則各自把多處經文串聯"
         "推得——每根橫條都附著算式。此線以右，經文不再給出連續的年歲鏈條，因此沒有"
         "生平橫條可畫——只有事件，按 assets/bible_timeline.json 的公元前後"
         "年份「定位」。那一段的底色會淡出，理由和沒有記載卒年的橫條淡出是同"
@@ -992,23 +1035,20 @@ def contested_note(offset_years, offset_person_ids, people):
     }
 
 
-def era_band_note(antediluvian_end_am, flood_am, patriarchs_start_am,
-                   patriarchs_end_am, abraham_birth_am, joseph_death_am):
+def era_band_note(antediluvian_end_am, flood_am):
     """Trilingual copy for `_meta.eraBandNote`.
 
     Every figure here is a parameter, not a literal, so the prose can
     never state a number `build()` did not just compute. `build()`
-    asserts the inequalities this sentence relies on (antediluvian
-    truly ends after the Flood; patriarchs truly starts before Abraham
-    is born and ends before Joseph dies) before calling this, so if a
-    future edit closes one of those gaps the build fails asking for the
-    note to be rewritten rather than shipping a caveat about a gap that
-    no longer exists. See the ORIENTATION comment on `eras` in build()
-    and `lib/models/chronology.dart:249` for the reason the gap exists
-    at all: a band's edges come from the placed-event layer
-    (assets/bible_timeline.json), but its name points at the computed
-    lifeline/marker layer, and those two layers are not drawn from the
-    same clock.
+    asserts the inequality this sentence relies on (the antediluvian
+    band truly ends after the Flood) before calling this.
+
+    It used to describe a second gap too — the patriarchs band starting
+    before Abraham's computed birth and ending before Joseph's death.
+    That was the ~170-year disagreement between the family tree's
+    patriarchal dates and the Ussher anchor, and it closed on
+    2026-09-21 when the anchor became the derived 4114 BC (see
+    CREATION_BC): the band now starts at Abraham's birth exactly.
     """
     return {
         "en": (
@@ -1016,49 +1056,30 @@ def era_band_note(antediluvian_end_am, flood_am, patriarchs_start_am,
             "(assets/bible_timeline.json), but its name points at the "
             "computed layer — lifelines and markers chained from "
             "Genesis's stated ages. The two do not always meet at the "
-            "same year. The Antediluvian band runs to AM %d, but the "
-            "Flood itself is computed at AM %d — %d years earlier. The "
-            "Patriarchs band runs AM %d–%d, but Abraham's computed "
-            "birth is AM %d (after the band already started) and "
-            "Joseph's computed death is AM %d (after the band already "
-            "ended). Nothing has been shifted to close either gap: the "
-            "band is an orientation device for the axis, the tick is "
-            "the precise claim." % (
-                antediluvian_end_am, flood_am,
-                antediluvian_end_am - flood_am,
-                patriarchs_start_am, patriarchs_end_am,
-                abraham_birth_am, joseph_death_am,
-            )
+            "same year: the Antediluvian band runs to AM %d, but the "
+            "Flood itself is computed at AM %d — %d years earlier. "
+            "Nothing has been shifted to close the gap: the band is an "
+            "orientation device for the axis, the tick is the precise "
+            "claim." % (antediluvian_end_am, flood_am,
+                        antediluvian_end_am - flood_am)
         ),
         "zh-Hans": (
             "色带的边界来自事件安放层（assets/bible_timeline.json），但"
             "其名称指向的是按创世记所记年岁推算的生平横条与标记层，两者未"
-            "必落在同一年份。「洪水前」色带一直画到创世纪元 %d 年，而洪水"
-            "本身推算为创世纪元 %d 年——早了 %d 年。「族长时代」色带跨"
-            "创世纪元 %d 至 %d 年，而亚伯拉罕的推算出生年份是创世纪元 %d"
-            "年（色带已经开始之后），约瑟的推算去世年份是创世纪元 %d 年"
-            "（色带已经结束之后）。两处差距都没有为了拉近而挪动任何数字："
-            "色带是轴线上的定向工具，刻度才是精确的主张。" % (
+            "必落在同一年份：「洪水前」色带一直画到创世纪元 %d 年，而洪水"
+            "本身推算为创世纪元 %d 年——早了 %d 年。这一差距没有为了拉近而"
+            "挪动任何数字：色带是轴线上的定向工具，刻度才是精确的主张。" % (
                 antediluvian_end_am, flood_am,
-                antediluvian_end_am - flood_am,
-                patriarchs_start_am, patriarchs_end_am,
-                abraham_birth_am, joseph_death_am,
-            )
+                antediluvian_end_am - flood_am)
         ),
         "zh-Hant": (
             "色帶的邊界來自事件安放層（assets/bible_timeline.json），但"
             "其名稱指向的是按創世記所記年歲推算的生平橫條與標記層，兩者未"
-            "必落在同一年份。「洪水前」色帶一直畫到創世紀元 %d 年，而洪水"
-            "本身推算為創世紀元 %d 年——早了 %d 年。「族長時代」色帶跨"
-            "創世紀元 %d 至 %d 年，而亞伯拉罕的推算出生年份是創世紀元 %d"
-            "年（色帶已經開始之後），約瑟的推算去世年份是創世紀元 %d 年"
-            "（色帶已經結束之後）。兩處差距都沒有為了拉近而挪動任何數字："
-            "色帶是軸線上的定向工具，刻度才是精確的主張。" % (
+            "必落在同一年份：「洪水前」色帶一直畫到創世紀元 %d 年，而洪水"
+            "本身推算為創世紀元 %d 年——早了 %d 年。這一差距沒有為了拉近而"
+            "挪動任何數字：色帶是軸線上的定向工具，刻度才是精確的主張。" % (
                 antediluvian_end_am, flood_am,
-                antediluvian_end_am - flood_am,
-                patriarchs_start_am, patriarchs_end_am,
-                abraham_birth_am, joseph_death_am,
-            )
+                antediluvian_end_am - flood_am)
         ),
     }
 
@@ -1072,29 +1093,37 @@ def two_scale_note(person, birth, death):
     fam_death_bc = -person["deathYear"]
     am_birth_bc = CREATION_BC - birth
     am_death_bc = CREATION_BC - death
+    # No caveat when the two scales agree — which, since the derived
+    # 4114 BC anchor (2026-09-21), they do for every patriarch: the
+    # family tree's 2166-1991 BC for Abraham IS AM 1948-2123 here.
+    # Printing "does not join up" beside two identical ranges would be a
+    # false statement. Kept for the day a record diverges again, when
+    # `familyTreeScaleOffset` below will already have failed the build.
+    if (fam_birth_bc, fam_death_bc) == (am_birth_bc, am_death_bc):
+        return {}
     return {
         "noteEn": (
             "assets/family_tree.json dates %s %d-%d BC, a late-date "
             "scheme that does not join up with the Anno Mundi count "
-            "used here (AM %d-%d is %d-%d BC on the 4004 BC anchor). "
+            "used here (AM %d-%d is %d-%d BC on the %d BC anchor). "
             "Reconciling the two scales for the patriarchs is "
             "deliberately left to a later pass rather than fudged."
             % (person["name"], fam_birth_bc, fam_death_bc, birth,
-               death, am_birth_bc, am_death_bc)),
+               death, am_birth_bc, am_death_bc, CREATION_BC)),
         "noteZhHans": (
             "assets/family_tree.json 把%s定在公元前 %d-%d 年，属于晚期定年"
-            "方案，与本图所用的创世纪元并不衔接（AM %d-%d 在 4004 锚点下为"
+            "方案，与本图所用的创世纪元并不衔接（AM %d-%d 在 %d 锚点下为"
             "公元前 %d-%d 年）。列祖世系两套刻度的调和刻意留待后续，不作"
             "勉强弥合。"
             % (person["nameZhHans"], fam_birth_bc, fam_death_bc, birth,
-               death, am_birth_bc, am_death_bc)),
+               death, CREATION_BC, am_birth_bc, am_death_bc)),
         "noteZhHant": (
             "assets/family_tree.json 把%s定在公元前 %d-%d 年，屬於晚期定年"
-            "方案，與本圖所用的創世紀元並不銜接（AM %d-%d 在 4004 錨點下為"
+            "方案，與本圖所用的創世紀元並不銜接（AM %d-%d 在 %d 錨點下為"
             "公元前 %d-%d 年）。列祖世系兩套刻度的調和刻意留待後續，不作"
             "勉強彌合。"
             % (person["nameZhHant"], fam_birth_bc, fam_death_bc, birth,
-               death, am_birth_bc, am_death_bc)),
+               death, CREATION_BC, am_birth_bc, am_death_bc)),
     }
 
 
@@ -1286,8 +1315,9 @@ def build():
     # tuple). This recomputes the offset independently, from the raw
     # `bc` records themselves rather than from those notes, over ALL 7,
     # so a future edit to family_tree.json or to CREATION_BC that broke
-    # the ~170-year figure fails the build instead of leaving stale
-    # prose on screen. Feeds `_meta.familyTreeScaleOffset` and
+    # the figure fails the build instead of leaving stale prose on
+    # screen. It was ~170 years on the Ussher anchor and is 0 on the
+    # derived 4114 BC one (2026-09-21) — every patriarch agrees. Feeds `_meta.familyTreeScaleOffset` and
     # `contested_note()`; the completeness test lives in
     # test/bible_chronology_test.dart.
     offset_years = None
@@ -1689,36 +1719,21 @@ def build():
         # (eventId, personId): (expected deltaYears, class name, note)
         # deltaYears = family_tree.json's year minus bible_timeline.json's
         # placed year, both expressed as signed BC/AD.
-        ("seth_born", "seth"): (
-            -4, "creationAnchor4Year",
-            "bible_timeline.json places Creation at 4000 BC; the AM "
-            "scale here (via CREATION_BC) anchors it at 4004 BC — the "
-            "same 4-year gap already recorded on the creation marker's "
-            "placedDeltaYears."),
-        ("moses_born", "moses"): (
-            1, "mosesAnchorYear",
-            "family_tree.json dates Moses 1525-1405 BC, "
-            "bible_timeline.json 1526-1406 BC — both ends 1 year "
-            "later on family_tree.json, so this is a shared anchor "
-            "difference, not a lifespan error: both put his life at "
-            "exactly 120 years (see the assertion right below this "
-            "table)."),
-        ("moses_dies", "moses"): (
-            1, "mosesAnchorYear",
-            "See moses_born above — the same 1-year anchor shift, at "
-            "the other end of the same 120-year life."),
         ("jesus_born", "jesus"): (
             1, "nativityDating",
             "family_tree.json dates Jesus's birth 4 BC, "
             "bible_timeline.json 5 BC — both are years used in "
             "published nativity chronologies; this chart does not "
             "adjudicate between them or assert which one is right."),
+        # Seth's birth and Moses' birth and death used to be listed here
+        # (-4, 1, 1); on the derived anchor, with the family tree's Moses
+        # aligned to the Exodus in 1446 BC, all three agree exactly.
         ("cain_abel", "abel"): (
-            21, "unresolved",
+            25, "unresolved",
             "family_tree.json gives Abel a deathYear (AM 75) with no "
             "scripture citation for a specific age at death — Genesis "
             "does not state one, unlike Seth's stated lifespan. This "
-            "21-year gap against bible_timeline.json's placement is "
+            "25-year gap against bible_timeline.json's placement is "
             "recorded, not resolved: neither figure is derived from a "
             "stated age, so there is nothing here to adjudicate "
             "between, only to disclose."),
@@ -1920,7 +1935,9 @@ def build():
         }
         for era in era_order
     ]
-    expected_misordered_band_starts = {"patriarchs"}
+    # Empty since 2026-09-21. The patriarchs band's start edge was the
+    # one misordered placed event, and the derived anchor removed it.
+    expected_misordered_band_starts = set()
     actual_misordered_band_starts = {
         b["id"] for b in era_band_basis if b["startEdgeMisordered"]
     }
@@ -1954,21 +1971,10 @@ def build():
             "Flood (AM %d) — eraBandNote()'s antediluvian case is "
             "stale, rewrite or remove it"
             % (antediluvian_end_am, flood_am))
-    if patriarchs_start_am >= abraham_birth_am:
-        problems.append(
-            "patriarchs band (starts AM %d) no longer starts before "
-            "Abraham's computed birth (AM %d) — eraBandNote()'s "
-            "patriarchs case is stale, rewrite or remove it"
-            % (patriarchs_start_am, abraham_birth_am))
-    if patriarchs_end_am >= joseph_death_am:
-        problems.append(
-            "patriarchs band (ends AM %d) no longer ends before "
-            "Joseph's computed death (AM %d) — eraBandNote()'s "
-            "patriarchs case is stale, rewrite or remove it"
-            % (patriarchs_end_am, joseph_death_am))
-    era_band_note_text = era_band_note(
-        antediluvian_end_am, flood_am, patriarchs_start_am,
-        patriarchs_end_am, abraham_birth_am, joseph_death_am)
+    # The patriarchs band used to start before Abraham's computed birth
+    # and end before Joseph's death; on the derived anchor it starts AT
+    # Abraham's birth, so that case left the note (see era_band_note).
+    era_band_note_text = era_band_note(antediluvian_end_am, flood_am)
 
     # A second gate, not a duplicate of the one above: everything
     # appended to `problems` since that check (the era-band assertions
@@ -1995,22 +2001,22 @@ def build():
             "description": (
                 "Two layers on one Anno Mundi axis. (1) LIFELINES — the "
                 "begetting ages Genesis states, chained from Adam to "
-                "Joseph: directly, for most; Shem's, Abraham's and "
-                "Joseph's are each chained together from multiple "
-                "verses instead, since no single verse states outright "
-                "what age their father was (see CHAIN in this file). "
+                "Joseph: directly, for most; Shem's and Joseph's are "
+                "each chained together from multiple verses instead, "
+                "since no single verse states outright what age their "
+                "father was (see CHAIN in this file). "
                 "Names from "
                 "assets/family_tree.json, years recomputed from the "
                 "Masoretic ages and cross-checked against it. "
                 "(2) EVENTS — the same %d events the event list on this "
                 "page shows, from assets/bible_timeline.json, placed on "
                 "the AM axis by their stated BC/AD year through the "
-                "4004 BC anchor, so both views of the page span "
+                "%d BC anchor, so both views of the page span "
                 "Creation to Revelation. The two layers are drawn "
                 "differently and labelled, because a placed year is not "
                 "a computed one. No data is taken from the copyrighted "
                 "reference sheet in docs/reference/."
-            ) % len(events),
+            ) % (len(events), CREATION_BC),
             "computedNote": COMPUTED_NOTE,
             "undrawnLines": UNDRAWN,
             "unanchoredLifespans": UNANCHORED,

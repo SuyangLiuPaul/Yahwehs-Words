@@ -136,9 +136,13 @@ void main() {
     // future import cannot quietly hand them the same dead affordance —
     // which is the cheaper guard than defending against data that does
     // not exist.
+    // 123 → 133 and 665 → 747 on 2026-09-21, when Words took Yahweh's
+    // Sword's chronology: seven more timeline events, and every person
+    // in the family tree now carries `dating.refs`, the verses a year
+    // is derived from. More citations, all still resolvable.
     for (final file in const {
-      'assets/bible_timeline.json': 123,
-      'assets/family_tree.json': 665,
+      'assets/bible_timeline.json': 133,
+      'assets/family_tree.json': 747,
     }.entries) {
       final refs = <String>[];
       void walk(dynamic node) {

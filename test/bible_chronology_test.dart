@@ -393,9 +393,13 @@ void main() {
   // Pure — no widget needed — and previously untested anywhere in the
   // file even though it has its own BC/AD-crossing branch and its own
   // zh branch, both unexercised by anything that only calls
-  // [formatChronologyYear]. `masoretic-ussher`'s `creationBc` is 4004,
-  // confirmed against `assets/bible_chronology.json` rather than
-  // assumed, so `amToYear` below is worked out from that anchor.
+  // [formatChronologyYear]. `masoretic-ussher`'s `creationBc` is 4114
+  // since 2026-09-21 (was Ussher's 4004; see CREATION_BC in
+  // tools/build_bible_chronology.py), confirmed against
+  // `assets/bible_chronology.json` rather than assumed, so `amToYear`
+  // below is worked out from that anchor. Every AM literal in this
+  // group is its old value +110, so the worked BC/AD answers are
+  // unchanged — only the anchor moved, not the arithmetic.
 
   group('formatChronologyYearRange', () {
     late ChronologyScheme scheme;
@@ -406,48 +410,48 @@ void main() {
       ) as Map<String, dynamic>;
       final data = ChronologyData.fromJson(raw);
       scheme = data.activeScheme;
-      expect(scheme.creationBc, 4004,
+      expect(scheme.creationBc, 4114,
           reason: 'the worked examples below are anchored to this value');
     });
 
     test('a same-AM span delegates to formatChronologyYear', () {
       expect(
-        formatChronologyYearRange(4000, 4000, scheme, 'en'),
-        formatChronologyYear(4000, scheme, 'en'),
+        formatChronologyYearRange(4110, 4110, scheme, 'en'),
+        formatChronologyYear(4110, scheme, 'en'),
       );
     });
 
     test('a same-era BC span reads as one BC range, not two BC years', () {
-      // AM 4000 -> 4 BC, AM 4002 -> 2 BC.
-      expect(formatChronologyYearRange(4000, 4002, scheme, 'en'), '4–2 BC');
+      // AM 4110 -> 4 BC, AM 4112 -> 2 BC.
+      expect(formatChronologyYearRange(4110, 4112, scheme, 'en'), '4–2 BC');
       expect(
-        formatChronologyYearRange(4000, 4002, scheme, 'zh-Hans'),
+        formatChronologyYearRange(4110, 4112, scheme, 'zh-Hans'),
         '公元前4–2年',
       );
       expect(
-        formatChronologyYearRange(4000, 4002, scheme, 'zh-Hant'),
+        formatChronologyYearRange(4110, 4112, scheme, 'zh-Hant'),
         '公元前4–2年',
       );
     });
 
     test('a same-era AD span reads as one AD range', () {
-      // AM 4010 -> AD 7, AM 4012 -> AD 9.
-      expect(formatChronologyYearRange(4010, 4012, scheme, 'en'), 'AD 7–9');
+      // AM 4120 -> AD 7, AM 4122 -> AD 9.
+      expect(formatChronologyYearRange(4120, 4122, scheme, 'en'), 'AD 7–9');
       expect(
-        formatChronologyYearRange(4010, 4012, scheme, 'zh-Hans'),
+        formatChronologyYearRange(4120, 4122, scheme, 'zh-Hans'),
         '公元7–9年',
       );
     });
 
     test('a span crossing BC into AD names both eras, not one', () {
-      // AM 4003 -> 1 BC, AM 4005 -> AD 2 — there is no year 0 in between,
+      // AM 4113 -> 1 BC, AM 4115 -> AD 2 — there is no year 0 in between,
       // so this pair is deliberately chosen to straddle the crossing.
       expect(
-        formatChronologyYearRange(4003, 4005, scheme, 'en'),
+        formatChronologyYearRange(4113, 4115, scheme, 'en'),
         '1 BC – AD 2',
       );
       expect(
-        formatChronologyYearRange(4003, 4005, scheme, 'zh-Hans'),
+        formatChronologyYearRange(4113, 4115, scheme, 'zh-Hans'),
         '公元前1年 – 公元2年',
       );
     });
@@ -794,10 +798,14 @@ void main() {
       final isaacBorn =
           data.markers.firstWhere((m) => m.id == 'isaac_born');
 
-      expect(isaac.birthAm, 2108, reason: 'Genesis 21:5');
-      expect(isaac.deathAm, 2288, reason: 'Genesis 35:28');
-      expect(jacob.birthAm, 2168, reason: 'Genesis 25:26');
-      expect(jacob.deathAm, 2315, reason: 'Genesis 47:28');
+      // Every figure here is 60 years earlier than before 2026-09-21,
+      // when Abraham's begetting age (Genesis 11:26, read as written)
+      // became 70 rather than the Acts-7:4 harmonisation's 130 — see
+      // the abraham CHAIN row and its derivation prose.
+      expect(isaac.birthAm, 2048, reason: 'Genesis 21:5');
+      expect(isaac.deathAm, 2228, reason: 'Genesis 35:28');
+      expect(jacob.birthAm, 2108, reason: 'Genesis 25:26');
+      expect(jacob.deathAm, 2255, reason: 'Genesis 47:28');
       expect(isaac.birthAm, isaacBorn.am,
           reason: 'the isaac lifeline and the isaac_born marker are '
               'computed independently and must agree');
@@ -819,9 +827,10 @@ void main() {
       expect(ishmael.fatherId, 'abraham');
       expect(ishmael.lineId, 'ishmaelite');
       expect(ishmael.birthAm, abraham.birthAm + 86, reason: 'Genesis 16:16');
-      expect(ishmael.birthAm, 2094);
+      // 2094 -> 2034 (-60), same cause as the isaac/jacob shift above.
+      expect(ishmael.birthAm, 2034);
       expect(ishmael.lifespan, 137, reason: 'Genesis 25:17');
-      expect(ishmael.deathAm, 2231);
+      expect(ishmael.deathAm, 2171);
       expect(ishmael.refs, containsAll(<String>[
         'Genesis 16:16', 'Genesis 25:17',
       ]));
@@ -854,11 +863,14 @@ void main() {
       final joseph =
           data.lifelines.firstWhere((l) => l.personId == 'joseph');
       expect(ishmael.deathAm, lessThan(joseph.deathAm!));
-      expect(data.computedEndAm, 2369);
-      expect(data.spanEndAm, 4098);
+      // 2369 -> 2309 (-60, the patriarch shift); 4098 -> 4208 (+110, the
+      // anchor moving from 4004 to 4114 — the span's other end, AD 95,
+      // does not move, only where AM 0 sits under it).
+      expect(data.computedEndAm, 2309);
+      expect(data.spanEndAm, 4208);
     });
 
-    // Pins Sarah's Genesis 17:17 / 23:1 arithmetic (AM 2018-2145) and the
+    // Pins Sarah's Genesis 17:17 / 23:1 arithmetic (AM 1958-2085) and the
     // family_tree.json 10/127-year cross-check on ITS OWN (BC) scale, and
     // that she is anchored on Isaac's birth rather than chained from a
     // father — Genesis 20:12 names Terah as her father but states no
@@ -876,9 +888,10 @@ void main() {
       expect(sarah.anchorChildId, 'isaac');
       expect(sarah.lineId, 'matriarchs');
       expect(sarah.birthAm, isaac.birthAm - 90, reason: 'Genesis 17:17');
-      expect(sarah.birthAm, 2018);
+      // 2018 -> 1958 (-60), same cause as isaac/jacob above.
+      expect(sarah.birthAm, 1958);
       expect(sarah.lifespan, 127, reason: 'Genesis 23:1');
-      expect(sarah.deathAm, 2145);
+      expect(sarah.deathAm, 2085);
       expect(sarah.refs, containsAll(<String>[
         'Genesis 17:17', 'Genesis 23:1',
       ]));
@@ -910,11 +923,11 @@ void main() {
       final joseph =
           data.lifelines.firstWhere((l) => l.personId == 'joseph');
       expect(sarah.deathAm, lessThan(joseph.deathAm!));
-      expect(data.computedEndAm, 2369);
-      expect(data.spanEndAm, 4098);
+      expect(data.computedEndAm, 2309);
+      expect(data.spanEndAm, 4208);
     });
 
-    // Pins Esau's Genesis 25:26 twin-birth arithmetic (AM 2168, the same
+    // Pins Esau's Genesis 25:26 twin-birth arithmetic (AM 2108, the same
     // as Jacob's) and that he is the chart's first OPEN_ENDED row: no
     // verse anywhere states his death age, cross-checked against
     // family_tree.json's independently curated esau record, which has
@@ -929,7 +942,8 @@ void main() {
       expect(esau.fatherId, 'isaac');
       expect(esau.lineId, 'edomite');
       expect(esau.birthAm, isaac.birthAm + 60, reason: 'Genesis 25:26');
-      expect(esau.birthAm, 2168);
+      // 2168 -> 2108 (-60), same cause as isaac/jacob above.
+      expect(esau.birthAm, 2108);
       expect(esau.birthAm, jacob.birthAm,
           reason: 'Genesis 25:26 dates both twins in the one verse');
       expect(esau.deathAm, isNull,
@@ -958,8 +972,8 @@ void main() {
 
       // Esau's open-ended bar does not move the computed boundary: it
       // is excluded from computed_end's max() because deathAm is null.
-      expect(data.computedEndAm, 2369);
-      expect(data.spanEndAm, 4098);
+      expect(data.computedEndAm, 2309);
+      expect(data.spanEndAm, 4208);
     });
 
     // Pins Enoch's third end-state, the opposite gap from Esau's:
@@ -1011,9 +1025,10 @@ void main() {
               'textual argument for "translated" over "died"');
 
       // Only the label changed — the arithmetic that produced AM 987
-      // did not move.
-      expect(data.computedEndAm, 2369);
-      expect(data.spanEndAm, 4098);
+      // did not move. computedEndAm/spanEndAm themselves did (see the
+      // Ishmael test above for why): -60 and +110 respectively.
+      expect(data.computedEndAm, 2309);
+      expect(data.spanEndAm, 4208);
     });
 
     test(
@@ -1060,8 +1075,9 @@ void main() {
 
     // Pins Adam's third start-state, the same defect shape as Enoch's
     // above, moved to the other end of the bar: the person sheet said
-    // "Born 4004 BC" while the chart's own `creation` marker at the
-    // identical AM 0 said "Creation". The textual argument: every
+    // "Born 4114 BC" (4004 BC before the anchor moved, 2026-09-21)
+    // while the chart's own `creation` marker at the identical AM 0
+    // said "Creation". The textual argument: every
     // other CHAIN row is introduced by an explicit begetting formula;
     // Genesis 5:1-2 — Adam's own refs — has God make him "in the
     // likeness of God", never begat, never born.
@@ -1075,8 +1091,9 @@ void main() {
       expect(adam.refs, contains('Genesis 5:1-2'));
 
       // Only the label changed — AM 0 did not move.
-      expect(data.computedEndAm, 2369);
-      expect(data.spanEndAm, 4098);
+      // computedEndAm/spanEndAm did (see the Ishmael test above).
+      expect(data.computedEndAm, 2309);
+      expect(data.spanEndAm, 4208);
     });
 
     test(
@@ -1124,7 +1141,7 @@ void main() {
         '_meta.familyTreeScaleOffset names exactly the drawn lifelines '
         "whose family_tree.json record is 'bc', at one single offset, "
         'recomputed independently from the raw years', () {
-      const creationBc = 4004;
+      const creationBc = 4114;
       final bcLifelines = data.lifelines.where((l) {
         final fam = familyTree[l.personId];
         return fam != null && fam['yearSystem'] == 'bc';
@@ -1174,7 +1191,11 @@ void main() {
               "contested band's note (built from the same set) needs "
               're-checking too, not just this assertion',
       );
-      expect(offsetYears, 170,
+      // 170 -> 0 on 2026-09-21: the anchor was moved to 4114 BC
+      // specifically because it is the year derived from the SAME
+      // Genesis 11:26 reading that now produces the family tree's own
+      // BC-scale patriarch years, so the two scales meet exactly.
+      expect(offsetYears, 0,
           reason: 'the figure this slice measured for every one of '
               'them — a change here means family_tree.json moved, not '
               'that this test is stale');
@@ -1196,7 +1217,7 @@ void main() {
     // what it measured.
     test('_meta.crossSurfaceYearDiffs is exactly the swept vital events, '
         'recomputed independently from the raw assets', () {
-      const creationBc = 4004;
+      const creationBc = 4114;
       int amToYear(int am) =>
           am < creationBc ? am - creationBc : am - creationBc + 1;
       // Mirrors tools/build_bible_chronology.py's EXTRA_VITAL_EVENT_KINDS
@@ -1226,10 +1247,17 @@ void main() {
           .map((e) => e['id'] as String)
           .where((eid) => kindOf(eid) != null)
           .toSet();
+      // Seven more since 2026-09-21, when Words took Yahweh's Sword's
+      // bible_timeline.json: it dates the rest of the Genesis 5 chain
+      // as its own events (enosh, kenan, mahalalel, jared, methuselah,
+      // lamech, shelah), where the version this pin was written against
+      // only carried seth's.
       expect(
         swept,
         <String>{
-          'seth_born', 'ishmael_born', 'isaac_born', 'jacob_esau_born',
+          'seth_born', 'enosh_born', 'kenan_born', 'mahalalel_born',
+          'jared_born', 'methuselah_born', 'lamech_born', 'shelah_born',
+          'ishmael_born', 'isaac_born', 'jacob_esau_born',
           'moses_born', 'moses_dies', 'john_baptist_born', 'jesus_born',
           'cain_abel', 'crucifixion',
         },
@@ -1293,18 +1321,21 @@ void main() {
       }
 
       // The live finding this slice measured, pinned so a future change
-      // must explain itself rather than silently drift: five nonzero
-      // rows, all class-declared, everything else agrees exactly.
+      // must explain itself rather than silently drift. Three nonzero
+      // rows since 2026-09-21 (was six): seth_born, moses_born and
+      // moses_dies now agree exactly — the derived 4114 BC anchor was
+      // chosen so the Exodus chain (1 Kings 6:1, Exodus 12:40) meets
+      // family_tree.json's own dates — leaving only the two dating
+      // disagreements this chart never claimed to resolve (jesus_born,
+      // crucifixion) and Abel's unstated death age (cain_abel, whose
+      // delta itself moved 21 -> 25 with the anchor).
       final nonZero = expected.where((e) => e['deltaYears'] != 0);
       expect(
         nonZero.map(
           (e) => '${e['eventId']}/${e['personId']}:${e['deltaYears']}',
         ),
         [
-          'cain_abel/abel:21',
-          'seth_born/seth:-4',
-          'moses_born/moses:1',
-          'moses_dies/moses:1',
+          'cain_abel/abel:25',
           'jesus_born/jesus:1',
           'crucifixion/jesus:-3',
         ],
@@ -1312,9 +1343,14 @@ void main() {
     });
 
     test(
-        'Moses: family_tree.json and bible_timeline.json disagree on the '
-        'anchor year by exactly 1, but agree on the 120-year lifespan '
-        'itself', () {
+        'Moses: family_tree.json and bible_timeline.json agree exactly, '
+        'both ends, on the 120-year lifespan', () {
+      // Until 2026-09-21 these disagreed by exactly 1 year at both
+      // ends (an anchor difference, not a lifespan error — the title
+      // above said so). They agree now because the derived 4114 BC
+      // anchor was picked to make family_tree.json's Exodus-anchored
+      // Moses (80 at the Exodus, dead at 120) meet
+      // bible_timeline.json's own 1446/1406 BC placement exactly.
       final timeline = json.decode(
         File('assets/bible_timeline.json').readAsStringSync(),
       ) as Map<String, dynamic>;
@@ -1330,10 +1366,9 @@ void main() {
 
       expect(dies - born, 120, reason: 'bible_timeline.json lifespan');
       expect(famDeath - famBirth, 120, reason: 'family_tree.json lifespan');
-      expect(famBirth - born, 1);
-      expect(famDeath - dies, 1,
-          reason: 'the same 1-year shift at both ends — an anchor '
-              'difference, not a lifespan error');
+      expect(famBirth - born, 0);
+      expect(famDeath - dies, 0,
+          reason: 'the two surfaces now agree exactly, both ends');
     });
 
     // 2026-09-21 (queue:14267): the sweep above only ever covered events
@@ -1419,34 +1454,30 @@ void main() {
               'new vital event lost its personIds, or this one gained '
               'some, either of which needs eyes, not a silent pass');
 
-      // The measured count this slice found: 61 events with a
-      // non-empty personIds, 10 of them vital (9 with personIds plus
-      // john_baptist_born with none), 52 declared non-vital.
+      // The measured count this slice found: 68 events with a
+      // non-empty personIds (61 -> 68 on 2026-09-21, when Words took
+      // Yahweh's Sword's bible_timeline.json and its seven added
+      // Genesis-5 "_born" events), 17 of them vital (16 with
+      // personIds plus john_baptist_born with none), 52 declared
+      // non-vital — unchanged, none of the seven additions is
+      // non-vital.
       expect(
         events.where((e) => (e['personIds'] as List).isNotEmpty).length,
-        61,
+        68,
       );
-      expect(vitalEventIds.length, 10);
+      expect(vitalEventIds.length, 17);
       expect(nonVitalEventIds.length, 52);
     });
 
-    test(
-        "the contested band's note names assets/family_tree.json, not "
-        'only assets/bible_timeline.json, in all three locales',
-        () {
-      final note = data.contested!.note;
-      for (final locale in const ['en', 'zh-Hans', 'zh-Hant']) {
-        expect(note[locale], isNotNull,
-            reason: 'contested.note is missing a $locale entry');
-        expect(note[locale], contains('family_tree.json'),
-            reason: 'the reader who sees this band and then taps '
-                'Abraham on the Family Tree page needs the same note '
-                'to explain the different year — $locale currently '
-                "does not mention family_tree.json");
-        expect(note[locale], contains('bible_timeline.json'),
-            reason: '$locale must still name the events source, the '
-                'reason the band exists at all');
-      }
+    // 2026-09-21: superseded by 'there is no contested band, because
+    // the ordering clash it used to draw has closed', further down this
+    // file — data.contested is null on the derived 4114 BC anchor, so
+    // there is no note left to check the wording of. Kept as a marker
+    // rather than deleted outright, so a reader of this file's history
+    // can see what used to be tested here and why it stopped applying.
+    test('the contested band is null — see the dedicated test below for '
+        'why', () {
+      expect(data.contested, isNull);
     });
 
     test("startKind is 'born' for every lifeline except Adam ('created')",
@@ -1475,9 +1506,11 @@ void main() {
       expect(joseph.birthAm, jacob.birthAm + 91,
           reason: '30 (Gen 41:46) + 7 (41:53) + 2 (45:6) = 39; '
               '130 (Gen 47:9) - 39 = 91');
-      expect(joseph.birthAm, 2259);
+      // 2259 -> 2199 and 2369 -> 2309 (-60), same cause as the
+      // isaac/jacob shift above.
+      expect(joseph.birthAm, 2199);
       expect(joseph.lifespan, 110, reason: 'Genesis 50:22 / 50:26');
-      expect(joseph.deathAm, 2369);
+      expect(joseph.deathAm, 2309);
       expect(joseph.refs, containsAll(<String>[
         'Genesis 41:46', 'Genesis 41:53', 'Genesis 45:6', 'Genesis 47:9',
         'Genesis 50:22', 'Genesis 50:26',
@@ -1657,12 +1690,15 @@ void main() {
     });
 
     test('AM converts to BC on the anchor, skipping the year zero', () {
+      // Var still named "ussher" — the scheme's id
+      // (masoretic-ussher) did not change on 2026-09-21, only what it
+      // anchors to; see tools/build_bible_chronology.py CREATION_BC.
       final ussher = data.activeScheme;
-      expect(ussher.creationBc, 4004);
-      expect(ussher.amToYear(0), -4004);
-      expect(ussher.amToYear(1656), -2348); // the Flood, on this anchor
-      expect(ussher.amToYear(4003), -1);
-      expect(ussher.amToYear(4004), 1); // no year 0
+      expect(ussher.creationBc, 4114);
+      expect(ussher.amToYear(0), -4114);
+      expect(ussher.amToYear(1656), -2458); // the Flood, on this anchor
+      expect(ussher.amToYear(4113), -1);
+      expect(ussher.amToYear(4114), 1); // no year 0
     });
   });
 
@@ -1882,14 +1918,21 @@ void main() {
         (tester) async {
       await pumpChart(tester);
       // Not in a tooltip, not in a footnote — on screen, unprompted.
-      expect(find.textContaining('4004 BC'), findsWidgets);
-      expect(find.textContaining('Ussher'), findsWidgets);
+      //
+      // 4004 -> 4114 and "Ussher" dropped from the display name on
+      // 2026-09-21, when the scheme's anchor stopped being adopted from
+      // Ussher and became a figure this chart derives itself — see
+      // CREATION_BC in tools/build_bible_chronology.py. The scheme id
+      // (masoretic-ussher) is unchanged; only what it is CALLED and
+      // what it anchors to moved.
+      expect(find.textContaining('4114 BC'), findsWidgets);
+      expect(find.textContaining('Masoretic'), findsWidgets);
     });
 
     testWidgets('the banner opens the sheet naming the rival schemes',
         (tester) async {
       await pumpChart(tester);
-      await tester.tap(find.textContaining('4004 BC').first);
+      await tester.tap(find.textContaining('4114 BC').first);
       await tester.pumpAndSettle();
       expect(find.text('Whose chronology is this?'), findsOneWidget);
       // The sheet is taller than a phone, so the rival schemes below the
@@ -2283,26 +2326,29 @@ void main() {
     testWidgets('a same-year cluster the packer cannot fully seat draws a '
         '"+N" chip, and the chip opens a list naming more than one event',
         (tester) async {
-      // AM 4036 — measured directly from assets/bible_chronology.json,
-      // not assumed — carries six of the Gospel-era events at the exact
-      // same year: Triumphal Entry, Last Supper, Crucifixion,
-      // Resurrection, Ascension, Pentecost. They tie on x, so no row the
-      // packer tries can ever seat more than one of the six, and at this
-      // viewport the surrounding Gospel titles are dense enough that
-      // none of the six get a label of their own at all — confirmed by
-      // instrumenting `chronologyLabelPlan`'s own drop list before this
-      // test was written, at this exact `viewAt` call, rather than
-      // assumed from the layout.
+      // AM 4146 (AM 4036 before 2026-09-21, when the anchor moved from
+      // 4004 to 4114 BC — every PLACED event's AM shifts by the same
+      // +110, since it comes from a fixed BC/AD year through the anchor
+      // formula; re-measured directly against assets/bible_chronology.json
+      // after the move, not assumed) carries six of the Gospel-era
+      // events at the exact same year: Triumphal Entry, Last Supper,
+      // Crucifixion, Resurrection, Ascension, Pentecost. They tie on x,
+      // so no row the packer tries can ever seat more than one of the
+      // six, and at this viewport the surrounding Gospel titles are
+      // dense enough that none of the six get a label of their own at
+      // all — confirmed by instrumenting `chronologyLabelPlan`'s own
+      // drop list before this test was written, at this exact `viewAt`
+      // call, rather than assumed from the layout.
       final handle = tester.ensureSemantics();
       await pumpChart(tester, size: const Size(402, 874));
-      await viewAt(tester, 4036, years: 100);
+      await viewAt(tester, 4146, years: 100);
 
       // Other, smaller ties sit within the same 100-year window (AM
-      // 4000, 4029, 4038 each carry a pair) — `+6` picks out the one
+      // 4110, 4139, 4148 each carry a pair) — `+6` picks out the one
       // this test is actually about, not just any chip.
       final chip = find.bySemanticsLabel(RegExp(r'^\+6$'));
       expect(chip, findsOneWidget,
-          reason: 'no "+6" cluster chip drawn at the AM 4036 tie');
+          reason: 'no "+6" cluster chip drawn at the AM 4146 tie');
 
       await tester.tap(chip, warnIfMissed: false);
       await tester.pumpAndSettle();
@@ -2326,10 +2372,10 @@ void main() {
     });
 
     testWidgets('every one of the 14 events in the densest decade in the '
-        'whole corpus (AM 4029–4038) is reachable, enumerated — not just '
+        'whole corpus (AM 4139–4148) is reachable, enumerated — not just '
         '"more than one" of them', (tester) async {
       // The test above only asserts `namedInSheet.length > 1` for the
-      // AM 4036 six-way tie alone — it has never checked that all six are
+      // AM 4146 six-way tie alone — it has never checked that all six are
       // named, and it has never looked at the other eight events sharing
       // this same crowded 100-year window. This test measures the whole
       // decade at once, the "Left open, deliberately" note's own next
@@ -2338,14 +2384,17 @@ void main() {
       //
       // Re-derived directly from assets/bible_chronology.json for this
       // slice (python3, `events` + `markers`, half-open window
-      // `[a, a+10)`, scanning every possible start): AM 4029–4038 is the
+      // `[a, a+10)`, scanning every possible start): AM 4139–4148 is the
       // single densest 10-year window in the whole corpus — 14 events,
-      // no markers in it — AM 4029 x2, 4030, 4031, 4032, 4033, AM 4036
-      // x6 (the Passion week + Pentecost), AM 4038 x2. That matches the
+      // no markers in it — AM 4139 x2, 4140, 4141, 4142, 4143, AM 4146
+      // x6 (the Passion week + Pentecost), AM 4148 x2. That matches the
       // note's own "fourteen events in ten years, six on one year".
+      // (AM 4029–4038 before 2026-09-21, when the anchor moved from
+      // 4004 to 4114 BC — every placed event's AM shifts by the same
+      // +110; re-derived after the move, not shifted by hand.)
       final handle = tester.ensureSemantics();
       await pumpChart(tester, size: const Size(402, 874));
-      await viewAt(tester, 4036, years: 100);
+      await viewAt(tester, 4146, years: 100);
 
       const titles = [
         'Baptism of Jesus',
@@ -2431,32 +2480,34 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets('tapping the AM 4038 "+2" chip opens its own sheet, not '
-        "the AM 4036 tie's", (tester) async {
-      // AM 4036 (a "+6" chip) and AM 4038 (a "+2" chip) are two years
-      // apart, which is 8 pt of separation at this viewport's density —
+    testWidgets('tapping the AM 4148 "+2" chip opens its own sheet, not '
+        "the AM 4146 tie's", (tester) async {
+      // AM 4146/4148 (4036/4038 before 2026-09-21 — see the test above
+      // for the +110 anchor-move shift, re-measured after it rather
+      // than hand-shifted). A "+6" chip and a "+2" chip two years apart,
+      // which is 8 pt of separation at this viewport's density —
       // narrower than either chip's own drawn width. Before the chips
       // were packed, both were drawn content-sized with no collision
-      // check, and the AM 4036 chip's fixed 18 pt hit box (unrelated to
-      // its actual drawn width) reached well into the AM 4038 chip's
+      // check, and the AM 4146 chip's fixed 18 pt hit box (unrelated to
+      // its actual drawn width) reached well into the AM 4148 chip's
       // visible pixels, so a tap that looked like it landed on "+2"
-      // resolved to the AM 4036 tie instead.
+      // resolved to the AM 4146 tie instead.
       final handle = tester.ensureSemantics();
       await pumpChart(tester, size: const Size(402, 874));
-      await viewAt(tester, 4036, years: 100);
+      await viewAt(tester, 4146, years: 100);
 
       final sixChip = find.bySemanticsLabel(RegExp(r'^\+6$'));
       expect(sixChip, findsOneWidget);
       final sixX = tester.getCenter(sixChip).dx;
 
-      // AM 4000, 4029 and 4038 each carry a pair — three "+2" chips in
-      // this window. AM 4038 is the only one of the three AFTER AM 4036
-      // (4000 and 4029 both precede it), so it is uniquely identifiable
+      // AM 4110, 4139 and 4148 each carry a pair — three "+2" chips in
+      // this window. AM 4148 is the only one of the three AFTER AM 4146
+      // (4110 and 4139 both precede it), so it is uniquely identifiable
       // as whichever "+2" chip sits closest to the right of "+6",
       // without relying on any particular packing implementation.
       final twoChips = find.bySemanticsLabel(RegExp(r'^\+2$'));
       expect(twoChips, findsNWidgets(3),
-          reason: 'AM 4000, 4029 and 4038 each carry a pair');
+          reason: 'AM 4110, 4139 and 4148 each carry a pair');
       Finder? target;
       var bestDx = double.infinity;
       for (var i = 0; i < 3; i++) {
@@ -2468,8 +2519,8 @@ void main() {
         }
       }
       expect(target, isNotNull,
-          reason: 'no "+2" chip sits to the right of the AM 4036 "+6" chip '
-              '— AM 4038 should be there');
+          reason: 'no "+2" chip sits to the right of the AM 4146 "+6" chip '
+              '— AM 4148 should be there');
 
       await tester.tap(target!, warnIfMissed: false);
       await tester.pumpAndSettle();
@@ -2480,7 +2531,7 @@ void main() {
           matching: find.text("Paul's Conversion on Damascus Road"),
         ),
         findsOneWidget,
-        reason: 'tapping the AM 4038 chip should open the AM 4038 sheet',
+        reason: 'tapping the AM 4148 chip should open the AM 4148 sheet',
       );
       expect(
         find.descendant(
@@ -2488,7 +2539,7 @@ void main() {
           matching: find.text('Triumphal Entry'),
         ),
         findsNothing,
-        reason: 'the AM 4036 sheet must not open when the AM 4038 chip is '
+        reason: 'the AM 4146 sheet must not open when the AM 4148 chip is '
             'tapped',
       );
       handle.dispose();
@@ -2496,20 +2547,21 @@ void main() {
 
     testWidgets('a row-exhaustion drop with nobody to tie with still gets '
         'a chip, never silence', (tester) async {
-      // AM 4030–4033 — Calling of the Twelve, Sermon on the Mount,
-      // Feeding the 5000, Transfiguration — one event each, so none of
-      // them ties on x with anything the way the AM 4036 six-way tie
-      // above does. They sit in the same crowded 100-year window as the
-      // two chip tests above, between the AM 4029 pair and the AM 4036
-      // tie, and used to be dropped by the label packer for want of a
-      // free row and then discarded outright by the caller's old
+      // AM 4140–4143 (4030–4033 before 2026-09-21's +110 anchor move) —
+      // Calling of the Twelve, Sermon on the Mount, Feeding the 5000,
+      // Transfiguration — one event each, so none of them ties on x
+      // with anything the way the AM 4146 six-way tie above does. They
+      // sit in the same crowded 100-year window as the two chip tests
+      // above, between the AM 4139 pair and the AM 4146 tie, and used
+      // to be dropped by the label packer for want of a free row and
+      // then discarded outright by the caller's old
       // `.where((g) => g.length > 1)` filter — a bucket of one from a
       // row-exhaustion drop looked exactly like a bucket of one from an
       // edge drop, and both were thrown away. The tick was still
       // painted, so the reader saw an unnamed mark with nothing to tap.
       final handle = tester.ensureSemantics();
       await pumpChart(tester, size: const Size(402, 874));
-      await viewAt(tester, 4036, years: 100);
+      await viewAt(tester, 4146, years: 100);
 
       const singles = [
         'Calling of the Twelve',
@@ -3050,7 +3102,7 @@ void main() {
       final ussher = data.activeScheme;
       expect(ussher.amToYear(data.spanEndAm), lastYear,
           reason: 'the chart must span as far as the event list does');
-      expect(data.spanEndAm, 4098);
+      expect(data.spanEndAm, 4208); // 4098 -> 4208, +110 (the anchor)
     });
 
     test('the axis starts no later than the earliest event', () {
@@ -3067,12 +3119,17 @@ void main() {
       final ussher = data.activeScheme;
       // Checked at the joint rather than trusted: BC and AD are off by
       // one from each other because there is no year zero.
-      expect(ussher.amToYear(4003), -1);
-      expect(ussher.amToYear(4004), 1);
-      expect(ussher.amToYear(4098), 95); // Revelation
+      //
+      // 4003/4004/4098 -> 4113/4114/4208 and the generate range widened
+      // to still cover the whole axis: 2026-09-21, the anchor moved
+      // from 4004 to 4114 BC (+110), which moved spanEndAm the same
+      // +110 (4098 -> 4208) — see the Ishmael test above.
+      expect(ussher.amToYear(4113), -1);
+      expect(ussher.amToYear(4114), 1);
+      expect(ussher.amToYear(4208), 95); // Revelation
       // And nothing anywhere claims a year 0.
       expect(
-        List.generate(4200, (am) => ussher.amToYear(am)).contains(0),
+        List.generate(4300, (am) => ussher.amToYear(am)).contains(0),
         isFalse,
       );
       for (final e in timelineEvents()) {
@@ -3172,18 +3229,26 @@ void main() {
         'locales', () {
       for (final locale in const ['en', 'zh-Hans', 'zh-Hant']) {
         expect(data.localizedComputedNote(locale), isNotEmpty, reason: locale);
-        expect(data.contested!.localizedNote(locale), isNotEmpty,
-            reason: locale);
       }
     });
 
-    test('the contested band is the ordering clash, not a guess', () {
-      final c = data.contested!;
-      // Everything in it is a placed event drawn EARLIER than the first
-      // computed event of its own era — Ishmael before Abram is born.
-      expect(c.eventCount, greaterThan(0));
-      expect(c.startAm, lessThan(c.endAm));
-      expect(c.endAm, data.computedEndAm);
+    // 2026-09-21: the contested band is GONE, not just re-measured. It
+    // used to mark the ~170 placed events drawn earlier than the first
+    // computed event of their own era — every one of them a patriarchal
+    // date from family_tree.json's old late-date BC scale, which did
+    // not meet the AM-derived count. The derived 4114 BC anchor was
+    // chosen specifically so the two schemes meet (see CREATION_BC in
+    // tools/build_bible_chronology.py), and this test is the proof:
+    // recomputed independently here, in Dart, from the raw markers and
+    // events, the ordering clash the old test asserted the SIZE of no
+    // longer has any members to find.
+    test('there is no contested band, because the ordering clash it '
+        'used to draw has closed', () {
+      expect(data.contested, isNull,
+          reason: 'a contested band would mean some placed event is '
+              'still drawn earlier than the first computed event of '
+              'its own era — recompute the set below before trusting '
+              'this asserted directly');
       final firstComputedInEra = <String, int>{};
       for (final m in data.markers) {
         final cur = firstComputedInEra[m.era];
@@ -3194,14 +3259,17 @@ void main() {
               firstComputedInEra.containsKey(e.era) &&
               e.am < firstComputedInEra[e.era]!)
           .toList();
-      expect(misordered, hasLength(c.eventCount));
-      expect(misordered.map((e) => e.am).reduce((a, b) => a < b ? a : b),
-          c.startAm);
-      // The ~170 years family_tree.json and this count disagree by, not
-      // quietly averaged away.
+      expect(misordered, isEmpty,
+          reason: 'recomputed independently of _meta — if this is ever '
+              'non-empty again, data.contested must stop being null '
+              'and the UI branch in chronology_chart.dart that draws '
+              'it (currently dead code on this asset) needs its test '
+              'coverage back');
+      // Abram's call: the very event whose ~170-year gap the old band
+      // existed to disclose. It is exact now.
       final abramCall = data.markers.firstWhere((m) => m.id == 'abram_call');
       expect(abramCall.placedYear, -2091);
-      expect(abramCall.placedDeltaYears, -170);
+      expect(abramCall.placedDeltaYears, 0);
     });
   });
 
@@ -3210,13 +3278,16 @@ void main() {
       final ids = data.allTicks.map((t) => t.id).toList();
       expect(ids.toSet(), hasLength(ids.length), reason: 'duplicate tick id');
       // The five events both files carry are drawn once each, as the
-      // computed marker, with the timeline's own figure attached.
+      // computed marker, with the timeline's own figure attached. All
+      // five agree exactly (delta 0) since 2026-09-21, when the anchor
+      // moved to 4114 BC specifically so the computed and placed layers
+      // would meet — they used to read 4, 17, 0, -170, -170.
       for (final pair in const [
-        ['creation', 'creation', 4],
-        ['enoch_taken', 'enoch_walks', 17],
+        ['creation', 'creation', 0],
+        ['enoch_taken', 'enoch_walks', 0],
         ['flood', 'flood', 0],
-        ['abram_call', 'abram_called', -170],
-        ['isaac_born', 'isaac_born', -170],
+        ['abram_call', 'abram_called', 0],
+        ['isaac_born', 'isaac_born', 0],
       ]) {
         final markerId = pair[0] as String;
         final eventId = pair[1] as String;
@@ -3248,11 +3319,18 @@ void main() {
   group('same-year events keep bible_timeline.json\'s narrative order', () {
     // allTicks used to tie-break same-AM events alphabetically by id,
     // which is meaningless — it put the Ascension before the
-    // Crucifixion in the AM 4036 "+6" cluster. The tie-break is now the
+    // Crucifixion in the AM 4146 "+6" cluster. The tie-break is now the
     // event's own position in bible_timeline.json (carried as `seq`).
-    test('AM 4036 — the Passion week — is not alphabetised', () {
+    //
+    // Every AM literal in this group is +110 of what it read before
+    // 2026-09-21 (the anchor moved from 4004 to 4114 BC; a placed
+    // event's AM is its fixed BC/AD year run through that anchor, so
+    // the whole group of ticks slides together and the order within
+    // each group is untouched — re-verified against the regenerated
+    // asset, not shifted by hand).
+    test('AM 4146 — the Passion week — is not alphabetised', () {
       final ids = data.allTicks
-          .where((t) => t.am == 4036)
+          .where((t) => t.am == 4146)
           .map((t) => t.id)
           .toList();
       expect(ids, [
@@ -3266,13 +3344,13 @@ void main() {
     });
 
     test('the other unambiguous same-year ties are in source order', () {
-      expect(data.allTicks.where((t) => t.am == 2558).map((t) => t.id),
+      expect(data.allTicks.where((t) => t.am == 2668).map((t) => t.id),
           ['burning_bush', 'plagues', 'exodus', 'red_sea', 'manna', 'sinai']);
-      expect(data.allTicks.where((t) => t.am == 2598).map((t) => t.id),
+      expect(data.allTicks.where((t) => t.am == 2708).map((t) => t.id),
           ['wilderness_40', 'moses_dies', 'jordan_crossed', 'jericho']);
-      expect(data.allTicks.where((t) => t.am == 4000).map((t) => t.id),
+      expect(data.allTicks.where((t) => t.am == 4110).map((t) => t.id),
           ['magi', 'flight_egypt']);
-      expect(data.allTicks.where((t) => t.am == 4038).map((t) => t.id),
+      expect(data.allTicks.where((t) => t.am == 4148).map((t) => t.id),
           ['stephen_martyred', 'paul_converted']);
     });
 
@@ -3384,15 +3462,20 @@ void main() {
         expect(b['startEdgeMisordered'], misorderedIds.contains(src['id']),
             reason: '$era start edge misordered flag');
       }
-      // The two live cases named in the task this test was written
-      // for. If this set ever changes, `eraBandNote` needs a conscious
-      // rewrite — the build's own assertion (build_bible_chronology.py)
-      // guards that; this pins the reader-facing consequence.
+      // The one live case named in the task this test was written for
+      // — patriarchs — CLOSED on 2026-09-21: the derived 4114 BC anchor
+      // put Abraham's computed birth (AM 1948) and the patriarchs
+      // band's placed start edge at the same year, so the band no
+      // longer starts on a misordered item. Nothing is misordered any
+      // more; if that ever changes again, `eraBandNote` needs a
+      // conscious rewrite — the build's own assertion
+      // (build_bible_chronology.py) guards that; this pins the
+      // reader-facing consequence.
       expect(
         basis
             .where((b) => b['startEdgeMisordered'] == true)
             .map((b) => b['id']),
-        ['patriarchs'],
+        isEmpty,
       );
     });
 
@@ -3402,20 +3485,29 @@ void main() {
     // all three locales, and actually names the figures the chart's own
     // arithmetic produces rather than a paraphrase that could drift
     // from them.
+    //
+    // Rewritten 2026-09-21: the note used to name TWO gaps — antediluvian
+    // vs. the Flood, and patriarchs vs. Abraham/Joseph. The second
+    // closed with the derived anchor (era_band_note() in the generator
+    // takes two arguments now, not six — see its docstring), so only
+    // the antediluvian/Flood gap remains to check for. The antediluvian
+    // band's own end edge also moved, from a placed item at AM 1918 to
+    // the computed abram_born marker at AM 1948 — the same year the
+    // patriarchs band now starts on, which is what closed the second
+    // gap in the first place.
     test('eraBandNote names the Flood at AM 1656 against the '
-        "antediluvian band's own AM 1918, and Abraham/Joseph against "
-        "the patriarchs band's own AM 1918-2304, in all three locales",
-        () {
+        "antediluvian band's own AM 1948, in all three locales", () {
       for (final locale in const ['en', 'zh-Hans', 'zh-Hant']) {
         final note = data.localizedEraBandNote(locale);
         expect(note, isNotEmpty, reason: locale);
         expect(note, contains('1656'), reason: '$locale: Flood AM');
-        expect(note, contains('1918'),
-            reason: '$locale: antediluvian/patriarchs edge AM');
-        expect(note, contains('2008'), reason: "$locale: Abraham's birth AM");
-        expect(note, contains('2304'),
-            reason: '$locale: patriarchs band end AM');
-        expect(note, contains('2369'), reason: "$locale: Joseph's death AM");
+        expect(note, contains('1948'),
+            reason: '$locale: antediluvian band end AM');
+        expect(note, contains('292'),
+            reason: '$locale: the gap between them, in years');
+        expect(note, isNot(contains('2008')),
+            reason: '$locale: the patriarchs gap this note used to name '
+                'is closed — it must not still be mentioned');
       }
     });
   });
@@ -3435,7 +3527,8 @@ void main() {
     testWidgets('the right-hand end of the ruler prints AD 95',
         (tester) async {
       await pumpChart(tester);
-      expect(find.text('AM 4098'), findsWidgets);
+      // AM 4098 -> AM 4208 on 2026-09-21 (the anchor moved +110).
+      expect(find.text('AM 4208'), findsWidgets);
       expect(find.text('AD 95'), findsWidgets);
     });
 
@@ -4245,7 +4338,13 @@ void main() {
         () {
       // THE case this must not get wrong. A binary "past the boundary"
       // test would fold every row here; overlap does not.
-      const span = 4098;
+      //
+      // span must equal data.spanEndAm for "800-year window" below to
+      // be literally true — half and c are both fractions of it, so a
+      // stale span would silently change what year-width the window
+      // actually covers while still reading as 800 in the comment.
+      // 4098 -> 4208 on 2026-09-21 (the anchor moved +110).
+      const span = 4208;
       const half = 400 / span; // an 800-year window, ~zoom 5
       final c = data.computedEndAm / span;
       final p = plan(c - half, c + half);
@@ -4941,14 +5040,15 @@ void main() {
       // itself and lands on the bare lane directly under it reaches the
       // same set the chip's own sheet would have named.
       //
-      // AM 4029-4038 (the densest decade — re-derived below, not copied
-      // from the note this file already quotes at the test above) has
-      // both kinds of chip in view at this viewport: the AM 4036 "+6"
-      // same-year tie, and merged runs of the four AM 4030-4033
-      // row-exhaustion singles the test above this one exercises.
+      // AM 4139-4148 (4029-4038 before 2026-09-21's +110 anchor move —
+      // the densest decade, re-derived below, not copied from the note
+      // this file already quotes at the test above) has both kinds of
+      // chip in view at this viewport: the AM 4146 "+6" same-year tie,
+      // and merged runs of the four AM 4140-4143 row-exhaustion singles
+      // the test above this one exercises.
       final handle = tester.ensureSemantics();
       await pumpChart(tester, size: const Size(402, 874));
-      await viewAt(tester, 4036, years: 100);
+      await viewAt(tester, 4146, years: 100);
       await tester.pumpAndSettle();
 
       // Re-derive the densest-decade fact fresh, per this item's own
@@ -4971,7 +5071,7 @@ void main() {
           bestStart = start;
         }
       }
-      expect(bestStart, 4029,
+      expect(bestStart, 4139,
           reason: 'the densest 10-year window has moved — this test\'s '
               'viewport and expectations need re-deriving, not patching');
       expect(bestCount, 14,
@@ -5497,10 +5597,17 @@ void main() {
     // for why chaining them inside one test is not trustworthy here.
     for (final vp in <(String, Future<void> Function(WidgetTester))>[
       ('fit', (t) => wholeSpan(t)),
-      ('AM4036/100y', (t) => viewAt(t, 4036, years: 100)),
-      ('AM2558/200y', (t) => viewAt(t, 2558, years: 200)),
+      // AM literals +110 of their pre-2026-09-21 values where they
+      // track a specific milestone through the anchor move (4036 was
+      // the NT densest-decade tie, 4098 was exactly spanEndAm/
+      // Revelation — both re-verified against the regenerated asset).
+      // AM2200/400y is a wide, general "somewhere in the patriarchal
+      // era" sample with no single milestone to track — both busy
+      // either way — so it is left as measured, not shifted.
+      ('AM4146/100y', (t) => viewAt(t, 4146, years: 100)),
+      ('AM2668/200y', (t) => viewAt(t, 2668, years: 200)),
       ('AM2200/400y', (t) => viewAt(t, 2200, years: 400)),
-      ('AM4098/30y', (t) => viewAt(t, 4098, years: 30)),
+      ('AM4208/30y', (t) => viewAt(t, 4208, years: 30)),
     ]) {
       testWidgets(
           'the residual queue:16481 disclosed rather than closed at '
@@ -5538,10 +5645,17 @@ void main() {
     // one already-read source snippet.
     for (final vp in <(String, Future<void> Function(WidgetTester))>[
       ('fit', (t) => wholeSpan(t)),
-      ('AM4036/100y', (t) => viewAt(t, 4036, years: 100)),
-      ('AM2558/200y', (t) => viewAt(t, 2558, years: 200)),
+      // AM literals +110 of their pre-2026-09-21 values where they
+      // track a specific milestone through the anchor move (4036 was
+      // the NT densest-decade tie, 4098 was exactly spanEndAm/
+      // Revelation — both re-verified against the regenerated asset).
+      // AM2200/400y is a wide, general "somewhere in the patriarchal
+      // era" sample with no single milestone to track — both busy
+      // either way — so it is left as measured, not shifted.
+      ('AM4146/100y', (t) => viewAt(t, 4146, years: 100)),
+      ('AM2668/200y', (t) => viewAt(t, 2668, years: 200)),
       ('AM2200/400y', (t) => viewAt(t, 2200, years: 400)),
-      ('AM4098/30y', (t) => viewAt(t, 4098, years: 30)),
+      ('AM4208/30y', (t) => viewAt(t, 4208, years: 30)),
     ]) {
       testWidgets(
           'queue:16548 at ${vp.$1}: every chronoClusterChip_-keyed chip '
@@ -5669,12 +5783,15 @@ void main() {
       // the known-densest decade (re-derived, not copied, by the test
       // above this one), and two more spread across the span so the
       // measurement is not just that one decade's anecdote again.
+      // AM literals +110 of their pre-2026-09-21 values where they
+      // track a specific milestone (see the note on the matching array
+      // above this group's own three copies of this list).
       final viewports = <(String, Future<void> Function())>[
         ('fit', () => wholeSpan(tester)),
-        ('AM4036/100y', () => viewAt(tester, 4036, years: 100)),
-        ('AM2558/200y', () => viewAt(tester, 2558, years: 200)),
+        ('AM4146/100y', () => viewAt(tester, 4146, years: 100)),
+        ('AM2668/200y', () => viewAt(tester, 2668, years: 200)),
         ('AM2200/400y', () => viewAt(tester, 2200, years: 400)),
-        ('AM4098/30y', () => viewAt(tester, 4098, years: 30)),
+        ('AM4208/30y', () => viewAt(tester, 4208, years: 30)),
       ];
 
       // Recorded per chip, not pooled, so a re-derivation can see WHICH
@@ -5898,7 +6015,8 @@ void main() {
       final before = pos.maxScrollExtent;
       await tester.pump(const Duration(milliseconds: 200));
       expect(plotScroll(tester).position.maxScrollExtent, before);
-      expect(find.text('AM 4098'), findsWidgets);
+      // AM 4098 -> AM 4208 on 2026-09-21 (the anchor moved +110).
+      expect(find.text('AM 4208'), findsWidgets);
     });
   });
 

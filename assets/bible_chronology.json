@@ -5,15 +5,15 @@
     "generator": "tools/build_bible_chronology.py",
     "defaultScheme": "masoretic-ussher",
     "spanStartAm": 0,
-    "spanEndAm": 4098,
-    "computedEndAm": 2369,
+    "spanEndAm": 4208,
+    "computedEndAm": 2309,
     "count": 26,
-    "eventCount": 93,
-    "description": "Two layers on one Anno Mundi axis. (1) LIFELINES — the begetting ages Genesis states, chained from Adam to Joseph: directly, for most; Shem's, Abraham's and Joseph's are each chained together from multiple verses instead, since no single verse states outright what age their father was (see CHAIN in this file). Names from assets/family_tree.json, years recomputed from the Masoretic ages and cross-checked against it. (2) EVENTS — the same 93 events the event list on this page shows, from assets/bible_timeline.json, placed on the AM axis by their stated BC/AD year through the 4004 BC anchor, so both views of the page span Creation to Revelation. The two layers are drawn differently and labelled, because a placed year is not a computed one. No data is taken from the copyrighted reference sheet in docs/reference/.",
+    "eventCount": 100,
+    "description": "Two layers on one Anno Mundi axis. (1) LIFELINES — the begetting ages Genesis states, chained from Adam to Joseph: directly, for most; Shem's and Joseph's are each chained together from multiple verses instead, since no single verse states outright what age their father was (see CHAIN in this file). Names from assets/family_tree.json, years recomputed from the Masoretic ages and cross-checked against it. (2) EVENTS — the same 100 events the event list on this page shows, from assets/bible_timeline.json, placed on the AM axis by their stated BC/AD year through the 4114 BC anchor, so both views of the page span Creation to Revelation. The two layers are drawn differently and labelled, because a placed year is not a computed one. No data is taken from the copyrighted reference sheet in docs/reference/.",
     "computedNote": {
-      "en": "Left of this line every year is COMPUTED: it is the ages Scripture states, chained together — directly, for most; Shem's, Abraham's and Joseph's are each chained together from multiple verses instead — and each bar carries the arithmetic. Right of it Scripture stops giving a continuous chain of ages, so there are no lifelines to draw — only events, PLACED on the BC/AD years of assets/bible_timeline.json. The ground fades out there for the same reason a bar with no stated death year fades out: the chart is saying it does not know.",
-      "zh-Hans": "此线以左，每一个年份都是「推算」出来的：把经文所记的岁数逐代相连而得——大多直接见于经文，闪、亚伯拉罕、约瑟三代则各自把多处经文串联推得——每根横条都附着算式。此线以右，经文不再给出连续的年岁链条，因此没有生平横条可画——只有事件，按 assets/bible_timeline.json 的公元前后年份「定位」。那一段的底色会淡出，理由和没有记载卒年的横条淡出是同一个：本图在说它不知道。",
-      "zh-Hant": "此線以左，每一個年份都是「推算」出來的：把經文所記的歲數逐代相連而得——大多直接見於經文，閃、亞伯拉罕、約瑟三代則各自把多處經文串聯推得——每根橫條都附著算式。此線以右，經文不再給出連續的年歲鏈條，因此沒有生平橫條可畫——只有事件，按 assets/bible_timeline.json 的公元前後年份「定位」。那一段的底色會淡出，理由和沒有記載卒年的橫條淡出是同一個：本圖在說它不知道。"
+      "en": "Left of this line every year is COMPUTED: it is the ages Scripture states, chained together — directly, for most; Shem's and Joseph's are each chained together from multiple verses instead — and each bar carries the arithmetic. Right of it Scripture stops giving a continuous chain of ages, so there are no lifelines to draw — only events, PLACED on the BC/AD years of assets/bible_timeline.json. The ground fades out there for the same reason a bar with no stated death year fades out: the chart is saying it does not know.",
+      "zh-Hans": "此线以左，每一个年份都是「推算」出来的：把经文所记的岁数逐代相连而得——大多直接见于经文，闪、约瑟两代则各自把多处经文串联推得——每根横条都附着算式。此线以右，经文不再给出连续的年岁链条，因此没有生平横条可画——只有事件，按 assets/bible_timeline.json 的公元前后年份「定位」。那一段的底色会淡出，理由和没有记载卒年的横条淡出是同一个：本图在说它不知道。",
+      "zh-Hant": "此線以左，每一個年份都是「推算」出來的：把經文所記的歲數逐代相連而得——大多直接見於經文，閃、約瑟兩代則各自把多處經文串聯推得——每根橫條都附著算式。此線以右，經文不再給出連續的年歲鏈條，因此沒有生平橫條可畫——只有事件，按 assets/bible_timeline.json 的公元前後年份「定位」。那一段的底色會淡出，理由和沒有記載卒年的橫條淡出是同一個：本圖在說它不知道。"
     },
     "undrawnLines": {
       "en": "Cain's line (Genesis 4), Ham's and Japheth's (Genesis 10) are not drawn. Scripture names them but gives no ages, so there is nothing to plot without inventing it.",
@@ -93,7 +93,7 @@
       }
     ],
     "familyTreeScaleOffset": {
-      "offsetYears": 170,
+      "offsetYears": 0,
       "personIds": [
         "abraham",
         "esau",
@@ -110,27 +110,27 @@
         "parentId": "terah",
         "relation": "father",
         "childSignedYear": -2166,
-        "parentSignedYear": -2126,
-        "gapYears": -40,
-        "note": "terah is `am` (Genesis 11 genealogy); abraham is `bc` under the late-date patriarchal scheme. Converted to one signed timeline, abraham's birth lands 40 years before terah's — the boundary where the two schemes meet, not a data error to fix by moving either year."
+        "parentSignedYear": -2236,
+        "gapYears": 70,
+        "note": "Terah was 70 at Abram's birth, as Genesis 11:26 states — the reading this chronology now takes (see CREATION_BC)."
       },
       {
         "childId": "haran",
         "parentId": "terah",
         "relation": "father",
         "childSignedYear": -2200,
-        "parentSignedYear": -2126,
-        "gapYears": -74,
-        "note": "Same terah/`am`-vs-`bc` boundary as abraham above; 74 years on this line."
+        "parentSignedYear": -2236,
+        "gapYears": 36,
+        "note": "Haran's birth year is a placement, not a derivation, carried over from the earlier late-date scheme. On this anchor it falls in Terah's 36th year, before the 70th that Genesis 11:26 gives for his sons — recorded as an open question, not adjusted, because no verse states Haran's age."
       },
       {
         "childId": "nahor_younger",
         "parentId": "terah",
         "relation": "father",
         "childSignedYear": -2180,
-        "parentSignedYear": -2126,
-        "gapYears": -54,
-        "note": "Same terah/`am`-vs-`bc` boundary as abraham above; 54 years on this line."
+        "parentSignedYear": -2236,
+        "gapYears": 56,
+        "note": "Same as Haran above: a placement, falling in Terah's 56th year on this anchor. Open, not adjusted."
       }
     ],
     "crossSurfaceYearDiffs": [
@@ -138,21 +138,83 @@
         "eventId": "cain_abel",
         "personId": "abel",
         "kind": "death",
-        "timelineYear": -3950,
-        "familyTreeYear": -3929,
-        "deltaYears": 21,
+        "timelineYear": -4064,
+        "familyTreeYear": -4039,
+        "deltaYears": 25,
         "class": "unresolved",
-        "note": "family_tree.json gives Abel a deathYear (AM 75) with no scripture citation for a specific age at death — Genesis does not state one, unlike Seth's stated lifespan. This 21-year gap against bible_timeline.json's placement is recorded, not resolved: neither figure is derived from a stated age, so there is nothing here to adjudicate between, only to disclose."
+        "note": "family_tree.json gives Abel a deathYear (AM 75) with no scripture citation for a specific age at death — Genesis does not state one, unlike Seth's stated lifespan. This 25-year gap against bible_timeline.json's placement is recorded, not resolved: neither figure is derived from a stated age, so there is nothing here to adjudicate between, only to disclose."
       },
       {
         "eventId": "seth_born",
         "personId": "seth",
         "kind": "birth",
-        "timelineYear": -3870,
-        "familyTreeYear": -3874,
-        "deltaYears": -4,
-        "class": "creationAnchor4Year",
-        "note": "bible_timeline.json places Creation at 4000 BC; the AM scale here (via CREATION_BC) anchors it at 4004 BC — the same 4-year gap already recorded on the creation marker's placedDeltaYears."
+        "timelineYear": -3984,
+        "familyTreeYear": -3984,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "enosh_born",
+        "personId": "enosh",
+        "kind": "birth",
+        "timelineYear": -3879,
+        "familyTreeYear": -3879,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "kenan_born",
+        "personId": "kenan",
+        "kind": "birth",
+        "timelineYear": -3789,
+        "familyTreeYear": -3789,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "mahalalel_born",
+        "personId": "mahalalel",
+        "kind": "birth",
+        "timelineYear": -3719,
+        "familyTreeYear": -3719,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "jared_born",
+        "personId": "jared",
+        "kind": "birth",
+        "timelineYear": -3654,
+        "familyTreeYear": -3654,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "methuselah_born",
+        "personId": "methuselah",
+        "kind": "birth",
+        "timelineYear": -3427,
+        "familyTreeYear": -3427,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "lamech_born",
+        "personId": "lamech",
+        "kind": "birth",
+        "timelineYear": -3240,
+        "familyTreeYear": -3240,
+        "deltaYears": 0,
+        "class": "none"
+      },
+      {
+        "eventId": "shelah_born",
+        "personId": "shelah",
+        "kind": "birth",
+        "timelineYear": -2421,
+        "familyTreeYear": -2421,
+        "deltaYears": 0,
+        "class": "none"
       },
       {
         "eventId": "ishmael_born",
@@ -195,20 +257,18 @@
         "personId": "moses",
         "kind": "birth",
         "timelineYear": -1526,
-        "familyTreeYear": -1525,
-        "deltaYears": 1,
-        "class": "mosesAnchorYear",
-        "note": "family_tree.json dates Moses 1525-1405 BC, bible_timeline.json 1526-1406 BC — both ends 1 year later on family_tree.json, so this is a shared anchor difference, not a lifespan error: both put his life at exactly 120 years (see the assertion right below this table)."
+        "familyTreeYear": -1526,
+        "deltaYears": 0,
+        "class": "none"
       },
       {
         "eventId": "moses_dies",
         "personId": "moses",
         "kind": "death",
         "timelineYear": -1406,
-        "familyTreeYear": -1405,
-        "deltaYears": 1,
-        "class": "mosesAnchorYear",
-        "note": "See moses_born above — the same 1-year anchor shift, at the other end of the same 120-year life."
+        "familyTreeYear": -1406,
+        "deltaYears": 0,
+        "class": "none"
       },
       {
         "eventId": "jesus_born",
@@ -235,14 +295,21 @@
       "vitalEventIds": [
         "cain_abel",
         "crucifixion",
+        "enosh_born",
         "isaac_born",
         "ishmael_born",
         "jacob_esau_born",
+        "jared_born",
         "jesus_born",
         "john_baptist_born",
+        "kenan_born",
+        "lamech_born",
+        "mahalalel_born",
+        "methuselah_born",
         "moses_born",
         "moses_dies",
-        "seth_born"
+        "seth_born",
+        "shelah_born"
       ],
       "vitalEventsWithoutPersonIds": {
         "john_baptist_born": "no John-the-Baptist person in family_tree.json to compare against"
@@ -305,78 +372,78 @@
     "eraBandBasis": [
       {
         "id": "antediluvian",
-        "startEdgeId": "creation",
+        "startEdgeId": "eden",
         "startEdgeAm": 0,
-        "startEdgeAmBasis": "computed",
+        "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "patriarchs",
-        "startEdgeId": "lot_separates",
-        "startEdgeAm": 1918,
-        "startEdgeAmBasis": "placed",
-        "startEdgeMisordered": true
+        "startEdgeId": "abram_born",
+        "startEdgeAm": 1948,
+        "startEdgeAmBasis": "computed",
+        "startEdgeMisordered": false
       },
       {
         "id": "mosaic",
         "startEdgeId": "israel_oppressed",
-        "startEdgeAm": 2304,
+        "startEdgeAm": 2414,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "conquest",
         "startEdgeId": "jordan_crossed",
-        "startEdgeAm": 2598,
+        "startEdgeAm": 2708,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "monarchy",
         "startEdgeId": "saul_anointed",
-        "startEdgeAm": 2954,
+        "startEdgeAm": 3064,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "exile",
         "startEdgeId": "judah_falls",
-        "startEdgeAm": 3418,
+        "startEdgeAm": 3528,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "intertestamental",
         "startEdgeId": "intertestamental",
-        "startEdgeAm": 3604,
+        "startEdgeAm": 3714,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       },
       {
         "id": "nt",
         "startEdgeId": "john_baptist_born",
-        "startEdgeAm": 3998,
+        "startEdgeAm": 4108,
         "startEdgeAmBasis": "placed",
         "startEdgeMisordered": false
       }
     ],
     "eraBandNote": {
-      "en": "A band's edges are set by the placed-event layer (assets/bible_timeline.json), but its name points at the computed layer — lifelines and markers chained from Genesis's stated ages. The two do not always meet at the same year. The Antediluvian band runs to AM 1918, but the Flood itself is computed at AM 1656 — 262 years earlier. The Patriarchs band runs AM 1918–2304, but Abraham's computed birth is AM 2008 (after the band already started) and Joseph's computed death is AM 2369 (after the band already ended). Nothing has been shifted to close either gap: the band is an orientation device for the axis, the tick is the precise claim.",
-      "zh-Hans": "色带的边界来自事件安放层（assets/bible_timeline.json），但其名称指向的是按创世记所记年岁推算的生平横条与标记层，两者未必落在同一年份。「洪水前」色带一直画到创世纪元 1918 年，而洪水本身推算为创世纪元 1656 年——早了 262 年。「族长时代」色带跨创世纪元 1918 至 2304 年，而亚伯拉罕的推算出生年份是创世纪元 2008年（色带已经开始之后），约瑟的推算去世年份是创世纪元 2369 年（色带已经结束之后）。两处差距都没有为了拉近而挪动任何数字：色带是轴线上的定向工具，刻度才是精确的主张。",
-      "zh-Hant": "色帶的邊界來自事件安放層（assets/bible_timeline.json），但其名稱指向的是按創世記所記年歲推算的生平橫條與標記層，兩者未必落在同一年份。「洪水前」色帶一直畫到創世紀元 1918 年，而洪水本身推算為創世紀元 1656 年——早了 262 年。「族長時代」色帶跨創世紀元 1918 至 2304 年，而亞伯拉罕的推算出生年份是創世紀元 2008年（色帶已經開始之後），約瑟的推算去世年份是創世紀元 2369 年（色帶已經結束之後）。兩處差距都沒有為了拉近而挪動任何數字：色帶是軸線上的定向工具，刻度才是精確的主張。"
+      "en": "A band's edges are set by the placed-event layer (assets/bible_timeline.json), but its name points at the computed layer — lifelines and markers chained from Genesis's stated ages. The two do not always meet at the same year: the Antediluvian band runs to AM 1948, but the Flood itself is computed at AM 1656 — 292 years earlier. Nothing has been shifted to close the gap: the band is an orientation device for the axis, the tick is the precise claim.",
+      "zh-Hans": "色带的边界来自事件安放层（assets/bible_timeline.json），但其名称指向的是按创世记所记年岁推算的生平横条与标记层，两者未必落在同一年份：「洪水前」色带一直画到创世纪元 1948 年，而洪水本身推算为创世纪元 1656 年——早了 292 年。这一差距没有为了拉近而挪动任何数字：色带是轴线上的定向工具，刻度才是精确的主张。",
+      "zh-Hant": "色帶的邊界來自事件安放層（assets/bible_timeline.json），但其名稱指向的是按創世記所記年歲推算的生平橫條與標記層，兩者未必落在同一年份：「洪水前」色帶一直畫到創世紀元 1948 年，而洪水本身推算為創世紀元 1656 年——早了 292 年。這一差距沒有為了拉近而挪動任何數字：色帶是軸線上的定向工具，刻度才是精確的主張。"
     }
   },
   "schemes": [
     {
       "id": "masoretic-ussher",
       "supported": true,
-      "creationBc": 4004,
-      "nameEn": "Masoretic text (Ussher anchor)",
-      "nameZhHans": "马所拉文本（乌雪锚点）",
-      "nameZhHant": "馬所拉文本（烏雪錨點）",
-      "noteEn": "Every year on this chart is counted in Anno Mundi — years since Creation — using the ages the Masoretic (Hebrew) text gives in Genesis 5 and 11. Those intervals are what Scripture states; the BC labels are not. They come from anchoring AM 0 at 4004 BC, which is Ussher's date and the one the reference chart uses. Read the AM column as the sourced figure and the BC column as one scholar's placement of it.",
-      "noteZhHans": "本图的年份以「创世纪元」（AM，自创造起算的年数）计算，取自马所拉（希伯来）文本创世记第 5、11 章所记的岁数。经文陈述的是这些间隔，而非公元前年份；公元前标签来自把 AM 0 锚定在公元前 4004 年，那是乌雪的定年，也是参考图所用的。请把 AM 一栏视为有经文出处的数字，把公元前一栏视为某一位学者对它的定位。",
-      "noteZhHant": "本圖的年份以「創世紀元」（AM，自創造起算的年數）計算，取自馬所拉（希伯來）文本創世記第 5、11 章所記的歲數。經文陳述的是這些間隔，而非公元前年份；公元前標籤來自把 AM 0 錨定在公元前 4004 年，那是烏雪的定年，也是參考圖所用的。請把 AM 一欄視為有經文出處的數字，把公元前一欄視為某一位學者對它的定位。"
+      "creationBc": 4114,
+      "nameEn": "Masoretic text (anchor derived from Scripture)",
+      "nameZhHans": "马所拉文本（经文推算锚点）",
+      "nameZhHant": "馬所拉文本（經文推算錨點）",
+      "noteEn": "Every year on this chart is counted in Anno Mundi — years since Creation — using the ages the Masoretic (Hebrew) text gives in Genesis 5 and 11. The BC labels come from anchoring AM 0 at 4114 BC, and that anchor is derived, not adopted: counting back from Solomon's temple (966 BC) through 1 Kings 6:1, Exodus 12:40 and the patriarchs' ages puts Abram's birth in 2166 BC, which Genesis 11 puts at AM 1948. The same years are used by the family tree and the timeline.",
+      "noteZhHans": "本图的年份以「创世纪元」（AM，自创造起算的年数）计算，取自马所拉（希伯来）文本创世记第 5、11 章所记的岁数。公元前标签来自把 AM 0 锚定在公元前 4114 年；这个锚点是推算出来的，而非借用：从所罗门建殿（公元前 966 年）起，按列王纪上 6:1、出埃及记 12:40 及列祖的岁数往回推，亚伯兰生于公元前 2166 年，而创世记 11 章把这一年记在创世纪元 1948 年。家谱与时间轴也用同一套年份。",
+      "noteZhHant": "本圖的年份以「創世紀元」（AM，自創造起算的年數）計算，取自馬所拉（希伯來）文本創世記第 5、11 章所記的歲數。公元前標籤來自把 AM 0 錨定在公元前 4114 年；這個錨點是推算出來的，而非借用：從所羅門建殿（公元前 966 年）起，按列王紀上 6:1、出埃及記 12:40 及列祖的歲數往回推，亞伯蘭生於公元前 2166 年，而創世記 11 章把這一年記在創世紀元 1948 年。家譜與時間軸也用同一套年份。"
     },
     {
       "id": "septuagint",
@@ -449,7 +516,7 @@
     {
       "id": "antediluvian",
       "startAm": 0,
-      "endAm": 1918,
+      "endAm": 1948,
       "colorHex": "#6B5E3F",
       "nameEn": "Antediluvian (Creation → Flood)",
       "nameZhHans": "洪水之前（创世 → 洪水）",
@@ -457,8 +524,8 @@
     },
     {
       "id": "patriarchs",
-      "startAm": 1918,
-      "endAm": 2304,
+      "startAm": 1948,
+      "endAm": 2414,
       "colorHex": "#8C5A2F",
       "nameEn": "Patriarchs (Abraham → Joseph)",
       "nameZhHans": "列祖时代（亚伯拉罕 → 约瑟）",
@@ -466,8 +533,8 @@
     },
     {
       "id": "mosaic",
-      "startAm": 2304,
-      "endAm": 2598,
+      "startAm": 2414,
+      "endAm": 2708,
       "colorHex": "#B42E2E",
       "nameEn": "Exodus & Wilderness",
       "nameZhHans": "出埃及与旷野",
@@ -475,8 +542,8 @@
     },
     {
       "id": "conquest",
-      "startAm": 2598,
-      "endAm": 2954,
+      "startAm": 2708,
+      "endAm": 3064,
       "colorHex": "#2F7C5C",
       "nameEn": "Conquest & Judges",
       "nameZhHans": "征服与士师",
@@ -484,8 +551,8 @@
     },
     {
       "id": "monarchy",
-      "startAm": 2954,
-      "endAm": 3418,
+      "startAm": 3064,
+      "endAm": 3528,
       "colorHex": "#2A4FB0",
       "nameEn": "United & Divided Monarchy",
       "nameZhHans": "联合与分裂王国",
@@ -493,8 +560,8 @@
     },
     {
       "id": "exile",
-      "startAm": 3418,
-      "endAm": 3604,
+      "startAm": 3528,
+      "endAm": 3714,
       "colorHex": "#5F3F86",
       "nameEn": "Exile & Return",
       "nameZhHans": "被掳与回归",
@@ -502,8 +569,8 @@
     },
     {
       "id": "intertestamental",
-      "startAm": 3604,
-      "endAm": 3998,
+      "startAm": 3714,
+      "endAm": 4108,
       "colorHex": "#505590",
       "nameEn": "Inter-Testamental Period",
       "nameZhHans": "两约之间",
@@ -511,8 +578,8 @@
     },
     {
       "id": "nt",
-      "startAm": 3998,
-      "endAm": 4098,
+      "startAm": 4108,
+      "endAm": 4208,
       "colorHex": "#B8860B",
       "nameEn": "New Testament",
       "nameZhHans": "新约",
@@ -938,24 +1005,18 @@
       "nameZhHans": "亚伯拉罕",
       "nameZhHant": "亞伯拉罕",
       "fatherId": "terah",
-      "birthAm": 2008,
-      "deathAm": 2183,
+      "birthAm": 1948,
+      "deathAm": 2123,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 175,
       "refs": [
         "Genesis 11:26",
-        "Genesis 11:32",
-        "Genesis 12:4",
-        "Acts 7:4",
         "Genesis 25:7"
       ],
-      "derivationEn": "Genesis 11:26 states Terah was 70 when he begat Abram, Nahor and Haran together — a birth-order note, not Abram's own birth year. Terah died at 205 (Genesis 11:32); Abram left Haran at 75, after his father's death (Genesis 12:4, Acts 7:4), so Terah was 205 − 75 = 130 when Abraham was born. Abraham lived 175 years (Genesis 25:7).",
-      "derivationZhHans": "创世记 11:26 说他拉 70 岁生了亚伯兰、拿鹤、哈兰三个儿子，说的是出生次序，不是亚伯兰本人的出生年。他拉死时 205 岁（创世记 11:32）；亚伯兰离开哈兰时 75 岁，是在父亲死后（创世记 12:4、使徒行传 7:4）——205 − 75 = 130，就是他拉生亚伯拉罕时的年岁。亚伯拉罕共活了 175 年（创世记 25:7）。",
-      "derivationZhHant": "創世記 11:26 說他拉 70 歲生了亞伯蘭、拿鶴、哈蘭三個兒子，說的是出生次序，不是亞伯蘭本人的出生年。他拉死時 205 歲（創世記 11:32）；亞伯蘭離開哈蘭時 75 歲，是在父親死後（創世記 12:4、使徒行傳 7:4）——205 − 75 = 130，就是他拉生亞伯拉罕時的年歲。亞伯拉罕共活了 175 年（創世記 25:7）。",
-      "noteEn": "assets/family_tree.json dates Abraham 2166-1991 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2008-2183 is 1996-1821 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把亚伯拉罕定在公元前 2166-1991 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2008-2183 在 4004 锚点下为公元前 1996-1821 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把亞伯拉罕定在公元前 2166-1991 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2008-2183 在 4004 錨點下為公元前 1996-1821 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationEn": "Genesis 11:26 states Terah was 70 when he begat Abram, Nahor and Haran, and this chart reads it as written — on that reading the patriarchs' dates meet the count from Creation exactly. Genesis 11:32 with 12:4 and Acts 7:4 can also be read to put Abram's birth sixty years later, in Terah's 130th year; that reading is not drawn here. Abraham lived 175 years (Genesis 25:7).",
+      "derivationZhHans": "创世记 11:26 说他拉 70 岁生了亚伯兰、拿鹤、哈兰，本图按字面采用；按这一读法，列祖的年份与自创世起算的年数正好衔接。另有一种读法，结合创世记 11:32、12:4 与使徒行传 7:4，把亚伯兰的出生推后六十年，落在他拉一百三十岁那年；本图没有采用。亚伯拉罕共活了 175 年（创世记 25:7）。",
+      "derivationZhHant": "創世記 11:26 說他拉 70 歲生了亞伯蘭、拿鶴、哈蘭，本圖按字面採用；按這一讀法，列祖的年份與自創世起算的年數正好銜接。另有一種讀法，結合創世記 11:32、12:4 與使徒行傳 7:4，把亞伯蘭的出生推後六十年，落在他拉一百三十歲那年；本圖沒有採用。亞伯拉罕共活了 175 年（創世記 25:7）。"
     },
     {
       "personId": "ishmael",
@@ -965,8 +1026,8 @@
       "nameZhHans": "以实玛利",
       "nameZhHant": "以實瑪利",
       "fatherId": "abraham",
-      "birthAm": 2094,
-      "deathAm": 2231,
+      "birthAm": 2034,
+      "deathAm": 2171,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 137,
@@ -976,10 +1037,7 @@
       ],
       "derivationEn": "Abraham was 86 when Ishmael was born (Genesis 16:16); Ishmael lived 137 years (Genesis 25:17).",
       "derivationZhHans": "亚伯拉罕 86 岁生以实玛利（创世记 16:16）；以实玛利共活了 137 年（创世记 25:17）。",
-      "derivationZhHant": "亞伯拉罕 86 歲生以實瑪利（創世記 16:16）；以實瑪利共活了 137 年（創世記 25:17）。",
-      "noteEn": "assets/family_tree.json dates Ishmael 2080-1943 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2094-2231 is 1910-1773 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把以实玛利定在公元前 2080-1943 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2094-2231 在 4004 锚点下为公元前 1910-1773 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把以實瑪利定在公元前 2080-1943 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2094-2231 在 4004 錨點下為公元前 1910-1773 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationZhHant": "亞伯拉罕 86 歲生以實瑪利（創世記 16:16）；以實瑪利共活了 137 年（創世記 25:17）。"
     },
     {
       "personId": "isaac",
@@ -989,8 +1047,8 @@
       "nameZhHans": "以撒",
       "nameZhHant": "以撒",
       "fatherId": "abraham",
-      "birthAm": 2108,
-      "deathAm": 2288,
+      "birthAm": 2048,
+      "deathAm": 2228,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 180,
@@ -1000,10 +1058,7 @@
       ],
       "derivationEn": "Abraham was 100 when Isaac was born (Genesis 21:5); Isaac lived 180 years (Genesis 35:28).",
       "derivationZhHans": "亚伯拉罕 100 岁生以撒（创世记 21:5）；以撒共活了 180 年（创世记 35:28）。",
-      "derivationZhHant": "亞伯拉罕 100 歲生以撒（創世記 21:5）；以撒共活了 180 年（創世記 35:28）。",
-      "noteEn": "assets/family_tree.json dates Isaac 2066-1886 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2108-2288 is 1896-1716 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把以撒定在公元前 2066-1886 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2108-2288 在 4004 锚点下为公元前 1896-1716 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把以撒定在公元前 2066-1886 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2108-2288 在 4004 錨點下為公元前 1896-1716 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationZhHant": "亞伯拉罕 100 歲生以撒（創世記 21:5）；以撒共活了 180 年（創世記 35:28）。"
     },
     {
       "personId": "esau",
@@ -1013,7 +1068,7 @@
       "nameZhHans": "以扫",
       "nameZhHant": "以掃",
       "fatherId": "isaac",
-      "birthAm": 2168,
+      "birthAm": 2108,
       "deathAm": null,
       "startKind": "born",
       "endKind": "unknown",
@@ -1033,8 +1088,8 @@
       "nameZhHans": "雅各（以色列）",
       "nameZhHant": "雅各（以色列）",
       "fatherId": "isaac",
-      "birthAm": 2168,
-      "deathAm": 2315,
+      "birthAm": 2108,
+      "deathAm": 2255,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 147,
@@ -1044,10 +1099,7 @@
       ],
       "derivationEn": "Isaac was 60 when Jacob (Israel) was born (Genesis 25:26); Jacob (Israel) lived 147 years (Genesis 47:28).",
       "derivationZhHans": "以撒 60 岁生雅各（以色列）（创世记 25:26）；雅各（以色列）共活了 147 年（创世记 47:28）。",
-      "derivationZhHant": "以撒 60 歲生雅各（以色列）（創世記 25:26）；雅各（以色列）共活了 147 年（創世記 47:28）。",
-      "noteEn": "assets/family_tree.json dates Jacob (Israel) 2006-1859 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2168-2315 is 1836-1689 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把雅各（以色列）定在公元前 2006-1859 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2168-2315 在 4004 锚点下为公元前 1836-1689 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把雅各（以色列）定在公元前 2006-1859 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2168-2315 在 4004 錨點下為公元前 1836-1689 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationZhHant": "以撒 60 歲生雅各（以色列）（創世記 25:26）；雅各（以色列）共活了 147 年（創世記 47:28）。"
     },
     {
       "personId": "joseph",
@@ -1057,8 +1109,8 @@
       "nameZhHans": "约瑟",
       "nameZhHant": "約瑟",
       "fatherId": "jacob",
-      "birthAm": 2259,
-      "deathAm": 2369,
+      "birthAm": 2199,
+      "deathAm": 2309,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 110,
@@ -1072,10 +1124,7 @@
       ],
       "derivationEn": "Genesis never states Jacob's age when Joseph was born; it is computed. Joseph was 30 when he stood before Pharaoh (Genesis 41:46); 7 years of plenty followed (Genesis 41:53); 2 years of famine had passed when he sent for his family (Genesis 45:6) — Joseph was 39 when Jacob entered Egypt. Jacob was 130 at that entry (Genesis 47:9), so Jacob was 130 − 39 = 91 when Joseph was born. Joseph lived 110 years (Genesis 50:22, Genesis 50:26).",
       "derivationZhHans": "经文没有哪一节直接说雅各生约瑟时几岁，这是推算所得：约瑟站在法老面前时 30 岁（创世记 41:46）；接着 7 个丰年过去（41:53）；约瑟差人去接家人时，饥荒已过了 2 年（45:6）——雅各一家进埃及时约瑟 39 岁。雅各进埃及时 130 岁（47:9），130 − 39 = 91，就是雅各生约瑟时的年岁。约瑟共活了 110 年（创世记 50:22、创世记 50:26）。",
-      "derivationZhHant": "經文沒有哪一節直接說雅各生約瑟時幾歲，這是推算所得：約瑟站在法老面前時 30 歲（創世記 41:46）；接著 7 個豐年過去（41:53）；約瑟差人去接家人時，饑荒已過了 2 年（45:6）——雅各一家進埃及時約瑟 39 歲。雅各進埃及時 130 歲（47:9），130 − 39 = 91，就是雅各生約瑟時的年歲。約瑟共活了 110 年（創世記 50:22、創世記 50:26）。",
-      "noteEn": "assets/family_tree.json dates Joseph 1915-1805 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2259-2369 is 1745-1635 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把约瑟定在公元前 1915-1805 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2259-2369 在 4004 锚点下为公元前 1745-1635 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把約瑟定在公元前 1915-1805 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2259-2369 在 4004 錨點下為公元前 1745-1635 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationZhHant": "經文沒有哪一節直接說雅各生約瑟時幾歲，這是推算所得：約瑟站在法老面前時 30 歲（創世記 41:46）；接著 7 個豐年過去（41:53）；約瑟差人去接家人時，饑荒已過了 2 年（45:6）——雅各一家進埃及時約瑟 39 歲。雅各進埃及時 130 歲（47:9），130 − 39 = 91，就是雅各生約瑟時的年歲。約瑟共活了 110 年（創世記 50:22、創世記 50:26）。"
     },
     {
       "personId": "sarah",
@@ -1086,8 +1135,8 @@
       "nameZhHant": "撒拉",
       "fatherId": null,
       "anchorChildId": "isaac",
-      "birthAm": 2018,
-      "deathAm": 2145,
+      "birthAm": 1958,
+      "deathAm": 2085,
       "startKind": "born",
       "endKind": "died",
       "lifespan": 127,
@@ -1098,10 +1147,7 @@
       ],
       "derivationEn": "Genesis 17:17 states two ages in one breath: Abraham \"an hundred years old\" and Sarah \"ninety years old.\" But 17:1 already puts Abraham at 99 earlier in the same chapter, and 17:21 promises Isaac \"at this set time in the next year\"; 21:5 then states Abraham was 100 when Isaac was born. Both of 17:17's ages look forward a year, to the birth itself, not to the day of the promise — so Sarah was 90 when Isaac was born (Genesis 17:17, Genesis 21:5), not at the promise a year earlier. Sarah lived 127 years (Genesis 23:1).",
       "derivationZhHans": "创世记 17:17 一口气说出两个岁数——亚伯拉罕「一百岁」，撒拉「九十岁」。但同一章 17:1 已说亚伯拉罕当时 99 岁，17:21 又应许以撒「到明年这时候」出生；21:5 则说以撒出生时亚伯拉罕正是 100 岁。可见 17:17 的两个岁数指向的都是一年后的出生那一刻，而非应许当下——因此撒拉生以撒时是 90 岁（创世记 17:17、21:5），而非应许时就已是这个岁数。撒拉共活了 127 年（创世记 23:1）。",
-      "derivationZhHant": "創世記 17:17 一口氣說出兩個歲數——亞伯拉罕「一百歲」，撒拉「九十歲」。但同一章 17:1 已說亞伯拉罕當時 99 歲，17:21 又應許以撒「到明年這時候」出生；21:5 則說以撒出生時亞伯拉罕正是 100 歲。可見 17:17 的兩個歲數指向的都是一年後的出生那一刻，而非應許當下——因此撒拉生以撒時是 90 歲（創世記 17:17、21:5），而非應許時就已是這個歲數。撒拉共活了 127 年（創世記 23:1）。",
-      "noteEn": "assets/family_tree.json dates Sarah 2156-2029 BC, a late-date scheme that does not join up with the Anno Mundi count used here (AM 2018-2145 is 1986-1859 BC on the 4004 BC anchor). Reconciling the two scales for the patriarchs is deliberately left to a later pass rather than fudged.",
-      "noteZhHans": "assets/family_tree.json 把撒拉定在公元前 2156-2029 年，属于晚期定年方案，与本图所用的创世纪元并不衔接（AM 2018-2145 在 4004 锚点下为公元前 1986-1859 年）。列祖世系两套刻度的调和刻意留待后续，不作勉强弥合。",
-      "noteZhHant": "assets/family_tree.json 把撒拉定在公元前 2156-2029 年，屬於晚期定年方案，與本圖所用的創世紀元並不銜接（AM 2018-2145 在 4004 錨點下為公元前 1986-1859 年）。列祖世系兩套刻度的調和刻意留待後續，不作勉強彌合。"
+      "derivationZhHant": "創世記 17:17 一口氣說出兩個歲數——亞伯拉罕「一百歲」，撒拉「九十歲」。但同一章 17:1 已說亞伯拉罕當時 99 歲，17:21 又應許以撒「到明年這時候」出生；21:5 則說以撒出生時亞伯拉罕正是 100 歲。可見 17:17 的兩個歲數指向的都是一年後的出生那一刻，而非應許當下——因此撒拉生以撒時是 90 歲（創世記 17:17、21:5），而非應許時就已是這個歲數。撒拉共活了 127 年（創世記 23:1）。"
     }
   ],
   "markers": [
@@ -1119,8 +1165,8 @@
       "titleZhHans": "创造",
       "titleZhHant": "創造",
       "placedEventId": "creation",
-      "placedYear": -4000,
-      "placedDeltaYears": 4
+      "placedYear": -4114,
+      "placedDeltaYears": 0
     },
     {
       "id": "enoch_taken",
@@ -1136,8 +1182,8 @@
       "titleZhHans": "以诺被接去",
       "titleZhHant": "以諾被接去",
       "placedEventId": "enoch_walks",
-      "placedYear": -3000,
-      "placedDeltaYears": 17
+      "placedYear": -3127,
+      "placedDeltaYears": 0
     },
     {
       "id": "flood",
@@ -1153,12 +1199,12 @@
       "titleZhHans": "洪水（挪亚 600 岁）",
       "titleZhHant": "洪水（挪亞 600 歲）",
       "placedEventId": "flood",
-      "placedYear": -2348,
+      "placedYear": -2458,
       "placedDeltaYears": 0
     },
     {
       "id": "abram_born",
-      "am": 2008,
+      "am": 1948,
       "era": "patriarchs",
       "refs": [
         "Genesis 11:26",
@@ -1173,7 +1219,7 @@
     },
     {
       "id": "abram_call",
-      "am": 2083,
+      "am": 2023,
       "era": "patriarchs",
       "refs": [
         "Genesis 12:1-4"
@@ -1185,11 +1231,11 @@
       "titleZhHant": "亞伯蘭 75 歲離開哈蘭",
       "placedEventId": "abram_called",
       "placedYear": -2091,
-      "placedDeltaYears": -170
+      "placedDeltaYears": 0
     },
     {
       "id": "isaac_born",
-      "am": 2108,
+      "am": 2048,
       "era": "patriarchs",
       "refs": [
         "Genesis 21:5"
@@ -1201,11 +1247,11 @@
       "titleZhHant": "以撒出生，亞伯拉罕 100 歲",
       "placedEventId": "isaac_born",
       "placedYear": -2066,
-      "placedDeltaYears": -170
+      "placedDeltaYears": 0
     },
     {
       "id": "abraham_dies",
-      "am": 2183,
+      "am": 2123,
       "era": "patriarchs",
       "refs": [
         "Genesis 25:7",
@@ -1221,9 +1267,9 @@
   "events": [
     {
       "id": "eden",
-      "am": 4,
+      "am": 0,
       "seq": 1,
-      "year": -4000,
+      "year": -4114,
       "era": "antediluvian",
       "amBasis": "placed",
       "pin": false,
@@ -1236,9 +1282,9 @@
     },
     {
       "id": "fall",
-      "am": 14,
+      "am": 10,
       "seq": 2,
-      "year": -3990,
+      "year": -4104,
       "era": "antediluvian",
       "amBasis": "placed",
       "pin": false,
@@ -1252,9 +1298,9 @@
     },
     {
       "id": "cain_abel",
-      "am": 54,
+      "am": 50,
       "seq": 3,
-      "year": -3950,
+      "year": -4064,
       "era": "antediluvian",
       "amBasis": "placed",
       "pin": false,
@@ -1267,9 +1313,9 @@
     },
     {
       "id": "seth_born",
-      "am": 134,
+      "am": 130,
       "seq": 4,
-      "year": -3870,
+      "year": -3984,
       "era": "antediluvian",
       "amBasis": "placed",
       "pin": false,
@@ -1282,10 +1328,117 @@
       "titleZhHant": "塞特出生"
     },
     {
-      "id": "babel",
-      "am": 1804,
+      "id": "enosh_born",
+      "am": 235,
+      "seq": 5,
+      "year": -3879,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 4:26",
+        "Genesis 5:6-11"
+      ],
+      "titleEn": "Birth of Enosh",
+      "titleZhHans": "以挪士出生",
+      "titleZhHant": "以挪士出生"
+    },
+    {
+      "id": "kenan_born",
+      "am": 325,
+      "seq": 6,
+      "year": -3789,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 5:9-14"
+      ],
+      "titleEn": "Birth of Kenan",
+      "titleZhHans": "该南出生",
+      "titleZhHant": "該南出生"
+    },
+    {
+      "id": "mahalalel_born",
+      "am": 395,
       "seq": 7,
-      "year": -2200,
+      "year": -3719,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 5:12-17"
+      ],
+      "titleEn": "Birth of Mahalalel",
+      "titleZhHans": "玛勒列出生",
+      "titleZhHant": "瑪勒列出生"
+    },
+    {
+      "id": "jared_born",
+      "am": 460,
+      "seq": 8,
+      "year": -3654,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 5:15-20"
+      ],
+      "titleEn": "Birth of Jared",
+      "titleZhHans": "雅列出生",
+      "titleZhHant": "雅列出生"
+    },
+    {
+      "id": "methuselah_born",
+      "am": 687,
+      "seq": 9,
+      "year": -3427,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 5:21-27"
+      ],
+      "titleEn": "Birth of Methuselah",
+      "titleZhHans": "玛土撒拉出生",
+      "titleZhHant": "瑪土撒拉出生"
+    },
+    {
+      "id": "lamech_born",
+      "am": 874,
+      "seq": 10,
+      "year": -3240,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 5:25-31"
+      ],
+      "titleEn": "Birth of Lamech, Noah's Father",
+      "titleZhHans": "拉麦出生（挪亚之父）",
+      "titleZhHant": "拉麥出生（挪亞之父）"
+    },
+    {
+      "id": "shelah_born",
+      "am": 1693,
+      "seq": 13,
+      "year": -2421,
+      "era": "antediluvian",
+      "amBasis": "placed",
+      "pin": false,
+      "refs": [
+        "Genesis 10:24",
+        "Genesis 11:12-15"
+      ],
+      "titleEn": "Birth of Shelah",
+      "titleZhHans": "沙拉出生",
+      "titleZhHant": "沙拉出生"
+    },
+    {
+      "id": "babel",
+      "am": 1800,
+      "seq": 14,
+      "year": -2314,
       "era": "antediluvian",
       "amBasis": "placed",
       "pin": false,
@@ -1298,8 +1451,8 @@
     },
     {
       "id": "lot_separates",
-      "am": 1918,
-      "seq": 9,
+      "am": 2028,
+      "seq": 16,
       "year": -2086,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1313,8 +1466,8 @@
     },
     {
       "id": "abrahamic_covenant",
-      "am": 1924,
-      "seq": 10,
+      "am": 2034,
+      "seq": 17,
       "year": -2080,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1329,8 +1482,8 @@
     },
     {
       "id": "ishmael_born",
-      "am": 1924,
-      "seq": 11,
+      "am": 2034,
+      "seq": 18,
       "year": -2080,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1344,8 +1497,8 @@
     },
     {
       "id": "sodom_destroyed",
-      "am": 1937,
-      "seq": 12,
+      "am": 2047,
+      "seq": 19,
       "year": -2067,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1359,8 +1512,8 @@
     },
     {
       "id": "isaac_offered",
-      "am": 1949,
-      "seq": 14,
+      "am": 2059,
+      "seq": 21,
       "year": -2055,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1374,8 +1527,8 @@
     },
     {
       "id": "rebekah_marries",
-      "am": 1978,
-      "seq": 15,
+      "am": 2088,
+      "seq": 22,
       "year": -2026,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1389,8 +1542,8 @@
     },
     {
       "id": "jacob_esau_born",
-      "am": 1998,
-      "seq": 16,
+      "am": 2108,
+      "seq": 23,
       "year": -2006,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1404,8 +1557,8 @@
     },
     {
       "id": "job_trial",
-      "am": 2004,
-      "seq": 17,
+      "am": 2114,
+      "seq": 24,
       "year": -2000,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1423,8 +1576,8 @@
     },
     {
       "id": "jacob_blessing",
-      "am": 2075,
-      "seq": 18,
+      "am": 2185,
+      "seq": 25,
       "year": -1929,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1438,8 +1591,8 @@
     },
     {
       "id": "jacobs_ladder",
-      "am": 2075,
-      "seq": 19,
+      "am": 2185,
+      "seq": 26,
       "year": -1929,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1453,8 +1606,8 @@
     },
     {
       "id": "jacob_marries",
-      "am": 2082,
-      "seq": 20,
+      "am": 2192,
+      "seq": 27,
       "year": -1922,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1468,8 +1621,8 @@
     },
     {
       "id": "joseph_sold",
-      "am": 2106,
-      "seq": 21,
+      "am": 2216,
+      "seq": 28,
       "year": -1898,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1483,8 +1636,8 @@
     },
     {
       "id": "joseph_rises",
-      "am": 2119,
-      "seq": 22,
+      "am": 2229,
+      "seq": 29,
       "year": -1885,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1498,8 +1651,8 @@
     },
     {
       "id": "israel_egypt",
-      "am": 2128,
-      "seq": 23,
+      "am": 2238,
+      "seq": 30,
       "year": -1876,
       "era": "patriarchs",
       "amBasis": "placed",
@@ -1514,8 +1667,8 @@
     },
     {
       "id": "israel_oppressed",
-      "am": 2304,
-      "seq": 24,
+      "am": 2414,
+      "seq": 31,
       "year": -1700,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1530,8 +1683,8 @@
     },
     {
       "id": "moses_born",
-      "am": 2478,
-      "seq": 25,
+      "am": 2588,
+      "seq": 32,
       "year": -1526,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1545,8 +1698,8 @@
     },
     {
       "id": "burning_bush",
-      "am": 2558,
-      "seq": 26,
+      "am": 2668,
+      "seq": 33,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1560,8 +1713,8 @@
     },
     {
       "id": "plagues",
-      "am": 2558,
-      "seq": 27,
+      "am": 2668,
+      "seq": 34,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1575,8 +1728,8 @@
     },
     {
       "id": "exodus",
-      "am": 2558,
-      "seq": 28,
+      "am": 2668,
+      "seq": 35,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1590,8 +1743,8 @@
     },
     {
       "id": "red_sea",
-      "am": 2558,
-      "seq": 29,
+      "am": 2668,
+      "seq": 36,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1605,8 +1758,8 @@
     },
     {
       "id": "manna",
-      "am": 2558,
-      "seq": 30,
+      "am": 2668,
+      "seq": 37,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1620,8 +1773,8 @@
     },
     {
       "id": "sinai",
-      "am": 2558,
-      "seq": 31,
+      "am": 2668,
+      "seq": 38,
       "year": -1446,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1636,8 +1789,8 @@
     },
     {
       "id": "tabernacle",
-      "am": 2559,
-      "seq": 32,
+      "am": 2669,
+      "seq": 39,
       "year": -1445,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1652,8 +1805,8 @@
     },
     {
       "id": "wilderness_40",
-      "am": 2598,
-      "seq": 33,
+      "am": 2708,
+      "seq": 40,
       "year": -1406,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1668,8 +1821,8 @@
     },
     {
       "id": "moses_dies",
-      "am": 2598,
-      "seq": 34,
+      "am": 2708,
+      "seq": 41,
       "year": -1406,
       "era": "mosaic",
       "amBasis": "placed",
@@ -1683,8 +1836,8 @@
     },
     {
       "id": "jordan_crossed",
-      "am": 2598,
-      "seq": 35,
+      "am": 2708,
+      "seq": 42,
       "year": -1406,
       "era": "conquest",
       "amBasis": "placed",
@@ -1698,8 +1851,8 @@
     },
     {
       "id": "jericho",
-      "am": 2598,
-      "seq": 36,
+      "am": 2708,
+      "seq": 43,
       "year": -1406,
       "era": "conquest",
       "amBasis": "placed",
@@ -1713,8 +1866,8 @@
     },
     {
       "id": "land_divided",
-      "am": 2605,
-      "seq": 37,
+      "am": 2715,
+      "seq": 44,
       "year": -1399,
       "era": "conquest",
       "amBasis": "placed",
@@ -1728,8 +1881,8 @@
     },
     {
       "id": "judges_period",
-      "am": 2624,
-      "seq": 38,
+      "am": 2734,
+      "seq": 45,
       "year": -1380,
       "era": "conquest",
       "amBasis": "placed",
@@ -1743,8 +1896,8 @@
     },
     {
       "id": "deborah",
-      "am": 2764,
-      "seq": 39,
+      "am": 2874,
+      "seq": 46,
       "year": -1240,
       "era": "conquest",
       "amBasis": "placed",
@@ -1758,8 +1911,8 @@
     },
     {
       "id": "gideon",
-      "am": 2813,
-      "seq": 40,
+      "am": 2923,
+      "seq": 47,
       "year": -1191,
       "era": "conquest",
       "amBasis": "placed",
@@ -1773,8 +1926,8 @@
     },
     {
       "id": "samson",
-      "am": 2904,
-      "seq": 41,
+      "am": 3014,
+      "seq": 48,
       "year": -1100,
       "era": "conquest",
       "amBasis": "placed",
@@ -1788,8 +1941,8 @@
     },
     {
       "id": "ruth",
-      "am": 2904,
-      "seq": 42,
+      "am": 3014,
+      "seq": 49,
       "year": -1100,
       "era": "conquest",
       "amBasis": "placed",
@@ -1803,8 +1956,8 @@
     },
     {
       "id": "samuel_called",
-      "am": 2924,
-      "seq": 43,
+      "am": 3034,
+      "seq": 50,
       "year": -1080,
       "era": "conquest",
       "amBasis": "placed",
@@ -1818,8 +1971,8 @@
     },
     {
       "id": "saul_anointed",
-      "am": 2954,
-      "seq": 44,
+      "am": 3064,
+      "seq": 51,
       "year": -1050,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1833,8 +1986,8 @@
     },
     {
       "id": "david_anointed",
-      "am": 2979,
-      "seq": 45,
+      "am": 3089,
+      "seq": 52,
       "year": -1025,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1848,8 +2001,8 @@
     },
     {
       "id": "david_goliath",
-      "am": 2980,
-      "seq": 46,
+      "am": 3090,
+      "seq": 53,
       "year": -1024,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1863,8 +2016,8 @@
     },
     {
       "id": "david_king",
-      "am": 2994,
-      "seq": 47,
+      "am": 3104,
+      "seq": 54,
       "year": -1010,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1878,8 +2031,8 @@
     },
     {
       "id": "jerusalem_captured",
-      "am": 3001,
-      "seq": 48,
+      "am": 3111,
+      "seq": 55,
       "year": -1003,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1893,8 +2046,8 @@
     },
     {
       "id": "davidic_covenant",
-      "am": 3004,
-      "seq": 49,
+      "am": 3114,
+      "seq": 56,
       "year": -1000,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1908,8 +2061,8 @@
     },
     {
       "id": "solomon_king",
-      "am": 3034,
-      "seq": 50,
+      "am": 3144,
+      "seq": 57,
       "year": -970,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1923,8 +2076,8 @@
     },
     {
       "id": "temple_built",
-      "am": 3038,
-      "seq": 51,
+      "am": 3148,
+      "seq": 58,
       "year": -966,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1939,8 +2092,8 @@
     },
     {
       "id": "kingdom_divided",
-      "am": 3073,
-      "seq": 52,
+      "am": 3183,
+      "seq": 59,
       "year": -931,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1954,8 +2107,8 @@
     },
     {
       "id": "elijah_carmel",
-      "am": 3144,
-      "seq": 53,
+      "am": 3254,
+      "seq": 60,
       "year": -860,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1969,8 +2122,8 @@
     },
     {
       "id": "elisha_succeeds",
-      "am": 3156,
-      "seq": 54,
+      "am": 3266,
+      "seq": 61,
       "year": -848,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1984,8 +2137,8 @@
     },
     {
       "id": "jonah",
-      "am": 3224,
-      "seq": 55,
+      "am": 3334,
+      "seq": 62,
       "year": -780,
       "era": "monarchy",
       "amBasis": "placed",
@@ -1999,8 +2152,8 @@
     },
     {
       "id": "israel_falls",
-      "am": 3282,
-      "seq": 56,
+      "am": 3392,
+      "seq": 63,
       "year": -722,
       "era": "monarchy",
       "amBasis": "placed",
@@ -2014,8 +2167,8 @@
     },
     {
       "id": "hezekiah_reform",
-      "am": 3289,
-      "seq": 57,
+      "am": 3399,
+      "seq": 64,
       "year": -715,
       "era": "monarchy",
       "amBasis": "placed",
@@ -2030,8 +2183,8 @@
     },
     {
       "id": "isaiah",
-      "am": 3304,
-      "seq": 58,
+      "am": 3414,
+      "seq": 65,
       "year": -700,
       "era": "monarchy",
       "amBasis": "placed",
@@ -2045,8 +2198,8 @@
     },
     {
       "id": "jeremiah",
-      "am": 3377,
-      "seq": 60,
+      "am": 3487,
+      "seq": 67,
       "year": -627,
       "era": "monarchy",
       "amBasis": "placed",
@@ -2060,8 +2213,8 @@
     },
     {
       "id": "josiah_reform",
-      "am": 3382,
-      "seq": 59,
+      "am": 3492,
+      "seq": 66,
       "year": -622,
       "era": "monarchy",
       "amBasis": "placed",
@@ -2075,8 +2228,8 @@
     },
     {
       "id": "judah_falls",
-      "am": 3418,
-      "seq": 61,
+      "am": 3528,
+      "seq": 68,
       "year": -586,
       "era": "exile",
       "amBasis": "placed",
@@ -2092,8 +2245,8 @@
     },
     {
       "id": "daniel_lions",
-      "am": 3464,
-      "seq": 62,
+      "am": 3574,
+      "seq": 69,
       "year": -540,
       "era": "exile",
       "amBasis": "placed",
@@ -2107,8 +2260,8 @@
     },
     {
       "id": "return_zerubbabel",
-      "am": 3466,
-      "seq": 63,
+      "am": 3576,
+      "seq": 70,
       "year": -538,
       "era": "exile",
       "amBasis": "placed",
@@ -2122,8 +2275,8 @@
     },
     {
       "id": "temple_rebuilt",
-      "am": 3488,
-      "seq": 64,
+      "am": 3598,
+      "seq": 71,
       "year": -516,
       "era": "exile",
       "amBasis": "placed",
@@ -2137,8 +2290,8 @@
     },
     {
       "id": "esther",
-      "am": 3526,
-      "seq": 65,
+      "am": 3636,
+      "seq": 72,
       "year": -478,
       "era": "exile",
       "amBasis": "placed",
@@ -2152,8 +2305,8 @@
     },
     {
       "id": "ezra_returns",
-      "am": 3546,
-      "seq": 66,
+      "am": 3656,
+      "seq": 73,
       "year": -458,
       "era": "exile",
       "amBasis": "placed",
@@ -2167,8 +2320,8 @@
     },
     {
       "id": "nehemiah_walls",
-      "am": 3559,
-      "seq": 67,
+      "am": 3669,
+      "seq": 74,
       "year": -445,
       "era": "exile",
       "amBasis": "placed",
@@ -2182,8 +2335,8 @@
     },
     {
       "id": "malachi",
-      "am": 3574,
-      "seq": 68,
+      "am": 3684,
+      "seq": 75,
       "year": -430,
       "era": "exile",
       "amBasis": "placed",
@@ -2197,8 +2350,8 @@
     },
     {
       "id": "intertestamental",
-      "am": 3604,
-      "seq": 69,
+      "am": 3714,
+      "seq": 76,
       "year": -400,
       "era": "intertestamental",
       "amBasis": "placed",
@@ -2210,8 +2363,8 @@
     },
     {
       "id": "greek_period",
-      "am": 3671,
-      "seq": 70,
+      "am": 3781,
+      "seq": 77,
       "year": -333,
       "era": "intertestamental",
       "amBasis": "placed",
@@ -2223,8 +2376,8 @@
     },
     {
       "id": "septuagint",
-      "am": 3754,
-      "seq": 71,
+      "am": 3864,
+      "seq": 78,
       "year": -250,
       "era": "intertestamental",
       "amBasis": "placed",
@@ -2236,8 +2389,8 @@
     },
     {
       "id": "maccabees",
-      "am": 3837,
-      "seq": 72,
+      "am": 3947,
+      "seq": 79,
       "year": -167,
       "era": "intertestamental",
       "amBasis": "placed",
@@ -2249,8 +2402,8 @@
     },
     {
       "id": "rome_judea",
-      "am": 3941,
-      "seq": 73,
+      "am": 4051,
+      "seq": 80,
       "year": -63,
       "era": "intertestamental",
       "amBasis": "placed",
@@ -2262,8 +2415,8 @@
     },
     {
       "id": "john_baptist_born",
-      "am": 3998,
-      "seq": 74,
+      "am": 4108,
+      "seq": 81,
       "year": -6,
       "era": "nt",
       "amBasis": "placed",
@@ -2277,8 +2430,8 @@
     },
     {
       "id": "jesus_born",
-      "am": 3999,
-      "seq": 75,
+      "am": 4109,
+      "seq": 82,
       "year": -5,
       "era": "nt",
       "amBasis": "placed",
@@ -2293,8 +2446,8 @@
     },
     {
       "id": "magi",
-      "am": 4000,
-      "seq": 76,
+      "am": 4110,
+      "seq": 83,
       "year": -4,
       "era": "nt",
       "amBasis": "placed",
@@ -2308,8 +2461,8 @@
     },
     {
       "id": "flight_egypt",
-      "am": 4000,
-      "seq": 77,
+      "am": 4110,
+      "seq": 84,
       "year": -4,
       "era": "nt",
       "amBasis": "placed",
@@ -2323,8 +2476,8 @@
     },
     {
       "id": "jesus_temple_12",
-      "am": 4011,
-      "seq": 78,
+      "am": 4121,
+      "seq": 85,
       "year": 8,
       "era": "nt",
       "amBasis": "placed",
@@ -2338,15 +2491,16 @@
     },
     {
       "id": "jesus_baptized",
-      "am": 4029,
-      "seq": 79,
+      "am": 4139,
+      "seq": 86,
       "year": 26,
       "era": "nt",
       "amBasis": "placed",
       "pin": false,
       "refs": [
         "Matthew 3:13-17",
-        "Mark 1:9-11"
+        "Mark 1:9-11",
+        "Luke 3:1"
       ],
       "titleEn": "Baptism of Jesus",
       "titleZhHans": "耶稣受洗",
@@ -2354,8 +2508,8 @@
     },
     {
       "id": "temptation",
-      "am": 4029,
-      "seq": 80,
+      "am": 4139,
+      "seq": 87,
       "year": 26,
       "era": "nt",
       "amBasis": "placed",
@@ -2370,8 +2524,8 @@
     },
     {
       "id": "disciples_called",
-      "am": 4030,
-      "seq": 81,
+      "am": 4140,
+      "seq": 88,
       "year": 27,
       "era": "nt",
       "amBasis": "placed",
@@ -2387,8 +2541,8 @@
     },
     {
       "id": "sermon_mount",
-      "am": 4031,
-      "seq": 82,
+      "am": 4141,
+      "seq": 89,
       "year": 28,
       "era": "nt",
       "amBasis": "placed",
@@ -2402,8 +2556,8 @@
     },
     {
       "id": "5000_fed",
-      "am": 4032,
-      "seq": 83,
+      "am": 4142,
+      "seq": 90,
       "year": 29,
       "era": "nt",
       "amBasis": "placed",
@@ -2418,8 +2572,8 @@
     },
     {
       "id": "transfiguration",
-      "am": 4033,
-      "seq": 84,
+      "am": 4143,
+      "seq": 91,
       "year": 30,
       "era": "nt",
       "amBasis": "placed",
@@ -2433,8 +2587,8 @@
     },
     {
       "id": "triumphal_entry",
-      "am": 4036,
-      "seq": 85,
+      "am": 4146,
+      "seq": 92,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2448,8 +2602,8 @@
     },
     {
       "id": "last_supper",
-      "am": 4036,
-      "seq": 86,
+      "am": 4146,
+      "seq": 93,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2465,8 +2619,8 @@
     },
     {
       "id": "crucifixion",
-      "am": 4036,
-      "seq": 87,
+      "am": 4146,
+      "seq": 94,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2481,8 +2635,8 @@
     },
     {
       "id": "resurrection",
-      "am": 4036,
-      "seq": 88,
+      "am": 4146,
+      "seq": 95,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2498,8 +2652,8 @@
     },
     {
       "id": "ascension",
-      "am": 4036,
-      "seq": 89,
+      "am": 4146,
+      "seq": 96,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2513,8 +2667,8 @@
     },
     {
       "id": "pentecost",
-      "am": 4036,
-      "seq": 90,
+      "am": 4146,
+      "seq": 97,
       "year": 33,
       "era": "nt",
       "amBasis": "placed",
@@ -2528,8 +2682,8 @@
     },
     {
       "id": "stephen_martyred",
-      "am": 4038,
-      "seq": 91,
+      "am": 4148,
+      "seq": 98,
       "year": 35,
       "era": "nt",
       "amBasis": "placed",
@@ -2543,8 +2697,8 @@
     },
     {
       "id": "paul_converted",
-      "am": 4038,
-      "seq": 92,
+      "am": 4148,
+      "seq": 99,
       "year": 35,
       "era": "nt",
       "amBasis": "placed",
@@ -2558,8 +2712,8 @@
     },
     {
       "id": "paul_journeys",
-      "am": 4050,
-      "seq": 93,
+      "am": 4160,
+      "seq": 100,
       "year": 47,
       "era": "nt",
       "amBasis": "placed",
@@ -2573,8 +2727,8 @@
     },
     {
       "id": "jerusalem_council",
-      "am": 4052,
-      "seq": 94,
+      "am": 4162,
+      "seq": 101,
       "year": 49,
       "era": "nt",
       "amBasis": "placed",
@@ -2588,8 +2742,8 @@
     },
     {
       "id": "paul_rome",
-      "am": 4063,
-      "seq": 95,
+      "am": 4173,
+      "seq": 102,
       "year": 60,
       "era": "nt",
       "amBasis": "placed",
@@ -2603,8 +2757,8 @@
     },
     {
       "id": "temple_destroyed",
-      "am": 4073,
-      "seq": 96,
+      "am": 4183,
+      "seq": 103,
       "year": 70,
       "era": "nt",
       "amBasis": "placed",
@@ -2619,8 +2773,8 @@
     },
     {
       "id": "john_patmos",
-      "am": 4098,
-      "seq": 97,
+      "am": 4208,
+      "seq": 104,
       "year": 95,
       "era": "nt",
       "amBasis": "placed",
@@ -2633,14 +2787,5 @@
       "titleZhHant": "約翰被流放拔摩；寫啟示錄"
     }
   ],
-  "contested": {
-    "startAm": 1918,
-    "endAm": 2369,
-    "eventCount": 8,
-    "note": {
-      "en": "Inside this band the two scales disagree by about 170 years. The lifelines put Abram's birth at AM 2008 (1996 BC on this anchor); assets/bible_timeline.json places his call at 2091 BC on the late-date scheme, which is earlier than the lifelines have him born. assets/family_tree.json — what the Family Tree page reads — is dated on that same late-date scale: Abraham, Ishmael, Isaac, Esau, Jacob (Israel), Joseph and Sarah each show about 170 years earlier there than on this chart, for the same anchor mismatch. Every figure is shown where its own source puts it. Nothing has been shifted to make the picture tidy, and neither page is wrong.",
-      "zh-Hans": "在这一带，两套刻度相差约 170 年。生平横条把亚伯兰的出生定在创世纪元 2008 年（本锚点下为公元前 1996 年）；assets/bible_timeline.json 依晚期定年方案把他蒙召定在公元前 2091 年，比横条所记的出生还早。assets/family_tree.json——「家谱」页面所读取的数据——用的正是同一晚期定年方案：亚伯拉罕、以实玛利、以撒、以扫、雅各（以色列）、约瑟、撒拉在那里显示的年份都比本图早约 170 年，同一个锚点差异所致。每一个数字都按各自来源的位置照实画出，没有为了图面好看而挪动任何一方，两个页面也都没有错。",
-      "zh-Hant": "在這一帶，兩套刻度相差約 170 年。生平橫條把亞伯蘭的出生定在創世紀元 2008 年（本錨點下為公元前 1996 年）；assets/bible_timeline.json 依晚期定年方案把他蒙召定在公元前 2091 年，比橫條所記的出生還早。assets/family_tree.json——「家譜」頁面所讀取的數據——用的正是同一晚期定年方案：亞伯拉罕、以實瑪利、以撒、以掃、雅各（以色列）、約瑟、撒拉在那裡顯示的年份都比本圖早約 170 年，同一個錨點差異所致。每一個數字都按各自來源的位置照實畫出，沒有為了圖面好看而挪動任何一方，兩個頁面也都沒有錯。"
-    }
-  }
+  "contested": null
 }

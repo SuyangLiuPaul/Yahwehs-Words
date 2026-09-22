@@ -6,6 +6,31 @@
     "yearLegend": {
       "am": "Anno Mundi (years since Creation, derived from Genesis 5 and 11)",
       "bc": "Years before Christ. Kings follow Thiele's chronology. Patriarch years (Abraham through Joseph) follow the same late-date scheme as assets/bible_timeline.json, which reads about 170 years earlier than the Ussher anchor assets/bible_chronology.json's Anno Mundi chart uses for the same people — see that asset's _meta.familyTreeScaleOffset"
+    },
+    "dating": {
+      "generator": "tools/audit_dates.py",
+      "kinds": {
+        "birth": {
+          "en": "A birth, shown exactly. Derivable from an age the text states; `refs` gives the verses.",
+          "zh-Hans": "出生年份，按确数列出。可由经文所记的岁数推得；`refs` 列出所据经文。",
+          "zh-Hant": "出生年份，按確數列出。可由經文所記的歲數推得；`refs` 列出所據經文。"
+        },
+        "reign": {
+          "en": "A reign, not a birth. birthYear here is an accession or coregency year and is NOT displayed; the span in reignStart/reignEnd is, and it is Thiele's, from hebrew_kings.json.",
+          "zh-Hans": "在位年份，并非出生年份。此处的 birthYear 是登基或摄政之年，并不显示；显示的是 reignStart/reignEnd 的在位年段，取自 hebrew_kings.json，依据锡尔（Thiele）。",
+          "zh-Hant": "在位年份，並非出生年份。此處的 birthYear 是登基或攝政之年，並不顯示；顯示的是 reignStart/reignEnd 的在位年段，取自 hebrew_kings.json，依據錫爾（Thiele）。"
+        },
+        "approximate": {
+          "en": "Shown with \"c.\". A commonly published reconstruction. Nothing we ship fixes this year, so it is not stated as exact.",
+          "zh-Hans": "以「约」标示。这是通行的推算年份。本应用所载的资料并不能确定此年，故不作确数陈述。",
+          "zh-Hant": "以「約」標示。這是通行的推算年份。本應用所載的資料並不能確定此年，故不作確數陳述。"
+        }
+      },
+      "counts": {
+        "birth": 28,
+        "reign": 14,
+        "approximate": 235
+      }
     }
   },
   "people": [
@@ -38,7 +63,15 @@
         "Genesis 5:1-5"
       ],
       "role": "FIRST MAN",
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:3",
+          "Genesis 5:5"
+        ]
+      }
     },
     {
       "id": "eve",
@@ -67,7 +100,12 @@
       ],
       "role": "FIRST WOMAN",
       "era": "antediluvian",
-      "birthYear": 0
+      "birthYear": 0,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "cain",
@@ -91,7 +129,12 @@
         "Jude 11"
       ],
       "era": "antediluvian",
-      "birthYear": 30
+      "birthYear": 30,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abel",
@@ -114,7 +157,12 @@
       ],
       "era": "antediluvian",
       "birthYear": 35,
-      "deathYear": 75
+      "deathYear": 75,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "seth",
@@ -139,7 +187,15 @@
         "Genesis 5:3-8",
         "Luke 3:38"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:6",
+          "Genesis 5:8"
+        ]
+      }
     },
     {
       "id": "enosh",
@@ -164,7 +220,16 @@
         "Genesis 5:6-11",
         "Luke 3:38"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:9",
+          "Genesis 5:11"
+        ]
+      },
+      "nameKjv": "Enos"
     },
     {
       "id": "kenan",
@@ -189,7 +254,16 @@
         "1 Chronicles 1:2",
         "Luke 3:37"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:12",
+          "Genesis 5:14"
+        ]
+      },
+      "nameKjv": "Cainan"
     },
     {
       "id": "mahalalel",
@@ -214,7 +288,16 @@
         "1 Chronicles 1:2",
         "Luke 3:37"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:15",
+          "Genesis 5:17"
+        ]
+      },
+      "nameKjv": "Mahalaleel"
     },
     {
       "id": "jared",
@@ -239,7 +322,15 @@
         "1 Chronicles 1:2",
         "Luke 3:37"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:18",
+          "Genesis 5:20"
+        ]
+      }
     },
     {
       "id": "enoch",
@@ -267,7 +358,15 @@
       ],
       "role": "PROPHET",
       "accent": "prophetic",
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:21",
+          "Genesis 5:23"
+        ]
+      }
     },
     {
       "id": "methuselah",
@@ -292,7 +391,15 @@
         "1 Chronicles 1:3",
         "Luke 3:37"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:25",
+          "Genesis 5:27"
+        ]
+      }
     },
     {
       "id": "lamech",
@@ -317,7 +424,15 @@
         "1 Chronicles 1:3",
         "Luke 3:36"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:28",
+          "Genesis 5:31"
+        ]
+      }
     },
     {
       "id": "noah",
@@ -350,7 +465,14 @@
         "Luke 3:36"
       ],
       "role": "PATRIARCH",
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 5:32"
+        ]
+      }
     },
     {
       "id": "shem",
@@ -378,7 +500,15 @@
         "Luke 3:36"
       ],
       "role": "PATRIARCH",
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:10",
+          "Genesis 11:11"
+        ]
+      }
     },
     {
       "id": "ham",
@@ -400,7 +530,12 @@
       ],
       "role": "PATRIARCH",
       "era": "post_flood",
-      "birthYear": 1559
+      "birthYear": 1559,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "japheth",
@@ -422,7 +557,12 @@
       ],
       "role": "PATRIARCH",
       "era": "post_flood",
-      "birthYear": 1556
+      "birthYear": 1556,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "arphaxad",
@@ -447,7 +587,15 @@
         "Genesis 11:10-13",
         "Luke 3:36"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:12",
+          "Genesis 11:13"
+        ]
+      }
     },
     {
       "id": "eber",
@@ -472,7 +620,15 @@
         "Genesis 11:14-17",
         "Luke 3:35"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:16",
+          "Genesis 11:17"
+        ]
+      }
     },
     {
       "id": "peleg",
@@ -497,7 +653,15 @@
         "Genesis 11:16-19",
         "Luke 3:35"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:18",
+          "Genesis 11:19"
+        ]
+      }
     },
     {
       "id": "reu",
@@ -522,7 +686,15 @@
         "1 Chronicles 1:25",
         "Luke 3:35"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:20",
+          "Genesis 11:21"
+        ]
+      }
     },
     {
       "id": "serug",
@@ -547,7 +719,15 @@
         "1 Chronicles 1:26",
         "Luke 3:35"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:22",
+          "Genesis 11:23"
+        ]
+      }
     },
     {
       "id": "nahor_elder",
@@ -572,7 +752,15 @@
         "1 Chronicles 1:26",
         "Luke 3:34"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:24",
+          "Genesis 11:25"
+        ]
+      }
     },
     {
       "id": "terah",
@@ -600,7 +788,15 @@
         "Acts 7:2-4",
         "Luke 3:34"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:26",
+          "Genesis 11:32"
+        ]
+      }
     },
     {
       "id": "abraham",
@@ -640,7 +836,18 @@
         "Hebrews 11:8-19"
       ],
       "role": "PATRIARCH",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 6:1",
+          "Exodus 12:40",
+          "Genesis 47:9",
+          "Genesis 25:26",
+          "Genesis 21:5"
+        ]
+      }
     },
     {
       "id": "sarah",
@@ -671,7 +878,12 @@
         "1 Peter 3:6"
       ],
       "role": "MATRIARCH",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hagar",
@@ -697,7 +909,12 @@
       ],
       "role": "CONCUBINE",
       "era": "patriarchs",
-      "birthYear": -2090
+      "birthYear": -2090,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "keturah",
@@ -726,7 +943,12 @@
       ],
       "role": "WIFE",
       "era": "patriarchs",
-      "birthYear": -2050
+      "birthYear": -2050,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ishmael",
@@ -764,7 +986,12 @@
         "Genesis 25:12-18"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "isaac",
@@ -796,7 +1023,17 @@
         "Hebrews 11:17-20"
       ],
       "role": "PATRIARCH",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 6:1",
+          "Exodus 12:40",
+          "Genesis 47:9",
+          "Genesis 25:26"
+        ]
+      }
     },
     {
       "id": "rebekah",
@@ -825,7 +1062,12 @@
       "role": "MATRIARCH",
       "era": "patriarchs",
       "birthYear": -2030,
-      "deathYear": -1900
+      "deathYear": -1900,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "esau",
@@ -852,7 +1094,12 @@
         "Romans 9:13"
       ],
       "role": "EDOMITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jacob",
@@ -899,7 +1146,16 @@
         "Hebrews 11:21"
       ],
       "role": "PATRIARCH",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 6:1",
+          "Exodus 12:40",
+          "Genesis 47:9"
+        ]
+      }
     },
     {
       "id": "leah",
@@ -932,7 +1188,12 @@
       "role": "MATRIARCH",
       "era": "patriarchs",
       "birthYear": -1980,
-      "deathYear": -1880
+      "deathYear": -1880,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "rachel",
@@ -962,7 +1223,12 @@
       "role": "MATRIARCH",
       "era": "patriarchs",
       "birthYear": -1975,
-      "deathYear": -1898
+      "deathYear": -1898,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "bilhah",
@@ -988,7 +1254,12 @@
       ],
       "role": "CONCUBINE",
       "era": "patriarchs",
-      "birthYear": -1970
+      "birthYear": -1970,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zilpah",
@@ -1014,7 +1285,12 @@
       ],
       "role": "CONCUBINE",
       "era": "patriarchs",
-      "birthYear": -1968
+      "birthYear": -1968,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "reuben",
@@ -1042,7 +1318,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1928
+      "birthYear": -1928,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "simeon",
@@ -1071,7 +1352,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1925
+      "birthYear": -1925,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "levi",
@@ -1101,7 +1387,14 @@
       "accent": "priestly",
       "era": "patriarchs",
       "birthYear": -1923,
-      "deathYear": -1786
+      "deathYear": -1786,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": [
+          "Exodus 6:16"
+        ]
+      }
     },
     {
       "id": "judah",
@@ -1132,7 +1425,12 @@
       "role": "ROYAL TRIBE",
       "accent": "royal",
       "era": "patriarchs",
-      "birthYear": -1920
+      "birthYear": -1920,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "dan",
@@ -1155,7 +1453,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1918
+      "birthYear": -1918,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "naphtali",
@@ -1181,7 +1484,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1916
+      "birthYear": -1916,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "gad",
@@ -1210,7 +1518,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1914
+      "birthYear": -1914,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "asher",
@@ -1237,7 +1550,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1912
+      "birthYear": -1912,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "issachar",
@@ -1263,7 +1581,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1910
+      "birthYear": -1910,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zebulun",
@@ -1289,7 +1612,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1908
+      "birthYear": -1908,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joseph",
@@ -1319,7 +1647,12 @@
         "Hebrews 11:22"
       ],
       "role": "TRIBE",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "manasseh",
@@ -1340,7 +1673,12 @@
       ],
       "role": "HALF-TRIBE",
       "era": "patriarchs",
-      "birthYear": -1880
+      "birthYear": -1880,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ephraim",
@@ -1362,7 +1700,12 @@
       ],
       "role": "HALF-TRIBE",
       "era": "patriarchs",
-      "birthYear": -1878
+      "birthYear": -1878,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "benjamin",
@@ -1395,7 +1738,12 @@
       ],
       "role": "TRIBE",
       "era": "patriarchs",
-      "birthYear": -1900
+      "birthYear": -1900,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "dinah",
@@ -1416,7 +1764,12 @@
       ],
       "role": "DAUGHTER",
       "era": "patriarchs",
-      "birthYear": -1905
+      "birthYear": -1905,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "perez",
@@ -1441,7 +1794,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1880
+      "birthYear": -1880,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hezron",
@@ -1466,7 +1824,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1850
+      "birthYear": -1850,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ram",
@@ -1490,7 +1853,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1820
+      "birthYear": -1820,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amminadab",
@@ -1514,7 +1882,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1530
+      "birthYear": -1530,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nahshon",
@@ -1540,7 +1913,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1490
+      "birthYear": -1490,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "salmon",
@@ -1566,7 +1944,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1450
+      "birthYear": -1450,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "rahab",
@@ -1595,7 +1978,12 @@
       "role": "GENTILE",
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1450
+      "birthYear": -1450,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "boaz",
@@ -1623,7 +2011,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1150
+      "birthYear": -1150,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ruth",
@@ -1652,7 +2045,12 @@
       "role": "GENTILE",
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1140
+      "birthYear": -1140,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "obed",
@@ -1676,7 +2074,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1120
+      "birthYear": -1120,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jesse",
@@ -1710,7 +2113,12 @@
       ],
       "accent": "royal",
       "era": "davidic_line",
-      "birthYear": -1090
+      "birthYear": -1090,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "david",
@@ -1761,7 +2169,16 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Samuel 5:4"
+        ]
+      },
+      "reignStart": -1010,
+      "reignEnd": -970
     },
     {
       "id": "bathsheba",
@@ -1792,7 +2209,12 @@
       "role": "QUEEN",
       "accent": "royal",
       "era": "kings",
-      "birthYear": -1040
+      "birthYear": -1040,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "solomon",
@@ -1821,7 +2243,14 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "reign",
+        "basis": "thiele",
+        "refs": []
+      },
+      "reignStart": -970,
+      "reignEnd": -931
     },
     {
       "id": "rehoboam",
@@ -1848,7 +2277,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 14:21",
+          "2 Chronicles 12:13"
+        ]
+      },
+      "reignStart": -931,
+      "reignEnd": -913
     },
     {
       "id": "hezekiah",
@@ -1875,7 +2314,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 18:2",
+          "2 Chronicles 29:1"
+        ]
+      },
+      "reignStart": -716,
+      "reignEnd": -687
     },
     {
       "id": "josiah",
@@ -1902,7 +2351,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 22:1",
+          "2 Chronicles 34:1"
+        ]
+      },
+      "reignStart": -641,
+      "reignEnd": -609
     },
     {
       "id": "jeconiah",
@@ -1929,7 +2388,12 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shealtiel",
@@ -1956,7 +2420,12 @@
       "accent": "royal",
       "era": "exile",
       "birthYear": -597,
-      "deathYear": -550
+      "deathYear": -550,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zerubbabel",
@@ -1985,7 +2454,12 @@
       "accent": "royal",
       "era": "exile",
       "birthYear": -560,
-      "deathYear": -490
+      "deathYear": -490,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joseph_father_of_jesus",
@@ -2020,7 +2494,12 @@
       "accent": "messianic",
       "era": "nt",
       "birthYear": -30,
-      "deathYear": 18
+      "deathYear": 18,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mary",
@@ -2055,7 +2534,12 @@
       "accent": "messianic",
       "era": "nt",
       "birthYear": -20,
-      "deathYear": 48
+      "deathYear": 48,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jesus",
@@ -2084,7 +2568,12 @@
       ],
       "role": "MESSIAH",
       "accent": "messianic",
-      "era": "nt"
+      "era": "nt",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "haran",
@@ -2107,7 +2596,12 @@
         "Genesis 11:27",
         "Genesis 11:28"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nahor_younger",
@@ -2131,7 +2625,12 @@
         "Genesis 11:29",
         "Genesis 22:20-23"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "lot",
@@ -2154,7 +2653,12 @@
         "Genesis 13:5-13",
         "Genesis 19:1-38"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "milcah",
@@ -2179,7 +2683,12 @@
         "Genesis 24:15"
       ],
       "role": "MATRIARCH",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "bethuel",
@@ -2203,7 +2712,12 @@
         "Genesis 24:15-50",
         "Genesis 25:20"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "laban",
@@ -2226,7 +2740,12 @@
         "Genesis 29:1-30",
         "Genesis 31:1-55"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "kohath",
@@ -2249,7 +2768,12 @@
         "Numbers 4:1-20"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amram",
@@ -2275,7 +2799,12 @@
         "Numbers 26:59"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jochebed",
@@ -2303,7 +2832,12 @@
       ],
       "role": "MATRIARCH",
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "aaron",
@@ -2320,8 +2854,8 @@
         "ithamar"
       ],
       "yearSystem": "bc",
-      "birthYear": -1530,
-      "deathYear": -1407,
+      "birthYear": -1529,
+      "deathYear": -1406,
       "summary": "Older brother of Moses; first High Priest of Israel; spokesman to Pharaoh. Founded the Aaronic priesthood that served until the New Covenant.",
       "summaryZhHans": "摩西的哥哥；以色列的第一位大祭司；对法老的发言人。开创了亚伦的祭司体系，事奉直到新约。",
       "summaryZhHant": "摩西的哥哥；以色列的第一位大祭司；對法老的發言人。開創了亞倫的祭司體系，事奉直到新約。",
@@ -2333,7 +2867,15 @@
       ],
       "role": "HIGH PRIEST",
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "Exodus 7:7",
+          "1 Kings 6:1"
+        ]
+      }
     },
     {
       "id": "moses",
@@ -2350,8 +2892,8 @@
         "eliezer_son"
       ],
       "yearSystem": "bc",
-      "birthYear": -1525,
-      "deathYear": -1405,
+      "birthYear": -1526,
+      "deathYear": -1406,
       "summary": "Lawgiver of Israel; led the Exodus from Egypt; received the Ten Commandments at Sinai. Author of the Pentateuch (Genesis–Deuteronomy).",
       "summaryZhHans": "以色列的律法颁布者；带领出埃及；在西奈山领受十诫。摩西五经（创世记—申命记）的作者。",
       "summaryZhHant": "以色列的律法頒布者；帶領出埃及；在西奈山領受十誡。摩西五經（創世記—申命記）的作者。",
@@ -2363,7 +2905,15 @@
       ],
       "role": "PROPHET",
       "accent": "prophetic",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 6:1",
+          "Exodus 7:7"
+        ]
+      }
     },
     {
       "id": "miriam",
@@ -2388,7 +2938,12 @@
       ],
       "role": "PROPHETESS",
       "accent": "prophetic",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abiud",
@@ -2409,7 +2964,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -500
+      "birthYear": -500,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliakim2",
@@ -2430,7 +2990,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -460
+      "birthYear": -460,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "azor",
@@ -2451,7 +3016,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -420
+      "birthYear": -420,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zadok2",
@@ -2472,7 +3042,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -380
+      "birthYear": -380,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "achim",
@@ -2493,7 +3068,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -340
+      "birthYear": -340,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliud",
@@ -2514,7 +3094,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -300
+      "birthYear": -300,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eleazar2",
@@ -2535,7 +3120,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -260
+      "birthYear": -260,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "matthan",
@@ -2556,7 +3146,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -100
+      "birthYear": -100,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jacob_father_of_joseph",
@@ -2577,7 +3172,12 @@
       ],
       "accent": "royal",
       "era": "exile",
-      "birthYear": -70
+      "birthYear": -70,
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abijah",
@@ -2601,7 +3201,14 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "reign",
+        "basis": "thiele",
+        "refs": []
+      },
+      "reignStart": -913,
+      "reignEnd": -911
     },
     {
       "id": "asa",
@@ -2624,7 +3231,14 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "reign",
+        "basis": "thiele",
+        "refs": []
+      },
+      "reignStart": -911,
+      "reignEnd": -870
     },
     {
       "id": "jehoshaphat",
@@ -2647,7 +3261,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "1 Kings 22:42",
+          "2 Chronicles 20:31"
+        ]
+      },
+      "reignStart": -872,
+      "reignEnd": -848
     },
     {
       "id": "jehoram_judah",
@@ -2670,7 +3294,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 8:17",
+          "2 Chronicles 21:5"
+        ]
+      },
+      "reignStart": -853,
+      "reignEnd": -841
     },
     {
       "id": "ahaziah_judah",
@@ -2693,7 +3327,16 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 8:26"
+        ]
+      },
+      "reignStart": -841,
+      "reignEnd": -841
     },
     {
       "id": "joash_judah",
@@ -2716,7 +3359,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 11:21",
+          "2 Chronicles 24:1"
+        ]
+      },
+      "reignStart": -835,
+      "reignEnd": -796
     },
     {
       "id": "amaziah",
@@ -2739,7 +3392,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 14:2",
+          "2 Chronicles 25:1"
+        ]
+      },
+      "reignStart": -796,
+      "reignEnd": -767
     },
     {
       "id": "uzziah",
@@ -2763,7 +3426,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 15:2",
+          "2 Chronicles 26:3"
+        ]
+      },
+      "reignStart": -792,
+      "reignEnd": -740
     },
     {
       "id": "jotham",
@@ -2786,7 +3459,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 15:33",
+          "2 Chronicles 27:1"
+        ]
+      },
+      "reignStart": -750,
+      "reignEnd": -732
     },
     {
       "id": "ahaz",
@@ -2810,7 +3493,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 16:2",
+          "2 Chronicles 28:1"
+        ]
+      },
+      "reignStart": -735,
+      "reignEnd": -716
     },
     {
       "id": "manasseh_king",
@@ -2833,7 +3526,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 21:1",
+          "2 Chronicles 33:1"
+        ]
+      },
+      "reignStart": -697,
+      "reignEnd": -643
     },
     {
       "id": "amon",
@@ -2856,7 +3559,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 21:19",
+          "2 Chronicles 33:21"
+        ]
+      },
+      "reignStart": -643,
+      "reignEnd": -641
     },
     {
       "id": "jehoiakim",
@@ -2880,7 +3593,17 @@
       ],
       "role": "KING",
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture+thiele",
+        "refs": [
+          "2 Kings 23:36",
+          "2 Chronicles 36:5"
+        ]
+      },
+      "reignStart": -609,
+      "reignEnd": -598
     },
     {
       "id": "nadab",
@@ -2901,7 +3624,12 @@
         "Numbers 3:4"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abihu",
@@ -2922,7 +3650,12 @@
         "Numbers 3:4"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eleazar_priest",
@@ -2943,7 +3676,12 @@
         "Joshua 14:1"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ithamar",
@@ -2964,7 +3702,12 @@
         "Numbers 4:33"
       ],
       "accent": "priestly",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zipporah",
@@ -2992,7 +3735,12 @@
       ],
       "role": "MATRIARCH",
       "accent": "prophetic",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "gershom_son",
@@ -3014,7 +3762,12 @@
         "1 Chronicles 23:15-16"
       ],
       "accent": "prophetic",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliezer_son",
@@ -3035,7 +3788,12 @@
         "1 Chronicles 23:15-17"
       ],
       "accent": "prophetic",
-      "era": "mosaic"
+      "era": "mosaic",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "enoch_cain",
@@ -3056,7 +3814,12 @@
       "refs": [
         "Genesis 4:17"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "irad",
@@ -3077,7 +3840,12 @@
       "refs": [
         "Genesis 4:18"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mehujael",
@@ -3098,7 +3866,12 @@
       "refs": [
         "Genesis 4:18"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "methushael",
@@ -3119,7 +3892,12 @@
       "refs": [
         "Genesis 4:18"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "lamech_cain",
@@ -3146,7 +3924,12 @@
       "refs": [
         "Genesis 4:18-24"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "adah",
@@ -3170,7 +3953,12 @@
       "refs": [
         "Genesis 4:19-20"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zillah",
@@ -3194,7 +3982,12 @@
       "refs": [
         "Genesis 4:19, 22"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jabal",
@@ -3213,7 +4006,12 @@
       "refs": [
         "Genesis 4:20"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jubal",
@@ -3232,7 +4030,12 @@
       "refs": [
         "Genesis 4:21"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "tubal_cain",
@@ -3251,7 +4054,12 @@
       "refs": [
         "Genesis 4:22"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "naamah",
@@ -3270,7 +4078,12 @@
       "refs": [
         "Genesis 4:22"
       ],
-      "era": "antediluvian"
+      "era": "antediluvian",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nebaioth",
@@ -3290,7 +4103,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "kedar",
@@ -3310,7 +4128,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "adbeel",
@@ -3330,7 +4153,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mibsam",
@@ -3350,7 +4178,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mishma",
@@ -3370,7 +4203,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "dumah",
@@ -3390,7 +4228,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "massa",
@@ -3410,7 +4253,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hadad_ish",
@@ -3430,7 +4278,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "tema",
@@ -3450,7 +4303,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jetur",
@@ -3470,7 +4328,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "naphish",
@@ -3490,7 +4353,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "kedemah",
@@ -3510,7 +4378,12 @@
         "1 Chronicles 1:29-31"
       ],
       "role": "ARABS",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "moab",
@@ -3530,7 +4403,12 @@
         "Genesis 19:30-37"
       ],
       "role": "MOABITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ben_ammi",
@@ -3550,7 +4428,12 @@
         "Genesis 19:30-38"
       ],
       "role": "AMMONITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zimran",
@@ -3570,7 +4453,12 @@
         "Genesis 25:1-4",
         "1 Chronicles 1:32-33"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jokshan",
@@ -3590,7 +4478,12 @@
         "Genesis 25:1-4",
         "1 Chronicles 1:32-33"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "medan",
@@ -3610,7 +4503,12 @@
         "Genesis 25:1-4",
         "1 Chronicles 1:32-33"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ishbak",
@@ -3630,7 +4528,12 @@
         "Genesis 25:1-4",
         "1 Chronicles 1:32-33"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shuah",
@@ -3650,7 +4553,12 @@
         "Genesis 25:1-4",
         "1 Chronicles 1:32-33"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "gershon",
@@ -3670,7 +4578,12 @@
         "Numbers 3:17-26"
       ],
       "accent": "priestly",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "merari",
@@ -3690,7 +4603,12 @@
         "Numbers 3:33-37"
       ],
       "accent": "priestly",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliphaz",
@@ -3712,7 +4630,12 @@
         "Genesis 36:10-12"
       ],
       "role": "EDOMITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "reuel",
@@ -3732,7 +4655,12 @@
         "Genesis 36:13"
       ],
       "role": "EDOMITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amalek",
@@ -3753,7 +4681,12 @@
         "1 Samuel 15:2-3"
       ],
       "role": "EDOMITES",
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "kish",
@@ -3778,7 +4711,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "saul",
@@ -3806,7 +4744,12 @@
       ],
       "role": "KING",
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ahinoam_saul",
@@ -3834,7 +4777,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jonathan",
@@ -3860,7 +4808,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "michal",
@@ -3886,7 +4839,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ish_bosheth",
@@ -3908,7 +4866,12 @@
       ],
       "role": "KING",
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mephibosheth",
@@ -3931,7 +4894,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliab",
@@ -3955,7 +4923,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abinadab_brother",
@@ -3979,7 +4952,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shimea",
@@ -4003,7 +4981,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nethanel",
@@ -4027,7 +5010,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "raddai",
@@ -4051,7 +5039,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ozem",
@@ -4075,7 +5068,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zeruiah",
@@ -4101,7 +5099,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abigail_sister",
@@ -4125,7 +5128,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joab",
@@ -4148,7 +5156,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abishai",
@@ -4170,7 +5183,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "asahel",
@@ -4192,7 +5210,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amasa",
@@ -4215,7 +5238,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "davidic_line"
+      "era": "davidic_line",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ahinoam_david",
@@ -4243,7 +5271,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abigail_wife",
@@ -4271,7 +5304,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "maacah",
@@ -4300,7 +5338,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "haggith",
@@ -4328,7 +5371,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "abital",
@@ -4356,7 +5404,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eglah",
@@ -4384,7 +5437,12 @@
       ],
       "role": "QUEEN",
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amnon",
@@ -4406,7 +5464,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "chileab",
@@ -4429,7 +5492,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "absalom",
@@ -4451,7 +5519,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "adonijah",
@@ -4474,7 +5547,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shephatiah",
@@ -4496,7 +5574,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ithream",
@@ -4518,7 +5601,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shammua",
@@ -4541,7 +5629,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shobab",
@@ -4563,7 +5656,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nathan_son_of_david",
@@ -4588,7 +5686,12 @@
       ],
       "role": null,
       "accent": "royal",
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "tamar_david",
@@ -4610,7 +5713,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "kings"
+      "era": "kings",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "er",
@@ -4633,7 +5741,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "onan",
@@ -4656,7 +5769,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zerah",
@@ -4679,7 +5797,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hanoch_reuben",
@@ -4702,7 +5825,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "pallu",
@@ -4725,7 +5853,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hezron_reuben",
@@ -4748,7 +5881,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "carmi",
@@ -4771,7 +5909,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jemuel",
@@ -4794,7 +5937,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jamin",
@@ -4817,7 +5965,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ohad",
@@ -4840,7 +5993,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jachin",
@@ -4863,7 +6021,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zohar",
@@ -4886,7 +6049,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shaul_simeon",
@@ -4909,7 +6077,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "tola",
@@ -4932,7 +6105,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "puvah",
@@ -4955,7 +6133,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "iob",
@@ -4978,7 +6161,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shimron",
@@ -5001,7 +6189,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "sered",
@@ -5024,7 +6217,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "elon",
@@ -5047,7 +6245,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jahleel",
@@ -5070,7 +6273,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "hushim_dan",
@@ -5093,7 +6301,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jahzeel",
@@ -5116,7 +6329,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "guni",
@@ -5139,7 +6357,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jezer",
@@ -5162,7 +6385,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shillem",
@@ -5185,7 +6413,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ziphion",
@@ -5208,7 +6441,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "haggi",
@@ -5231,7 +6469,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shuni",
@@ -5254,7 +6497,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ezbon",
@@ -5277,7 +6525,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eri",
@@ -5300,7 +6553,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "arodi",
@@ -5323,7 +6581,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "areli",
@@ -5346,7 +6609,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "imnah",
@@ -5369,7 +6637,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ishvah",
@@ -5392,7 +6665,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ishvi",
@@ -5415,7 +6693,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "beriah",
@@ -5438,7 +6721,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "serah",
@@ -5461,7 +6749,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "bela",
@@ -5484,7 +6777,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "becher",
@@ -5507,7 +6805,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ashbel",
@@ -5530,7 +6833,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "gera",
@@ -5553,7 +6861,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "naaman",
@@ -5576,7 +6889,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ehi",
@@ -5599,7 +6917,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "rosh",
@@ -5622,7 +6945,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "muppim",
@@ -5645,7 +6973,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "huppim",
@@ -5668,7 +7001,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "ard",
@@ -5691,7 +7029,12 @@
       ],
       "role": null,
       "accent": null,
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "james_brother",
@@ -5714,7 +7057,12 @@
       ],
       "role": null,
       "accent": "messianic",
-      "era": "nt"
+      "era": "nt",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joses",
@@ -5737,7 +7085,12 @@
       ],
       "role": null,
       "accent": "messianic",
-      "era": "nt"
+      "era": "nt",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "simon_brother",
@@ -5760,7 +7113,12 @@
       ],
       "role": null,
       "accent": "messianic",
-      "era": "nt"
+      "era": "nt",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jude_brother",
@@ -5783,7 +7141,12 @@
       ],
       "role": null,
       "accent": "messianic",
-      "era": "nt"
+      "era": "nt",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shelah",
@@ -5808,7 +7171,16 @@
         "Genesis 11:12-15",
         "1 Chronicles 1:18"
       ],
-      "era": "post_flood"
+      "era": "post_flood",
+      "dating": {
+        "kind": "birth",
+        "basis": "scripture",
+        "refs": [
+          "Genesis 11:14",
+          "Genesis 11:15"
+        ]
+      },
+      "nameKjv": "Salah"
     },
     {
       "id": "shelah_judah",
@@ -5829,7 +7201,12 @@
         "1 Chronicles 2:3",
         "Numbers 26:20"
       ],
-      "era": "patriarchs"
+      "era": "patriarchs",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "heli",
@@ -5850,7 +7227,12 @@
         "Luke 3:23"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "matthat_nt",
@@ -5871,7 +7253,12 @@
         "Luke 3:24"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "levi_nt",
@@ -5892,7 +7279,12 @@
         "Luke 3:24"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "melki_nt",
@@ -5913,7 +7305,12 @@
         "Luke 3:24"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "janna",
@@ -5934,7 +7331,12 @@
         "Luke 3:24"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joseph_lk_24",
@@ -5955,7 +7357,12 @@
         "Luke 3:24"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mattathias_lk_25",
@@ -5976,7 +7383,12 @@
         "Luke 3:25"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "amos_lk_25",
@@ -5997,7 +7409,12 @@
         "Luke 3:25"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "nahum_lk_25",
@@ -6018,7 +7435,12 @@
         "Luke 3:25"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "esli_lk_25",
@@ -6039,7 +7461,12 @@
         "Luke 3:25"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "naggai_lk_25",
@@ -6060,7 +7487,12 @@
         "Luke 3:25"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "maath_lk_26",
@@ -6081,7 +7513,12 @@
         "Luke 3:26"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mattathias_lk_26",
@@ -6102,7 +7539,12 @@
         "Luke 3:26"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "semein_lk_26",
@@ -6123,7 +7565,12 @@
         "Luke 3:26"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "josek_lk_26",
@@ -6144,7 +7591,12 @@
         "Luke 3:26"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joda_lk_26",
@@ -6165,7 +7617,12 @@
         "Luke 3:26"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joanan_lk_27",
@@ -6186,7 +7643,12 @@
         "Luke 3:27"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "rhesa_lk_27",
@@ -6207,7 +7669,12 @@
         "Luke 3:27"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "zerubbabel_lk_27",
@@ -6228,7 +7695,12 @@
         "Luke 3:27"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "shealtiel_lk_27",
@@ -6249,7 +7721,12 @@
         "Luke 3:27"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "neri_lk_27",
@@ -6270,7 +7747,12 @@
         "Luke 3:27"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "melchi_lk_28",
@@ -6291,7 +7773,12 @@
         "Luke 3:28"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "addi_lk_28",
@@ -6312,7 +7799,12 @@
         "Luke 3:28"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "cosam_lk_28",
@@ -6333,7 +7825,12 @@
         "Luke 3:28"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "elmadam_lk_28",
@@ -6354,7 +7851,12 @@
         "Luke 3:28"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "er_lk_28",
@@ -6375,7 +7877,12 @@
         "Luke 3:28"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joshua_lk_29",
@@ -6396,7 +7903,12 @@
         "Luke 3:29"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliezer_lk_29",
@@ -6417,7 +7929,12 @@
         "Luke 3:29"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jorim_lk_29",
@@ -6438,7 +7955,12 @@
         "Luke 3:29"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "matthat_lk_29",
@@ -6459,7 +7981,12 @@
         "Luke 3:29"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "levi_lk_29",
@@ -6480,7 +8007,12 @@
         "Luke 3:29"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "simeon_lk_30",
@@ -6501,7 +8033,12 @@
         "Luke 3:30"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "judah_lk_30",
@@ -6522,7 +8059,12 @@
         "Luke 3:30"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "joseph_lk_30",
@@ -6543,7 +8085,12 @@
         "Luke 3:30"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "jonam_lk_30",
@@ -6564,7 +8111,12 @@
         "Luke 3:30"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "eliakim_lk_30",
@@ -6585,7 +8137,12 @@
         "Luke 3:30"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "melea_lk_31",
@@ -6606,7 +8163,12 @@
         "Luke 3:31"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "menna_lk_31",
@@ -6627,7 +8189,12 @@
         "Luke 3:31"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     },
     {
       "id": "mattatha_lk_31",
@@ -6648,7 +8215,12 @@
         "Luke 3:31"
       ],
       "accent": "messianic",
-      "era": "lukan_lineage"
+      "era": "lukan_lineage",
+      "dating": {
+        "kind": "approximate",
+        "basis": "conventional",
+        "refs": []
+      }
     }
   ]
 }

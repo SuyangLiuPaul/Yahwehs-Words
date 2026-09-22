@@ -192,8 +192,11 @@ void main() {
     // asset → (refs, resolved targets). Targets exceed refs because of
     // the comma spans below.
     for (final file in const {
-      'assets/bible_timeline.json': (123, 124),
-      'assets/family_tree.json': (665, 667),
+      // Refs 123 → 133 and 665 → 747 on 2026-09-21: Yahweh's Sword's
+      // chronology added seven timeline events and a `dating.refs` list
+      // to every person. The target counts are re-measured, not guessed.
+      'assets/bible_timeline.json': (133, 134),
+      'assets/family_tree.json': (747, 749),
     }.entries) {
       final refs = <String>[];
       void walk(dynamic node) {

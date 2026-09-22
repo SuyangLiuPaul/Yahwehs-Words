@@ -1752,11 +1752,13 @@ const uiStrings = {
     'zh-Hant': '探索工具',
     'en': 'Discover',
   },
+  // 98 -> 105 events on 2026-09-21, when Words took Yahweh's Sword's
+  // bible_timeline.json.
   'onboardDiscoverBody': {
-    'zh-Hans': '圣经时间轴（98 个事件）、家谱（277 位人物）、圣经证据（225 项考古／抄本／科学发现），都可在主页打开。',
-    'zh-Hant': '聖經時間軸（98 個事件）、家譜（277 位人物）、聖經證據（225 項考古／抄本／科學發現），都可在主頁打開。',
+    'zh-Hans': '圣经时间轴（105 个事件）、家谱（277 位人物）、圣经证据（225 项考古／抄本／科学发现），都可在主页打开。',
+    'zh-Hant': '聖經時間軸（105 個事件）、家譜（277 位人物）、聖經證據（225 項考古／抄本／科學發現），都可在主頁打開。',
     'en':
-        'Bible Timeline (98 events), Family Tree (277 people), and Bible Evidence (225 archaeology / manuscript / science finds) — all reachable from Home.',
+        'Bible Timeline (105 events), Family Tree (277 people), and Bible Evidence (225 archaeology / manuscript / science finds) — all reachable from Home.',
   },
   'onboardCustomizeTitle': {
     'zh-Hans': '自定义与同步',
@@ -7225,20 +7227,26 @@ const uiStrings = {
     'zh-Hans': '从亚当到拉麦九代 · 创世以来 0 – 1656 年',
     'zh-Hant': '從亞當到拉麥九代 · 創世以來 0 – 1656 年',
   },
+  // 2948 – 1817 → 3058 – 1927 on 2026-09-21: the same AM years (Noah's
+  // birth AM 1056 to Eber's death AM 2187) on the derived 4114 BC anchor
+  // instead of Ussher's 4004.
   'familyTreeEraSubPostFlood': {
-    'en': 'Noah to Eber, post-Flood patriarchs · ~BC 2948 – 1817',
-    'zh-Hans': '挪亚到希伯，洪水后的列祖 · 约公元前 2948 – 1817',
-    'zh-Hant': '挪亞到希伯，洪水後的列祖 · 約公元前 2948 – 1817',
+    'en': 'Noah to Eber, post-Flood patriarchs · ~BC 3058 – 1927',
+    'zh-Hans': '挪亚到希伯，洪水后的列祖 · 约公元前 3058 – 1927',
+    'zh-Hant': '挪亞到希伯，洪水後的列祖 · 約公元前 3058 – 1927',
   },
   'familyTreeEraSubPatriarchs': {
     'en': 'Abraham, Isaac, Jacob & the twelve tribes · ~BC 2200 – 1700',
     'zh-Hans': '亚伯拉罕、以撒、雅各与十二支派 · 约公元前 2200 – 1700',
     'zh-Hant': '亞伯拉罕、以撒、雅各與十二支派 · 約公元前 2200 – 1700',
   },
+  // 1405 → 1406 on 2026-09-21: Moses' years were aligned with the
+  // Exodus in 1446 BC when Words took Yahweh's Sword's chronology (80 at
+  // the Exodus, dead at 120).
   'familyTreeEraSubMosaic': {
-    'en': 'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1850 – 1405',
-    'zh-Hans': '大祭司亚伦、律法颁布者摩西、米利暗 · 约公元前 1850 – 1405',
-    'zh-Hant': '大祭司亞倫、律法頒布者摩西、米利暗 · 約公元前 1850 – 1405',
+    'en': 'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1850 – 1406',
+    'zh-Hans': '大祭司亚伦、律法颁布者摩西、米利暗 · 约公元前 1850 – 1406',
+    'zh-Hant': '大祭司亞倫、律法頒布者摩西、米利暗 · 約公元前 1850 – 1406',
   },
   'familyTreeEraSubDavidic': {
     'en': 'Perez through Boaz & Ruth to Jesse, father of David · ~BC 1880 – 1005',
@@ -7541,13 +7549,19 @@ const uiStrings = {
     'zh-Hans': '此年份的来源',
     'zh-Hant': '此年份的來源',
   },
+  // 4004 → 4114 on 2026-09-21, and "anchor" now says where it comes from:
+  // Words took Yahweh's Sword's chronology, whose anchor is derived.
   'chronologyBasisComputed': {
     'en': 'Counted from the ages Scripture states, chained together. '
-        'The BC label is that count placed on the 4004 BC anchor.',
+        'The BC label is that count placed on the 4114 BC anchor, '
+        'itself counted back from Solomon\'s temple through 1 Kings 6:1 '
+        'and Exodus 12:40.',
     'zh-Hans': '由经文所记的岁数逐代相连累加而得。公元前标签是把这个年数'
-        '放在公元前 4004 年的锚点上。',
+        '放在公元前 4114 年的锚点上；这个锚点本身是从所罗门建殿起，按列王纪上 '
+        '6:1 与出埃及记 12:40 往回推得的。',
     'zh-Hant': '由經文所記的歲數逐代相連累加而得。公元前標籤是把這個年數'
-        '放在公元前 4004 年的錨點上。',
+        '放在公元前 4114 年的錨點上；這個錨點本身是從所羅門建殿起，按列王紀上 '
+        '6:1 與出埃及記 12:40 往回推得的。',
   },
   'chronologyBasisPlaced': {
     'en': 'Placed at {year} by assets/bible_timeline.json — the same '

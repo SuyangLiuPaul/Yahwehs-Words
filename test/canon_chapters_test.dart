@@ -313,7 +313,12 @@ void main() {
     // to a reference. Pinned so a future asset addition that introduces
     // an out-of-canon reference — rather than this guard regressing —
     // is what makes this test fail.
-    expect(parsedCount, 60426);
+    //
+    // 60,548 since 2026-09-21: Yahweh's Sword's chronology brought the
+    // `dating.refs` lists into the family tree and seven events into
+    // the timeline. None of them is out of canon — the assertion below
+    // is unchanged and passes.
+    expect(parsedCount, 60548);
     expect(outOfCanon, isEmpty,
         reason: 'a reference here would have rendered as a live tap '
             'target to scripture that does not exist, on every one of '

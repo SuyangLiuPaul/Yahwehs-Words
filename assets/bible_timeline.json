@@ -1,17 +1,64 @@
 {
   "_meta": {
-    "count": 98,
-    "source": "YsWords curated",
-    "yearSystem": "signed BC/AD — negative is BC, positive is AD, and there is no year 0 (1 BC is followed by AD 1). No event in this file carries year 0; tools/build_bible_chronology.py refuses one.",
-    "dating": "Every year here is a PLACEMENT, not a computed figure. Scripture states a continuous chain of ages only through Genesis 5 and 11; these dates are the conventional scholarly placements this app has curated, and the patriarchal ones follow the same late-date scheme as assets/family_tree.json (Abraham 2166-1991 BC).",
-    "knownConflict": "That late-date scheme does NOT join up with the Anno Mundi count in assets/bible_chronology.json, which puts Abram's birth at AM 2008 = 1996 BC on the 4004 BC anchor. The two disagree by about 170 years across the patriarchs. This is left unreconciled on purpose; the chronology chart draws the disagreement rather than averaging it away. See the `contested` block in assets/bible_chronology.json.",
-    "consumers": "lib/services/timeline_service.dart (the event list) and tools/build_bible_chronology.py, which projects these events onto the chart's AM axis. Changing an `id`, `year` or `era` here changes the chart too.",
-    "notFrom": "docs/reference/364673272-World-History-Chart-Bible-Chronology.pdf is under copyright (Bible Charts and Maps, LLC). Nothing in this file is transcribed from it."
+    "count": 105,
+    "generator": "tools/audit_dates.py",
+    "creation": {
+      "year": -4114,
+      "basis": "scripture+thiele",
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    "anchor": {
+      "en": "Every year on this axis is counted back from one fixed point: Solomon's accession, which this app takes from Thiele, as it does throughout. 1 Kings 6:1 dates the temple to Solomon's fourth year and places that 480 years after the exodus; each earlier year is counted back along intervals the text states, and every event lists the verses its own chain runs through.",
+      "zh-Hans": "此图各年皆自一个定点上溯而得：所罗门登基之年。该年取自锡尔（Thiele），本应用一律采用。王上 6:1 记圣殿建于所罗门在位第四年，并谓该年在出埃及后 480 年；其前各年，皆按经文自述的年数逐段上溯，每项事件亦各自列出所据的经文。",
+      "zh-Hant": "此圖各年皆自一個定點上溯而得：所羅門登基之年。該年取自錫爾（Thiele），本應用一律採用。王上 6:1 記聖殿建於所羅門在位第四年，並謂該年在出埃及後 480 年；其前各年，皆按經文自述的年數逐段上溯，每項事件亦各自列出所據的經文。"
+    },
+    "basis": {
+      "scripture+thiele": "The intervals are stated by scripture and the year they are measured from is Thiele's. Scripture states no BC year, so no date here rests on scripture alone.",
+      "thiele": "From hebrew_kings.json, which follows Thiele and cites him.",
+      "conventional": "No figure we can read fixes this year, so it is shown as a commonly published reconstruction, marked approximate."
+    },
+    "septuagintYear": "Present only where the chain runs through Exodus 12:40. The Hebrew counts its 430 years in Egypt; the Greek counts them in Egypt AND in Canaan, and where the Canaan part begins is not stated. Starting it at Abram's departure — the reading chronology.json plots, and the one place on that axis where a year had to be supplied rather than read — puts the event 215 years later. Both texts ship with this app; neither is corrected to the other. ABSENT above Abraham even though the chain there runs through the same verse: it runs on through Genesis 11 and Genesis 5, where the Greek states different begetting ages, so the Greek year for those events is not this shift but a different number for each of them. A figure printed under this sentence would be a figure this sentence does not describe, so none is written; chronology.json plots both traditions in full.",
+    "counts": {
+      "scripture+thiele": 29,
+      "conventional": 71,
+      "thiele": 5
+    },
+    "note": {
+      "en": "Chronologies differ. Nothing here is presented as a date the text gives unless the text gives it.",
+      "zh-Hans": "各家年代系统互有出入。凡经文未曾明记的年份，此处一概不作经文所记而列。",
+      "zh-Hant": "各家年代系統互有出入。凡經文未曾明記的年份，此處一概不作經文所記而列。"
+    }
   },
   "events": [
     {
       "id": "creation",
-      "year": -4000,
+      "year": -4114,
       "era": "antediluvian",
       "titleEn": "The Creation",
       "titleZhHans": "创造",
@@ -23,11 +70,40 @@
         "Genesis 1",
         "Genesis 2"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
     },
     {
       "id": "eden",
-      "year": -4000,
+      "year": -4114,
       "era": "antediluvian",
       "titleEn": "Adam & Eve in Eden",
       "titleZhHans": "亚当夏娃在伊甸园",
@@ -41,11 +117,13 @@
       "personIds": [
         "adam",
         "eve"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "fall",
-      "year": -3990,
+      "year": -4104,
       "era": "antediluvian",
       "titleEn": "The Fall",
       "titleZhHans": "人类堕落",
@@ -60,11 +138,13 @@
       "personIds": [
         "adam",
         "eve"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "cain_abel",
-      "year": -3950,
+      "year": -4064,
       "era": "antediluvian",
       "titleEn": "Cain Murders Abel",
       "titleZhHans": "该隐杀亚伯",
@@ -78,11 +158,13 @@
       "personIds": [
         "cain",
         "abel"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "seth_born",
-      "year": -3870,
+      "year": -3984,
       "era": "antediluvian",
       "titleEn": "Birth of Seth",
       "titleZhHans": "塞特出生",
@@ -96,11 +178,317 @@
       ],
       "personIds": [
         "seth"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "enosh_born",
+      "year": -3879,
+      "era": "antediluvian",
+      "titleEn": "Birth of Enosh",
+      "titleZhHans": "以挪士出生",
+      "titleZhHant": "以挪士出生",
+      "descEn": "Seth's son Enosh is born, third from Adam; in his time men began to call on the name of God.",
+      "descZhHans": "塞特之子以挪士出生，为亚当以下第三代；那时人开始求告神的名。",
+      "descZhHant": "塞特之子以挪士出生，為亞當以下第三代；那時人開始求告神的名。",
+      "refs": [
+        "Genesis 4:26",
+        "Genesis 5:6-11"
+      ],
+      "personIds": [
+        "enosh"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "kenan_born",
+      "year": -3789,
+      "era": "antediluvian",
+      "titleEn": "Birth of Kenan",
+      "titleZhHans": "该南出生",
+      "titleZhHant": "該南出生",
+      "descEn": "Enosh's son Kenan is born, fourth from Adam in the line of Seth.",
+      "descZhHans": "以挪士之子该南出生，为塞特家系中亚当以下第四代。",
+      "descZhHant": "以挪士之子該南出生，為塞特家系中亞當以下第四代。",
+      "refs": [
+        "Genesis 5:9-14"
+      ],
+      "personIds": [
+        "kenan"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "mahalalel_born",
+      "year": -3719,
+      "era": "antediluvian",
+      "titleEn": "Birth of Mahalalel",
+      "titleZhHans": "玛勒列出生",
+      "titleZhHant": "瑪勒列出生",
+      "descEn": "Kenan's son Mahalalel is born, fifth from Adam in the line of Seth.",
+      "descZhHans": "该南之子玛勒列出生，为塞特家系中亚当以下第五代。",
+      "descZhHant": "該南之子瑪勒列出生，為塞特家系中亞當以下第五代。",
+      "refs": [
+        "Genesis 5:12-17"
+      ],
+      "personIds": [
+        "mahalalel"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "jared_born",
+      "year": -3654,
+      "era": "antediluvian",
+      "titleEn": "Birth of Jared",
+      "titleZhHans": "雅列出生",
+      "titleZhHant": "雅列出生",
+      "descEn": "Mahalalel's son Jared is born, sixth from Adam and the father of Enoch.",
+      "descZhHans": "玛勒列之子雅列出生，为亚当以下第六代，是以诺的父亲。",
+      "descZhHant": "瑪勒列之子雅列出生，為亞當以下第六代，是以諾的父親。",
+      "refs": [
+        "Genesis 5:15-20"
+      ],
+      "personIds": [
+        "jared"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "methuselah_born",
+      "year": -3427,
+      "era": "antediluvian",
+      "titleEn": "Birth of Methuselah",
+      "titleZhHans": "玛土撒拉出生",
+      "titleZhHant": "瑪土撒拉出生",
+      "descEn": "Enoch's son Methuselah is born; Genesis records no longer life than his.",
+      "descZhHans": "以诺之子玛土撒拉出生；创世记所载的寿数，无人长过他。",
+      "descZhHant": "以諾之子瑪土撒拉出生；創世記所載的壽數，無人長過他。",
+      "refs": [
+        "Genesis 5:21-27"
+      ],
+      "personIds": [
+        "methuselah"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "lamech_born",
+      "year": -3240,
+      "era": "antediluvian",
+      "titleEn": "Birth of Lamech, Noah's Father",
+      "titleZhHans": "拉麦出生（挪亚之父）",
+      "titleZhHant": "拉麥出生（挪亞之父）",
+      "descEn": "Methuselah's son Lamech is born; he names his son Noah, hoping for comfort from the toil of the cursed ground.",
+      "descZhHans": "玛土撒拉之子拉麦出生；他给儿子起名挪亚，指望在受咒诅之地的劳苦中得安慰。",
+      "descZhHant": "瑪土撒拉之子拉麥出生；他給兒子起名挪亞，指望在受咒詛之地的勞苦中得安慰。",
+      "refs": [
+        "Genesis 5:25-31"
+      ],
+      "personIds": [
+        "lamech"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
       ]
     },
     {
       "id": "enoch_walks",
-      "year": -3000,
+      "year": -3127,
       "era": "antediluvian",
       "titleEn": "Enoch Walks with God",
       "titleZhHans": "以诺与神同行",
@@ -114,11 +502,41 @@
       ],
       "personIds": [
         "enoch"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3",
+        "Genesis 5:23"
       ]
     },
     {
       "id": "flood",
-      "year": -2348,
+      "year": -2458,
       "era": "antediluvian",
       "titleEn": "Noah's Flood",
       "titleZhHans": "挪亚洪水",
@@ -131,11 +549,87 @@
       ],
       "personIds": [
         "noah"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
+      ]
+    },
+    {
+      "id": "shelah_born",
+      "year": -2421,
+      "era": "antediluvian",
+      "titleEn": "Birth of Shelah",
+      "titleZhHans": "沙拉出生",
+      "titleZhHant": "沙拉出生",
+      "descEn": "Arphaxad's son Shelah is born, the first generation after the flood to be born rather than saved from it; the King James Version spells his name Salah.",
+      "descZhHans": "亚法撒之子沙拉出生，是洪水之后头一代生于水后、而非得救于水中的人；英王钦定本作「Salah」。",
+      "descZhHant": "亞法撒之子沙拉出生，是洪水之後頭一代生於水後、而非得救於水中的人；英王欽定本作「Salah」。",
+      "refs": [
+        "Genesis 10:24",
+        "Genesis 11:12-15"
+      ],
+      "personIds": [
+        "shelah"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1",
+        "Genesis 11:26",
+        "Genesis 11:24",
+        "Genesis 11:22",
+        "Genesis 11:20",
+        "Genesis 11:18",
+        "Genesis 11:16",
+        "Genesis 11:14",
+        "Genesis 11:12",
+        "Genesis 11:10",
+        "Genesis 7:6",
+        "Genesis 5:28",
+        "Genesis 5:25",
+        "Genesis 5:21",
+        "Genesis 5:18",
+        "Genesis 5:15",
+        "Genesis 5:12",
+        "Genesis 5:9",
+        "Genesis 5:6",
+        "Genesis 5:3"
       ]
     },
     {
       "id": "babel",
-      "year": -2200,
+      "year": -2314,
       "era": "antediluvian",
       "titleEn": "Tower of Babel",
       "titleZhHans": "巴别塔",
@@ -146,7 +640,9 @@
       "refs": [
         "Genesis 11:1-9"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "abram_called",
@@ -163,7 +659,18 @@
       ],
       "personIds": [
         "abraham"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 12:4",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1876
     },
     {
       "id": "lot_separates",
@@ -181,7 +688,9 @@
       "personIds": [
         "abraham",
         "lot"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "abrahamic_covenant",
@@ -199,7 +708,9 @@
       ],
       "personIds": [
         "abraham"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "ishmael_born",
@@ -217,7 +728,18 @@
       "personIds": [
         "ishmael",
         "hagar"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 21:5",
+        "Genesis 16:16",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1865
     },
     {
       "id": "sodom_destroyed",
@@ -234,7 +756,19 @@
       ],
       "personIds": [
         "lot"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 17:21",
+        "Genesis 18:10",
+        "Genesis 19:1",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1852
     },
     {
       "id": "isaac_born",
@@ -253,7 +787,16 @@
         "isaac",
         "abraham",
         "sarah"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1851
     },
     {
       "id": "isaac_offered",
@@ -271,7 +814,9 @@
       "personIds": [
         "abraham",
         "isaac"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "rebekah_marries",
@@ -289,7 +834,17 @@
       "personIds": [
         "isaac",
         "rebekah"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 25:20",
+        "Genesis 25:26",
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1811
     },
     {
       "id": "jacob_esau_born",
@@ -307,7 +862,15 @@
       "personIds": [
         "jacob",
         "esau"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 47:9",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1791
     },
     {
       "id": "job_trial",
@@ -326,7 +889,9 @@
         "Job 42",
         "Ezekiel 14:14"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jacob_blessing",
@@ -344,7 +909,9 @@
       "personIds": [
         "jacob",
         "esau"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jacobs_ladder",
@@ -361,7 +928,9 @@
       ],
       "personIds": [
         "jacob"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jacob_marries",
@@ -380,7 +949,9 @@
         "jacob",
         "leah",
         "rachel"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "joseph_sold",
@@ -397,7 +968,9 @@
       ],
       "personIds": [
         "joseph"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "joseph_rises",
@@ -414,7 +987,17 @@
       ],
       "personIds": [
         "joseph"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Genesis 41:46",
+        "Genesis 41:53",
+        "Genesis 45:6",
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1670
     },
     {
       "id": "israel_egypt",
@@ -433,7 +1016,14 @@
       "personIds": [
         "jacob",
         "joseph"
-      ]
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Exodus 12:40",
+        "1 Kings 6:1"
+      ],
+      "septuagintYear": -1661
     },
     {
       "id": "israel_oppressed",
@@ -449,7 +1039,9 @@
         "Exodus 1",
         "Genesis 15:13"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "moses_born",
@@ -468,6 +1060,12 @@
         "moses",
         "jochebed",
         "amram"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Exodus 7:7",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -485,7 +1083,9 @@
       ],
       "personIds": [
         "moses"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "plagues",
@@ -503,7 +1103,9 @@
       "personIds": [
         "moses",
         "aaron"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "exodus",
@@ -521,6 +1123,11 @@
       "personIds": [
         "moses",
         "aaron"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "1 Kings 6:1"
       ]
     },
     {
@@ -538,7 +1145,9 @@
       ],
       "personIds": [
         "moses"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "manna",
@@ -555,6 +1164,12 @@
       ],
       "personIds": [
         "moses"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Exodus 16:1",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -573,6 +1188,12 @@
       ],
       "personIds": [
         "moses"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Exodus 19:1",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -591,6 +1212,12 @@
       ],
       "personIds": [
         "moses"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Exodus 40:17",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -611,6 +1238,13 @@
         "moses",
         "aaron",
         "miriam"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Numbers 32:13",
+        "Joshua 5:6",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -628,6 +1262,13 @@
       ],
       "personIds": [
         "moses"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Deuteronomy 34:7",
+        "Exodus 7:7",
+        "1 Kings 6:1"
       ]
     },
     {
@@ -643,7 +1284,14 @@
       "refs": [
         "Joshua 3-4"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Deuteronomy 1:3",
+        "Joshua 5:6",
+        "1 Kings 6:1"
+      ]
     },
     {
       "id": "jericho",
@@ -658,7 +1306,16 @@
       "refs": [
         "Joshua 6"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "Joshua 4:19",
+        "Joshua 6:15",
+        "Deuteronomy 1:3",
+        "Joshua 5:6",
+        "1 Kings 6:1"
+      ]
     },
     {
       "id": "land_divided",
@@ -673,7 +1330,9 @@
       "refs": [
         "Joshua 13-22"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "judges_period",
@@ -688,7 +1347,9 @@
       "refs": [
         "Judges 1-21"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "deborah",
@@ -703,7 +1364,9 @@
       "refs": [
         "Judges 4-5"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "gideon",
@@ -718,7 +1381,9 @@
       "refs": [
         "Judges 6-8"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "samson",
@@ -733,7 +1398,9 @@
       "refs": [
         "Judges 13-16"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "ruth",
@@ -751,7 +1418,9 @@
       "personIds": [
         "ruth",
         "boaz"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "samuel_called",
@@ -766,7 +1435,9 @@
       "refs": [
         "1 Samuel 3"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "saul_anointed",
@@ -783,7 +1454,9 @@
       ],
       "personIds": [
         "saul"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "david_anointed",
@@ -800,7 +1473,9 @@
       ],
       "personIds": [
         "david"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "david_goliath",
@@ -817,7 +1492,9 @@
       ],
       "personIds": [
         "david"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "david_king",
@@ -834,7 +1511,10 @@
       ],
       "personIds": [
         "david"
-      ]
+      ],
+      "basis": "thiele",
+      "approximate": false,
+      "datingRefs": []
     },
     {
       "id": "jerusalem_captured",
@@ -851,7 +1531,9 @@
       ],
       "personIds": [
         "david"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "davidic_covenant",
@@ -868,7 +1550,9 @@
       ],
       "personIds": [
         "david"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "solomon_king",
@@ -885,7 +1569,10 @@
       ],
       "personIds": [
         "solomon"
-      ]
+      ],
+      "basis": "thiele",
+      "approximate": false,
+      "datingRefs": []
     },
     {
       "id": "temple_built",
@@ -903,6 +1590,11 @@
       ],
       "personIds": [
         "solomon"
+      ],
+      "basis": "scripture+thiele",
+      "approximate": false,
+      "datingRefs": [
+        "1 Kings 6:1"
       ]
     },
     {
@@ -920,7 +1612,10 @@
       ],
       "personIds": [
         "rehoboam"
-      ]
+      ],
+      "basis": "thiele",
+      "approximate": false,
+      "datingRefs": []
     },
     {
       "id": "elijah_carmel",
@@ -935,7 +1630,9 @@
       "refs": [
         "1 Kings 18"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "elisha_succeeds",
@@ -950,7 +1647,9 @@
       "refs": [
         "2 Kings 2"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jonah",
@@ -965,7 +1664,9 @@
       "refs": [
         "Jonah 1-4"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "israel_falls",
@@ -980,7 +1681,10 @@
       "refs": [
         "2 Kings 17"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "thiele",
+      "approximate": false,
+      "datingRefs": []
     },
     {
       "id": "hezekiah_reform",
@@ -998,7 +1702,9 @@
       ],
       "personIds": [
         "hezekiah"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "isaiah",
@@ -1013,7 +1719,9 @@
       "refs": [
         "Isaiah 1-66"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "josiah_reform",
@@ -1030,7 +1738,9 @@
       ],
       "personIds": [
         "josiah"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jeremiah",
@@ -1045,7 +1755,9 @@
       "refs": [
         "Jeremiah 1-52"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "judah_falls",
@@ -1064,7 +1776,10 @@
       ],
       "personIds": [
         "jeconiah"
-      ]
+      ],
+      "basis": "thiele",
+      "approximate": false,
+      "datingRefs": []
     },
     {
       "id": "daniel_lions",
@@ -1079,7 +1794,9 @@
       "refs": [
         "Daniel 6"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "return_zerubbabel",
@@ -1096,7 +1813,9 @@
       ],
       "personIds": [
         "zerubbabel"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "temple_rebuilt",
@@ -1113,7 +1832,9 @@
       ],
       "personIds": [
         "zerubbabel"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "esther",
@@ -1128,7 +1849,9 @@
       "refs": [
         "Esther 1-10"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "ezra_returns",
@@ -1143,7 +1866,9 @@
       "refs": [
         "Ezra 7-10"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "nehemiah_walls",
@@ -1158,7 +1883,9 @@
       "refs": [
         "Nehemiah 1-6"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "malachi",
@@ -1173,7 +1900,9 @@
       "refs": [
         "Malachi 1-4"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "intertestamental",
@@ -1186,7 +1915,9 @@
       "descZhHans": "玛拉基与施洗约翰之间约四百年没有圣经先知。",
       "descZhHant": "瑪拉基與施洗約翰之間約四百年沒有聖經先知。",
       "refs": [],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "greek_period",
@@ -1199,7 +1930,9 @@
       "descZhHans": "亚历山大征服波斯帝国，推广希腊文化（希腊化）。",
       "descZhHant": "亞歷山大征服波斯帝國，推廣希臘文化（希臘化）。",
       "refs": [],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "septuagint",
@@ -1212,7 +1945,9 @@
       "descZhHans": "希伯来圣经在亚历山大被译为希腊文（七十士译本）。",
       "descZhHant": "希伯來聖經在亞歷山大被譯為希臘文（七十士譯本）。",
       "refs": [],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "maccabees",
@@ -1225,7 +1960,9 @@
       "descZhHans": "犹大·马加比领导反抗希腊塞琉古王朝的起义；重新洁净圣殿。",
       "descZhHant": "猶大·馬加比領導反抗希臘塞琉古王朝的起義；重新潔淨聖殿。",
       "refs": [],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "rome_judea",
@@ -1238,7 +1975,9 @@
       "descZhHans": "庞培攻陷耶路撒冷；犹太成为罗马行省。",
       "descZhHant": "龐培攻陷耶路撒冷；猶太成為羅馬行省。",
       "refs": [],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "john_baptist_born",
@@ -1253,7 +1992,9 @@
       "refs": [
         "Luke 1:5-25, 57-80"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jesus_born",
@@ -1273,7 +2014,9 @@
         "jesus",
         "mary",
         "joseph_father_of_jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "magi",
@@ -1290,7 +2033,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "flight_egypt",
@@ -1309,7 +2054,9 @@
         "joseph_father_of_jesus",
         "mary",
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jesus_temple_12",
@@ -1326,7 +2073,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jesus_baptized",
@@ -1335,16 +2084,19 @@
       "titleEn": "Baptism of Jesus",
       "titleZhHans": "耶稣受洗",
       "titleZhHant": "耶穌受洗",
-      "descEn": "John baptizes Jesus in the Jordan; the Father speaks, the Spirit descends.",
-      "descZhHans": "约翰在约旦河为耶稣施洗；父神发声，圣灵降临。",
-      "descZhHant": "約翰在約旦河為耶穌施洗；父神發聲，聖靈降臨。",
+      "descEn": "John baptizes Jesus in the Jordan; the Father speaks, the Spirit descends. The year is the earliest Luke 3:1 allows — it names Pontius Pilate as governor, and his prefecture begins in AD 26 — while the same verse's fifteenth year of Tiberius, counted from his accession in AD 14, would give AD 28 or 29. The verse brackets the ministry rather than fixing one year, and this chart sits at the early end.",
+      "descZhHans": "约翰在约旦河为耶稣施洗；父神发声，圣灵降临。此年份取路加福音 3:1 所容许的最早一年——该节记本丢彼拉多作巡抚，而彼拉多到任在公元26年；而同一节的「提比留在位第十五年」若自其公元14年登基起算，则应得公元28或29年。此节是把这段事奉夹在一个区间内，而非定出某一年，本图取的是区间前端。",
+      "descZhHant": "約翰在約旦河為耶穌施洗；父神發聲，聖靈降臨。此年份取路加福音 3:1 所容許的最早一年——該節記本丟彼拉多作巡撫，而彼拉多到任在公元26年；而同一節的「提比留在位第十五年」若自其公元14年登基起算，則應得公元28或29年。此節是把這段事奉夾在一個區間內，而非定出某一年，本圖取的是區間前端。",
       "refs": [
         "Matthew 3:13-17",
-        "Mark 1:9-11"
+        "Mark 1:9-11",
+        "Luke 3:1"
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "temptation",
@@ -1362,7 +2114,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "disciples_called",
@@ -1381,7 +2135,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "sermon_mount",
@@ -1398,7 +2154,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "5000_fed",
@@ -1416,7 +2174,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "transfiguration",
@@ -1434,7 +2194,9 @@
       "personIds": [
         "jesus",
         "moses"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "triumphal_entry",
@@ -1451,7 +2213,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "last_supper",
@@ -1470,7 +2234,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "crucifixion",
@@ -1488,7 +2254,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "resurrection",
@@ -1508,7 +2276,9 @@
       "personIds": [
         "jesus",
         "mary"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "ascension",
@@ -1525,7 +2295,9 @@
       ],
       "personIds": [
         "jesus"
-      ]
+      ],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "pentecost",
@@ -1540,7 +2312,9 @@
       "refs": [
         "Acts 2"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "stephen_martyred",
@@ -1555,7 +2329,9 @@
       "refs": [
         "Acts 6-7"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "paul_converted",
@@ -1570,7 +2346,9 @@
       "refs": [
         "Acts 9"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "paul_journeys",
@@ -1585,7 +2363,9 @@
       "refs": [
         "Acts 13-14"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "jerusalem_council",
@@ -1600,7 +2380,9 @@
       "refs": [
         "Acts 15"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "paul_rome",
@@ -1615,7 +2397,9 @@
       "refs": [
         "Acts 28"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "temple_destroyed",
@@ -1631,7 +2415,9 @@
         "Matthew 24:1-2",
         "Mark 13:1-2"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     },
     {
       "id": "john_patmos",
@@ -1646,7 +2432,9 @@
       "refs": [
         "Revelation 1:9"
       ],
-      "personIds": []
+      "personIds": [],
+      "basis": "conventional",
+      "approximate": true
     }
   ]
 }

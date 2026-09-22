@@ -29,7 +29,9 @@ class ChronologyScheme {
   final String id;
   final bool supported;
 
-  /// BC year that AM 0 is anchored to (4004 for Ussher).
+  /// BC year that AM 0 is anchored to — 4114 on the default scheme
+  /// since 2026-09-21 (derived; see tools/build_bible_chronology.py
+  /// CREATION_BC), 4004 on Ussher's.
   final int creationBc;
 
   final String nameEn;
