@@ -9818,6 +9818,38 @@ has never seen this repo.
       unconfirmed; `gh run list` now shows five consecutive successes on
       `main` through HEAD. Nothing red to chase.
 
+- [x] **2026-09-22 — `test/bible_timeline_integrity_test.dart` added;
+      NEXT_TASK.md's own plan named this as the fallback (10 of 20 open
+      queue items blocked on two publisher letters the user hasn't yet
+      confirmed sent; nothing else actionable).** `assets/bible_timeline.json`
+      was replaced wholesale one commit earlier (`a7c35696`, +1000 lines,
+      the Yahweh's Sword chronology switch) and had no test covering its
+      cross-references into `family_tree.json` or its `era` vocabulary
+      against `lib/pages/bible_timeline_page.dart`'s `_eraLabel`/`_eraColor`
+      — both fail silently at runtime (uppercase-fallback label, grey
+      `0xFF555555`, a personIds chip that jumps nowhere), not loudly.
+      New test asserts, from the raw assets only: all 105 event ids
+      unique/non-empty; all `personIds` resolve into `family_tree.json`
+      (0 dangling, measured); the era set used by the 105 events is
+      exactly the 8 keys `_eraLabel`/`_eraColor` recognise (no extra, no
+      missing); and all six localized fields are non-empty on every
+      event. `_meta.count` was left uncovered on purpose — already
+      pinned in `test/onboarding_counts_test.dart:59`. An independent
+      refuter agent re-derived all four claims plus the "already
+      covered elsewhere" claim directly from the assets and from
+      `bible_timeline_page.dart`'s literal label/color maps; all
+      confirmed, no discrepancy found. Each check proven able to fail:
+      four small "mutate an in-memory copy, confirm red" subtests in
+      the same file (duplicate id, dangling personIds, unknown era,
+      emptied field), verified never to touch the shared fixture the
+      other tests read.
+
+      `flutter analyze`: clean. Full suite run as 6 foreground chunks
+      via `tools/run_test_chunks.py`, exit code checked per chunk — all
+      6 green. Test-only change; no `assets/` edit, no deploy (v1.6.30
+      went to prod 13 minutes before this plan was written; nothing
+      user-visible changed here).
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
