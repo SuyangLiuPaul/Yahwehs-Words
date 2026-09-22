@@ -9689,9 +9689,60 @@ has never seen this repo.
       after a second watch pass). Two docs-only follow-ups on top — restoring
       a P1 section header this item's own first edit had accidentally
       deleted (`cfc69359`, run `35672531469`), then this note itself
-      (`14a70e7d`, run `35672665205`) — were both still `in_progress` past
-      the watch budget; next iteration's step 0 should confirm both if
-      this note is still here.
+      (`14a70e7d`, run `35672665205`) — **both confirmed `success`** by
+      `68148ecd`'s iteration (`35672941196`'s own step-0 check), settling
+      the "still in_progress" note above.
+
+- [x] **2026-09-22 — `test/book_groups_partition_test.dart` added; all
+      6 tiers were empty-or-blocked this hour, so this is the "widen test
+      coverage of existing behaviour" fallback.** `lib/constants/book_groups.dart`
+      (243 lines, pure `const` data + `divisionIdForEnglishBook`) was
+      imported by no test file at all — confirmed by an independent
+      refuter agent searching `test/` for the file and every exported
+      symbol, zero hits. New test asserts: the 39/27 canonical OT/NT
+      lists are disjoint with no duplicates; the five OT analytical lists
+      (Pentateuch/History/Wisdom/Major/Minor) and four NT ones
+      (Gospels&Acts/Pauline/Johannine/OtherApostolic) each partition
+      their testament (sizes, pairwise-disjoint, union); `ntJohannine`
+      excludes the Gospel of John by design; `kBibleDivisions`'s 10
+      entries partition all 66, each division's `oldTestament` flag and
+      book order match the canonical lists; every division id is a real
+      `uiStrings` key; `divisionIdForEnglishBook` resolves all 66 titles
+      to a real division; and `englishToChinese`/`englishToChineseTraditional`
+      (`book_name_mapping.dart`) values are cross-checked against the
+      testament sets.
+
+      **One real, pre-existing gap surfaced**, measured not guessed: of
+      the 132 display names across both maps, exactly one was absent
+      from its testament set — `englishToChinese['Genesis'] == '创世纪'`,
+      while `oldTestamentBooks` held `'创世记'`/`'創世紀'` but not the
+      simplified `纪` spelling. **Confirmed latent, not a live bug**: both
+      call sites (`book_chapter_picker.dart:195-200/267-271/1522-1523`)
+      resolve the title through `toEnglish()` first, and `zhToEn('创世纪')`
+      already answers `'Genesis'` — via the very `englishToChinese` map
+      entry being discussed, matched before even reaching the
+      `_zhAliasToEn` alias table — so the raw-title fallback never fires
+      here today. Fixed by the one additive line the task's own rule
+      allowed: `'创世纪'` added to `oldTestamentBooks`. An independent
+      refuter agent re-derived all three claims (no prior test coverage,
+      exactly-one gap, latent-not-live) from the files directly and
+      confirmed each.
+
+      Each of the 7 invariant groups was proven able to fail by hand:
+      reverted the additive fix (invariant 7 → red, "Genesis -> 创世纪"),
+      duplicated a book across two OT groups (size/disjoint/kBibleDivisions-
+      partition invariants → red), renamed a division id (uiStrings-key
+      invariant → red), and swapped two books' order inside a division
+      (order invariant → red) — each restored after confirming red, back
+      to a 1-line diff in `book_groups.dart`.
+
+      `flutter analyze`: clean. Full suite run as 6 foreground chunks via
+      `tools/run_test_chunks.py`, exit code checked per chunk — all 6
+      green (one pre-existing, unrelated skip in
+      `release_scripts_test.dart`, same in every chunk run this week).
+      Docs + one `lib/` line + one new test file — deploy skipped (no
+      user-visible behaviour changed; the fix only widens a set that no
+      reachable code path queries with the affected spelling yet).
 
 ## P1 — Bible study correctness
 

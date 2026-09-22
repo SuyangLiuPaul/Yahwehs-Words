@@ -10,7 +10,7 @@ const oldTestamentBooks = <String>{
   'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk',
   'Zephaniah', 'Haggai', 'Zechariah', 'Malachi',
   // Chinese Simplified + Traditional
-  '创世记', '創世紀',
+  '创世记', '創世紀', '创世纪',
   '出埃及记', '出埃及記',
   '利未记', '利未記',
   '民数记', '民數記',
