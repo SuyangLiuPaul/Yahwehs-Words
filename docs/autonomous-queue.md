@@ -9744,6 +9744,10 @@ has never seen this repo.
       user-visible behaviour changed; the fix only widens a set that no
       reachable code path queries with the affected spelling yet).
 
+      Pushed as `19fdbced`. CI run `35678261116` was still `in_progress`
+      past the ~6-minute watch budget; next iteration's step 0 should
+      confirm it before picking a new item.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-17: Abraham and Shem now get honest `DERIVED_PEOPLE`
