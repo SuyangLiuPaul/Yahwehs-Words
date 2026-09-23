@@ -59,6 +59,30 @@ Refuses if the verse text is not what it expects, if the split would
 produce an empty half, if 23:34 is missing, or if the affix appears more
 than once — each of those means the asset moved and a human should look
 before a script rewrites scripture.
+
+2026-09-24: THE v3 CASE
+------------------------
+The September re-fetch (`biblexg-v3` / `biblexg-v3-tr`, which superseded
+and hid `biblexg-v2*`) dropped the affix entirely rather than carrying
+the bug forward: 23:33 is clean prose and 23:34 is the full, unsplit
+concatenation of the old 34a + 34, tagged with a `blockNotes` footnote
+about the doubtful passage instead. There is no `34a` substring left to
+split on, so the v2 code path above does not apply.
+
+`repair_v3` below splits v3's 23:34 instead of v3's 23:33. It does not
+hardcode the split point as a literal string — that would be inventing
+where the boundary falls. Instead it takes the ALREADY-VERIFIED v2/v2-tr
+edition (of the matching orthography) as the witness and requires
+
+    v3_34.text == v2_34a.text + v2_34.text
+
+to hold byte-for-byte before it will touch anything. If the publisher
+ever rewords 23:34, that identity breaks and the script refuses instead
+of splitting at a now-wrong offset.
+
+The existing `blockNotes` footnote stays where it already is (the second
+half, matching v2's `34` entry) — it is not duplicated onto the new 34a,
+which would print the same note twice.
 """
 import json
 import os
@@ -67,13 +91,15 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 EDITIONS = [
-    ('assets/biblexg-v2.json', '路加福音'),
-    ('assets/biblexg-v2-tr.json', '路加福音'),
+    ('assets/biblexg-v2.json', '路加福音', 'affix33', None),
+    ('assets/biblexg-v2-tr.json', '路加福音', 'affix33', None),
     # 2026-09-14: the September re-fetch of the same translation. The
-    # rebuild this file's docstring anticipated actually happened, and
-    # this is the line that made it a re-run instead of a hand edit.
-    ('assets/biblexg-v3.json', '路加福音'),
-    ('assets/biblexg-v3-tr.json', '路加福音'),
+    # rebuild this file's docstring anticipated actually happened, but it
+    # dropped the affix rather than carrying it forward — see "THE v3
+    # CASE" above. Split mode differs, so each v3 file names its v2
+    # witness.
+    ('assets/biblexg-v3.json', '路加福音', 'split34', 'assets/biblexg-v2.json'),
+    ('assets/biblexg-v3-tr.json', '路加福音', 'split34', 'assets/biblexg-v2-tr.json'),
 ]
 CHAPTER = '23'
 AFFIX = '34a'
@@ -88,6 +114,74 @@ def is_minified(path):
     """True when the file is one long line (the Simplified edition)."""
     with open(path, encoding='utf-8') as fh:
         return '\n' not in fh.read(4096)
+
+
+def repair_v3(path, book, check, v2_witness):
+    """Split v3's 23:34 at the boundary the v2 witness already proves."""
+    full = os.path.join(ROOT, path)
+    verses = load(full)
+    minified = is_minified(full)
+    idx33 = idx34 = None
+    for i, v in enumerate(verses):
+        if v.get('book') == book and str(v.get('chapter')) == CHAPTER:
+            if str(v.get('verse')) == '33':
+                idx33 = i
+            elif str(v.get('verse')) == '34':
+                idx34 = i
+
+    if idx33 is None or idx34 is None:
+        return f'REFUSE {path}: 23:33 or 23:34 not found'
+
+    has_34a = any(
+        v.get('book') == book
+        and str(v.get('chapter')) == CHAPTER
+        and str(v.get('verseLabel')) == AFFIX
+        for v in verses
+    )
+    if has_34a:
+        return f'ok   {path}: already applied, nothing to do'
+
+    witness = load(os.path.join(ROOT, v2_witness))
+    w34a = w34 = None
+    for v in witness:
+        if v.get('book') == book and str(v.get('chapter')) == CHAPTER:
+            if str(v.get('verseLabel')) == AFFIX:
+                w34a = v
+            elif str(v.get('verseLabel')) == '34':
+                w34 = v
+    if w34a is None or w34 is None:
+        return f'REFUSE {path}: witness {v2_witness} has no 34a/34 to split by'
+
+    v34 = verses[idx34]
+    text = v34['text']
+    if text != w34a['text'] + w34['text']:
+        return (f'REFUSE {path}: 23:34 does not equal the witness\'s '
+                f'34a+34 concatenation — the split point is not verified')
+
+    new34a = dict(v34)
+    new34a['verseLabel'] = AFFIX
+    new34a['text'] = w34a['text']
+    new34a['subVerseOrder'] = 0
+    new34a['isParagraphStart'] = False
+    new34a.pop('blockNotes', None)
+    if 'id' in new34a:
+        new34a['id'] = f"{v34['id']}a"
+
+    if check:
+        return (f'WOULD SPLIT {path}\n'
+                f'    34a → {w34a["text"][:24]!r}\n'
+                f'    34  → subVerseOrder 1 ({w34["text"][:16]!r})')
+
+    verses[idx34] = {**v34, 'text': w34['text'], 'subVerseOrder': 1}
+    verses.insert(idx34, new34a)
+
+    with open(full, 'w', encoding='utf-8') as fh:
+        if minified:
+            json.dump(verses, fh, ensure_ascii=False, separators=(',', ':'))
+        else:
+            json.dump(verses, fh, ensure_ascii=False, indent=1)
+            fh.write('\n')
+    return f'✓    {path}: split; {len(verses)} verses'
 
 
 def repair(path, book, check):
@@ -173,8 +267,11 @@ def repair(path, book, check):
 if __name__ == '__main__':
     check = '--check' in sys.argv[1:]
     rc = 0
-    for path, book in EDITIONS:
-        out = repair(path, book, check)
+    for path, book, mode, witness in EDITIONS:
+        if mode == 'split34':
+            out = repair_v3(path, book, check, witness)
+        else:
+            out = repair(path, book, check)
         print(out)
         if out.startswith('REFUSE'):
             rc = 1

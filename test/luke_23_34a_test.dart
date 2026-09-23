@@ -14,6 +14,13 @@ import 'package:yahwehs_words/models/verse.dart';
 /// re-applies the split (it is idempotent) after the Traditional rebuild
 /// that is still waiting on the publisher.
 ///
+/// 2026-09-24: the September re-fetch (`biblexg-v3` / `biblexg-v3-tr`,
+/// which superseded and hid `biblexg-v2*`) regressed this — it dropped the
+/// affix from 23:33 but never split 23:34 back out, so 34a became
+/// unreachable on the editions readers actually get. `editions` below
+/// covers all four files so a future re-fetch trips this test again
+/// instead of silently regressing a second time.
+///
 /// The thing most likely to break this silently is the SORT. 34a and the
 /// existing 34 both hold `verse: 34`, `compareTo` on the number returns 0
 /// for that pair, and **Dart's sort is not stable** — so the two halves
@@ -29,6 +36,8 @@ void main() {
   const editions = {
     'assets/biblexg-v2.json': '路加福音',
     'assets/biblexg-v2-tr.json': '路加福音',
+    'assets/biblexg-v3.json': '路加福音',
+    'assets/biblexg-v3-tr.json': '路加福音',
   };
 
   editions.forEach((path, book) {
@@ -41,10 +50,17 @@ void main() {
       test('no literal sub-verse affix survives anywhere in the edition', () {
         // The whole class, not just the one verse: if a future import
         // reintroduces `12b` somewhere else, this is where it shows up.
+        //
+        // `<note:…>` is stripped first, same as
+        // biblexg_verse_integrity_test.dart: v3's inline footnotes cite
+        // other verses and BDAG entries like `释义2a`, which match this
+        // shape without being a sub-verse affix at all.
+        final noteTag = RegExp(r'<note:[^>]*>');
         final affix = RegExp(r'\d{1,3}[a-dA-D](?![0-9a-zA-Z])');
         final hits = <String>[];
         for (final m in load(path)) {
-          if (affix.hasMatch(m['text'] as String)) {
+          final stripped = (m['text'] as String).replaceAll(noteTag, '');
+          if (affix.hasMatch(stripped)) {
             hits.add('${m['book']} ${m['chapter']}:${m['verse']}');
           }
         }

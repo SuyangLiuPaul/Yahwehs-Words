@@ -216,6 +216,20 @@ jobs:
       - name: Strong's-tagging / divine-name gate unit tests
         run: python3 test/test_audit_census_checks.py
 
+      # 路加福音 23:34a invariant (tools/repair_biblexg_luke_23_34a.py),
+      # added 2026-09-24. The September re-fetch (biblexg-v3 / -v3-tr,
+      # which superseded and hid biblexg-v2*) dropped the affix from 23:33
+      # but never split 34a back out of 23:34, silently regressing the
+      # 2026-09-02 feature (「34a这些能够也做成像经文可以选择的节吗」) on the
+      # editions readers actually get — nothing caught it because this
+      # gate didn't exist and test/luke_23_34a_test.dart's `editions` map
+      # only ever listed the two hidden v2 paths. `--check` never writes;
+      # it refuses (exit 1) if any of the four editions is neither
+      # correctly split nor provably unsplit-and-splittable, which is
+      # exactly the half-applied shape that regression left behind.
+      - name: 路加福音 23:34a sub-verse invariant
+        run: python3 tools/repair_biblexg_luke_23_34a.py --check
+
       # Unit tests for the fourth and last `--check` gate without one
       # (added 2026-09-16): tools/audit_originals_compounds.py's --check
       # exits 0 on both "no drift" and "cache is cold, nothing measured"

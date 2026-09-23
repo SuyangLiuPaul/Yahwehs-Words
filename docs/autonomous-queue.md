@@ -8614,6 +8614,47 @@ has never seen this repo.
       print for the half that has no number today and follows the
       publisher for the half that has one.
 
+- [x] **路加福音 23:34a regressed by the September v3 re-fetch — FIXED
+      2026-09-24.** The 2026-09-14 re-fetch (`biblexg-v3` / `-v3-tr`,
+      which superseded and hid `biblexg-v2*` per `_kSupersededBy`) never
+      carried the split above forward: 23:33 came back clean (no literal
+      `34a` affix — the old defect did not return), but 23:34 was the
+      full unsplit concatenation of 34a+34, with an orphaned
+      `subVerseOrder: 1` and no `subVerseOrder: 0` sibling anywhere in
+      the file — consistent with a splitting step having run and been
+      refused by the old (affix-only) check, though the exact import
+      mechanism isn't logged anywhere to confirm. Because v2 is hidden,
+      no reader could reach 34a at all; a refuter agent independently
+      re-derived this from `disabledVersions`/`_kSupersededBy` and every
+      version-resolution call site and found no bypass.
+
+      Fixed by adding a second code path (`repair_v3` in
+      `tools/repair_biblexg_luke_23_34a.py`) that splits v3's 23:34
+      instead of v3's 23:33, deriving the boundary from the
+      already-fixed v2 edition as a witness — it requires
+      `v3_34.text == v2_34a.text + v2_34.text` to hold exactly (verified
+      byte-for-byte, independently re-derived by the refuter) before
+      touching anything, never a hardcoded split string. Applied to both
+      `assets/biblexg-v3.json` and `-v3-tr.json`: 7926 → 7927 entries
+      each. Zero scripture characters changed — proved by stripping
+      `<note:…>` and diffing the full concatenated chapter text
+      before/after (also independently re-derived by the refuter). The
+      existing `blockNotes` footnote on 34 (`"34节注：许多古抄本不含…"`,
+      added by the same re-fetch) stays on the second half only, not
+      duplicated onto 34a. `test/luke_23_34a_test.dart`'s `editions` map
+      now covers all four files (previously only the two hidden v2
+      paths, which is why this regression shipped silently); proved red
+      against the pre-fix v3 assets via `git stash` before landing.
+      Fixed a latent false-positive in that same test's "no literal
+      affix" check while extending it — it didn't strip `<note:…>`
+      before matching, so v3's denser inline footnotes (BDAG citations
+      like `释义2a`) tripped the `\d{1,3}[a-dA-D]` regex; same class of
+      bug `biblexg_verse_integrity_test.dart` already guards against.
+      Wired `tools/repair_biblexg_luke_23_34a.py --check` into CI
+      (`.github/workflows/flutter-ci.yml`) as a gate, alongside
+      `audit_p0.py --check` / `audit_divine_name.py --check`, so a future
+      re-fetch trips CI instead of silently regressing a third time.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
