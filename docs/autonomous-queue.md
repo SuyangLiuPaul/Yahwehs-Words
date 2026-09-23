@@ -10903,6 +10903,38 @@ has never seen this repo.
       order against the reading text for every verse the two share)
       rather than catching each instance by hand.
 
+- [ ] **`BreadcrumbObserver` has no `didRemove` override — a stale
+      `currentRoute` pointer possible if a route is ever removed
+      without a push/pop/replace.** Filed 2026-09-23 while writing
+      `test/breadcrumb_observer_test.dart` (that file's first dedicated
+      coverage for `lib/utils/breadcrumb_observer.dart`), not a
+      user-reported bug. `grep -n didRemove lib/utils/breadcrumb_observer.dart`
+      finds nothing — only `didPush`/`didPop`/`didReplace` are
+      overridden. Verified against Flutter's own navigator.dart
+      (`~/flutter/packages/flutter/lib/src/widgets/navigator.dart`):
+      `Navigator.removeRoute`/`removeRouteBelow` fire `didRemove`
+      (`:3627`) with no accompanying `didPush`/`didPop`/`didReplace`, so
+      removing the *current top* route this way would leave
+      `ErrorReporter`'s `currentRoute` pointing at the just-removed
+      screen's name instead of whatever became visible underneath it —
+      a mailed-in crash report would then name the wrong screen, which
+      feeds this queue's own BUGS tier. **Bounded, not broad**: also
+      checked `pushAndRemoveUntil` (`:2463`, fires `didPush` for the new
+      top route *and* `didRemove` for the ones removed below it) — its
+      `didPush` already refreshes `currentRoute` to the right value, so
+      that path is NOT stale, only missing a `nav:remove` breadcrumb
+      entry for the removed routes. And checked GetX 4.7.2's own
+      navigation layer (`~/.pub-cache/hosted/pub.dev/get-4.7.2/lib/
+      get_navigation/src/extension_navigation.dart:886-906`): `Get.off`
+      calls `pushReplacement` → `didReplace`, not `didRemove`, so it is
+      unaffected. `grep -rn "removeRoute\|pushAndRemoveUntil\|Get\.offUntil"
+      lib/` finds **zero call sites in this app today** — nothing
+      currently exercises the stale-pointer path. Worth fixing (add a
+      `didRemove` override that calls `ErrorReporter.setCurrentRoute`
+      only when the removed route was the current top one, plus a
+      `nav:remove` breadcrumb) before any future code adds a
+      `removeRoute`/`Get.removeRoute` call, not urgent today.
+
 ## P2 — features the user asked for
 
 - [x] **The 福音电台 sermon library UI is dead code, still bundled.**
@@ -20614,6 +20646,33 @@ so the bundle-size answer stays on the record.
       conclusion as every prior recurrence: the fix is in
       `run.sh`/`prompt.md` under `~/Library/Application Support/
       yswords-loop/`, outside this repo, not touched here.
+
+      **Another recurrence, a different cause, 2026-09-23
+      14:21:43-14:48:58.** Not the "chose to background the suite and
+      ended rc=0" pattern every recurrence above shares —
+      `run.log` reads `stage 2 end rc=1 killed=0` and the stage's
+      entire recorded output is one line, `Request timed out`; nothing
+      in it mentions a background job at all. The harness/transport
+      dropped the stage mid-turn while it had already written
+      `test/breadcrumb_observer_test.dart` (mtime 14:23:31, inside the
+      window) and left it untracked. Exact count of prior recurrences
+      not restated here — this file already has them individually
+      numbered up to "twenty-first" above and re-deriving a running
+      total wasn't worth it; what matters is this one's mechanism
+      differs. The existing proposed fix for the rc=0 pattern ("don't
+      end a stage while a background job you started is unresolved")
+      would **not** have prevented this one — nothing was backgrounded
+      to wait for. What limited the damage was this loop's existing
+      habit of committing incrementally rather than saving everything
+      for the end of the turn, which meant only one file was orphaned,
+      not the whole hour's work. Landed the same hour: verified the
+      file against `lib/utils/breadcrumb_observer.dart` and
+      `lib/services/error_reporter.dart` line-by-line, `flutter analyze`
+      clean, full suite green across 4 foreground chunks
+      (`tools/run_test_chunks.py`), committed and pushed. Still true
+      that the durable fix is outside this repo's reach, in
+      `run.sh`/`prompt.md` under `~/Library/Application Support/
+      yswords-loop/`, not touched here.
 
 - [x] **The `git secrets` hooks are LIVE as of 2026-08-23.**
       `git-secrets` 1.3.0 installed via brew; hooks chmod +x; an
