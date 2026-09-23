@@ -10277,15 +10277,29 @@ has never seen this repo.
 
 ## P1 — Bible study correctness
 
-- [ ] **`buildVerseContentSpans()` doesn't collapse directly-adjacent
-      `<note:...>` markers into a range, contradicting its own code
-      comment — found while writing
+- [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
+      directly-adjacent `<note:...>` markers into a range and suppresses
+      a note immediately after a `{clarification}` brace, as its own
+      code comments always said it should.** One-line fix — `if
+      (part.isEmpty) continue;` at the top of the per-part loop
+      (`lib/utils/build_verse_content_spans.dart:158`) — skips the
+      empty string `splitMapJoin` inserts between two zero-gap matches,
+      which is what was defeating both features (see original writeup
+      below; root cause re-confirmed by an adversarial refuter before
+      landing, including tracing `splitMapJoin`'s actual output rather
+      than trusting the prose). New tests in
+      `test/build_verse_content_spans_test.dart` (adjacent-pair,
+      three-in-a-row, brace+note suppression) fail against the unfixed
+      code and pass with the fix; the `45aca60b` text-preservation
+      invariant still passes. No asset touched.
+
+      Original writeup, found while writing
       `test/build_verse_content_spans_test.dart`'s text-preservation
-      coverage, confirmed by an adversarial refuter, NOT fixed here
-      (out of scope for a test-coverage iteration; flagging per the
-      "add it to the queue, don't fix inline" rule).** No verse text is
-      lost either way — this is a display-fidelity bug, not the P0
-      omitted/blank-verse carve-out, so it does not jump the queue.
+      coverage, confirmed by an adversarial refuter, NOT fixed at the
+      time (out of scope for that test-coverage iteration; flagged per
+      the "add it to the queue, don't fix inline" rule). No verse text
+      was lost either way — this was a display-fidelity bug, not the P0
+      omitted/blank-verse carve-out, so it did not jump the queue.
 
       `lib/utils/build_verse_content_spans.dart` (~:412) collapses a
       *run* of note markers into one `¹⁻⁵`-style range when "the notes

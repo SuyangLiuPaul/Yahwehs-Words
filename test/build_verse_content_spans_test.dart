@@ -147,6 +147,32 @@ void main() {
               'outer TextSpan tree, so a WidgetSpan child\'s own Text is '
               'structurally invisible to it');
     });
+
+    testWidgets(
+        'a note directly after a brace is suppressed, not given its own marker',
+        (tester) async {
+      // Same `splitMapJoin` empty-part artifact as the adjacent-notes
+      // case above, but between a `{...}` and a `<note:...>` instead of
+      // two notes: the brace chip is already the tap target for this
+      // note (its own onTap extracts the note text straight out of
+      // `verse.text`), so the note must not ALSO render a superscript.
+      final noteSink = <String>[];
+      final out = await renderPlainText(
+        tester,
+        '看哪{注解}<note:額外附註>，日子將到',
+        noteSink: noteSink,
+      );
+      expect(out, '看哪，日子將到',
+          reason: 'no superscript marker for the suppressed note — only '
+              'the brace chip (a WidgetSpan, invisible to toPlainText) '
+              'sits between the two halves of the sentence');
+      expect(noteSink, isEmpty,
+          reason: 'the note is reachable through the brace chip\'s own '
+              'dialog, not the notes block, so it must not also land in '
+              'noteSink');
+      expect(textAnywhereInTree(tester, '注解'), isTrue,
+          reason: 'the brace badge itself still renders normally');
+    });
   });
 
   group('<note: ...> markers', () {
@@ -195,6 +221,42 @@ void main() {
       // not simply gone.
       await renderPlainText(tester, '看哪<note:編者按>，日子將到');
       expect(find.byIcon(Icons.notes_rounded), findsOneWidget);
+    });
+
+    testWidgets('two directly-adjacent markers collapse into one range',
+        (tester) async {
+      // `splitMapJoin` inserts an `onNonMatch('')` between two
+      // zero-gap matches. `<note:注一><note:注二>` (no separating text)
+      // is exactly that shape — the previous test above covers markers
+      // separated by text, which never hits the empty-part case at all.
+      final noteSink = <String>[];
+      final out = await renderPlainText(
+        tester,
+        '看哪<note:注一><note:注二>，日子將到，',
+        noteSink: noteSink,
+      );
+      expect(noteSink, ['注一', '注二'],
+          reason: 'both notes must still reach the sink, in order, even '
+              'though their markers merge on screen');
+      expect(out, '看哪①⁠⁻⁠②，日子將到，',
+          reason: 'documented behaviour is a collapsed range (①⁻②), not '
+              'two separate markers (①②) — the bug this guards against '
+              'printed the latter');
+    });
+
+    testWidgets('three in a row collapse to a single range, not a chain',
+        (tester) async {
+      final noteSink = <String>[];
+      final out = await renderPlainText(
+        tester,
+        '看哪<note:一><note:二><note:三>，',
+        noteSink: noteSink,
+      );
+      expect(noteSink, ['一', '二', '三']);
+      expect(out, '看哪①⁠⁻⁠③，',
+          reason: '_markerStart always reads the FIRST number of an '
+              'existing marker, so a third adjacent note extends the '
+              'range (①⁻③) instead of chaining another (①⁻②⁻③)');
     });
   });
 

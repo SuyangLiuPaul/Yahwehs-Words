@@ -156,6 +156,16 @@ List<InlineSpan> buildVerseContentSpans({
   // Build text and badge spans
   String? lastPart;
   for (var part in parts) {
+    // `splitMapJoin` calls `onNonMatch('')` for the zero-width gap
+    // between two directly-adjacent matches (e.g. `<note:one><note:two>`,
+    // or `{clar}<note:extra>`) — that empty string is an artifact of the
+    // split, not verse content. Skipping it here (before it can become
+    // an empty `TextSpan` or overwrite `lastPart` with `''`) is what lets
+    // the note-range collapse below and the brace-suppression check see
+    // the REAL previous part instead of the empty one sitting between
+    // them. Guard on `isEmpty`, not `trim().isEmpty`: a whitespace-only
+    // part is real verse text (the space between two words).
+    if (part.isEmpty) continue;
     final isNoteOnly =
         part.trim().startsWith('<note:') && part.trim().endsWith('>');
     final wasBraceOnly = lastPart != null &&
