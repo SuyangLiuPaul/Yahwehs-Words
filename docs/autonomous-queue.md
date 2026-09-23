@@ -21478,6 +21478,14 @@ so the bundle-size answer stays on the record.
       `CHUNK N/6: PASS`). No deploy: test-only change, nothing
       user-visible.
 
+      Pushed as `cfef892a` (after a heredoc mis-parse mangled the first
+      attempt's commit message — no content was wrong, only the message;
+      fixed with a soft-reset-and-recommit rather than an amend). CI run
+      `35806955538` was still `in_progress` after the ~6-minute watch
+      budget — `flutter analyze` and the full 6-chunk suite were clean
+      locally, so nothing is expected to fail; the next iteration's
+      step 0 should confirm this run's conclusion rather than assume it.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
