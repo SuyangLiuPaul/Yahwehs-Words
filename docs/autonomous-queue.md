@@ -21307,7 +21307,7 @@ so the bundle-size answer stays on the record.
       Pushed as `1feb8b5d`, watched to completion: **run `34192392272`
       concluded `success`.**
 
-- [ ] **Three more live instances of the same locale-fallback bug class
+- [x] **Three more live instances of the same locale-fallback bug class
       just fixed in `biblical_role.dart` (queue:183, 2026-09-23), found
       by that item's own refuter, not yet fixed:**
       `lib/utils/font_catalog.dart:61` (`label[locale] ?? label['en'] ??
@@ -21364,6 +21364,47 @@ so the bundle-size answer stays on the record.
       analyze` clean, full suite green (3641 passed, 1 skipped) again,
       pushed as a second commit (`d2a47464`), watched to conclusion: **run
       `35792289307` concluded `success`.**
+
+      **2026-09-23: the last site, `bible_reading_pane.dart:9118`,
+      fixed too — at the source, not inline.** Planning traced
+      `_BookIntroCard` (the widget that owns `:9118`) to its one
+      construction site, `:6876-6878`, which feeds it
+      `locale: settings.locale`. Rather than patch that one inline
+      expression and leave ~1,200 other `uiStrings[…]?[locale]` lookups
+      app-wide exposed to the same bug, added
+      `AppSettings.normalizeLocale()` (`lib/models/app_settings.dart`,
+      `@visibleForTesting`) and applied it at the three places that
+      write `_locale` with no validation: `setLocale()` (normalizing
+      *before* the same-value early return, so calling it twice with a
+      raw tag doesn't wedge), the SharedPreferences load (re-persisting
+      when the stored tag differs, since `MainProvider.restoreState`
+      reads the raw `'locale'` key directly rather than through
+      `AppSettings` — `lib/providers/main_provider.dart:1626,1663`), and
+      `_applyUserPrefsBlob` (cross-device sync). New
+      `test/app_settings_locale_normalization_test.dart` (12 cases,
+      including the `_applyUserPrefsBlob` blob path with a `'zh'`
+      value). Run against the unfixed code first: 4 cases went red
+      (`setLocale('zh')`, the load-path `'zh'` case, the blob-path
+      `'zh'` case, plus the direct `normalizeLocale` unit tests which
+      don't compile pre-fix since the method is new — verified
+      separately by temporarily trimming those out of the file and
+      confirming the other 4 cases fail against the unfixed ingress
+      points), all 4 green after. A refuter independently re-grepped
+      the whole `lib/` tree and confirmed: `_BookIntroCard` really has
+      exactly one construction site; no other file assigns `_locale` or
+      writes the `'locale'` prefs key; `main_provider.dart`'s raw reads
+      of that key are read-only, no feedback into `AppSettings`; all
+      three UI locale pickers only ever offer `zh-Hant`/`zh-Hans`/`en`,
+      each of which round-trips unchanged through the normaliser; and
+      the normalize-before-compare ordering in `setLocale` is correct.
+      `flutter analyze` clean; full suite green, run as 6 foreground
+      chunks via `tools/run_test_chunks.py`, each chunk's exit code
+      checked (all `CHUNK N/6: PASS`). No deploy — pure `lib/` + test
+      change, not user-visible until a `zh-XX` tag actually reaches a
+      device, which none of the three UI pickers can produce; cross-
+      device sync is the only realistic path. Open question repeated
+      from prior passes, still unresolved: NASB divine-pronoun
+      capitalisation (queue:21086) needs the user's licensing answer.
 
 - [ ] **17 other test files call `Directory(...).listSync(recursive:
       true)` with no `.sort()`** (`grep -rln "listSync(recursive: true)"

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -1031,11 +1031,12 @@ class AppSettings extends ChangeNotifier {
   }
 
   Future<void> setLocale(String langCode) async {
-    if (_locale == langCode) return;
-    _locale = langCode;
+    final normalized = normalizeLocale(langCode);
+    if (_locale == normalized) return;
+    _locale = normalized;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kLocale, langCode);
+    await prefs.setString(_kLocale, normalized);
     // 2026-06-16 (v1.3.89): scheduled-notification titles/bodies are
     // localized at schedule time, so a language change must re-create them
     // — otherwise pending reminders keep firing in the OLD language until
@@ -1533,9 +1534,17 @@ class AppSettings extends ChangeNotifier {
     // intended NASB. Writing the detected value back the first
     // time we see an unset prefs key fixes that without touching
     // the read path.
-    final persistedLocale = prefs.getString(_kLocale);
+    final persistedLocaleRaw = prefs.getString(_kLocale);
+    final persistedLocale = persistedLocaleRaw == null
+        ? null
+        : normalizeLocale(persistedLocaleRaw);
     _locale = persistedLocale ?? _detectSystemLocale();
-    if (persistedLocale == null) {
+    if (persistedLocale == null || persistedLocale != persistedLocaleRaw) {
+      // Re-persist so `MainProvider.restoreState`, which reads the raw
+      // 'locale' prefs key directly rather than through AppSettings
+      // (lib/providers/main_provider.dart:1626,1663), doesn't keep a
+      // legacy unnormalised tag on disk and land on its default-version
+      // `default:` branch forever.
       await prefs.setString(_kLocale, _locale);
     }
     _themeMode = _parseThemeMode(prefs.getString(_kThemeMode));
@@ -1874,7 +1883,9 @@ class AppSettings extends ChangeNotifier {
       if (m['copyStripParentheticals'] is bool) {
         _copyStripNotes = m['copyStripParentheticals'] as bool;
       }
-      if (m['locale'] is String) _locale = m['locale'] as String;
+      if (m['locale'] is String) {
+        _locale = normalizeLocale(m['locale'] as String);
+      }
       if (m['themeMode'] is String) {
         _themeMode = _parseThemeMode(m['themeMode'] as String);
       }
@@ -1977,6 +1988,23 @@ class AppSettings extends ChangeNotifier {
       (m) => m.name == normalized,
       orElse: () => ThemeMode.system,
     );
+  }
+
+  // 2026-09-23: the three ingress points that write `_locale` (setLocale,
+  // the SharedPreferences load, and _applyUserPrefsBlob's cross-device
+  // sync) previously stored whatever tag arrived unvalidated, so a bare
+  // 'zh' or an unrecognised 'zh-XX' tag reached every
+  // `uiStrings[k]?[locale]` lookup app-wide and fell through to English
+  // instead of Simplified. Same convention as localizedRole() /
+  // FontOption.labelFor / HelpKeyRow.label. Non-'zh' tags (including
+  // unrecognised ones) are returned unchanged — this is a normaliser,
+  // not a validator, and must not invent a locale the caller didn't ask
+  // for.
+  @visibleForTesting
+  static String normalizeLocale(String raw) {
+    if (raw == 'zh-Hant') return 'zh-Hant';
+    if (raw.startsWith('zh')) return 'zh-Hans';
+    return raw;
   }
 
   static String _detectSystemLocale() {
