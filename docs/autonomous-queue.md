@@ -10277,6 +10277,56 @@ has never seen this repo.
 
 ## P1 — Bible study correctness
 
+- [ ] **`buildVerseContentSpans()` doesn't collapse directly-adjacent
+      `<note:...>` markers into a range, contradicting its own code
+      comment — found while writing
+      `test/build_verse_content_spans_test.dart`'s text-preservation
+      coverage, confirmed by an adversarial refuter, NOT fixed here
+      (out of scope for a test-coverage iteration; flagging per the
+      "add it to the queue, don't fix inline" rule).** No verse text is
+      lost either way — this is a display-fidelity bug, not the P0
+      omitted/blank-verse carve-out, so it does not jump the queue.
+
+      `lib/utils/build_verse_content_spans.dart` (~:412) collapses a
+      *run* of note markers into one `¹⁻⁵`-style range when "the notes
+      share a position" — i.e. two `<note:...>` tags with literally
+      nothing between them in `verse.text`. They don't: for
+      `'A<note:one><note:two>B'`, `raw.splitMapJoin(combinedPattern,
+      ...).split('||')` yields `['A', '<note:one>', '', '<note:two>',
+      'B']` — the empty string between two zero-gap matches is an
+      artifact of `splitMapJoin` calling `onNonMatch('')` there. That
+      empty part still goes through the per-part loop and gets its own
+      (empty) `TextSpan` appended to `spans`, so by the time the second
+      note is processed `spans.last` is that empty span, not the first
+      marker — `isNoteMarkerText(previous.text!)` is false on `''`, the
+      collapse branch never fires, and the two markers render
+      separately (`①②`, confirmed by running the real function) instead
+      of the documented `①⁻②`.
+
+      **Same root cause breaks a second, related feature**: the
+      note-immediately-after-a-brace suppression (`if (isNoteOnly &&
+      wasBraceOnly) { lastPart = part; continue; }`, a few lines above)
+      is meant to skip rendering a `<note:...>` that directly follows a
+      `{...}` badge, because that note's text is already reachable by
+      tapping the badge. For `'A{clar}<note:extra>B'` the same
+      empty-string part lands between `{clar}` and `<note:extra>` and
+      resets `lastPart` to `''` before the note is examined, so
+      `wasBraceOnly` (which reads `lastPart`) is always false at that
+      point — confirmed the note renders its own marker/icon instead of
+      being suppressed, for input the suppression was written to catch.
+
+      Neither loses the note's TEXT (it still lands in `noteSink` or a
+      dialog, just not visually collapsed/suppressed the way the code
+      says it should), so this is P1 correctness, not P0 data loss.
+      Likely fix shape: skip appending a `TextSpan` for empty parts in
+      the loop (guard on `part.isEmpty`) — but audit every other branch
+      that reads `lastPart` first, since at least the brace-suppression
+      check above also depends on it and would need re-verifying
+      against real adjacent-annotation cases (`test/
+      build_verse_content_spans_test.dart` doesn't cover this — it uses
+      non-adjacent multi-note text on purpose, to stay in scope for a
+      pure test-coverage iteration).
+
 - [x] **Fixed 2026-09-22: `relativeTime()` (`lib/utils/relative_time.dart`)
       now renders Traditional glyphs for `zh-Hant` instead of Simplified.**
       Same class of bug as the `shortBookName()` fix directly below it (UI
