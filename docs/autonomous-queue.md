@@ -8793,6 +8793,12 @@ has never seen this repo.
 
       Asset-only, no reader-visible change (see above) — no deploy.
 
+      Pushed as `61051710`. CI run `35922307865` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze`, the full
+      6-chunk suite, and every CI-listed Python check were clean
+      locally, so nothing is expected to fail; the next iteration's
+      step 0 should confirm this run's conclusion rather than assume it.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
