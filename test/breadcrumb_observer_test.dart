@@ -114,6 +114,38 @@ void main() {
               'null route');
       expect(crumbs().single.data, 'MaterialPageRoute<void>');
     });
+
+    test(
+        'didRemove on a detached previousRoute records the crumb but does '
+        'not move currentRoute', () {
+      final observer = BreadcrumbObserver();
+      final removed = namedRoute('/search');
+      final previous = namedRoute('/home'); // never attached to a Navigator
+
+      ErrorReporter.setCurrentRoute('/existing');
+      observer.didRemove(removed, previous);
+
+      expect(ErrorReporter.currentRouteForTest, '/existing',
+          reason: 'a detached route is never "current" (Route.isCurrent is '
+              'false when !_installed), so a route object built outside a '
+              'live Navigator must never be treated as the new top');
+      final remove = crumbs().where((b) => b.action == 'nav:remove').toList();
+      expect(remove, hasLength(1));
+      expect(remove.single.data, 'removed /search');
+    });
+
+    test('didRemove with a null previousRoute records the crumb and leaves '
+        'currentRoute alone', () {
+      final observer = BreadcrumbObserver();
+      final removed = namedRoute('/search');
+
+      ErrorReporter.setCurrentRoute('/existing');
+      observer.didRemove(removed, null);
+
+      expect(ErrorReporter.currentRouteForTest, '/existing');
+      final remove = crumbs().where((b) => b.action == 'nav:remove').toList();
+      expect(remove.single.data, 'removed /search');
+    });
   });
 
   group('wired into a real Navigator', () {
@@ -158,6 +190,94 @@ void main() {
       final pop = crumbs().where((b) => b.action == 'nav:pop').toList();
       expect(pop, hasLength(1));
       expect(pop.single.data, 'from /next → /');
+    });
+
+    testWidgets(
+        'removeRoute on the TOP route repoints currentRoute to the route '
+        'underneath and records a nav:remove crumb', (tester) async {
+      final removedRoute = MaterialPageRoute<void>(
+        settings: const RouteSettings(name: '/next'),
+        builder: (_) => const Scaffold(body: Text('next page')),
+      );
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: [BreadcrumbObserver()],
+        initialRoute: '/',
+        routes: {
+          '/': (_) => Scaffold(
+                body: Builder(
+                  builder: (ctx) => TextButton(
+                    onPressed: () => Navigator.of(ctx).push(removedRoute),
+                    child: const Text('go'),
+                  ),
+                ),
+              ),
+        },
+      ));
+
+      await tester.tap(find.text('go'));
+      await tester.pumpAndSettle();
+      expect(ErrorReporter.currentRouteForTest, '/next');
+
+      Navigator.of(tester.element(find.text('next page')))
+          .removeRoute(removedRoute);
+      await tester.pumpAndSettle();
+
+      expect(ErrorReporter.currentRouteForTest, '/',
+          reason: 'removing the route that was on top leaves the route '
+              'underneath as current — the same as a pop, just without '
+              'the pop gesture/animation');
+      final remove = crumbs().where((b) => b.action == 'nav:remove').toList();
+      expect(remove, hasLength(1));
+      expect(remove.single.data, 'from /next → /');
+    });
+
+    testWidgets(
+        'removeRouteBelow the top route leaves currentRoute unchanged but '
+        'still records a nav:remove crumb', (tester) async {
+      final middleRoute = MaterialPageRoute<void>(
+        settings: const RouteSettings(name: '/next'),
+        builder: (_) => const Scaffold(body: Text('next page')),
+      );
+      final topRoute = MaterialPageRoute<void>(
+        settings: const RouteSettings(name: '/deeper'),
+        builder: (_) => const Scaffold(body: Text('deeper page')),
+      );
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: [BreadcrumbObserver()],
+        initialRoute: '/',
+        routes: {
+          '/': (_) => Scaffold(
+                body: Builder(
+                  builder: (ctx) => TextButton(
+                    onPressed: () => Navigator.of(ctx).push(middleRoute),
+                    child: const Text('go'),
+                  ),
+                ),
+              ),
+        },
+      ));
+
+      await tester.tap(find.text('go'));
+      await tester.pumpAndSettle();
+
+      Navigator.of(tester.element(find.text('next page'))).push(topRoute);
+      await tester.pumpAndSettle();
+      expect(ErrorReporter.currentRouteForTest, '/deeper');
+
+      Navigator.of(tester.element(find.text('deeper page')))
+          .removeRouteBelow(topRoute);
+      await tester.pumpAndSettle();
+
+      expect(ErrorReporter.currentRouteForTest, '/deeper',
+          reason: 'the removed route (/next) was never on top, so the '
+              'current-route pointer must not move — this is the negative '
+              'case that proves the isCurrent guard is doing work, not '
+              'just an unconditional setCurrentRoute');
+      final remove = crumbs().where((b) => b.action == 'nav:remove').toList();
+      expect(remove, hasLength(1));
+      expect(remove.single.data, 'removed /next');
     });
   });
 }

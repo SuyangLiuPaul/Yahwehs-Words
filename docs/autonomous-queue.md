@@ -10903,7 +10903,15 @@ has never seen this repo.
       order against the reading text for every verse the two share)
       rather than catching each instance by hand.
 
-- [ ] **`BreadcrumbObserver` has no `didRemove` override — a stale
+- [x] **DONE 2026-09-23**: added `BreadcrumbObserver.didRemove`
+      (`lib/utils/breadcrumb_observer.dart`) — repoints `currentRoute` only
+      when `previousRoute?.isCurrent == true` (the removed route was top),
+      always records a `nav:remove` crumb; 5 new tests in
+      `test/breadcrumb_observer_test.dart` (2 direct-call, 2 live-Navigator
+      incl. the `removeRouteBelow` negative case, falsifiability-checked by
+      temporarily making the guard unconditional and confirming 3 tests
+      went red). `flutter analyze` clean, full suite green (3689 cases).
+      **`BreadcrumbObserver` has no `didRemove` override — a stale
       `currentRoute` pointer possible if a route is ever removed
       without a push/pop/replace.** Filed 2026-09-23 while writing
       `test/breadcrumb_observer_test.dart` (that file's first dedicated

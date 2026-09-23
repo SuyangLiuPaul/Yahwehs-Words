@@ -41,6 +41,24 @@ class BreadcrumbObserver extends NavigatorObserver {
     ErrorReporter.breadcrumb('nav:replace', data: name);
   }
 
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    // previousRoute is the nearest still-present route below the removed
+    // one. It's only the new current route if the removed route WAS the
+    // top of the stack — isCurrent is false for a route removed from
+    // lower in the stack (removeRouteBelow) or one already superseded by
+    // a push that landed first (pushAndRemoveUntil).
+    if (previousRoute?.isCurrent == true) {
+      final name = _routeName(previousRoute);
+      ErrorReporter.setCurrentRoute(name);
+      ErrorReporter.breadcrumb('nav:remove',
+          data: 'from ${_routeName(route)} → $name');
+    } else {
+      ErrorReporter.breadcrumb('nav:remove',
+          data: 'removed ${_routeName(route)}');
+    }
+  }
+
   String _routeName(Route<dynamic>? route) {
     if (route == null) return '(unknown)';
     final name = route.settings.name;
