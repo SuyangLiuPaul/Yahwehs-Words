@@ -112,6 +112,30 @@ void main() {
     });
   }
 
+  test('no verse in any edition carries an empty blockNotes array', () {
+    // 2026-09-24: `tools/apply_ljk_2026_09_17.py` moved 路加福音 23:34a's
+    // note onto 23:34 (the translator's own ruling — see ebea3499) but
+    // left `"blockNotes":[]` on 23:38 instead of removing the key, the
+    // convention every other note-less verse in these assets follows.
+    // An empty array is inert in the reader (`VerseNotesBlock.build`
+    // returns `SizedBox.shrink()` for `notes.isEmpty`), so this was
+    // never visible — but it is downstream residue a future script
+    // could reproduce the same way, so pin the convention.
+    for (final path in [
+      'assets/biblexg-v2.json',
+      'assets/biblexg-v2-tr.json',
+      'assets/biblexg-v3.json',
+      'assets/biblexg-v3-tr.json',
+    ]) {
+      final verses = load(path);
+      final empties = verses
+          .where((v) => v['blockNotes'] is List && (v['blockNotes'] as List).isEmpty)
+          .map((v) => v['id'] as String)
+          .toList();
+      expect(empties, isEmpty, reason: '$path has empty blockNotes at $empties');
+    }
+  });
+
   test('帖撒罗尼迦后书 2:4 carries the recovered three senses of θεοῦ', () {
     const wanted = {
       'assets/biblexg-v2.json': ['帖撒罗尼迦后书', '如林前8.5', '如林前8.6', '如出7.1'],

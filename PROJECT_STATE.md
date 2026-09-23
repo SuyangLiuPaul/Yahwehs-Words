@@ -2217,6 +2217,21 @@ skipped (rate limit) or NEXT_TASK.md wasn't refreshed — not a crash.
     would silently undercount the same way the diff did. Fixed 2026-09-24
     by teaching the script `--code`/`--src-dir` rather than hardcoding
     both.
+74. **A filter-then-reassign on a list leaves `[]`, not an absent key.**
+    `tools/apply_ljk_2026_09_17.py` moved 路 23:38's note onto 23:34 with
+    `kept = [n for n in old38 if not n.startswith(...)]` then
+    `by['42023038']['blockNotes'] = kept` — correct when other notes
+    survive the filter, but when the filtered-out note was the verse's
+    only one, `kept` is `[]` and gets assigned back, instead of the key
+    being deleted. Every note-less verse elsewhere in these assets
+    carries no `blockNotes` key at all; this one `[]` was inert in the
+    reader (`VerseNotesBlock` treats an empty list the same as no
+    notes) but was still wrong data. Fixed 2026-09-24, and
+    `biblexg_block_note_list_test.dart` now pins zero empty
+    `blockNotes` arrays across all four assets. The general shape: any
+    `dict[key] = [filtered items]` needs a `if not kept: del dict[key]`
+    branch, or use `.pop(key, None)` when the result is empty, whenever
+    "no items" and "key absent" are supposed to mean the same thing.
 
 ## Trap: "local green" and "CI green" are different claims
 

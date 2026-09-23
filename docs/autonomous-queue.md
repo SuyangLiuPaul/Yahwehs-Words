@@ -8719,6 +8719,80 @@ has never seen this repo.
       the next iteration's step 0 should confirm this run's conclusion
       rather than assume it.
 
+      **RESOLVED 2026-09-24**: `35911682399` concluded `success`, as did
+      `7c951122`'s own housekeeping commit (`35912495771`) and
+      `24b72f5d` (`35912593713`). All five most recent `main` runs are
+      green — checked directly with `gh run list`, not assumed from a
+      prior note.
+
+- [x] **2026-09-24 FIXED — `42023038` (路加福音 23:38) carried
+      `"blockNotes":[]` in both `assets/biblexg-v3.json` and
+      `assets/biblexg-v3-tr.json`** — the only two verses across all
+      four biblexg assets with an *empty* `blockNotes` array; v2/v2-tr
+      have zero. `ebea3499` ("the translator's 2026-09-17 rulings")
+      moved 23:38's note onto 23:34, reworded, on the translator's own
+      instruction (34a folds into 34; not a loss). Its script,
+      `tools/apply_ljk_2026_09_17.py:100-104`, filtered the note out of
+      23:38's list and assigned the *filtered* (empty) list back
+      (`by['42023038']['blockNotes'] = kept`) instead of deleting the
+      key — every other note-less verse in these assets carries no
+      `blockNotes` key at all, not `[]`. `tools/import_ljk2.py` cannot
+      itself produce this shape (both its write paths are guarded on
+      truthy content); confirmed downstream residue, not an import
+      defect.
+
+      **Census done properly, not just the one array**: diffed
+      `blockNotes` for all 7927 verses × both v3 editions between
+      `ff226ddc` (ebea3499's parent) and `ebea3499` itself. Exactly 2
+      verses changed in `biblexg-v3.json` (42023034 gained the reworded
+      note, 42023038 emptied) and 3 in `-tr` (those same two, plus
+      44008039's kept note gaining one simplified-character fix,
+      耶稣→耶穌, matching the commit's own stated scope for 徒 8:40's
+      note). **No undocumented drift** — every note change traces to
+      `ebea3499`'s declared list.
+
+      Fix: dropped the empty `blockNotes` key at `42023038` in both v3
+      files (matching the no-key convention), touching nothing else.
+      Verified before committing: all 7927 verses' `text` fields
+      byte-identical before/after in both files; no `blockNotes` array
+      anywhere shrank; `42023034`'s note unchanged; both files still
+      parse. Confirmed with an independent adversarial review (asked to
+      refute every claim in this entry, not just check the diff) — one
+      correction taken from it: the 44008039 note fix is 耶稣→耶穌 only,
+      *not* also 甚么→甚麼 as an earlier draft of this note claimed.
+
+      Checked whether an empty `blockNotes: []` renders anything —
+      it doesn't: `VerseNotesBlock.build()` (`lib/widgets/
+      verse_notes_block.dart:160`) returns `SizedBox.shrink()` on
+      `notes.isEmpty`, both call sites spread `verse.blockNotes` into
+      that list, and `models/verse.dart`'s JSON parsing maps `[]` to
+      the same empty `List<String>` as an absent key. So this was never
+      reader-visible — pure data hygiene, not the omitted/blank-verse
+      carve-out.
+
+      `tools/apply_ljk_2026_09_17.py` is a **spent one-shot**, left
+      unmodified: its `--fresh <dir>` argument is required and no such
+      directory exists anywhere on this machine (that dir was a
+      transient full-pipeline re-run's output, never committed), and
+      its `expect()`/`REFUSE` guards are hardcoded to the exact
+      pre-revision text of this one 2026-09-17 batch — re-running it
+      today would hit `REFUSE` at the 23:38/23:34 block immediately,
+      fresh dir or not, since the base state has moved past what it
+      expects. Not touched, per "don't refactor a dead script."
+
+      Added the cheap invariant to `test/biblexg_block_note_list_test.
+      dart` (`no verse in any edition carries an empty blockNotes
+      array`): proven red against the pre-fix assets (found exactly
+      `['42023038']` in `biblexg-v3.json`), green after. `flutter
+      analyze` clean; full Dart suite green (6 chunks, `run_test_
+      chunks.py`); every CI-listed Python check green (`audit_p0.py
+      --check`, `audit_strongs_tagging.py --check`,
+      `audit_divine_name.py --check`, `repair_biblexg_luke_23_34a.py
+      --check` — reports "already applied, nothing to do" — plus all
+      `test_*.py` unit suites).
+
+      Asset-only, no reader-visible change (see above) — no deploy.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
