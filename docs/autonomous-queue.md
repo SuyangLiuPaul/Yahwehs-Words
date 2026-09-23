@@ -8713,6 +8713,12 @@ has never seen this repo.
       had). `flutter analyze` clean; full suite green in 6 chunks +
       the Python suite (334 tests, incl. the 2 new ones).
 
+      Pushed as `5420cda5`. CI run `35911682399` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      6-chunk suite were clean locally, so nothing is expected to fail;
+      the next iteration's step 0 should confirm this run's conclusion
+      rather than assume it.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
