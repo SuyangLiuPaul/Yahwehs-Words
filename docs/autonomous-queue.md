@@ -322,6 +322,12 @@ and quoted.**
       `assets/cuvs-yhwh*.json` read but not written, frozen-hash test
       untouched.
 
+      Pushed as `e5c5dafa`. CI run `35813335572` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      6-chunk suite were clean locally, so nothing is expected to fail;
+      the next iteration's step 0 should confirm this run's conclusion
+      rather than assume it.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
