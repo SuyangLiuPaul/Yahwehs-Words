@@ -328,6 +328,57 @@ and quoted.**
       the next iteration's step 0 should confirm this run's conclusion
       rather than assume it.
 
+- [x] **2026-09-23 — Tier 4 (P1), `BreadcrumbObserver.didRemove`
+      landed.** `NEXT_TASK.md` named this item directly (the gap filed by
+      the 2026-09-23 `5a91b2e8` iteration alongside the observer's first
+      test coverage) after re-confirming tiers 1–3 all genuinely blocked:
+      BUGS' one open item needs an upstream product call in
+      yswords-data; P2's `.router` migration item has now been deferred
+      14 consecutive iterations, its other item's fix lives outside this
+      repo; P3's two open items are the same outside-repo fix and the
+      NASB licensing question.
+
+      Added `didRemove` to `lib/utils/breadcrumb_observer.dart`: records
+      a `nav:remove` breadcrumb on every call, and repoints
+      `ErrorReporter.currentRoute` only when `previousRoute?.isCurrent ==
+      true` — true iff the removed route was the current top of the
+      stack, false for `removeRouteBelow` and for `pushAndRemoveUntil`'s
+      removed routes (whose new top already pushed and repointed
+      `currentRoute` first — additions flush before deletions in Flutter
+      3.44.2's `navigator.dart` `_flushObserverNotifications`, read at
+      `:4593-4607`). `Route.isCurrent` returns `false` for a route never
+      installed on a live Navigator (`:584-595`), so the guard needs no
+      null check. `grep -rn "removeRoute\|pushAndRemoveUntil\|Get\.
+      offUntil\|Get\.offAll" lib/` still finds zero call sites — this
+      remains defensive, not a fix for an active bug.
+
+      5 new tests in `test/breadcrumb_observer_test.dart`: 2 direct-call
+      (a detached route, and a null `previousRoute`), 2 live-`Navigator`
+      (`removeRoute` on the top route moves `currentRoute`;
+      `removeRouteBelow` does not — the negative case). Proved the guard
+      does real work: temporarily made `didRemove` call `setCurrentRoute`
+      unconditionally, confirmed 3 tests went red (including the negative
+      case), reverted, re-ran green, `git diff` clean before committing.
+
+      A refuter independently re-checked all 4 factual claims (the zero
+      call sites, the additions-before-deletions flush order, `isCurrent`
+      on a detached route, and GetX 4.7.2's `Get.off` going through
+      `pushReplacement`/`didReplace` not `didRemove`, with the explicit
+      caveat that `Get.offAll`/`Get.offUntil` were not checked) — all 4
+      confirmed against the actual source, none refuted.
+
+      `flutter analyze` clean (41.9s, full repo). Full suite run as 4
+      foreground chunks (~3689 test cases total across all chunks,
+      chunk sizes ~100 files each) — all 4 green. No deploy: observer
+      logic only, no user-visible surface.
+
+      Pushed as `83bb6536` (rebased onto `0f850f97`, an unrelated songs
+      snapshot refresh that landed on `origin/main` first). CI run
+      `35833484347` was still `in_progress` after the ~6-minute watch
+      budget — `flutter analyze` and the full 4-chunk suite were clean
+      locally, so nothing is expected to fail; the next iteration's step
+      0 should confirm this run's conclusion rather than assume it.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
