@@ -251,6 +251,77 @@ and quoted.**
 
       **2026-09-23 confirmed:** run `35779188950` concluded `success`.
 
+- [x] **2026-09-23 — fallback iteration (test coverage): first dedicated
+      test file for `lib/utils/scripture_markup.dart`.**
+
+      `NEXT_TASK.md` re-read all 21 open items: BUGS' one item needs a
+      product call upstream in yswords-data; P2's two are a branch-scale
+      `.router` migration (13+ deferrals) and a fix living outside this
+      repo; P3's two actionable items need a licensing/hosting answer;
+      P1 is empty; all 13 open P0 items are frozen-asset or awaiting the
+      publisher, none omits/blanks verse text. Fallback's audit option
+      was declined this pass because zero `assets/` files changed since
+      the last full audit (`c068a837`) — re-running 26 audits over
+      byte-identical input confirms nothing new. Took the coverage
+      option.
+
+      `bracketSpanKind`/`isReferentGloss` (`lib/utils/scripture_markup.dart`)
+      decide whether a `[bracketed]` span is the divine name, a referent
+      gloss, or a supplied word — the classification that decides which
+      word a Strong's number attaches to (`tagged_text_service.dart`,
+      4 call sites: `:357`, `:412`, `:418`, `:426`). Before this its only
+      coverage was incidental, inside `cuv_three_referent_markers_test.dart`,
+      touching 5 of the 16 tokens.
+
+      Added `test/scripture_markup_test.dart`: all 16 tokens across both
+      closed sets, empty-string and ordinary-supplied-word defaults,
+      whitespace trimming including U+3000 ideographic space (checked
+      empirically — Dart's `String.trim()` does fold it), a
+      characterization (not a fix) of today's case-sensitive matching
+      (`'yahweh'`/`'JESUS'` → `supplied`), and a dataset-coverage guard
+      that sweeps every distinct `[...]` body actually present in the
+      two frozen reading assets (`cuvs-yhwh.json`/`-tr.json`, read-only)
+      and asserts none classifies `supplied` — without pinning the
+      distinct-body count itself, to avoid a second figure the tree
+      could drift under. Independently re-derived rather than trusted:
+      3 distinct bodies per file (雅伟/雅偉 212, 耶稣/耶穌 123, 基督 17).
+
+      The tagged corpus (`assets/tagged/**/*.json`, 264 files) is
+      deliberately **not** swept: a per-run regex sweep is structurally
+      noisy there because `cuvs-yhwh`'s own tagged JSON splits exactly
+      these brackets across two `TaggedRun`s (confirmed directly —
+      `assets/tagged/cuvs-yhwh/luke.json` verse `1:6` has one run's `w`
+      ending `主 [` and the next opening `雅伟] 的一切`; 386 such split
+      runs counted in that one corpus), so a naive sweep would silently
+      undercount rather than error. A structural sweep (regex per run's
+      own `w` field, not the whole file blob) found 9 distinct bodies
+      including `Selah` ×62 — confirmed musical/pause notation, correctly
+      absent from both closed sets and correctly `supplied` — which is
+      real coverage information but the fragile split-run gap makes it
+      unfit as a guard, so the sweep stays restricted to the two reading
+      assets with a note in the test file explaining why.
+
+      Proven able to fail: broke the `'yahweh'` case-sensitivity
+      assertion by hand, confirmed red (`Expected divineName, Actual
+      supplied`), restored, `git diff` clean before committing.
+
+      A refuter independently re-verified all 6 factual claims in this
+      entry (first-dedicated-file framing, the 3-body counts and their
+      classification, `String.trim()`'s U+3000 handling, the
+      case-sensitive exact-match behaviour, the luke.json 1:6 split, and
+      the Selah/62 structural-sweep figure) — all 6 confirmed, none
+      refuted.
+
+      `flutter analyze` clean (4.0s, both touched files). Full suite run
+      as 6 foreground chunks via `tools/run_test_chunks.py`, exit code
+      checked per chunk — all 6 `CHUNK N/6: PASS` (chunk 0's first
+      sequential run in one shell hit this *shell's* own 10-minute
+      timeout partway through chunk 1 — a harness artifact, not a test
+      failure — chunks 1/3/4/5 were then each re-run individually to a
+      clean `PASS`). No deploy: test-only change, nothing user-visible;
+      `assets/cuvs-yhwh*.json` read but not written, frozen-hash test
+      untouched.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -21485,6 +21556,8 @@ so the bundle-size answer stays on the record.
       budget — `flutter analyze` and the full 6-chunk suite were clean
       locally, so nothing is expected to fail; the next iteration's
       step 0 should confirm this run's conclusion rather than assume it.
+
+      **Confirmed 2026-09-23:** `35806955538` concluded `success`.
 
 ## Blocked on the user — do not attempt
 
