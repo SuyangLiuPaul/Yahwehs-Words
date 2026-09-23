@@ -20674,6 +20674,12 @@ so the bundle-size answer stays on the record.
       `run.sh`/`prompt.md` under `~/Library/Application Support/
       yswords-loop/`, not touched here.
 
+      Pushed as `5a91b2e8`. CI run `35826134917` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      4-chunk suite were clean locally, so nothing is expected to fail;
+      the next iteration's step 0 should confirm this run's conclusion
+      rather than assume it.
+
 - [x] **The `git secrets` hooks are LIVE as of 2026-08-23.**
       `git-secrets` 1.3.0 installed via brew; hooks chmod +x; an
       `nfp_[A-Za-z0-9]{20,}` pattern registered. The two broad AWS
