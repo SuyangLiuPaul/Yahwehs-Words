@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Stray-ASCII / bracket-balance guard for 梁家鏗譯本 (biblexg-v2 / -tr).
+/// Stray-ASCII / bracket-balance guard for 梁家鏗譯本 (biblexg-v2/-tr and
+/// biblexg-v3/-tr — v3 is the September re-fetch that superseded v2 as
+/// the edition readers actually reach; see biblexg_verse_integrity_test
+/// and PROJECT_STATE.md).
 ///
 /// Every other shipping edition has one of these: `kjv`/`nasb`/`leb`/
 /// `cuvs-yhwh(-tr)` via `bible_version_integrity_test.dart`'s `forbidden`
@@ -43,6 +46,14 @@ void main() {
       '启示录|1|5': ',', // ASCII comma amid otherwise full-width punctuation
     },
     'assets/biblexg-v2-tr.json': {},
+    // v3 was re-fetched from the same publisher source in September and
+    // carries the identical two offenders in the Simplified file, none
+    // in Traditional — same census, same publisher text, same pin.
+    'assets/biblexg-v3.json': {
+      '使徒行传|7|32': "'",
+      '启示录|1|5': ',',
+    },
+    'assets/biblexg-v3-tr.json': {},
   };
 
   const forbidden = r'()[]{}|^~*.,!;:"' "'";

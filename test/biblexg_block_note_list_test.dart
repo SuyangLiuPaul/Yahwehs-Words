@@ -15,6 +15,17 @@ import 'package:flutter_test/flutter_test.dart';
 /// recovered them additively, without touching the ten commits of
 /// hand-repairs already sitting in these assets).
 ///
+/// 2026-09-14 (16633cad) reverted the importer fix when it was replaced
+/// wholesale, and the September re-fetch (`assets/biblexg-v3*.json`,
+/// the edition readers actually reach) shipped the same defect again —
+/// 24 verses this time (2 more than the May-derived v2 count: the
+/// publisher had added list nodes at 罗8:30 and 多2:15 between the two
+/// fetches, so a v2-vs-v3 diff alone could not have found them — only
+/// re-parsing the publisher's current source could). Restored
+/// 2026-09-24, again by `tools/backfill_ljk2_comment_lists.py`, this
+/// time with `--code biblexg-v3 --src-dir /tmp/ljk-source` against a
+/// freshly fetched snapshot rather than the vendored April one.
+///
 /// This does not re-derive that count — it watches for the SHAPE of
 /// the defect: a `blockNotes` entry that ends in a colon (`：` / `:`)
 /// with nothing list-shaped after it in the same verse. That shape is
@@ -78,6 +89,8 @@ void main() {
   for (final path in [
     'assets/biblexg-v2.json',
     'assets/biblexg-v2-tr.json',
+    'assets/biblexg-v3.json',
+    'assets/biblexg-v3-tr.json',
   ]) {
     test('$path: every colon-ending block note is followed by its list',
         () {
@@ -103,6 +116,11 @@ void main() {
     const wanted = {
       'assets/biblexg-v2.json': ['帖撒罗尼迦后书', '如林前8.5', '如林前8.6', '如出7.1'],
       'assets/biblexg-v2-tr.json': ['帖撒羅尼迦後書', '如林前8.5', '如林前8.6', '如出7.1'],
+      // The September re-fetch (biblexg-v3*) dropped this same list —
+      // see docs/autonomous-queue.md — and 2026-09-24 recovered it from
+      // the publisher's own current source, additively, same as v2.
+      'assets/biblexg-v3.json': ['帖撒罗尼迦后书', '如林前8.5', '如林前8.6', '如出7.1'],
+      'assets/biblexg-v3-tr.json': ['帖撒羅尼迦後書', '如林前8.5', '如林前8.6', '如出7.1'],
     };
     wanted.forEach((path, want) {
       final verse = load(path).firstWhere((v) =>

@@ -197,6 +197,24 @@ def html_to_inline(html: str) -> str:
     return s.strip()
 
 
+_LI_RE = re.compile(r'<li[^>]*>(.*?)</li>', re.S)
+
+
+def clean_comment_list(segments, ordered: bool) -> str:
+    """Render a `comment-list` / `ul-comment-list` node as one blockNotes
+    string: one `<li>` per line, numbered (comment-list) or bulleted
+    (ul-comment-list). Each item goes through `clean_block_comment` —
+    same tag handling as an ordinary block note, so `<cite>` / `<mark>`
+    read identically whether the source text sits in a list or not.
+    """
+    raw = ' '.join(str(s) for s in segments)
+    items = [clean_block_comment([it]) for it in _LI_RE.findall(raw)]
+    items = [it for it in items if it]
+    if ordered:
+        return '\n'.join(f'{i}. {it}' for i, it in enumerate(items, 1))
+    return '\n'.join(f'• {it}' for it in items)
+
+
 def clean_block_comment(segments) -> str:
     """Block comments arrive as a list whose items are EITHER plain
     HTML strings OR dicts of shape `{lineBreak, content}` (the latter
@@ -410,6 +428,17 @@ def build_book_verses(book_data: list[dict], book_id: int,
                     cleaned = clean_block_comment(contents)
                 else:
                     cleaned = clean_block_comment([str(contents)])
+                if not cleaned:
+                    continue
+                if out:
+                    out[-1].setdefault('blockNotes', []).append(cleaned)
+                else:
+                    pending_comments.append(cleaned)
+            elif t in ('comment-list', 'ul-comment-list'):
+                contents = n.get('contents', [])
+                if not isinstance(contents, list):
+                    contents = [str(contents)]
+                cleaned = clean_comment_list(contents, ordered=t == 'comment-list')
                 if not cleaned:
                     continue
                 if out:

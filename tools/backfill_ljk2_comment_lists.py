@@ -4,14 +4,20 @@
 notes that `tools/import_ljk2.py` dropped on every import to date (fixed
 in the same commit — see the new `elif` branch in `build_book_verses`).
 
+2026-09-24: that fix was reverted by 16633cad (2026-09-14) when the
+importer was replaced wholesale with a copy predating it, and restored
+again the same day this note was added — see the `elif t in
+('comment-list', 'ul-comment-list')` branch in `build_book_verses` at
+HEAD. Check `git blame` before trusting "fixed" claims like this one;
+they rot.
+
 This does NOT re-run the importer over the shipped assets: at least ten
-commits have hand-repaired assets/biblexg-v2*.json since the 2026-05-19
-import, and a full regeneration would revert every one of them. Instead
-this reads the untracked upstream source already on disk at
-`ljk-nt-bible-webapp/public/resources/`, finds the 22 verses per edition
-(cn + tw) that carry a comment-list, computes WHERE in that verse's
-existing blockNotes the list belongs, and inserts — nothing else in the
-shipped JSON is touched.
+commits have hand-repaired assets/biblexg-v2*.json (and, since 2026-09,
+biblexg-v3*.json) since import, and a full regeneration would revert
+every one of them. Instead this reads upstream source already fetched to
+disk, finds the verses per edition (cn + tw) that carry a comment-list,
+computes WHERE in that verse's existing blockNotes the list belongs, and
+inserts — nothing else in the shipped JSON is touched.
 
 Position, not string match: the two editions' note text has diverged
 under post-import repairs, so anchoring by content would miss verses
@@ -22,12 +28,26 @@ list node within its verse's attachment run (the same run
 verse's shipped blockNotes array is shorter than k, the anchor doesn't
 hold — skip it and print, rather than insert blind.
 
+--src-dir must point at a source snapshot actually contemporary with
+the target asset. 2026-09-24: the default below (the vendored
+`ljk-nt-bible-webapp/public/resources/` checkout) is an April snapshot
+and running it against biblexg-v3* (a September fetch) undercounts —
+it does not have the list nodes the publisher added between April and
+September (e.g. 罗8:30, 多2:15), and comparing v3's existing blockNotes
+against only-in-v3 content is not possible from an older source at all.
+Fetch a fresh snapshot with `import_ljk2.fetch()` (writes to
+`/tmp/ljk-source`) and pass `--src-dir /tmp/ljk-source` when backfilling
+biblexg-v3*.
+
 Run:
-    python3 tools/backfill_ljk2_comment_lists.py           # dry run
-    python3 tools/backfill_ljk2_comment_lists.py --write   # apply
+    python3 tools/backfill_ljk2_comment_lists.py                        # dry run, v2
+    python3 tools/backfill_ljk2_comment_lists.py --write                # apply, v2
+    python3 tools/backfill_ljk2_comment_lists.py --code biblexg-v3 \\
+        --src-dir /tmp/ljk-source --write                               # apply, v3
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -36,14 +56,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import import_ljk2 as ljk  # noqa: E402
 
 REPO_ROOT = ljk.REPO_ROOT
-SRC_DIR = os.path.join(REPO_ROOT, 'ljk-nt-bible-webapp', 'public', 'resources')
+DEFAULT_SRC_DIR = os.path.join(REPO_ROOT, 'ljk-nt-bible-webapp', 'public', 'resources')
 
 
-def find_insertions(lang: str, abbr: str, book_id: int) -> list[tuple[str, int, str]]:
+def find_insertions(src_dir: str, lang: str, abbr: str,
+                    book_id: int) -> list[tuple[str, int, str]]:
     """Return `(verse_id, k, list_text)` for every comment-list /
     ul-comment-list node in one upstream book file, in encounter order.
     """
-    path = os.path.join(SRC_DIR, f'{lang}-{abbr}.json')
+    path = os.path.join(src_dir, f'{lang}-{abbr}.json')
     with open(path, encoding='utf-8') as f:
         book_data = json.load(f)
 
@@ -69,7 +90,7 @@ def find_insertions(lang: str, abbr: str, book_id: int) -> list[tuple[str, int, 
                 contents = n.get('contents', [])
                 if not isinstance(contents, list):
                     contents = [str(contents)]
-                cleaned, _body = ljk.split_block_comment(contents)
+                cleaned = ljk.clean_block_comment(contents)
                 if cleaned:
                     run_comment_count += 1
             elif t in ('comment-list', 'ul-comment-list'):
@@ -82,14 +103,14 @@ def find_insertions(lang: str, abbr: str, book_id: int) -> list[tuple[str, int, 
     return out
 
 
-def backfill(asset_path: str, lang: str) -> None:
+def backfill(asset_path: str, lang: str, src_dir: str) -> None:
     with open(asset_path, encoding='utf-8') as f:
         verses = json.load(f)
     by_id = {v['id']: v for v in verses}
 
     insertions_by_verse: dict[str, list[tuple[int, str]]] = {}
     for abbr, _en, _cn, _tr, book_id in ljk.BOOKS:
-        for verse_id, k, text in find_insertions(lang, abbr, book_id):
+        for verse_id, k, text in find_insertions(src_dir, lang, abbr, book_id):
             insertions_by_verse.setdefault(verse_id, []).append((k, text))
 
     applied = 0
@@ -140,21 +161,33 @@ def backfill(asset_path: str, lang: str) -> None:
 
 
 def main() -> None:
-    write = '--write' in sys.argv
-    cn_path = os.path.join(REPO_ROOT, 'assets', 'biblexg-v2.json')
-    tr_path = os.path.join(REPO_ROOT, 'assets', 'biblexg-v2-tr.json')
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--code', default='biblexg-v2',
+                    help='version code to backfill: assets/<code>.json and '
+                         'assets/<code>-tr.json (default: biblexg-v2)')
+    ap.add_argument('--src-dir', default=DEFAULT_SRC_DIR,
+                    help='directory holding cn-<abbr>.json / tw-<abbr>.json '
+                         'upstream source, contemporary with --code '
+                         '(default: the vendored April snapshot — see the '
+                         'module docstring before using it for anything but '
+                         'biblexg-v2*)')
+    ap.add_argument('--write', action='store_true')
+    args = ap.parse_args()
 
-    if not write:
+    cn_path = os.path.join(REPO_ROOT, 'assets', f'{args.code}.json')
+    tr_path = os.path.join(REPO_ROOT, 'assets', f'{args.code}-tr.json')
+
+    if not args.write:
         print('Dry run (pass --write to apply). Computing insertions only:')
         for lang, path in (('cn', cn_path), ('tw', tr_path)):
             total = 0
             for abbr, _en, _cn, _tr, book_id in ljk.BOOKS:
-                total += len(find_insertions(lang, abbr, book_id))
+                total += len(find_insertions(args.src_dir, lang, abbr, book_id))
             print(f'  {lang}: {total} list nodes found')
         return
 
-    backfill(cn_path, 'cn')
-    backfill(tr_path, 'tw')
+    backfill(cn_path, 'cn', args.src_dir)
+    backfill(tr_path, 'tw', args.src_dir)
 
 
 if __name__ == '__main__':

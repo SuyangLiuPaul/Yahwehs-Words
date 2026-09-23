@@ -8655,6 +8655,64 @@ has never seen this repo.
       `audit_p0.py --check` / `audit_divine_name.py --check`, so a future
       re-fetch trips CI instead of silently regressing a third time.
 
+- [x] **The 2026-08-31 `comment-list`/`ul-comment-list` importer fix was
+      reverted and the September v3 re-fetch shipped the same defect
+      again — FIXED 2026-09-24.** Found while checking whether the
+      23:34a regression above had siblings. `git show 16633cad --
+      tools/import_ljk2.py` showed the September rewrite deleted
+      `clean_comment_list()` and the `elif t in ('comment-list',
+      'ul-comment-list')` branch wholesale, reverting `21bd0308`
+      (2026-08-31). `build_book_verses()` at HEAD handled only
+      `chapter`/`verse`/`comment` again, so every enumerated/bulleted
+      block-note list the publisher writes — the case originally
+      reported with a photo of the print edition, 帖後2:4 — was silently
+      dropped from `assets/biblexg-v3.json` / `-v3-tr.json`, the editions
+      readers actually reach (v2 is hidden behind `_kSupersededBy`).
+
+      Phase A (tooling): restored `clean_comment_list()` + the `elif`
+      branch verbatim from `21bd0308`, with a new pytest unit test
+      (`test/test_import_ljk2_comment_list.py`) proven red against HEAD
+      before the fix, green after. Corrected
+      `backfill_ljk2_comment_lists.py`'s docstring, which still claimed
+      the importer fix was permanent. Extended
+      `test/biblexg_punctuation_test.dart` to the two v3 files — measured
+      the identical stray-ASCII census as v2 (2 in cn, 0 in tr; same two
+      offenders, both the publisher's own text) and 0 unbalanced
+      `<note:…>` tags in all four files.
+
+      Phase B (recovery): the "22 verses per edition, 0 gained" figure
+      quoted when this item was filed came from diffing v2's blockNotes
+      against v3's, which **cannot see a loss in content that is new to
+      v3** — the publisher added two more list nodes between the May and
+      September fetches (罗8:30, 多2:15) that v2 never had at all, so
+      there was nothing in v2 to diff against. Re-fetched all 27 NT
+      books × cn/tw fresh from the publisher's live source (the
+      vendored `ljk-nt-bible-webapp/public/resources/` on disk was an
+      April snapshot, older than both v2 and v3, and would have
+      undercounted the same way) and ran a full type census directly:
+      **24 verses per edition, 34 list nodes, not 22/30** — 多2:15 alone
+      carries three separate list nodes (an 8-way translation comparison,
+      a 4-item grammar-rule checklist, and an English CJB quote), which
+      the original "22" also didn't anticipate.
+
+      Taught `tools/backfill_ljk2_comment_lists.py` a `--code` and
+      `--src-dir` argument (its `SRC_DIR` was hardcoded to the stale
+      vendored checkout and its comment-counting used a `split_block_comment`
+      function that no longer exists post-16633cad; both fixed) and ran
+      it against `biblexg-v3`/`-v3-tr` with the fresh fetch: 34 inserted,
+      0 skipped, both editions. Verified before committing, not assumed:
+      every verse's `text` field diffed byte-for-byte before/after
+      (zero changes, all 7927 verses each edition), zero verses shrank,
+      53002004's recovered list matches the position `21bd0308` documented
+      for v2's `53002004`, and 多2:15/罗8:30's recovered content read
+      correct against the freshly fetched source by eye.
+      `biblexg_block_note_list_test.dart` extended to all four files —
+      **zero new allow-list entries needed**; independently re-verified
+      in Python (32 unexplained colon-endings before the backfill, 0
+      after, using the same allow-list keyed by verse id that v2 already
+      had). `flutter analyze` clean; full suite green in 6 chunks +
+      the Python suite (334 tests, incl. the 2 new ones).
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
