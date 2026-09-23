@@ -2197,6 +2197,26 @@ skipped (rate limit) or NEXT_TASK.md wasn't refreshed — not a crash.
     `bible.db`'s `ljks`/`ljkt` directly** (same `book`/`chapter`/`verse`
     lookup `adopt_official_ljk.py` itself uses), not mattwhatsup's JSON.
     Found adjudicating queue's 43-new-to-v3 note-count item, 2026-09-20.
+73. **A v2-vs-v3 asset diff can't see a defect in content that's new to
+    v3.** `tools/import_ljk2.py`'s `comment-list`/`ul-comment-list`
+    handling was reverted by `16633cad` (2026-09-14) and the loss was
+    first measured by diffing v2's `blockNotes` against v3's — which
+    found 22 of the true 24 affected verses. The other two (罗8:30,
+    多2:15) carry list nodes the publisher added to their source
+    between the May fetch (v2) and the September one (v3), so v2 never
+    had anything to diff against for them. Re-parsing the publisher's
+    CURRENT live source directly (not a vendored snapshot — see next)
+    found all 24. When checking whether an importer/converter regressed
+    an edition, prefer a fresh census of the live upstream over a diff
+    against an older sibling edition. Also: `tools/backfill_ljk2_comment
+    _lists.py`'s default `SRC_DIR` is a vendored `ljk-nt-bible-webapp/
+    public/resources/` checkout (gitignored, on-disk only) that is an
+    **April** snapshot — older than both v2 (May) and v3 (September).
+    It still matches v2's original 22/30 count because v2 was built
+    close to when that snapshot was current, but running it against v3
+    would silently undercount the same way the diff did. Fixed 2026-09-24
+    by teaching the script `--code`/`--src-dir` rather than hardcoding
+    both.
 
 ## Trap: "local green" and "CI green" are different claims
 
