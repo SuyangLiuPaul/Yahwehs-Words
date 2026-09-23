@@ -15,8 +15,8 @@ class SectionHeading {
 }
 
 /// Section / paragraph titles bundled at `assets/section_titles.json`.
-/// One asset, multiple title-sets (cuv / cuv-tr / english-classic /
-/// future cnv), wired via `lib/constants/section_title_map.dart`.
+/// One asset, multiple title-sets (cuv / cuv-tr / english-classic),
+/// wired via `lib/constants/section_title_map.dart`.
 ///
 /// Lazy-loaded once on first lookup. Single in-memory cache shared
 /// across reading-pane calls; deep enough that even tight loops over
@@ -83,7 +83,8 @@ class SectionTitleService {
   /// no heading is configured for that exact verse.
   ///
   /// Looks up the version's primary title set; on miss, consults the
-  /// fallback set (CNV → CUV).
+  /// fallback set named in `sectionTitleFallbackSet`, which is
+  /// currently empty — no version has a fallback configured today.
   static SectionHeading? headingAt({
     required String version,
     required String englishBook,

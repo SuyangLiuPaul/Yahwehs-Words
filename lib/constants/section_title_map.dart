@@ -44,9 +44,11 @@ const sectionTitleSetByVersion = <String, String>{
   'biblexg-v3-tr': 'cuv-tr',
 };
 
-/// When a primary title set has no entry for a given chapter, the
+/// When a primary title set has no entry for a given verse, the
 /// service falls back to the corresponding "fallback set" if one is
-/// configured here.
+/// configured here. Currently empty — no version has a fallback
+/// configured; the branch in `SectionTitleService.headingAt` that reads
+/// this map is unreachable until an entry is added.
 const sectionTitleFallbackSet = <String, String>{};
 
 String sectionTitleSetFor(String version) =>

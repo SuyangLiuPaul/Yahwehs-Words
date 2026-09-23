@@ -21238,6 +21238,31 @@ so the bundle-size answer stays on the record.
       committed together. The underlying gap is still open and still
       outside this repo's reach.
 
+      **Recurred again, later the same day, 2026-09-23 ~23:58 through
+      2026-09-24 ~00:01** — a different stage from the one above, so
+      this is not the same incident re-described: that stage wrote
+      `test/section_title_service_test.dart` (237 lines, new) plus
+      doc-comment-only edits to `lib/services/section_title_service.dart`
+      and `lib/constants/section_title_map.dart`, and again ended its
+      turn with the tree dirty and nothing committed. (Not attempting
+      an exact ordinal here — the count has already drifted once this
+      item; "recurred again" plus the date is the honest claim.) Landed
+      the following iteration: the doc comments matched the code they
+      described, the new suite's own factual claims were independently
+      re-verified rather than taken on trust (1443 heading keys in each
+      of the three title sets — `cuv`, `cuv-tr`, `english-classic` —
+      with all three holding an identical key set; Genesis 1:1's `cuv`
+      title is exactly `起初创造天地`; `clearCache()` resets both `_cache`
+      and `_loadFuture`, which matters because resetting only `_cache`
+      would leave `ensureLoaded()`'s `_loadFuture ??= _doLoad()` handing
+      back the stale completed future forever; `sectionTitleFallbackSet`
+      is currently empty, so the fallback branch in `headingAt` is
+      unreachable today), `flutter analyze` was clean, and the full
+      suite (381 files, split into 4 foreground chunks per this item's
+      own recipe, each chunk's exit code checked before moving on) all
+      passed. The underlying gap is still open and still outside this
+      repo's reach.
+
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
       (`queue:14246`'s note, whose own line number will drift — grep
