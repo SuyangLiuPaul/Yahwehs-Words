@@ -153,7 +153,11 @@ void main() {
         .where((f) => f.path.endsWith('.dart'))
         .where((f) => f.readAsStringSync().contains('class SongShareButton'))
         .map((f) => f.path)
-        .toList();
+        .toList()
+      ..sort();
+    // `Directory.listSync`'s enumeration order is filesystem-dependent —
+    // stable-ish on macOS/APFS, not guaranteed on Linux/ext4 (the CI
+    // runner) — so sort before the exact-equality check below.
     expect(defs, ['lib/widgets/song_actions.dart']);
   });
 }

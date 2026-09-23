@@ -21406,26 +21406,77 @@ so the bundle-size answer stays on the record.
       from prior passes, still unresolved: NASB divine-pronoun
       capitalisation (queue:21086) needs the user's licensing answer.
 
-- [ ] **17 other test files call `Directory(...).listSync(recursive:
-      true)` with no `.sort()`** (`grep -rln "listSync(recursive: true)"
-      test/ | xargs grep -L '\.sort()'`, 2026-09-23, found while fixing
-      the CI failure above — not itself verified to be broken, since most
-      probably use the listing for counting or an unordered search rather
-      than asserting exact order): `update_service_test.dart`,
-      `selectable_text_scroll_test.dart`, `nested_scrollable_test.dart`,
-      `projection_page_test.dart`, `safe_item_scroll_test.dart`,
-      `ziji_typo_test.dart`, `china_build_email_signin_test.dart`,
-      `log_diag_test.dart`, `sermon_library_orphaned_test.dart`,
-      `support_email_test.dart`, `forensic_logging_audit_test.dart`,
-      `image_asset_audit_test.dart`, `song_share_button_test.dart`,
-      `reader_route_leak_test.dart`, `reactive_builder_const_test.dart`,
-      `ai_key_required_test.dart`, `reading_plans_stay_removed_test.dart`,
-      `reduced_motion_test.dart`, `image_network_audit_test.dart`. Worth
-      an actual read of each (not just a grep) to find any that, like
-      `bible_evidence_untranslated_hant_test.dart` did, assert an exact
-      ordered list rather than a set/count — those are latent
-      Mac-passes-CI-fails bugs waiting for their own unlucky directory
-      order.
+- [x] **17 other test files call `Directory(...).listSync(recursive:
+      true)` with no `.sort()`** — **audited 2026-09-23, 1 of 19 fixed,
+      rest are order-independent by construction.**
+
+      Corrected the count first: the queue's own `grep -rln
+      "listSync(recursive: true)" test/ | xargs grep -L '\.sort()'`
+      actually returns **19** files, not 17 (the prose undercounted its
+      own list). Re-running it post-fix now returns 18, because the one
+      genuine fix below removed itself from the `-L` set — state the
+      number's *timing*, not just the number.
+
+      Read all 19 in full (not grepped) and classified:
+
+      **Already sort, despite the grep saying otherwise (4)** —
+      `forensic_logging_audit_test.dart:142`,
+      `image_asset_audit_test.dart:42`, `image_network_audit_test.dart:45`,
+      `nested_scrollable_test.dart:52`. Cause: grep BRE treats `\.sort()`
+      as the *literal* 7-char string `.sort()`, so
+      `..sort((a, b) => a.path.compareTo(b.path))` — which all four use —
+      doesn't match and the file gets reported as unsorted when it isn't.
+      `grep -LE '\.\.?sort\('` gives the correct 15, not 19. (All four are
+      order-independent anyway — see below — so this cost nothing, but the
+      grep itself is worth remembering as broken.)
+
+      **Order-independent (14)**, each because its listSync result is
+      consumed only by an `isEmpty`/`isNotEmpty`/count/contains-style
+      check, never by exact-order equality or positional indexing:
+      `ai_key_required_test.dart`, `china_build_email_signin_test.dart`,
+      `log_diag_test.dart`, `projection_page_test.dart`,
+      `reactive_builder_const_test.dart`, `reader_route_leak_test.dart`,
+      `reading_plans_stay_removed_test.dart`, `reduced_motion_test.dart`,
+      `safe_item_scroll_test.dart`, `selectable_text_scroll_test.dart`
+      (its `hasLength(1)` check is a count, not an order claim),
+      `sermon_library_orphaned_test.dart`, `support_email_test.dart`,
+      `update_service_test.dart`, `ziji_typo_test.dart` (its `sermons`
+      list at :29-33 is a hardcoded `const`, not derived from any
+      listSync — the thing that looks exactly like the bug on a skim and
+      isn't; confirmed no reassignment anywhere in the file).
+      `image_network_audit_test.dart` also has a *second*, unsorted
+      listSync at :149 (the first, at :40, is the sorted one feeding a
+      different test) — also isEmpty-checked, also order-independent.
+
+      **Genuinely order-dependent (1), fixed** —
+      `song_share_button_test.dart:157`,
+      `expect(defs, ['lib/widgets/song_actions.dart'])`: exact list
+      equality against an unsorted `listSync` result. Cannot fail *today*
+      (one element matches), so this is not a claim it "would have failed
+      on CI" — it is the same latent shape as the bug that turned CI red
+      two commits ago, one element away from being it. Fixed with the
+      same minimal pattern as `d2a47464`: `..sort()` on the list right
+      before the `expect`.
+
+      A refuter independently re-verified the corrected count, the BRE
+      root-cause claim, the already-sorts list, the order-independence
+      classification (spot-checked `reader_route_leak_test.dart`,
+      `reading_plans_stay_removed_test.dart`, `reduced_motion_test.dart`,
+      `support_email_test.dart` directly), the `ziji_typo_test.dart`
+      const-vs-listing claim, and swept the other 21 files matching
+      `listSync(recursive: true)` for any other exact-list-equality site
+      against unsorted data — found none besides the two now fixed
+      (`bible_evidence_untranslated_hant_test.dart` and this one). Its
+      first-pass count (18) initially looked like a refutation of the
+      "19" claim; resolved as a pre/post-edit timing difference, not an
+      error — both counts are correct for the moment each was taken.
+
+      `flutter analyze` clean; full suite green, run as 6 foreground
+      chunks via `tools/run_test_chunks.py` (one chunk's first run hit
+      this *shell's own* 10-minute timeout mid-run — a harness artifact,
+      not a test failure — and was re-run to a clean `PASS`; all
+      `CHUNK N/6: PASS`). No deploy: test-only change, nothing
+      user-visible.
 
 ## Blocked on the user — do not attempt
 
