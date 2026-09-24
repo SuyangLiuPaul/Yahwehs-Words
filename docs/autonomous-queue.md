@@ -9061,6 +9061,11 @@ has never seen this repo.
       `yswords-cn-qat`) confirmed serving `v1.6.30` via `version.json`.
       Prod untouched.
 
+      This own tick's commit (`0a48569b`, docs-only) has CI run
+      `35997572004` still `in_progress` after the watch budget — a
+      markdown-only change, nothing expected to fail; next iteration's
+      step 0 should confirm rather than assume.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
