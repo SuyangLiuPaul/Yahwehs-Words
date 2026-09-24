@@ -55,6 +55,16 @@ function releasesPage(repo) {
 // Prefer a name that says Android over one that merely ends in .apk, so
 // that a repo which someday ships two .apk files (a flavour split, say)
 // cannot silently start serving the wrong one.
+// 2026-09-25 「可以生成mac版本…放在about cn上面 而且保持更新」: `/dl/<app>-mac`
+// hands back the newest release's macOS zip the same way. Only words and
+// sword ship one; the release workflow names it `<App>-macOS-<tag>.zip`.
+function pickMac(assets) {
+	const zips = (assets || []).filter(
+		(a) => typeof a?.name === 'string' && /macos.*\.zip$/i.test(a.name),
+	);
+	return zips.length ? zips[0].browser_download_url || null : null;
+}
+
 function pickApk(assets) {
 	const apks = (assets || []).filter(
 		(a) => typeof a?.name === 'string' && a.name.toLowerCase().endsWith('.apk'),
@@ -64,7 +74,7 @@ function pickApk(assets) {
 	return (android || apks[0]).browser_download_url || null;
 }
 
-async function latestApkUrl(slug, repo) {
+async function latestApkUrl(slug, repo, kind) {
 	const hit = _cache.get(slug);
 	if (hit && Date.now() - hit.at < TTL_MS) return hit.url;
 
@@ -79,22 +89,27 @@ async function latestApkUrl(slug, repo) {
 	});
 	if (!res.ok) throw new Error(`github ${res.status}`);
 
-	const url = pickApk((await res.json())?.assets);
-	if (!url) throw new Error('no apk in latest release');
+	const assets = (await res.json())?.assets;
+	const url = kind === 'mac' ? pickMac(assets) : pickApk(assets);
+	if (!url) throw new Error(`no ${kind === 'mac' ? 'macOS zip' : 'apk'} in latest release`);
 
 	_cache.set(slug, { url, at: Date.now() });
 	return url;
 }
 
 export default async (req) => {
-	const slug = new URL(req.url).pathname.split('/').filter(Boolean).pop();
-	const repo = REPOS[slug];
+	const raw = new URL(req.url).pathname.split('/').filter(Boolean).pop();
+	const isMac = raw.endsWith('-mac');
+	const app = isMac ? raw.slice(0, -4) : raw;
+	// Only these two apps publish a macOS package.
+	const slug = raw;
+	const repo = isMac && !['words', 'sword'].includes(app) ? undefined : REPOS[app];
 
 	// An unknown slug is a broken link somewhere in our own pages, not a
 	// visitor's mistake to absorb silently — but there is nothing useful
 	// to redirect to, so say so plainly.
 	if (!repo) {
-		return new Response(`Unknown app: ${slug}\n`, {
+		return new Response(`Unknown app: ${raw}\n`, {
 			status: 404,
 			headers: { 'Content-Type': 'text/plain; charset=utf-8' },
 		});
@@ -102,7 +117,7 @@ export default async (req) => {
 
 	let target;
 	try {
-		target = await latestApkUrl(slug, repo);
+		target = await latestApkUrl(slug, repo, isMac ? 'mac' : 'apk');
 	} catch (e) {
 		console.error('[latestApk]', slug, String(e?.message || e).slice(0, 200));
 		// Not cached: the next visitor should get a fresh attempt at the
