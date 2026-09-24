@@ -9051,6 +9051,13 @@ has never seen this repo.
       6/6-chunk Dart suite green, `biblexg_verse_integrity_test.dart`
       green on its own (18/18).
 
+      Pushed as `b48c8c5e` (rebased onto `a039d995`, a concurrent "Sync
+      songs" commit). CI run `35995218012` was still `in_progress` after
+      the ~7-minute watch budget — local `flutter analyze` and the full
+      6/6-chunk Dart suite were clean, so nothing is expected to fail;
+      the next iteration's step 0 should confirm this run's conclusion
+      rather than assume it.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
