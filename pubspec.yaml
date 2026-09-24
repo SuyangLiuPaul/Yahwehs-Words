@@ -155,6 +155,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # Microsoft Store packaging only (`dart run msix:create --store`, see
+  # .github/workflows/windows-store-msix.yml). Not used at run time.
+  msix: ^3.16.9
   # 2026-09-15. Already resolved as a transitive dependency of
   # flutter_test, but a test that IMPORTS it has to say so —
   # `depend_on_referenced_packages` is an analyzer error here, and the
@@ -399,3 +402,18 @@ flutter_icons:
   web:
     generate: true
     image_path: "assets/app_icon.png"
+
+# Microsoft Store package. Identity values come from Partner Center →
+# Product management → Product identity; they must match it exactly or
+# the upload is rejected. Store builds are signed by Microsoft, so no
+# certificate is configured here.
+msix_config:
+  display_name: Yahweh's Words
+  publisher_display_name: Yahweh's People
+  identity_name: YahwehsPeople.YahwehsWords
+  publisher: CN=C4997401-2CEE-44B6-9803-4775768C89A5
+  logo_path: assets/app_icon.png
+  capabilities: internetClient
+  languages: en-us
+  trim_logo: false
+  store: true

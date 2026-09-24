@@ -245,6 +245,19 @@
   to = "/cn.html"
   status = 200
 
+# 2026-09-25: privacy policies required by the Microsoft Store listing.
+# Real files for the same reason as /about. GENERATED from
+# docs/privacy/*.md by tools/build_privacy.py; edit the Markdown.
+[[redirects]]
+  from = "/privacy/sword"
+  to = "/privacy-sword.html"
+  status = 200
+
+[[redirects]]
+  from = "/privacy/words"
+  to = "/privacy-words.html"
+  status = 200
+
 # Static-file SPA fallback. The Netlify Function URLs (`/api/*` and
 # `/.netlify/functions/*`) are matched and served by Netlify BEFORE
 # this catch-all rewrite, so the function doesn't get swallowed by

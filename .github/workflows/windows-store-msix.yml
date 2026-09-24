@@ -1,0 +1,37 @@
+# Yahweh's Words — Microsoft Store package (MSIX)
+#
+# Manual only. Builds the Windows app and packs an unsigned .msix for
+# upload to Partner Center (Microsoft signs Store packages). It touches
+# no release and no tag. The version comes from pubspec `version`
+# (msix turns 1.6.30+N into 1.6.30.0, which the Store requires).
+# STORE_BUILD switches off the GitHub self-updater. Identity/publisher values live in pubspec.yaml
+# under msix_config. Download the artifact, then upload it in Partner
+# Center → the app → Submission → Packages.
+name: Windows Store MSIX
+
+on:
+  workflow_dispatch:
+
+jobs:
+  msix:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.2'   # keep in step with release-windows.yml
+          channel: 'stable'
+          cache: true
+      - run: flutter pub get
+      - run: flutter build windows --release --dart-define=STORE_BUILD=true
+      - name: Pack MSIX (Store)
+        shell: bash
+        run: |
+          dart run msix:create --store --build-windows false
+          find build -name '*.msix'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Yahwehs-Words-msix
+          path: build/windows/x64/runner/Release/*.msix
+          if-no-files-found: error
