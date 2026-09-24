@@ -8926,6 +8926,12 @@ has never seen this repo.
       Tooling-only, no asset touched, no reader-visible change — no
       deploy. `flutter analyze` clean.
 
+      Pushed as `36c9ddd9`. CI run `35947195043` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      Python suite (341 tests) were clean locally, so nothing is expected
+      to fail; the next iteration's step 0 should confirm this run's
+      conclusion rather than assume it.
+
       Filed but NOT fixed this iteration (below, as its own P0 item, per
       the brief): `assemble_verse_text()` only turns `lineBreak == 'line'`
       into a newline; `reference` (269 occurrences) and `paragraph` (189)
