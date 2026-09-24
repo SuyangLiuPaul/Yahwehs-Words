@@ -10830,9 +10830,10 @@ has never seen this repo.
       `35997572004` (`0a48569b`) and `35998188411` (`cb58fb0b`) are both
       `success` — nothing red to chase before this fix.
 
-      Pushed as `8d93ccf9`. CI run `36027011538` was still `in_progress`
-      past the ~6-minute watch budget; next iteration's step 0 should
-      confirm it before picking a new item.
+      Pushed as `8d93ccf9`. CI run `36027011538` — noted as still
+      `in_progress` past the watch budget in `ab915553` — has since
+      **concluded `success`**, confirmed by the next planning pass; no
+      red run to chase.
 
 - [ ] **Filed, not fixed: the same wrong-script-character class also
       appears inside `<note:…>` footnote content in the v3 pair, and is
@@ -10868,6 +10869,50 @@ has never seen this repo.
       assets — this measurement only ran against extracted note text,
       thrown away, not against the files), and a decision on whether
       the excluded glyph-convention pairs should be excluded here too.
+
+      **`-v3` (Simplified) half fixed 2026-09-25**, in
+      `tools/repair_biblexg_v3_note_script_typos.py`. Recounted at HEAD
+      with an enumerated map (not the two rough figures above, which
+      used a different method and counted the deferred class too): 46
+      occurrences of 31 Traditional characters across 20 verses, all
+      inside `<note:…>` content, all confirmed publisher-side against
+      the cached upstream fetch (`~/.cache/yswords/ljk-source-v3/cn-
+      *.json` — the note text, HTML tags stripped, matches verbatim).
+      The 31-character set was checked exhaustively (every unique CJK
+      character across all 1,761 in `-v3` notes run through the same
+      character dictionary; exactly 37 differ from their own T→S
+      conversion, and those 37 are this 31 plus the 6 excluded below —
+      nothing outside that union). An adversarial review before commit
+      caught two real errors in the first draft: 數/数 (大數 at 使徒行传
+      9:11) was dropped entirely during hand-transcription from the
+      planning note's frequency list, and 穌's target was mistyped as
+      苏 (U+82CF, unrelated) instead of 稣 (U+7A23, the character 耶稣
+      already uses 1,603 times) — would have shipped 耶苏 six times.
+      Both fixed before the asset was written; see the script's
+      docstring. Deliberately excluded, staying in this item as
+      still-open for `-v3`: 麽/麼 (Traditional-internal variant,
+      ambiguous even under `s2t` char round-trip), 裡 (`s2t`
+      round-trips 里→裏, not 裡 — the same one-to-many class named below
+      for `-v3-tr`'s 里), 慾 (`s2t` round-trips 欲→欲 unchanged, i.e. 慾
+      is a distinct nuance word, not a simplification — same shape as
+      蹟/跡), 捱 (OpenCC's char dict maps it to 挨, but 捱 is itself
+      valid, common Simplified usage — would be a false positive), 註
+      (already has its own passing guard, "each edition writes the
+      annotation marker in its own script" — folding it in here would
+      duplicate/could conflict). Pinned by a new test, `no wrong-script
+      character survives inside biblexg-v3 notes`, in
+      `test/biblexg_verse_integrity_test.dart`.
+
+      **`-v3-tr` (Traditional) half explicitly deferred, not attempted.**
+      Its note-content sweep (39 unique flagged characters, 134
+      occurrences by this iteration's own recount) is dominated by
+      里 alone (45 of the original 142-count measurement above), and
+      `queue`'s own `-v3` body-text guard already treats 會堂**里** as
+      *correct in print* for the sister direction — i.e. the evidence
+      this loop already has says 里 is not safely correctable by rule
+      here either. Sweeping it needs the same enumerated, per-character,
+      print-or-cache-provenance treatment `-v3` just got, not a batch
+      pass — left for a future iteration, not blocked on the user.
 
 ## P1 — Bible study correctness
 

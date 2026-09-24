@@ -618,13 +618,14 @@ void main() {
     // filed + landed 2026-09-24). This pins the fix and covers both
     // directions, since v2's guard above only ever checked one.
     //
-    // Notes are stripped before scanning: a much larger, separate sweep
-    // (~20 Simplified chars in -v3-tr notes, ~36 Traditional chars in
-    // -v3 notes — mostly NEW note content with no v2 counterpart, so not
-    // regressions and never print-proofread) is filed as its own P0
-    // item rather than folded in here — see
-    // tools/repair_biblexg_v3_script_typos.py's module docstring and
-    // docs/autonomous-queue.md.
+    // Notes are stripped before scanning: they carry a separate,
+    // larger defect class of their own (docs/autonomous-queue.md:10837).
+    // The -v3 half is fixed and pinned in its own test below, with its
+    // own constant — do not add note-content characters to the ones
+    // here, which are scoped to verse bodies only. -v3-tr's notes
+    // (~39 Simplified chars, dominated by the deferred 里/裏/裡
+    // one-to-many class) are deliberately deferred; see
+    // tools/repair_biblexg_v3_note_script_typos.py's module docstring.
     //
     // Only characters with no reading at all in the other script are
     // listed, same rule the v2-tr guard above uses — a glyph-convention
@@ -651,6 +652,36 @@ void main() {
         if (b.contains(c)) {
           offenders.add(
               'biblexg-v3 ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
+        }
+      }
+    }
+    expect(offenders, isEmpty);
+  });
+
+  test('no wrong-script character survives inside biblexg-v3 notes', () {
+    // The guard above strips <note:…> content before scanning, so it
+    // never saw the Traditional-glyph typos INSIDE notes — a separate,
+    // larger class (docs/autonomous-queue.md:10837), fixed for the -v3
+    // (Simplified) side by
+    // tools/repair_biblexg_v3_note_script_typos.py. This pins that fix.
+    //
+    // -v3-tr's note-content typos are a DIFFERENT, larger sweep
+    // (dominated by the deferred 里/裏/裡 convention class) and are
+    // deliberately not covered here — see that script's module
+    // docstring for why each character below was included or excluded.
+    const traditionalOnlyInSpNotes =
+        '參穌譯爭詞來屢這時兒須羅節東馬亞為領熱針鴻屬經連釘異寬長當還數';
+    final note = RegExp(r'<note:([^>]*)>');
+
+    final offenders = <String>[];
+    for (final v in load('assets/biblexg-v3.json')) {
+      for (final m in note.allMatches(v['text'] as String)) {
+        final content = m.group(1)!;
+        for (final c in traditionalOnlyInSpNotes.split('')) {
+          if (content.contains(c)) {
+            offenders.add(
+                'biblexg-v3 ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
+          }
         }
       }
     }
