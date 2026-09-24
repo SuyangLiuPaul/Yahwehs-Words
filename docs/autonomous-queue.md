@@ -10835,7 +10835,7 @@ has never seen this repo.
       **concluded `success`**, confirmed by the next planning pass; no
       red run to chase.
 
-- [ ] **Filed, not fixed: the same wrong-script-character class also
+- [x] **Filed, not fixed: the same wrong-script-character class also
       appears inside `<note:…>` footnote content in the v3 pair, and is
       NOT covered by the guard added above (which strips notes before
       scanning).** This hour's plan cited "~20 Simplified chars in
@@ -10913,6 +10913,49 @@ has never seen this repo.
       here either. Sweeping it needs the same enumerated, per-character,
       print-or-cache-provenance treatment `-v3` just got, not a batch
       pass — left for a future iteration, not blocked on the user.
+
+      **`-v3-tr` (Traditional) half fixed 2026-09-25**, in
+      `tools/repair_biblexg_v3_tr_note_script_typos.py`. This closes the
+      item: both halves are now done. 21 characters / 34 occurrences /
+      25 verses, all inside `<note:…>` content, all confirmed
+      publisher-side against the cached upstream fetch
+      (`~/.cache/yswords/ljk-source-v3/tw-<book>.json`) — every flagged
+      character's count matches the cache file exactly, per book. 18
+      characters stay **excluded**, each for a documented, spot-checked
+      reason in the script's docstring (里/裏/裡 convention, 征服/占星術
+      -style genuinely-different words, the 內/内 and 麼/麽
+      glyph-convention pairs already carved out by the sister guard,
+      …) — settled exclusions, not open follow-up work.
+
+      The first draft (written by an earlier stage that then died mid-
+      session, see below) excluded 19 characters, not 18: an
+      adversarial re-review of all 19 rationales overturned one. 兹→茲
+      (8 occurrences, 7 verses, all in Revelation 2–3's 伊兹密爾/Izmir
+      and 代尼兹利/Denizli location notes) was excluded on "asset's own
+      settled convention" grounds — but unlike the other 18, 茲 occurs
+      **zero** times anywhere else in the entire asset, so there was no
+      independent usage for "convention" to mean anything; the cached
+      publisher source itself has 兹×8/茲×0 in exactly those seven
+      notes, the same publisher-side-leak shape as every other included
+      character, and zh-TW references write both place names with 茲.
+      Folded into the fix rather than filed separately, since it's the
+      same script, same file, same defect class, well-evidenced. The
+      other four rationales a refuter flagged as under-verified (里,
+      伙, 勸吁, 內→内) were spot-checked against the actual note text at
+      HEAD and held up — see the script's docstring for the specifics.
+      New test `no wrong-script character survives inside biblexg-v3-tr
+      notes` in `test/biblexg_verse_integrity_test.dart` pins it (proved
+      to fail if broken by hand before landing).
+
+      **Stranded-work recurrence, same shape as `queue:21028`/
+      `queue:19259`.** The script above was actually first written by
+      the 05:34–05:41 execution stage this same day, which ended `rc=1`
+      on a session-limit kill before ever running `--write` — an
+      untracked 218-line file sat in the tree with `assets/biblexg-v3-
+      tr.json` unmodified at HEAD. This iteration found it, verified
+      its dry run was clean, then did the adversarial re-review above
+      before writing. Recording the recurrence here per the loop's
+      instruction not to re-file it as a new item.
 
       Pushed as `7f0d7f1b`. CI run `36040479002` was still `in_progress`
       past the ~6-minute watch budget; next iteration's step 0 should
@@ -21915,6 +21958,41 @@ so the bundle-size answer stays on the record.
       own recipe, each chunk's exit code checked before moving on) all
       passed. The underlying gap is still open and still outside this
       repo's reach.
+
+- [ ] **New, filed 2026-09-25: `test/release_scripts_test.dart` (just
+      `tools/test_release_scripts.py passes`) hangs for ~90 minutes
+      inside a full `run_test_chunks.py --chunk 4 --of 6` run, twice in
+      a row, on this Mac — not a failure, a hang that only ends when the
+      chunk's own runner gives up.** Found while landing the `-v3-tr`
+      note-typo item above; unrelated to that change (nothing touched
+      shares a file with the release-script tooling). `flutter test
+      test/release_scripts_test.dart` alone passes cleanly in 51s, both
+      before and after the hang reproduced inside the chunk — so this is
+      not a deterministic regression in the test or the scripts it
+      exercises.
+
+      Suspected cause, not confirmed: this Mac was carrying heavy
+      unrelated load both times — `ps aux` showed multiple stale
+      `flutter_tester` processes for a different repo
+      (`~/Documents/CodingProject/SeekSparks`) still resident from
+      Sep 13/15, several `git fsmonitor--daemon` processes, and an
+      active browser-automation script from a concurrent session. The
+      test spawns real subprocesses with stub `git`/`gh`/`netlify` on
+      PATH in a temp dir (see its own module docstring); a subprocess
+      spawn or port bind stalling under that load is plausible and would
+      explain a hang rather than a deterministic failure.
+
+      Not fixed here: reproducing deliberately would mean recreating
+      heavy background load on a machine another session is actively
+      using, which risks interfering with that session's own work more
+      than it would teach us. Left for a future iteration to either
+      reproduce cleanly (idle machine) and file a real root cause, or
+      close as machine-load noise if CI — which runs on a clean,
+      single-tenant runner — never reproduces it. Per this loop's own
+      tier-5 rule, worth a dedicated look only if it actually causes a
+      shipped CI failure; so far every CI run on this branch has been
+      green (`gh run list`, most recent five checked 2026-09-25), so it
+      has not.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect

@@ -667,8 +667,7 @@ void main() {
     //
     // -v3-tr's note-content typos are a DIFFERENT, larger sweep
     // (dominated by the deferred 里/裏/裡 convention class) and are
-    // deliberately not covered here — see that script's module
-    // docstring for why each character below was included or excluded.
+    // covered by the sibling guard below instead, not here.
     const traditionalOnlyInSpNotes =
         '參穌譯爭詞來屢這時兒須羅節東馬亞為領熱針鴻屬經連釘異寬長當還數';
     final note = RegExp(r'<note:([^>]*)>');
@@ -681,6 +680,36 @@ void main() {
           if (content.contains(c)) {
             offenders.add(
                 'biblexg-v3 ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
+          }
+        }
+      }
+    }
+    expect(offenders, isEmpty);
+  });
+
+  test('no wrong-script character survives inside biblexg-v3-tr notes', () {
+    // The -v3-tr sibling of the guard above. Fixed by
+    // tools/repair_biblexg_v3_tr_note_script_typos.py
+    // (docs/autonomous-queue.md:10838, the -v3-tr note half). 21 of the
+    // 39 Simplified characters an exhaustive OpenCC sweep of this
+    // asset's note content flagged; the other 18 are excluded, each for
+    // a documented reason (里/裏/裡 convention, 說文解字-style word pairs
+    // like 征服/占星術, the 內/内 and 麼/麽 glyph-convention pairs, …) —
+    // see that script's module docstring for why each was included or
+    // excluded, including the one exclusion (兹) that an adversarial
+    // re-review overturned before this landed.
+    const simplifiedOnlyInTrNotes =
+        '条猪删气词组没语与爱标为参镜愿两于强详况兹';
+    final note = RegExp(r'<note:([^>]*)>');
+
+    final offenders = <String>[];
+    for (final v in load('assets/biblexg-v3-tr.json')) {
+      for (final m in note.allMatches(v['text'] as String)) {
+        final content = m.group(1)!;
+        for (final c in simplifiedOnlyInTrNotes.split('')) {
+          if (content.contains(c)) {
+            offenders.add(
+                'biblexg-v3-tr ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
           }
         }
       }
