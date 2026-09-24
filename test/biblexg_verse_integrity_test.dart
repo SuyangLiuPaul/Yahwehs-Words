@@ -604,6 +604,59 @@ void main() {
     expect(offenders.toSet(), printedItselfReadsSimplified);
   });
 
+  test('no wrong-script character survives in the v3 pair, either '
+      'direction', () {
+    // The guard above only ever scanned biblexg-v2-tr.json — the
+    // superseded snapshot (bible_versions.dart's `_kSupersededBy` hides
+    // it since 2026-09-14). It never saw biblexg-v3.json / -v3-tr.json,
+    // the editions a reader can actually select, and those were built
+    // from a September re-fetch that was never proofread the way v2
+    // was. That re-fetch let 10 publisher-side one-off typos through —
+    // Simplified glyphs in the Traditional body, Traditional glyphs in
+    // the Simplified body — fixed by
+    // tools/repair_biblexg_v3_script_typos.py (docs/autonomous-queue.md,
+    // filed + landed 2026-09-24). This pins the fix and covers both
+    // directions, since v2's guard above only ever checked one.
+    //
+    // Notes are stripped before scanning: a much larger, separate sweep
+    // (~20 Simplified chars in -v3-tr notes, ~36 Traditional chars in
+    // -v3 notes — mostly NEW note content with no v2 counterpart, so not
+    // regressions and never print-proofread) is filed as its own P0
+    // item rather than folded in here — see
+    // tools/repair_biblexg_v3_script_typos.py's module docstring and
+    // docs/autonomous-queue.md.
+    //
+    // Only characters with no reading at all in the other script are
+    // listed, same rule the v2-tr guard above uses — a glyph-convention
+    // character (说/説, 着/著, …) that the print itself uses either way
+    // does not belong here.
+    const simplifiedOnlyInTr = '门给';
+    const traditionalOnlyInSp = '來靈說餅無禦別話';
+    final note = RegExp(r'<note:[^>]*>');
+    String body(String text) => text.replaceAll(note, '');
+
+    final offenders = <String>[];
+    for (final v in load('assets/biblexg-v3-tr.json')) {
+      final b = body(v['text'] as String);
+      for (final c in simplifiedOnlyInTr.split('')) {
+        if (b.contains(c)) {
+          offenders.add(
+              'biblexg-v3-tr ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
+        }
+      }
+    }
+    for (final v in load('assets/biblexg-v3.json')) {
+      final b = body(v['text'] as String);
+      for (final c in traditionalOnlyInSp.split('')) {
+        if (b.contains(c)) {
+          offenders.add(
+              'biblexg-v3 ${v['book']} ${v['chapter']}:${v['verseLabel']} — $c');
+        }
+      }
+    }
+    expect(offenders, isEmpty);
+  });
+
   test('each edition writes the annotation marker in its own script', () {
     // 註 / 注 cannot go in the character list above, because 注 has a
     // perfectly good Traditional reading (注意) and appears 35 times in

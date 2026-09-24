@@ -10727,6 +10727,144 @@ has never seen this repo.
       `004001050` to the script's `EXPLAINED` dict. Full writeup
       `docs/p0-drift-2026-09-22.md`.
 
+- [x] **2026-09-25 — 10 verses in the September re-fetch printed a
+      character from the wrong script: 8 Traditional glyphs inside
+      `biblexg-v3.json` (Simplified), 2 Simplified glyphs inside
+      `biblexg-v3-tr.json` (Traditional).** These are the editions a
+      reader actually selects (`_kSupersededBy` hid the v2 pair on
+      2026-09-14); the existing guard at
+      `test/biblexg_verse_integrity_test.dart:579` never saw them — it
+      scans only the superseded `biblexg-v2-tr.json`, confirmed by
+      reading the test, and one-direction only (Simplified-in-
+      Traditional, never the reverse).
+
+      Landing stranded work: a prior stage (23:18–23:34, 2026-09-24)
+      found and repaired all 10 but hit the session limit before it
+      could commit — `tools/repair_biblexg_v3_script_typos.py`
+      (untracked) and the two asset edits were sitting correct but
+      uncommitted. This session re-verified everything from scratch
+      rather than trusting the prior stage's word for it.
+
+      **The 2 Traditional-side (太7:7 门→門, 路11:13 给→給)** are
+      confirmed against the printed 讀_繁_註釋本 by
+      `tools/proofread_ljk_tr.py`'s own text extraction. Independently
+      re-confirmed here: the cached upstream Traditional source itself
+      (`~/.cache/yswords/ljk-source/tw-mt.json`, `tw-lk.json`) already
+      contains the same two typos verbatim ("敲门" not "敲門";
+      "聖靈给求" not "聖靈給求") — publisher-side, not introduced by our
+      import.
+
+      **The 8 Simplified-side** have no printed witness (the 註釋本 is
+      Traditional-only), so they rest on internal-consistency grounds —
+      do not let that flatten into "confirmed against print" the way an
+      earlier draft of this write-up did. Provenance was widened from
+      the 5-of-10 the prior stage had checked to **all 10**: every one
+      of the 8 is present verbatim, wrong-script, in the cached upstream
+      Simplified source (`cn-mk.json` 41002003, `cn-lk.json` 42008027 +
+      42022031, `cn-act.json` 44027036, `cn-2co.json` 47005021,
+      `cn-eph.json` 49006011, `cn-phi.json` 50003004, `cn-2pe.json`
+      61001019) — a publisher typo, not an import defect. 7 of the 8 are
+      ×1 in their upstream file against tens-to-hundreds of correctly-
+      scripted instances of the same character in that same file (e.g.
+      來:1 vs 来:228 in `cn-mk.json`; 說:1 vs 说:419 in `cn-lk.json`).
+      **The 8th, Ephesians 6:11 (禦→御), does not**: `cn-eph.json` alone
+      has 禦:1 and 御:0, no in-file counter-witness — narrower than the
+      other 7. Corpus-wide (`assets/biblexg-v3.json` after the fix) 御
+      appears 5 times and 禦 0 times, so the repair is still consistent,
+      just not on the same file-local grounds as the rest; said
+      precisely here rather than folded into the blanket claim.
+
+      An independent refuter agent checked all 10 against general
+      Chinese orthography (via `opencc t2s`/`s2t`, not memory) rather
+      than just re-reading the evidence: confirmed 說/说 is the plain
+      unambiguous pair (not the 説/说 print-variant case), confirmed
+      禦→御 as a real many-to-one simplification merger (抵禦→抵御) via
+      `opencc` independent of the file-frequency argument, and found
+      none of the 10 collides with a deliberately-excluded glyph-
+      convention pair (说/説, 着/著, 内/內) that print sources use either
+      way — those would have been wrong to "fix". No objection raised;
+      safe to commit.
+
+      Not the deferred one-to-many converter-hole class (蹟/跡, 鍊/鏈,
+      兇/凶, …) — every character here is 1:1, unambiguous in context,
+      and the correct form is already the overwhelming majority reading
+      of that character elsewhere in the same source.
+
+      New test `'no wrong-script character survives in the v3 pair,
+      either direction'` in `test/biblexg_verse_integrity_test.dart`
+      pins both directions on both v3 assets (notes stripped before
+      scanning — see next item). 0 offenders on both assets as they now
+      stand; the repair script (`--write`, idempotent) reports "would
+      write 0 row(s)" on a clean run.
+
+      `flutter analyze`: clean. Full suite run as 4 foreground chunks
+      via `tools/run_test_chunks.py`, exit code checked per chunk.
+      Chunks 0 and 3 green outright. Chunk 1 and chunk 2 each showed one
+      failure, and both were run down to a cause outside this change
+      before being accepted: chunk 1's `update_check_scheduler_test.dart`
+      failure and chunk 2's `update_service_test.dart` failure both
+      disappeared when the same chunk was re-run in a throwaway
+      `git worktree` seeded from clean `HEAD` (`cb58fb0b`) plus only
+      this change's 4 files — meaning both were artifacts of the shared
+      checkout's *other* concurrent, uncommitted session (MSIX
+      packaging + privacy pages touching `pubspec.yaml`/`pubspec.lock`),
+      not of this fix. (The worktree method itself then failed a
+      *different* test — one that reads `.git/config` directly, which a
+      worktree's gitfile-indirection breaks — confirmed environmental by
+      running that file alone back in the real checkout, where it
+      passed clean.) Net: this change breaks nothing; the two failures
+      seen along the way both belong to state this iteration must not
+      touch.
+
+      Staged exactly the 5 files this fix owns — never `pubspec.yaml`,
+      `pubspec.lock`, `netlify.toml`, or anything under `docs/privacy/`
+      / `web/privacy-*` / `.github/workflows/windows-store-msix.yml`,
+      all mid-edit by the other session. **Dev/qat deploy deferred**,
+      per this hour's plan: `release_web.sh` rewrites `pubspec.yaml`'s
+      version line, which the concurrent session is editing right now
+      (`queue:20827`'s interleaved-diff near-miss) — the next iteration,
+      or the human's own release, picks up the deploy once that
+      contention clears. prod untouched regardless.
+
+      CI-green confirmed for both runs this hour's plan had queued:
+      `35997572004` (`0a48569b`) and `35998188411` (`cb58fb0b`) are both
+      `success` — nothing red to chase before this fix.
+
+- [ ] **Filed, not fixed: the same wrong-script-character class also
+      appears inside `<note:…>` footnote content in the v3 pair, and is
+      NOT covered by the guard added above (which strips notes before
+      scanning).** This hour's plan cited "~20 Simplified chars in
+      `-v3-tr` notes, ~36 Traditional chars in `-v3` notes" as coming
+      from `tools/repair_biblexg_v3_script_typos.py`'s module docstring
+      — that citation does not check out: as of this commit the
+      docstring contains no note-count claim at all (`grep -n
+      "note\|20\|36"` against it finds nothing relevant). Do not repeat
+      those two numbers as if verified; they are not.
+
+      A rough, uncurated measurement (not a substitute for a real
+      audit): round-tripping each note's text through `opencc -c s2t`
+      (for `-v3-tr`, which should be pure Traditional) and `opencc -c
+      t2s` (for `-v3`, which should be pure Simplified) and diffing
+      character-for-character finds 142 flipped characters across 98
+      notes / 87 verses in `-v3-tr`, and 52 flipped characters across 28
+      notes / 22 verses in `-v3`. This almost certainly **overcounts**:
+      the method has no way to exclude the glyph-convention pairs
+      (说/説, 着/著, 内/內, …) that the two guards in this file
+      deliberately treat as not-a-defect when print itself is
+      inconsistent about them — it would flag every one of those too.
+
+      Most of this note text is new in v3 with no v2 counterpart to
+      diff against, and was never print-proofread the way the body text
+      above was — a different judgement call from the 10 body
+      instances above (which had upstream-cache and/or print
+      confirmation), not a regression, and its own item rather than
+      folded into the body-text guard. Needs: an enumerated character
+      map the same way `tools/repair_biblexg_v3_script_typos.py` built
+      one for the body (never a blanket `opencc` sweep over the actual
+      assets — this measurement only ran against extracted note text,
+      thrown away, not against the files), and a decision on whether
+      the excluded glyph-convention pairs should be excluded here too.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
