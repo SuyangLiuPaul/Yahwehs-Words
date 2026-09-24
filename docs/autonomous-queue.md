@@ -8799,6 +8799,56 @@ has never seen this repo.
       locally, so nothing is expected to fail; the next iteration's
       step 0 should confirm this run's conclusion rather than assume it.
 
+- [x] **2026-09-24 FIXED — `9a3c5cac`'s `split_block_comment()` was the
+      OTHER half of `16633cad`'s revert, still missing at HEAD.** Direct
+      sibling of the `5420cda5` item above: that one restored
+      `clean_comment_list()` (the enumerated/bulleted-list fix from
+      `21bd0308`); this one restores `split_block_comment()` (the
+      half-verse-in-a-footnote fix from `9a3c5cac`, 2026-08-11).
+      `tools/import_ljk2.py:218` at HEAD was the pre-`9a3c5cac`
+      `clean_block_comment()`, folding a `comment` node's
+      `{lineBreak, content}` dict segments straight into the footnote
+      string instead of treating them as the PRECEDING VERSE'S OWN
+      BODY. Restored `split_block_comment()` and the `comment` branch's
+      body re-attachment (`out[-1]['text'] += body`) verbatim from
+      `9a3c5cac`'s diff; the `<p class="comment">`→`<cite>` rewrite and
+      the `_INVISIBLE` strip live in `html_to_inline()`, untouched, no
+      conflict. New pytest `test/test_import_ljk2_split_block_comment.py`
+      proven red against HEAD (dict segment silently dropped from the
+      verse's `text`, folded into the note instead), green after.
+
+      **Census against the live source, not the vendored checkout**
+      (that vendored copy is an April snapshot, older than v2 and v3,
+      forbidden by this item's own brief): fetched all 27 NT books ×
+      cn/tw fresh from `SRC_BASE` (54 files, 18,518 nodes, 2,085
+      `comment` nodes) and walked every one for a `contents` array
+      mixing `str` and non-`str` items. **Zero** — every segment in
+      every comment node, both languages, all 27 books, is a plain
+      string. Refuted rather than trusted: an independent second census
+      (different script, `type(seg).__name__` instead of an
+      `isinstance` pair, plus a recursive nested-dict sweep and a live
+      re-fetch of 6 files to rule out a stale cache) got the same zero.
+
+      That is a **real change from `9a3c5cac`'s "exactly two in the
+      whole corpus", not a bug in the count**: printed both previously
+      affected verses (約翰福音 12:36, 約翰一書 4:16, both languages) and
+      the publisher has since restructured their own source — the
+      second sentence of each now sits directly inside the **verse**
+      node's own `contents` (`lineBreak: "paragraph"`), not in a
+      `comment` node at all. Nothing needed recovering this run; the
+      restored function is pure regression-proofing for if the shape
+      reappears in a future fetch, not a live data fix. `ff226ddc`
+      (2026-09-16, see below) had already independently confirmed both
+      verses read correctly in the shipped v3 assets, for a different
+      reason (a hand repair, not this importer path) — this closes the
+      tooling gap that made that correctness fragile against the next
+      re-fetch.
+
+      `flutter analyze` clean; full Dart suite green (`flutter test`,
+      336 tests); full Python suite green (`unittest discover`, 336
+      tests, plus the 2 new). Tooling-only change (importer + tests,
+      no asset touched) — no deploy.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
