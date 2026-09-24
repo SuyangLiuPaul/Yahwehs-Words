@@ -64,6 +64,28 @@ rows this script actually writes. (An earlier, looser whitespace-equality
 guard counted 427; the 17-row difference is exactly the 8 + 9 rows the
 tighter guard now correctly refuses — see above.)
 
+**A second, narrower defect lives in the same neighbourhood and is fixed
+by a second pass in this same script (`docs/autonomous-queue.md:9012`).**
+Upstream occasionally encodes a poetry quotation as HTML
+`<div class="div">…</div>` wrappers instead of explicit `lineBreak:
+'line'`/`'reference'` fragments, with EVERY fragment's own `lineBreak`
+left at `'inline'` — so `assemble_verse_text()` (fixed above or not) has
+no marker to act on and glues the lines into one run-on string.
+`html_to_inline()` also strips the `<div>` tags themselves as "any other
+stray tag", so by the time a plain rebuild finishes, the boundary
+information is simply gone from the string it returns; this is not a
+case the first pass's `_BREAK_LINEBREAKS` fix could ever reach. Measured
+2026-09-24: exactly one verse node in the whole cached corpus uses this
+markup, `tw-1pe.json`'s `verseIndex: "10"` node — and that one node holds
+THREE verses (`60003010`/`011`/`012`) merged together, with `<sup>11</sup>`
+/ `<sup>12</sup>` inline markers standing in for the verse boundaries a
+separate node would otherwise carry. `expand_div_merged_node()` below
+walks that structure directly — each `<div class="div">` is a line, each
+leading `<sup>N</sup>` starts verse N — and `repair_div_merged_verses()`
+applies the exact same `'\n'`-only guard as the pass above, per split
+verse, so it remains structurally impossible for this branch to change a
+character either.
+
 Run:
     python3 tools/repair_biblexg_line_breaks.py            # dry run
     python3 tools/repair_biblexg_line_breaks.py --write
@@ -240,6 +262,119 @@ def compute_repairs(
     return to_write, skipped_mismatch, skipped_missing
 
 
+_DIV_RE = re.compile(r'^<div class="div">(.*)</div>$', re.S)
+_SUP_RE = re.compile(r'^<sup>(\d+)</sup>(.*)$', re.S)
+
+
+def expand_div_merged_node(ljk2, contents: list[dict], start_verse: int) -> dict[int, str]:
+    """Split one `<div class="div">`-wrapped, multi-verse upstream node
+    back into per-verse text with the line structure the `<div>`s encode.
+
+    `contents` is the node's own list — the SAME shape
+    `assemble_verse_text()` takes, but here `lineBreak` carries no
+    information (every fragment is `'inline'`; see module docstring), so
+    this walks the HTML instead: each `<div class="div">X</div>`
+    fragment is one poetry line, and a line whose content starts with
+    `<sup>N</sup>` is both that line's own leading marker AND the point
+    where the running verse number changes to N — the same convention
+    the publisher's node uses to fold verses 11 and 12 into the node
+    nominally addressed to verse 10. A fragment that is not `<div>`-wrapped
+    (the "因為：" lead-in before the first `<div>` here) is one line of
+    whichever verse is current when it is reached.
+
+    Returns `{verse_num: text}`, `text` already run through
+    `ljk2.html_to_inline()` per line and joined with `'\\n'` — so a
+    `<cite>` inside the last line (the Psalm 34 cross-reference in verse
+    12 here) still becomes `<note:…>`, exactly as it would coming through
+    the ordinary assembler.
+    """
+    lines: dict[int, list[str]] = {}
+    current = start_verse
+    for c in contents:
+        raw = c.get('content', '') or ''
+        m = _DIV_RE.match(raw)
+        inner = m.group(1) if m else raw
+        sup_m = _SUP_RE.match(inner) if m else None
+        if sup_m:
+            current = int(sup_m.group(1))
+            inner = sup_m.group(2)
+        chunk = ljk2.html_to_inline(inner)
+        if chunk:
+            lines.setdefault(current, []).append(chunk)
+    return {v: '\n'.join(parts) for v, parts in lines.items()}
+
+
+def find_div_merged_verse_nodes(
+    ljk2, cache_dir: str, lang: str,
+) -> list[tuple[str, int, int, str, list[dict]]]:
+    """Scan every cached book of one language for a verse node whose
+    `contents` include a `<div class="div">` fragment — the markup style
+    `expand_div_merged_node()` above understands. Returns
+    `(abbr, book_id, chapter, verse_label, contents)` per match.
+
+    Walks the same `chapter` node → `verse` node structure
+    `import_ljk2.build_book_verses()` does, but only far enough to find
+    chapter numbers and verse contents; it does not assemble text.
+    """
+    found: list[tuple[str, int, int, str, list[dict]]] = []
+    for abbr, _en, _cn, _tr, bid in ljk2.BOOKS:
+        data = load_cached_source(cache_dir, lang, abbr)
+        chapter = 0
+        for ch_data in data:
+            for n in ch_data.get('nodeData', []):
+                t = n.get('type')
+                if t == 'chapter':
+                    chapter = int(n.get('chapterIndex', '0'))
+                elif t == 'verse':
+                    contents = n.get('contents', [])
+                    if any('<div class="div">' in (c.get('content') or '')
+                           for c in contents if isinstance(c, dict)):
+                        found.append((abbr, bid, chapter,
+                                     n.get('verseIndex', '0'), contents))
+    return found
+
+
+def repair_div_merged_verses(ljk2, cache_dir: str, path: str, lang: str, *,
+                             write: bool) -> tuple[int, int, int, int]:
+    """The second pass — see `find_div_merged_verse_nodes()` /
+    `expand_div_merged_node()`. Returns `(written, skipped_mismatch,
+    skipped_missing, nodes_found)`.
+    """
+    with open(path, encoding='utf-8') as f:
+        raw = f.read()
+    rows = json.loads(raw)
+    rows_by_id = {r['id']: r for r in rows}
+    nodes = find_div_merged_verse_nodes(ljk2, cache_dir, lang)
+
+    to_write: list[tuple[str, str, str]] = []
+    skipped_mismatch = 0
+    skipped_missing = 0
+    for abbr, bid, chapter, verse_label, contents in nodes:
+        m = re.match(r'\d+', verse_label)
+        if not m:
+            continue
+        start_verse = int(m.group(0))
+        for vnum, new_text in expand_div_merged_node(ljk2, contents, start_verse).items():
+            vid = f'{bid:02d}{chapter:03d}{vnum:03d}'
+            row = rows_by_id.get(vid)
+            if row is None:
+                skipped_missing += 1
+                continue
+            if new_text == row['text']:
+                continue
+            if _nl_strip(new_text) != _nl_strip(row['text']):
+                skipped_mismatch += 1
+                continue
+            to_write.append((vid, row['text'], new_text))
+
+    if write and to_write:
+        new_raw = apply_text_edits(raw, to_write)
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(new_raw)
+
+    return len(to_write), skipped_mismatch, skipped_missing, len(nodes)
+
+
 def repair_asset(ljk2, cache_dir: str, path: str, use_tr: bool, *,
                   write: bool) -> tuple[int, int, int]:
     with open(path, encoding='utf-8') as f:
@@ -281,6 +416,18 @@ def main() -> int:
         print(f'{code}: {verb} {written} rows; skipped {skipped_mismatch} '
               f'reshaped by a later repair pass, {skipped_missing} with no '
               f'matching id in the fresh rebuild (expected, not a failure)')
+
+    print()
+    for code, use_tr in (('biblexg-v3', False), ('biblexg-v3-tr', True)):
+        path = os.path.join(REPO_ROOT, 'assets', f'{code}.json')
+        lang = 'tw' if use_tr else 'cn'
+        written, skipped_mismatch, skipped_missing, nodes_found = (
+            repair_div_merged_verses(ljk2, cache_dir, path, lang, write=args.write))
+        total_written += written
+        verb = 'wrote' if args.write else 'would write'
+        print(f'{code}: {nodes_found} <div>-merged verse node(s) found; '
+              f'{verb} {written} rows; skipped {skipped_mismatch} mismatched, '
+              f'{skipped_missing} with no matching id')
 
     if not args.write:
         print('dry run — pass --write to apply')

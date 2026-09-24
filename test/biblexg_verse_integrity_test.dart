@@ -394,25 +394,6 @@ void main() {
       // docs/梁家鏗譯本-請教出版方.md.
       '启示录 5:9': '两份官方来源就此边界互相不一致，各自照录',
       '启示录 5:10': '两份官方来源就此边界互相不一致，各自照录',
-      // Surfaced 2026-09-24 by docs/autonomous-queue.md:8943 (the fix
-      // that makes assemble_verse_text() emit a '\n' for the upstream's
-      // 'reference'/'paragraph' block markers, not just 'inline'ing
-      // them away): CN's 彼得前书 3:10 gained the ONE '\n' it was still
-      // missing (between 「因为：」 and the Psalm 34 quotation that
-      // follows it), pushing this pair's delta from +3 — under the old
-      // tolerance by luck, not by correctness — to +4. TR's row for
-      // this id has NO internal '\n' at all, and is not this fix's to
-      // add: the cached upstream (tw-1pe.json) has verses 10-12 merged
-      // into one node, so `repair_biblexg_line_breaks.py`'s
-      // whitespace-equality guard correctly refuses to touch it (the
-      // freshly assembled text is the whole 10-12 blob, not verse 10
-      // alone) — the row was already missing its poetry breaks before
-      // this fix touched anything, most likely lost by whichever
-      // earlier repair pass split 10-12 apart without carrying the
-      // internal 'line' markers along. That is a different defect, in a
-      // different tool, filed separately — see
-      // docs/autonomous-queue.md's TR-side 彼得前书 3:10 item.
-      '彼得前书 3:10': 'TR 缺内部换行（Psalm 34 引文未分行）——早于本次修复的既有缺陷，另案登记',
     };
     final inlineNote = RegExp(r'<note:.*?>');
     String body(Map<String, dynamic> v) =>

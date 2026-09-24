@@ -9009,24 +9009,47 @@ has never seen this repo.
       to fail; the next iteration's step 0 should confirm this run's
       conclusion rather than assume it.
 
-- [ ] **TR `彼得前书 3:10` (`60003010`) has no internal line breaks —
-      CN's has three.** Surfaced 2026-09-24 fixing the item above.
-      Current TR text: `因為：誰想享受人生，過好日子，就得勒住舌頭不出
-      惡言，管住嘴唇不沾詭詐。` — one run-on line. CN: the same clauses
-      each on their own line. `repair_biblexg_line_breaks.py` correctly
-      refused to touch this row: the cached upstream `tw-1pe.json` still
-      has verses 10-12 merged into one node (fresh rebuild for this id
-      returns the whole 10-12 blob, not verse 10 alone), so whatever
-      repair pass split them apart for the shipped asset ran before this
-      iteration and evidently didn't carry the internal `'line'` markers
-      through the split — a different tool's defect, not
-      `assemble_verse_text()`'s. Needs someone to either fix
-      `repair_biblexg.py`'s split to preserve internal line breaks, or
-      hand-repair this one row with the CN structure as the model (same
-      translation, same clause boundaries, only the script differs).
-      Pinned as a known difference in
-      `test/biblexg_verse_integrity_test.dart` in the meantime so it
-      doesn't silently grow into more verses.
+- [x] **TR `彼得前书 3:10` (`60003010`) has no internal line breaks —
+      CN's has three.** FIXED 2026-09-24. **The defect was 3 rows, not
+      1**: `60003010`/`011`/`012` all lost their poetry line breaks, not
+      just 3:10 — the earlier note under-scoped it because the CN/TR
+      length-parity check's tolerance happened not to trip for 3:11/3:12
+      individually.
+
+      Root cause: the cached upstream `tw-1pe.json` encodes this one
+      passage differently from the rest of the corpus — verses 10-12 are
+      merged into a SINGLE JSON node (`verseIndex: "10"`) whose `contents`
+      carry the poetry structure as `<div class="div">…</div>` HTML
+      wrappers (one div per line, `<sup>11</sup>`/`<sup>12</sup>` marking
+      the verse boundaries a separate node would normally carry) instead
+      of the `lineBreak: 'line'/'reference'/'paragraph'` markers every
+      other verse uses — every fragment's own `lineBreak` is `'inline'`,
+      so neither the old nor the fixed `assemble_verse_text()` had
+      anything to act on. Measured: this markup style occurs in exactly
+      ONE verse node in the whole cached corpus (54 files, both
+      languages) — a one-off, not a class.
+
+      Fixed by a new second pass in `tools/repair_biblexg_line_breaks.py`
+      (`expand_div_merged_node()` / `find_div_merged_verse_nodes()` /
+      `repair_div_merged_verses()`): walks the `<div>` wrappers directly,
+      splits on the `<sup>N</sup>` markers, and applies the exact same
+      `'\n'`-only guard as the pass above, per split verse — structurally
+      unable to change a non-`\n` character (adversarially reviewed
+      before commit, held). `--write` changed exactly 3 rows, each
+      gaining only `\n` characters; `git diff` confirms nothing else
+      moved. New text matches the CN twin's line structure exactly,
+      clause for clause. `biblexg-v3.json` (CN) untouched — no
+      `<div>`-merged node exists on that side.
+
+      The `彼得前书 3:10` `knownDifferences` entry in
+      `test/biblexg_verse_integrity_test.dart` is removed — the delta is
+      back within tolerance and removing it means a future regression
+      here won't go silent. New unit tests in
+      `test/test_repair_biblexg_line_breaks.py`
+      (`ExpandDivMergedNodeTest`) cover the div/merged-node branch
+      against the real 1 Peter 3 fixture. `flutter analyze` clean, full
+      6/6-chunk Dart suite green, `biblexg_verse_integrity_test.dart`
+      green on its own (18/18).
 
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all

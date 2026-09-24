@@ -116,6 +116,61 @@ class ComputeRepairsTest(unittest.TestCase):
         self.assertEqual(missing, 0)
 
 
+class ExpandDivMergedNodeTest(unittest.TestCase):
+    """`expand_div_merged_node()` — the second pass, for upstream nodes
+    that glue several verses' poetry lines together with
+    `<div class="div">` HTML instead of `lineBreak` markers
+    (`docs/autonomous-queue.md:9012`). Fixture is 1 Peter 3:10-12's own
+    cached `tw-1pe.json` contents, trimmed to the fields the function
+    reads (`content`) — real upstream markup, not invented for the test.
+    """
+
+    def _contents(self):
+        return [
+            {'lineBreak': 'inline', 'content': '因為：\n      '},
+            {'lineBreak': 'inline', 'content': '<div class="div">誰想享受人生，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">過好日子，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">就得勒住舌頭不出惡言，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">管住嘴唇不沾詭詐。</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div"><sup>11</sup>還要避惡行善，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">覓求和睦，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">緊追不捨。</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div"><sup>12</sup>因為主慈目眷顧義人，</div>'},
+            {'lineBreak': 'inline', 'content': '<div class="div">側耳俯聽他們的呼聲，</div>'},
+            {'lineBreak': 'inline',
+             'content': '<div class="div">但主跟造孽者作對。<cite>詩34.12-16</cite></div>'},
+        ]
+
+    def test_splits_the_merged_node_into_three_verses_at_the_sup_markers(self):
+        ljk2 = repair._load_import_ljk2()
+        result = repair.expand_div_merged_node(ljk2, self._contents(), 10)
+        self.assertEqual(set(result), {10, 11, 12})
+
+    def test_each_verse_gets_the_cn_twin_line_structure(self):
+        ljk2 = repair._load_import_ljk2()
+        result = repair.expand_div_merged_node(ljk2, self._contents(), 10)
+        self.assertEqual(
+            result[10],
+            '因為：\n誰想享受人生，\n過好日子，\n就得勒住舌頭不出惡言，\n管住嘴唇不沾詭詐。')
+        self.assertEqual(result[11], '還要避惡行善，\n覓求和睦，\n緊追不捨。')
+
+    def test_a_cite_inside_the_last_div_becomes_a_note_tag(self):
+        # <cite> handling must survive being nested inside a <div> — this
+        # is the same <note:…> conversion html_to_inline() always does,
+        # not a special case for div-wrapped content.
+        ljk2 = repair._load_import_ljk2()
+        result = repair.expand_div_merged_node(ljk2, self._contents(), 10)
+        self.assertEqual(
+            result[12],
+            '因為主慈目眷顧義人，\n側耳俯聽他們的呼聲，\n但主跟造孽者作對。<note:詩34.12-16>')
+
+    def test_no_div_content_returns_empty(self):
+        ljk2 = repair._load_import_ljk2()
+        contents = [{'lineBreak': 'inline', 'content': '如果你們熱心行善，誰能傷害你們？'}]
+        result = repair.expand_div_merged_node(ljk2, contents, 13)
+        self.assertEqual(result, {13: '如果你們熱心行善，誰能傷害你們？'})
+
+
 class ApplyTextEditsTest(unittest.TestCase):
     """`apply_text_edits()` must do a surgical, byte-level replacement of
     only the named `text` values — the first version of this script
