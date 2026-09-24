@@ -216,6 +216,22 @@ jobs:
       - name: Strong's-tagging / divine-name gate unit tests
         run: python3 test/test_audit_census_checks.py
 
+      # Unit tests for tools/import_ljk2.py's build_book_verses(), added
+      # 2026-09-14/2026-09-24 (test_import_ljk2_split_block_comment.py,
+      # test_import_ljk2_comment_list.py, test_import_ljk2_empty_verse_index.py)
+      # but never wired into CI until now. Same reasoning as :163's own
+      # comment: pure fixtures fed through build_book_verses() with no
+      # assets and no network, so safe unconditionally. Each pins a node
+      # shape the importer previously dropped silently — a stray
+      # `comment` body read as a footnote, a whole comment-list, an
+      # empty-verseIndex verse node — so a future edit that reintroduces
+      # any of those silent drops fails here instead of shipping.
+      - name: import_ljk2 unit tests
+        run: |
+          python3 test/test_import_ljk2_split_block_comment.py
+          python3 test/test_import_ljk2_comment_list.py
+          python3 test/test_import_ljk2_empty_verse_index.py
+
       # 路加福音 23:34a invariant (tools/repair_biblexg_luke_23_34a.py),
       # added 2026-09-24. The September re-fetch (biblexg-v3 / -v3-tr,
       # which superseded and hid biblexg-v2*) dropped the affix from 23:33

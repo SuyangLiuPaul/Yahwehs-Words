@@ -414,6 +414,32 @@ def build_book_verses(book_data: list[dict], book_id: int,
                 verse_num = int(re.match(r'\d+', verse_label).group(0)
                                 if re.match(r'\d+', verse_label) else 0)
                 if verse_num == 0:
+                    # No usable verse number (not even a range like
+                    # '1-2', which the regex above already handles).
+                    # If it carries no text this is a harmless upstream
+                    # markup gap. If it DOES carry text, that text is
+                    # scripture with nowhere of its own to go — found
+                    # 2026-09-24 on Romans 3:10's second clause, whose
+                    # verseIndex is '' in cn-rom.json. Reattach it to the
+                    # immediately preceding verse (same convention as the
+                    # 'comment' branch's split-off body below) rather
+                    # than drop it.
+                    stray_text = assemble_verse_text(n.get('contents', []))
+                    if stray_text:
+                        # `out` spans the whole book, so a bare `not out`
+                        # check would (wrongly) attach a stray node that
+                        # opens a NEW chapter to the previous chapter's
+                        # last verse instead of raising. Require the
+                        # preceding verse to be in THIS chapter too.
+                        if not out or int(out[-1]['chapter']) != chapter:
+                            raise ValueError(
+                                "!! UPSTREAM: a verse node with no "
+                                f"verseIndex carries text {stray_text!r} "
+                                f"in chapter {chapter} with no preceding "
+                                "verse in the same chapter to attach it to "
+                                "— report upstream, do not fabricate a "
+                                "verse number for it.")
+                        out[-1]['text'] = f"{out[-1]['text']}{stray_text}"
                     continue
                 paragraph = n.get('paragraph', 'paragraph')
                 is_para_start = paragraph in ('paragraph', 'reference')

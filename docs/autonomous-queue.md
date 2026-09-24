@@ -8855,6 +8855,108 @@ has never seen this repo.
       to fail; the next iteration's step 0 should confirm this run's
       conclusion rather than assume it.
 
+- [x] **2026-09-24 FIXED — a `verse` node with an empty `verseIndex` was
+      silently dropped by `build_book_verses()`, and in the live source
+      exactly one such node carries real scripture: 羅馬書 3:10's second
+      clause 「没有义人，一个也没有，」.** Fourth instalment of the
+      `16633cad` revert thread, same failure shape as `5420cda5`
+      (`clean_comment_list`) and `b461ede8` (`split_block_comment`): a
+      node the importer stops handling → scripture silently gone, no
+      warning, no test.
+
+      Census over the live source (`/tmp/ljk-source/`, fetched today,
+      confirmed still byte-identical to a fresh `curl` before trusting
+      it): 54 files, node-type counts `verse` 15845, `comment` 2085,
+      `chapter` 520, `comment-list` 48, `ul-comment-list` 20 — the five
+      types `build_book_verses()` already dispatches on, so no
+      *unknown-type* loss remains in this class. 46 verse nodes have a
+      non-plain `verseIndex`; 42 are ranges (`1-2` etc., already
+      handled); 4 are the empty string `''`. Three are empty-content
+      (`tw-1ti` ch1/ch5, `tw-eph` ch6 — harmless). The fourth,
+      `cn-rom.json` ch3 between verse 10 and verse 11, carries
+      「没有义人，一个也没有，」 and `tools/import_ljk2.py`'s
+      `if verse_num == 0: continue` dropped it with no log line.
+      Reproduced against HEAD: `build_book_verses()` on `cn-rom.json`
+      yielded `45003010 == '正如经上所记：'`, missing the clause.
+
+      **Latent, not shipped**: `assets/biblexg-v3.json` and `-v3-tr.json`
+      `45003010` already read the full two-clause verse today (read
+      directly, not inferred) — both v2 and v3 attribute the clause to
+      verse 10, which is the evidence for where a recovered node
+      belongs — so this recovers nothing from a shipped asset. It is
+      regression-proofing against the NEXT re-fetch silently shipping
+      Romans 3:10 truncated.
+
+      Fix: an empty/non-numeric-`verseIndex` verse node whose contents
+      carry text now has that text appended to the preceding verse
+      (`tools/import_ljk2.py`, reusing the exact re-attachment shape the
+      `comment` branch already uses for `split_block_comment()`'s body).
+      Empty-content ones stay dropped. A node with no preceding verse **in
+      the same chapter** now raises `ValueError` with an `!! UPSTREAM`
+      message instead of vanishing or (the refuter's finding below)
+      silently splicing onto the wrong chapter's last verse. Nothing in
+      the current source hits that path; it exists for if a future fetch
+      reintroduces the shape somewhere with no verse before it.
+
+      New `test/test_import_ljk2_empty_verse_index.py`, proven red
+      against HEAD (`git stash` the fix): 3 of 5 cases failed — the
+      Romans reattachment (`'正如经上所记：' != '正如经上所记：没有义人，
+      一个也没有，'`), the no-preceding-verse raise, and the
+      chapter-boundary raise (both `ValueError not raised`) — green
+      after. Also wired all three `test_import_ljk2_*.py` files into
+      `.github/workflows/flutter-ci.yml` as a new step; neither this one
+      nor its two siblings had run in CI before.
+
+      Refuted before committing (general-purpose agent, given the claims
+      and evidence, asked to break them): confirmed all four factual
+      claims independently — the "exactly one node corpus-wide" count via
+      a fresh independent census script (not reused code); the five
+      node-type census; both shipped assets' `45003010` read directly;
+      both v2 and v3 attributing the clause to verse 10. It also found a
+      REAL logic hole the first draft missed: the guard was `if not out:`,
+      which checks "any verse anywhere in the book" — a stray node opening
+      a NEW chapter, before that chapter's own first verse, would have
+      silently spliced onto the PREVIOUS chapter's last verse instead of
+      raising. Not live in the current corpus (the one real case is
+      mid-chapter), but a genuine gap in what "fails loudly" covers.
+      Hardened the guard to `not out or out[-1]['chapter'] != chapter`
+      and added a fifth test pinning it, proven red against the
+      unhardened version too before landing.
+
+      Tooling-only, no asset touched, no reader-visible change — no
+      deploy. `flutter analyze` clean.
+
+      Filed but NOT fixed this iteration (below, as its own P0 item, per
+      the brief): `assemble_verse_text()` only turns `lineBreak == 'line'`
+      into a newline; `reference` (269 occurrences) and `paragraph` (189)
+      currently fall through to no break at all, which is how this same
+      Romans clause loses its poetry-line break in `v3` (present in `v2`
+      as three separate lines). Choosing how to render that is a product
+      decision, not this hour's job.
+
+- [ ] **`assemble_verse_text()` drops the `reference`/`paragraph` line
+      break, run together with no separator instead.** Found while
+      investigating the Romans 3:10 empty-`verseIndex` item above (now
+      fixed, see `[x]` entry immediately above). The live source uses
+      three `lineBreak` values inside a verse's `contents`: `inline`
+      (269 `reference` + 189 `paragraph` occurrences corpus-wide,
+      counted 2026-09-24) get `sep = ''` in `assemble_verse_text()` and
+      are glued straight onto the previous fragment — no newline, no
+      space. `line` is the only one that currently becomes `\n`.
+
+      Evidence this is a real rendering regression, not just an
+      unhandled case: `biblexg-v2` renders Romans 3:10's OT quotation
+      (`lineBreak: "reference"`) as three separate poetry lines; `v3`
+      runs the whole thing together. `b461ede8`'s own investigation
+      separately noted 約翰福音 12:36's second sentence now arriving
+      with `lineBreak: "paragraph"` from upstream, same shape.
+
+      Deliberately not fixed here: deciding how a paragraph/reference
+      break inside a verse should render (newline? space? something
+      poetry-mode-specific?) is a product decision, and any fix would
+      churn both `biblexg-v3.json` and `-v3-tr.json`. Needs a decision on
+      the target rendering before someone regenerates those assets.
+
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
       and truncates 6:7 mid-sentence at 「并授予他们权能」, dropping
