@@ -235,6 +235,16 @@
   to = "/about.html"
   status = 200
 
+# 2026-09-24: `/cn` is the same page for readers in mainland China —
+# Simplified only, and without the list of church sites. A real file, and
+# for the same reason as /about (a bare `/cn` would otherwise be the SPA
+# catch-all handing back the Flutter shell). It is GENERATED from
+# web/about.html by tools/build_cn_about.py; edit that, not this.
+[[redirects]]
+  from = "/cn"
+  to = "/cn.html"
+  status = 200
+
 # Static-file SPA fallback. The Netlify Function URLs (`/api/*` and
 # `/.netlify/functions/*`) are matched and served by Netlify BEFORE
 # this catch-all rewrite, so the function doesn't get swallowed by
