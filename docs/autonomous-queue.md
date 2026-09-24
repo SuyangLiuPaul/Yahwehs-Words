@@ -10971,6 +10971,17 @@ has never seen this repo.
       threshold that would force it regardless. prod untouched
       regardless.
 
+      **`-v3-tr` note half landed as `355595c0`.** CI run `36060607893`
+      was still `in_progress` past the ~6-minute watch budget — next
+      iteration's step 0 should confirm it before picking a new item.
+      Dev/qat deploy deferred again, same `pubspec.yaml` contention as
+      above: the deploy queue is now 3 commits deep (`8d93ccf9`,
+      `7f0d7f1b`, `355595c0`), still under the 6-iteration threshold.
+      prod untouched regardless. Also filed this iteration: a
+      `test/release_scripts_test.dart` hang under system load, see the
+      new P3 item below — unrelated to this change, not a CI risk so
+      far (CI has been green every run checked).
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
