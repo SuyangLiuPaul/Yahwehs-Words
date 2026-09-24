@@ -10914,6 +10914,10 @@ has never seen this repo.
       print-or-cache-provenance treatment `-v3` just got, not a batch
       pass — left for a future iteration, not blocked on the user.
 
+      Pushed as `7f0d7f1b`. CI run `36040479002` was still `in_progress`
+      past the ~6-minute watch budget; next iteration's step 0 should
+      confirm it before picking a new item.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
