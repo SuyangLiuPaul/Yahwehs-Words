@@ -10830,6 +10830,10 @@ has never seen this repo.
       `35997572004` (`0a48569b`) and `35998188411` (`cb58fb0b`) are both
       `success` — nothing red to chase before this fix.
 
+      Pushed as `8d93ccf9`. CI run `36027011538` was still `in_progress`
+      past the ~6-minute watch budget; next iteration's step 0 should
+      confirm it before picking a new item.
+
 - [ ] **Filed, not fixed: the same wrong-script-character class also
       appears inside `<note:…>` footnote content in the v3 pair, and is
       NOT covered by the guard added above (which strips notes before
