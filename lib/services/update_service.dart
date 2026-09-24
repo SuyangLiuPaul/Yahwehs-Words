@@ -79,8 +79,17 @@ class UpdateService {
   /// True only on the native platforms where a downloadable release asset
   /// makes sense. Web (PWA auto-updates) returns false, so the UI hides
   /// the tile.
+  ///
+  /// 2026-09-25: also false in the Microsoft Store package
+  /// (`--dart-define=STORE_BUILD=true`, see windows-store-msix.yml). A
+  /// Store app is updated by the Store, and its install directory is
+  /// read-only, so a GitHub self-updater there is both against Store
+  /// policy and unable to work.
+  static const bool _storeBuild = bool.fromEnvironment('STORE_BUILD');
+
   static bool get isSupported {
     if (kIsWeb) return false;
+    if (_storeBuild) return false;
     try {
       return Platform.isAndroid ||
           Platform.isWindows ||
