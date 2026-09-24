@@ -39,6 +39,15 @@ book and a bare non-empty check would silently splice a stray node that
 opens a new chapter onto the PREVIOUS chapter's last verse instead of
 raising.
 
+`test_stray_text_reattaches_to_preceding_verse`'s expected text was
+updated 2026-09-24 (`docs/autonomous-queue.md:8943`) to include the
+`\n` between the two clauses. The stray node here carries
+`lineBreak: 'reference'` on its own first fragment, which
+`assemble_verse_text()` used to drop entirely (same bug as :8943) —
+this test's old expectation of no separator baked that bug in as
+"correct". See `test/test_import_ljk2_line_breaks.py` for the fix and
+why the splice needed its own change, not just `assemble_verse_text()`.
+
 Run:
     python3 -m unittest discover -s test -p 'test_*.py' -v
     python3 test/test_import_ljk2_empty_verse_index.py    # same thing
@@ -102,7 +111,7 @@ class EmptyVerseIndexTest(unittest.TestCase):
 
         self.assertEqual(len(verses), 2, f'stray node must not become its own verse: {verses!r}')
         self.assertEqual(verses[0]['verse'], '10')
-        self.assertEqual(verses[0]['text'], '正如经上所记：没有义人，一个也没有，')
+        self.assertEqual(verses[0]['text'], '正如经上所记：\n没有义人，一个也没有，')
         self.assertEqual(verses[1]['verse'], '11')
         self.assertEqual(verses[1]['text'], '没有一个人明白而寻求神。')
 

@@ -260,27 +260,44 @@ def clean_block_comment(segments) -> str:
 
 # ── Verse assembly ───────────────────────────────────────────────────
 
+# Every `lineBreak` value that means "start a new block", per the
+# publisher's own renderer (BibleDisplay.tsx:72-110): 'line' is a poetry
+# `<br>`; 'reference' opens a new `<Box className="ot-refs">`; 'paragraph'
+# opens a new `<Text as="p">`. All three are block-level there, so all
+# three become our '\n' — never '' (glued with no separator at all, the
+# bug this set fixes) and never '\n\n' (the reading pane renders that as
+# a visible blank line mid-verse, which the publisher's markup does not).
+_BREAK_LINEBREAKS = {'line', 'reference', 'paragraph'}
+
+
 def assemble_verse_text(contents: list[dict]) -> str:
     """Build a single text string from the upstream `contents` array.
 
     `lineBreak` semantics in the upstream:
-        • 'inline'  → no break, glue to previous fragment with a space
-        • 'line'    → render on a new line in poetry mode (we keep '\\n')
+        • 'inline'    → no break, glue to previous fragment with a space
+        • 'line'      → poetry line break — we keep '\\n'
+        • 'reference' → OT-quotation block (`<Box>`) — we keep '\\n'
+        • 'paragraph' → new paragraph (`<Text as="p">`) — we keep '\\n'
+    A fragment at index 0 never gets a leading '\\n' even when it carries
+    one of the three break markers above: that fragment IS the verse's
+    own start, already recorded by the asset's `isParagraphStart` /
+    `paragraphType` fields, not a break from something before it. (This
+    also falls out structurally from `parts` being empty on the first
+    fragment, but the `i == 0` check makes it a rule, not a side effect
+    of that emptiness.)
     """
     parts: list[str] = []
     for i, c in enumerate(contents):
         chunk = html_to_inline(c.get('content', ''))
+        is_break = c.get('lineBreak') in _BREAK_LINEBREAKS
         if not chunk:
-            # An empty content with lineBreak='line' is the upstream's
+            # An empty content with a break lineBreak is the upstream's
             # way of saying "newline here" — emit a literal newline.
-            if c.get('lineBreak') == 'line':
-                if parts and not parts[-1].endswith('\n'):
-                    parts.append('\n')
+            if is_break and i > 0 and parts and not parts[-1].endswith('\n'):
+                parts.append('\n')
             continue
-        # Default sep is a single space; a 'line' break before this
-        # chunk swaps to '\n'.
-        if parts and not parts[-1].endswith(('\n', ' ')):
-            sep = '\n' if c.get('lineBreak') == 'line' else ''
+        if i > 0 and parts and not parts[-1].endswith(('\n', ' ')):
+            sep = '\n' if is_break else ''
             if sep:
                 parts.append(sep)
         parts.append(chunk)
@@ -439,7 +456,22 @@ def build_book_verses(book_data: list[dict], book_id: int,
                                 "verse in the same chapter to attach it to "
                                 "— report upstream, do not fabricate a "
                                 "verse number for it.")
-                        out[-1]['text'] = f"{out[-1]['text']}{stray_text}"
+                        # `stray_text` was assembled from this stray
+                        # node's OWN contents list in isolation, so its
+                        # break-marker fragment sits at index 0 of THAT
+                        # list and assemble_verse_text()'s leading-break
+                        # guard (correctly) swallowed it. Splicing the two
+                        # assembled strings together with no separator
+                        # would lose the break a second time — reproducing
+                        # this exact bug for every stray-reattach case,
+                        # Romans 3:10 included. Recover it here from the
+                        # stray node's first fragment directly.
+                        first_lb = (n.get('contents') or [{}])[0].get('lineBreak')
+                        sep = ('\n' if first_lb in _BREAK_LINEBREAKS
+                               and out[-1]['text']
+                               and not out[-1]['text'].endswith('\n')
+                               else '')
+                        out[-1]['text'] = f"{out[-1]['text']}{sep}{stray_text}"
                     continue
                 paragraph = n.get('paragraph', 'paragraph')
                 is_para_start = paragraph in ('paragraph', 'reference')

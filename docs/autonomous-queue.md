@@ -8940,28 +8940,87 @@ has never seen this repo.
       as three separate lines). Choosing how to render that is a product
       decision, not this hour's job.
 
-- [ ] **`assemble_verse_text()` drops the `reference`/`paragraph` line
-      break, run together with no separator instead.** Found while
-      investigating the Romans 3:10 empty-`verseIndex` item above (now
-      fixed, see `[x]` entry immediately above). The live source uses
-      three `lineBreak` values inside a verse's `contents`: `inline`
-      (269 `reference` + 189 `paragraph` occurrences corpus-wide,
-      counted 2026-09-24) get `sep = ''` in `assemble_verse_text()` and
-      are glued straight onto the previous fragment — no newline, no
-      space. `line` is the only one that currently becomes `\n`.
+- [x] **`assemble_verse_text()` drops the `reference`/`paragraph` line
+      break, run together with no separator instead.** FIXED 2026-09-24.
+      The "product decision" this item deferred on dissolved on contact
+      with the evidence: the publisher's own React renderer
+      (`ljk-nt-bible-webapp/src/components/BibleDisplay/
+      BibleDisplay.tsx:72-110`, checked out read-only on this Mac) opens
+      a NEW block for both `reference` (`<Box className="ot-refs">`) and
+      `paragraph` (`<Text as="p">`) — the same block-level treatment as
+      `line`'s `<br>`. `assemble_verse_text()` (`tools/import_ljk2.py`)
+      now emits a single `\n` for all three, with an explicit (not
+      incidental) guard that a fragment at index 0 of a verse never gets
+      a leading `\n` — it's the verse's own start, already recorded via
+      `isParagraphStart`/`paragraphType`.
 
-      Evidence this is a real rendering regression, not just an
-      unhandled case: `biblexg-v2` renders Romans 3:10's OT quotation
-      (`lineBreak: "reference"`) as three separate poetry lines; `v3`
-      runs the whole thing together. `b461ede8`'s own investigation
-      separately noted 約翰福音 12:36's second sentence now arriving
-      with `lineBreak: "paragraph"` from upstream, same shape.
+      Re-measured against `/tmp/ljk-source/` (the cached snapshot these
+      assets were actually built from — confirmed it, NOT the
+      `ljk-nt-bible-webapp` checkout, differs from it on at least one
+      word, Matthew 1:21 应给/应要给): 269 `reference` + 189 `paragraph` =
+      458 break fragments (457 mid-verse, 1 at index 0), matching this
+      item's original count almost exactly.
 
-      Deliberately not fixed here: deciding how a paragraph/reference
-      break inside a verse should render (newline? space? something
-      poetry-mode-specific?) is a product decision, and any fix would
-      churn both `biblexg-v3.json` and `-v3-tr.json`. Needs a decision on
-      the target rendering before someone regenerates those assets.
+      The stray-node reattach splice (`build_book_verses`'s
+      `verse_num == 0` branch, the code Romans 3:10's second clause goes
+      through) needed its own fix too: it assembles the stray node's
+      contents in isolation, so the break marker sat at that isolated
+      list's own index 0 and the leading-fragment guard swallowed it a
+      second time. Recovered by checking the stray node's first
+      fragment's `lineBreak` directly at the splice point.
+
+      New `tools/repair_biblexg_line_breaks.py` (`--write`) repaired the
+      two already-shipped assets: re-assembles every verse from the
+      cached upstream with the corrected function, and only writes a row
+      if the fresh text equals the current asset text once **every
+      `'\n'` — and only `'\n'`** — is stripped from both (a first,
+      looser version that stripped all whitespace wrongly wrote spurious
+      spaces into 8 `<note:...>` tags before being caught and tightened
+      pre-commit). 207 rows in `biblexg-v3.json` + 203 in
+      `biblexg-v3-tr.json` = 410 written; the rest skipped because a
+      later repair pass (split/re-keyed/carried-forward/繁体-fixed) had
+      already reshaped them. Row order and every non-`text` field
+      verified byte-identical before/after; the write itself is a
+      surgical string-level edit of each row's `text` value, not a
+      `json.dump()` round trip — the first version of the script did
+      round-trip the whole file and silently reformatted
+      `-tr.json` (pretty-printed) into `-v3.json`'s compact style,
+      turning ~212 real edits into an 81,483-line diff; caught before
+      committing, not shipped.
+
+      `45003010` now reads `正如经上所记：\n没有义人，一个也没有，` — two
+      lines, not v2's three, because upstream now ships that quotation
+      as one fragment; claiming "restored to v2 verbatim" would be
+      false, and this queue does not claim it.
+
+      Surfaced a SEPARATE, pre-existing defect while fixing this one:
+      TR's 彼得前书 3:10 has NO internal line breaks at all (CN's has
+      three), which `test/biblexg_verse_integrity_test.dart`'s
+      CN/TR-length-parity check was passing by luck (delta was already
+      +3, right at the tolerance boundary) until this fix's one new `\n`
+      pushed it to +4. Pinned in that test's `knownDifferences` with the
+      reason, and filed as its own item directly below — not fixed here,
+      a different tool (`repair_biblexg.py`'s verse-split, not
+      `assemble_verse_text()`) most likely dropped it originally.
+
+- [ ] **TR `彼得前书 3:10` (`60003010`) has no internal line breaks —
+      CN's has three.** Surfaced 2026-09-24 fixing the item above.
+      Current TR text: `因為：誰想享受人生，過好日子，就得勒住舌頭不出
+      惡言，管住嘴唇不沾詭詐。` — one run-on line. CN: the same clauses
+      each on their own line. `repair_biblexg_line_breaks.py` correctly
+      refused to touch this row: the cached upstream `tw-1pe.json` still
+      has verses 10-12 merged into one node (fresh rebuild for this id
+      returns the whole 10-12 blob, not verse 10 alone), so whatever
+      repair pass split them apart for the shipped asset ran before this
+      iteration and evidently didn't carry the internal `'line'` markers
+      through the split — a different tool's defect, not
+      `assemble_verse_text()`'s. Needs someone to either fix
+      `repair_biblexg.py`'s split to preserve internal line breaks, or
+      hand-repair this one row with the CN structure as the model (same
+      translation, same clause boundaries, only the script differs).
+      Pinned as a known difference in
+      `test/biblexg_verse_integrity_test.dart` in the meantime so it
+      doesn't silently grow into more verses.
 
 - [ ] **馬可福音 6:8-11 is missing from the publisher's own Simplified.**
       Found by the chapter-gap audit. `cn-mk.json` has no 6:8-11 at all
