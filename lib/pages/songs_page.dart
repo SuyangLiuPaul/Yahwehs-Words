@@ -195,11 +195,20 @@ class _SongsPageState extends State<SongsPage> {
     if (row < 0) return;   // playing something the current filter hides
     _scrolledToId = id;
     // +2: the intro card and the search/filter bar occupy 0 and 1.
-    unawaited(_scrollCtrl.scrollToIndex(
-      row + 2,
-      preferPosition: AutoScrollPosition.middle,
-      duration: const Duration(milliseconds: 450),
-    ));
+    // 2026-09-25: a production report (v1.6.30, web, /songs) died here with
+    // "Null check operator used on a null value". scroll_to_index looks the
+    // row up with `ctx.findRenderObject()!` and reveals it through the
+    // viewport; if the list rebuilt (filter, search, coming back to the
+    // page) between the track change and this call, the row's render
+    // object is detached and the `!` throws. The future is unawaited, so
+    // nothing caught it. Not scrolling once is the right outcome.
+    unawaited(_scrollCtrl
+        .scrollToIndex(
+          row + 2,
+          preferPosition: AutoScrollPosition.middle,
+          duration: const Duration(milliseconds: 450),
+        )
+        .catchError((Object _) {}));
   }
 
   @override
