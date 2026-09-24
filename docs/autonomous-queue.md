@@ -9003,6 +9003,12 @@ has never seen this repo.
       a different tool (`repair_biblexg.py`'s verse-split, not
       `assemble_verse_text()`) most likely dropped it originally.
 
+      Pushed as `50ba8fdf`. CI run `35963555916` was still `in_progress`
+      after the ~6-minute watch budget — `flutter analyze` and the full
+      Dart suite (6/6 chunks) were clean locally, so nothing is expected
+      to fail; the next iteration's step 0 should confirm this run's
+      conclusion rather than assume it.
+
 - [ ] **TR `彼得前书 3:10` (`60003010`) has no internal line breaks —
       CN's has three.** Surfaced 2026-09-24 fixing the item above.
       Current TR text: `因為：誰想享受人生，過好日子，就得勒住舌頭不出
