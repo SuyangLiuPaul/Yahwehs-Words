@@ -10959,7 +10959,8 @@ has never seen this repo.
 
       Pushed as `7f0d7f1b`. CI run `36040479002` was still `in_progress`
       past the ~6-minute watch budget; next iteration's step 0 should
-      confirm it before picking a new item.
+      confirm it before picking a new item. **Resolved 2026-09-25: `gh
+      run list` confirms `36040479002` (`7f0d7f1b`) → `success`.**
 
       **Dev/qat deploy deferred again**, same reason as `8d93ccf9`:
       `pubspec.yaml`/`pubspec.lock` are still mid-edit, uncommitted, by
@@ -10974,6 +10975,8 @@ has never seen this repo.
       **`-v3-tr` note half landed as `355595c0`.** CI run `36060607893`
       was still `in_progress` past the ~6-minute watch budget — next
       iteration's step 0 should confirm it before picking a new item.
+      **Resolved 2026-09-25: `gh run list` confirms `36060607893`
+      (`355595c0`) → `success`.**
       Dev/qat deploy deferred again, same `pubspec.yaml` contention as
       above: the deploy queue is now 3 commits deep (`8d93ccf9`,
       `7f0d7f1b`, `355595c0`), still under the 6-iteration threshold.
@@ -22004,6 +22007,68 @@ so the bundle-size answer stays on the record.
       shipped CI failure; so far every CI run on this branch has been
       green (`gh run list`, most recent five checked 2026-09-25), so it
       has not.
+
+      **2026-09-25: bounded, not yet proven root-caused.** Reading the
+      code turned up a specific, load-independent mechanism this item
+      never considered: `tools/release_github.sh`'s post-push poll loop
+      (`RELEASE_GITHUB_POLL_INTERVAL`/`_CAP`, default 30s/1800s) breaks
+      *before* sleeping only when every `gh run list` call in one pass
+      answers `completed`; an empty `READ_OUT` (empty `gh` output) reads
+      as not-`completed`, so the loop can then sleep for real — up to 30
+      minutes — inside a test. Of `ReleaseGithub`'s 13 `run_script(...)`
+      call sites (class spans lines 90-327), only 3 overrode these
+      knobs; the other 10 inherited the real defaults and depended on
+      the stub `gh` never faltering. 3 × 30 min ≈ the observed ~90 min
+      is corroborating arithmetic, not proof — the load hypothesis this
+      item already named is not disproven, and both could be true at
+      once (load causes an odd `gh` answer; the missing override turns
+      that blip into 30 minutes instead of nothing).
+
+      **Fixed regardless of which explanation is right, because both
+      converge on "nothing bounds the wall clock":**
+      `ReleaseGithub.run_script` (`tools/test_release_scripts.py`) now
+      supplies `RELEASE_GITHUB_POLL_INTERVAL=0` and
+      `RELEASE_GITHUB_POLL_CAP=5` as defaults ahead of the three
+      existing per-test overrides (no assertions changed), and its
+      `subprocess.run` now carries `timeout=120` with `TimeoutExpired`
+      surfaced as a failed assertion instead of a hang.
+      `tools/run_test_chunks.py` gained `--timeout SECONDS`: on expiry
+      it kills the child's whole process group — not just the direct
+      `flutter` process, which forks a `dart` child that would otherwise
+      be orphaned still running — and returns 124, printing the chunk's
+      file list so a future occurrence names its own suspects.
+      `test/test_run_test_chunks.py` gained a case proving this (a stub
+      that sleeps past the requested timeout, rc == 124, bounded wall
+      time), and the fix was proven able to fail by temporarily skipping
+      the process-group kill by hand (confirmed it then hangs past an 8s
+      wall-clock check) before restoring it. No default `--timeout`, on
+      purpose: this tool's own docstring already warns against pinning a
+      suite-runtime figure, and one constant here would be wrong for
+      either the slowest chunk or the fastest depending which way it
+      erred; callers that know their own budget pass one explicitly.
+
+      **Smoke test, the acceptance criterion this item asked for:**
+      `python3 tools/run_test_chunks.py --chunk 4 --of 6 --timeout 480`
+      in the foreground — chunk 4 is still where
+      `test/release_scripts_test.dart` lands at HEAD (66 files). It
+      completed in 2m6s, never needed the timeout, and
+      `release_scripts_test.dart` itself ran its normal ~51s inside
+      it — **the wedge did not recur this run.** (The chunk did report
+      one unrelated failure, `update_check_scheduler_test.dart`'s
+      "UpdateService still refuses to answer on the web" — traced to
+      the concurrent session's own uncommitted
+      `lib/services/update_service.dart` WIP, not touched here.)
+
+      **Left open, honestly:** the mechanism above is a corroborated
+      lead, not a confirmed root cause — no empty `READ_OUT` was ever
+      actually captured mid-hang, and this run did not reproduce the
+      hang at all, so the fix was never tested against a real
+      recurrence, only against a synthetic stub. What changed is that
+      this specific failure mode can no longer produce an unbounded
+      sleep, and any wedge anywhere in the suite now surfaces as a
+      named, exit-124 timeout instead of a silent hang for any caller
+      that opts into `--timeout`. Left unchecked: bounded is not the
+      same claim as explained.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect

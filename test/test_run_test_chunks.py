@@ -9,7 +9,10 @@ file uses only synthetic in-memory fixtures (a fake `sizer` function, no
 filesystem, no `flutter` invocation), so it is safe to run unconditionally.
 """
 import os
+import stat
 import sys
+import tempfile
+import time
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,6 +136,48 @@ class TestCli(unittest.TestCase):
     def test_missing_chunk_flag_exits_nonzero(self):
         rc, out, err = self._run([])
         self.assertNotEqual(rc, 0)
+
+
+class TestChunkTimeout(unittest.TestCase):
+    """queue:21973: a chunk that wedges (gh/subprocess hang inside a
+    test) must not hang run_test_chunks.py itself — bound it and report
+    124, the same convention `timeout(1)` uses."""
+
+    def _run(self, argv):
+        import io
+
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        old_out, old_err = sys.stdout, sys.stderr
+        sys.stdout, sys.stderr = stdout, stderr
+        try:
+            rc = rtc.main(argv)
+        finally:
+            sys.stdout, sys.stderr = old_out, old_err
+        return rc, stdout.getvalue(), stderr.getvalue()
+
+    def test_a_wedged_chunk_is_killed_and_reported_as_124(self):
+        # A stub standing in for `flutter` that never returns on its own
+        # — the shape of the actual wedge this item is about (a `gh` call
+        # inside a subprocess.run with no timeout=).
+        with tempfile.TemporaryDirectory() as tmp:
+            stub = os.path.join(tmp, "flutter-stub")
+            with open(stub, "w", encoding="utf-8") as f:
+                f.write("#!/usr/bin/env bash\nsleep 30\n")
+            os.chmod(stub, os.stat(stub).st_mode | stat.S_IXUSR)
+
+            start = time.monotonic()
+            rc, out, err = self._run([
+                "--chunk", "0", "--of", "1",
+                "--flutter-bin", stub, "--timeout", "1",
+            ])
+            elapsed = time.monotonic() - start
+
+        self.assertEqual(rc, 124, out + err)
+        self.assertIn("TIMEOUT", out)
+        self.assertLess(elapsed, 10,
+                        "the wedged stub's sleep leaked past the "
+                        "requested 1s timeout:\n" + out + err)
 
 
 if __name__ == "__main__":

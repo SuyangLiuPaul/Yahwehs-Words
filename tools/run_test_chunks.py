@@ -50,6 +50,7 @@ import argparse
 import glob
 import json
 import os
+import signal
 import subprocess
 import sys
 
@@ -127,17 +128,46 @@ def check_partition(files, chunks):
     return True, "ok"
 
 
-def run_chunk(chunk, index, total, flutter_bin="flutter"):
+def run_chunk(chunk, index, total, flutter_bin="flutter", timeout=None):
     """Run one chunk's files through `flutter test --reporter compact` in
-    the foreground, returning the subprocess exit code."""
+    the foreground, returning the subprocess exit code.
+
+    `timeout`, in seconds, bounds the whole chunk. On expiry the child's
+    entire process group is killed — `flutter test` forks a `dart`
+    child, so killing only the direct process leaves that orphaned and
+    still running — the chunk's own file list is printed so whichever
+    file wedged names itself instead of costing a future iteration a
+    fresh investigation, and 124 is returned (the same convention
+    `timeout(1)` uses, so a caller can tell "timed out" apart from every
+    other exit code including a normal test failure).
+
+    No default: this tool's own docstring warns against pinning a
+    suite-runtime figure anywhere, and a single constant here would be
+    either too tight for the slowest chunk on a loaded machine or too
+    loose to bound the fastest one — callers that know their own budget
+    (this file's own smoke test; a future autonomous-loop caller) pass
+    one explicitly.
+    """
     if not chunk:
         print(f"CHUNK {index}/{total}: PASS (empty)")
         return 0
     cmd = [flutter_bin, "test", "--reporter", "compact"] + chunk
-    proc = subprocess.run(cmd, cwd=ROOT)
-    status = "PASS" if proc.returncode == 0 else "FAIL"
+    proc = subprocess.Popen(cmd, cwd=ROOT, start_new_session=True)
+    try:
+        returncode = proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        proc.wait()
+        print(f"CHUNK {index}/{total}: TIMEOUT after {timeout}s")
+        for path in chunk:
+            print(f"    {path}")
+        return 124
+    status = "PASS" if returncode == 0 else "FAIL"
     print(f"CHUNK {index}/{total}: {status}")
-    return proc.returncode
+    return returncode
 
 
 def main(argv=None):
@@ -152,6 +182,14 @@ def main(argv=None):
         help="exit 1 unless the partition covers every discovered file exactly once",
     )
     parser.add_argument("--flutter-bin", default="flutter", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help="seconds to allow --chunk's flutter test before killing it "
+             "and returning 124; unset by default (see run_chunk's "
+             "docstring for why no default is picked here)",
+    )
     args = parser.parse_args(argv)
 
     if args.of < 1:
@@ -184,7 +222,8 @@ def main(argv=None):
         print(f"run_test_chunks: --chunk must be in [0, {args.of})", file=sys.stderr)
         return 2
 
-    return run_chunk(chunks[args.chunk], args.chunk, args.of, flutter_bin=args.flutter_bin)
+    return run_chunk(chunks[args.chunk], args.chunk, args.of,
+                     flutter_bin=args.flutter_bin, timeout=args.timeout)
 
 
 if __name__ == "__main__":

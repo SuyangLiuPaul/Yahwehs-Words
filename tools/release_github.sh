@@ -186,9 +186,11 @@ echo "Pushed $TAG. Waiting for the five platform release workflows..."
 #
 # Bounded, not indefinite: today's own runs give the real shape — macOS
 # failed at +11 min, iOS was still building at +10 min — so the cap has
-# to clear a normal build, not a canary. Both knobs are overridable so
-# the test harness in tools/test_release_scripts.py never sleeps for
-# real.
+# to clear a normal build, not a canary. Both knobs are overridable, and
+# tools/test_release_scripts.py's ReleaseGithub.run_script sets bounded
+# defaults for both on every call (not just the tests that override
+# them further) — so a `gh` call the stub answers unexpectedly cannot
+# make this loop sleep for real inside the test harness.
 RELEASE_WORKFLOWS=(
   "Release Android"
   "Release iOS (unsigned)"

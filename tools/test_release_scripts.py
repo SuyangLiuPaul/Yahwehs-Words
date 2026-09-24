@@ -157,12 +157,31 @@ class ReleaseGithub(unittest.TestCase):
         ''')
 
     def run_script(self, *args, **env):
-        return subprocess.run(
-            ['bash', 'tools/release_github.sh', *args], cwd=str(self.work),
-            capture_output=True, text=True,
-            env={**os.environ, **GIT_ENV,
-                 'PATH': f'{self.bin}:{os.environ["PATH"]}', **env},
-        )
+        # Defaults come BEFORE **env so the three tests that already pass
+        # their own RELEASE_GITHUB_POLL_INTERVAL/_CAP (lines ~271, ~280,
+        # ~296) still win. Without a bounded default here, a `gh` call
+        # that returns anything other than "completed ..." — including an
+        # empty READ_OUT, which release_github.sh:220-224 treats as
+        # ALL_DONE=0 — makes every OTHER test in this class (all of which
+        # rely on the stub answering "completed" first try, and none of
+        # which override these knobs) inherit the real 30s/1800s poll
+        # loop. timeout= below is a second, independent backstop: it
+        # fails the test with captured output instead of hanging the
+        # whole suite if this loop wedges for any other reason.
+        try:
+            return subprocess.run(
+                ['bash', 'tools/release_github.sh', *args], cwd=str(self.work),
+                capture_output=True, text=True, timeout=120,
+                env={**os.environ, **GIT_ENV,
+                     'PATH': f'{self.bin}:{os.environ["PATH"]}',
+                     'RELEASE_GITHUB_POLL_INTERVAL': '0',
+                     'RELEASE_GITHUB_POLL_CAP': '5',
+                     **env},
+            )
+        except subprocess.TimeoutExpired as e:
+            self.fail(
+                'tools/release_github.sh did not exit within 120s '
+                '(stdout={!r} stderr={!r})'.format(e.stdout, e.stderr))
 
     def reject_pushes(self):
         """origin reachable, but nothing may land on it."""
