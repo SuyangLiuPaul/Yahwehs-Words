@@ -22070,6 +22070,16 @@ so the bundle-size answer stays on the record.
       that opts into `--timeout`. Left unchecked: bounded is not the
       same claim as explained.
 
+      Pushed as `1eb969e8` (plus a no-op `sync:` commit, `1eb969e8`'s
+      parent, that only aligned this checkout with `b91b23df` — the
+      concurrent session's own MSIX/privacy work, already pushed while
+      this iteration ran; confirmed byte-identical via `git diff
+      --cached origin/main` before committing, so nothing was lost or
+      reattributed). Merged with `origin/main` as `6c008dd5`. CI run
+      `36069165368` was still `in_progress` past the ~6-minute watch
+      budget; next iteration's step 0 should confirm it before picking
+      a new item.
+
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
       (`queue:14246`'s note, whose own line number will drift — grep
