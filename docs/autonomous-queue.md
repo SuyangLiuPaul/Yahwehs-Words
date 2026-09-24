@@ -10918,6 +10918,16 @@ has never seen this repo.
       past the ~6-minute watch budget; next iteration's step 0 should
       confirm it before picking a new item.
 
+      **Dev/qat deploy deferred again**, same reason as `8d93ccf9`:
+      `pubspec.yaml`/`pubspec.lock` are still mid-edit, uncommitted, by
+      the other concurrent session (MSIX packaging + privacy pages), and
+      `release_web.sh` rewrites `pubspec.yaml`'s version line — running
+      it now would interleave with that WIP. This is a content-only
+      change (no version bump either way), so the dev/qat deploy queue
+      is 2 commits deep (`8d93ccf9`, this one), not yet the 6-iteration
+      threshold that would force it regardless. prod untouched
+      regardless.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
