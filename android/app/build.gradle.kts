@@ -75,7 +75,14 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.yswords"
+        // 2026-09-25: Google Play refuses any `com.example.*` id, and an id
+        // can never change once published. The Play build passes
+        // ORG_GRADLE_PROJECT_playAppId (see .github/workflows/play-aab.yml);
+        // every other build - including the GitHub APKs people already have
+        // installed - keeps "com.example.yswords", so nobody's in-app update stops
+        // working.
+        applicationId = (project.findProperty("playAppId") as String?)
+            ?: "com.example.yswords"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

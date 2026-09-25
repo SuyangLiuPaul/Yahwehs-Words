@@ -1,0 +1,116 @@
+# Yahweh's Words - Google Play bundle (AAB)
+#
+# Manual only. Builds the release .aab that goes into Play Console and
+# uploads it as a workflow artifact; it touches no GitHub release and no
+# tag. The GitHub APKs (release-android.yml) keep the old application id
+# com.example.yswords; this build alone uses com.yahwehword.words, because Play
+# rejects com.example.* and the id is permanent once uploaded.
+#
+# Signed with the same release key (repository secrets). Register it as
+# the UPLOAD key when Play Console asks about Play App Signing.
+name: Play AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      ORG_GRADLE_PROJECT_playAppId: com.yahwehword.words
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # Android Gradle Plugin needs a JDK; flutter-action doesn't set
+      # one up. Temurin 17 matches the local toolchain (openjdk@17).
+      - name: Setup Java (JDK 17)
+        # v5 runs on Node 24 — v4 ran on Node 20, which GitHub deprecated
+        # (the runner warns and will force Node 24 from 2026-06-16).
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        # Pinned to a commit, not the movable v2 tag: this job now holds the
+        # release signing key, so a compromised tag would be a key leak.
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          flutter-version: '3.44.2'   # keep in step with flutter-ci.yml
+          channel: 'stable'
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      # flutter/flutter#191801 - with product flavors, Gradle's jniLib
+      # merge stays "up-to-date" while its input is rewritten, so the APK
+      # ships a new version string over OLD Dart code. The rule lives in
+      # tools/clear_stuck_jnilib_merge.sh; this is the call site.
+      #
+      # HONESTY NOTE, measured 2026-09-06: this runner is structurally
+      # IMMUNE. `actions/checkout` gives a fresh tree and nothing here
+      # caches build/ or ~/.gradle (subosito/flutter-action's `cache:` is
+      # the SDK, not the project), so there is no previous merge output
+      # for the task to be up-to-date against. Both released APKs were
+      # verified fresh - every lib/*/libapp.so carried its own tag's
+      # kAppReleaseTime and not the previous release's.
+      #
+      # So do NOT read a green run of this workflow as evidence that the
+      # workaround works. It is insurance against someone adding a Gradle
+      # cache here later, and it keeps every APK-producing path uniform
+      # so the coverage guard test can enumerate them. It costs ~0 and
+      # prints "nothing to clear".
+      - name: Clear stale Gradle jniLib merge outputs (flutter/flutter#191801)
+        run: tools/clear_stuck_jnilib_merge.sh "$GITHUB_WORKSPACE"
+
+      # SIGNING (2026-09-09). Until today this job fell through to
+      # `signingConfigs.getByName("debug")` in android/app/build.gradle.kts,
+      # and a GitHub runner has no ~/.android/debug.keystore, so the Android
+      # Gradle plugin GENERATED ONE PER RUN. Measured on the shipped assets:
+      # v1.5.20 and v1.5.21 carry different signing
+      # certificates. Android replaces an installed package only when the
+      # new APK is signed by the same certificate, so every release was
+      # un-installable over the one before it — the in-app updater added
+      # today would download ~200 MB and end at "App not installed".
+      # The real release key now comes from repository secrets. There is
+      # deliberately NO fallback: a tag build that cannot sign must FAIL
+      # rather than publish another un-installable APK.
+      - name: Write signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not set. Release APKs must be signed with the real release key; refusing to fall back to a debug key (see the comment above this step)."
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+          # Never echo the values; key.properties is written, not printed.
+          {
+            echo "storeFile=$RUNNER_TEMP/release.keystore"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > android/key.properties
+          echo "Wrote android/key.properties ($(wc -c < "$RUNNER_TEMP/release.keystore") byte keystore)."
+
+      - name: Build AAB (release, intl flavor)
+        run: flutter build appbundle --release --flavor intl
+
+      - name: Check the bundle carries the Play application id
+        run: |
+          f=build/app/outputs/bundle/intlRelease/app-intl-release.aab
+          ls -l "$f"
+          unzip -p "$f" base/manifest/AndroidManifest.xml | strings | grep -q "com.yahwehword.words" \
+            || { echo "::error::AAB does not contain com.yahwehword.words"; exit 1; }
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Yahwehs-Words-play-aab
+          path: build/app/outputs/bundle/intlRelease/app-intl-release.aab
+          if-no-files-found: error
