@@ -57,6 +57,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461522287670:android:377b7a71c4cc95c45dec97",
+        "android_client_info": {
+          "package_name": "com.yahwehword.words"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461522287670-a1vgu2ganbmf373b6u7nr6pfju21u50r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeSScgi-1Fr_SfTj9ud1HEfOO7pM5Mz6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461522287670-a1vgu2ganbmf373b6u7nr6pfju21u50r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "461522287670-ndij2tes352rk5rqek76ect2m1hv6i7d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.yswords"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
