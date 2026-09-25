@@ -78,11 +78,61 @@ jobs:
           "ZIP=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           Write-Host "Packaged $zip ($([math]::Round((Get-Item $zip).Length/1MB,1)) MB)"
 
+      # 2026-09-25: a single-file installer beside the zip, so the About page
+      # can offer "download for Windows" the way it does the APK. Per-user
+      # install (no admin prompt). STILL UNSIGNED - SmartScreen will warn on
+      # first run, exactly as it does for the zip; only a code-signing
+      # certificate or the Microsoft Store removes that.
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress | Out-Null
+          $tag = "${{ steps.ver.outputs.tag }}"
+          if ([string]::IsNullOrWhiteSpace($tag)) { $tag = "dev-$($env:GITHUB_SHA.Substring(0,7))" }
+          $ver = $tag -replace '^v',''
+          if ($ver -notmatch '^\d+(\.\d+)*$') { $ver = '0.0.0' }
+          $base = "Yahwehs-Words-Setup-$tag"
+          $iss = @"
+          [Setup]
+          AppId={{5C1F4B0E-7A62-4D0B-9C8A-3E1D9B5A6F21}
+          AppName=Yahweh's Words
+          AppVersion=$ver
+          AppPublisher=Yahweh's People
+          AppPublisherURL=https://yahwehword.com
+          DefaultDirName={autopf}\Yahwehs-Words
+          DefaultGroupName=Yahweh's Words
+          UninstallDisplayIcon={app}\Yahwehs-Words.exe
+          PrivilegesRequired=lowest
+          PrivilegesRequiredOverridesAllowed=dialog
+          ArchitecturesAllowed=x64compatible
+          ArchitecturesInstallIn64BitMode=x64compatible
+          Compression=lzma2
+          SolidCompression=yes
+          OutputDir=$env:GITHUB_WORKSPACE
+          OutputBaseFilename=$base
+          [Files]
+          Source: "$env:GITHUB_WORKSPACE\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion; Excludes: "*.lib,*.exp"
+          [Icons]
+          Name: "{group}\Yahweh's Words"; Filename: "{app}\Yahwehs-Words.exe"
+          Name: "{autodesktop}\Yahweh's Words"; Filename: "{app}\Yahwehs-Words.exe"; Tasks: desktopicon
+          [Tasks]
+          Name: "desktopicon"; Description: "Create a desktop shortcut"
+          [Run]
+          Filename: "{app}\Yahwehs-Words.exe"; Description: "Launch Yahweh's Words"; Flags: nowait postinstall skipifsilent
+          "@
+          Set-Content -Path setup.iss -Value $iss -Encoding utf8
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" setup.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+          "SETUP=$base.exe" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "Built $base.exe ($([math]::Round((Get-Item "$base.exe").Length/1MB,1)) MB)"
+
       - name: Upload workflow artifact (always)
         uses: actions/upload-artifact@v7
         with:
           name: Yahwehs-Words-Windows-x64
-          path: ${{ env.ZIP }}
+          path: |
+            ${{ env.ZIP }}
+            ${{ env.SETUP }}
           if-no-files-found: error
 
       - name: Attach to GitHub Release (tag builds only)
@@ -107,4 +157,4 @@ jobs:
               --title "$tag — Windows desktop build" \
               --notes "Automated Windows x64 build. Download the zip, extract, and run \`Yahwehs-Words\\Yahwehs-Words.exe\`. The exe is unsigned — on first launch click **More info → Run anyway** past Windows SmartScreen."
           fi
-          gh release upload "$tag" "$ZIP" --clobber
+          gh release upload "$tag" "$ZIP" "$SETUP" --clobber
