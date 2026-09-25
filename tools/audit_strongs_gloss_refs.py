@@ -7,8 +7,10 @@ Nothing had ever verified that merge, and a gloss under the wrong number is the
 same class of error as a wrong verse: the Originals sheet prints it as the
 meaning of the word the reader tapped.
 
-The check does not read the Chinese.  4,853 Hebrew and 3,744 Greek entries end
+The check does not read the Chinese.  4,837 Hebrew and 3,699 Greek entries end
 their ``defZh`` with CBOL's own citations, e.g. H3 ``(#伯 8:12; 歌 6:11|)``.
+(Corrected 2026-09-25 from 4,853/3,744, stale since `42e35a2a` rewrote 426
+glosses; the combined total, 8,536, was already correct and unchanged.)
 That is a falsifiable claim about the text: the word numbered H3 must stand in
 Job 8:12.  So every citation is resolved against ``assets/originals/`` -- an
 independently sourced dataset (OSHB / OpenGNT) that the glosses were never

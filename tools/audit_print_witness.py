@@ -70,7 +70,10 @@ VERSE_MARK = re.compile(r"\{\{verse\|(\d+)\|(\d+)\}\}")
 CONTROL = re.compile(r"[=*#|{}\[\]<>]")
 MERGED = "〔merged into the verse above〕"
 
-# ── the 37 exceptions, each read individually ────────────────────────────────
+# ── the 49 exceptions, each read individually ────────────────────────────────
+# (was "37" until 2026-09-25 — stale, from an unrelated check-3 note-loss
+# count; ID_ONLY+MERGE_ONLY+CONTENT+VARIANT_CONVENTION below sum to 49,
+# matching this file's own docstring.)
 
 # An id one edition numbers and the other does not.
 ID_ONLY = {

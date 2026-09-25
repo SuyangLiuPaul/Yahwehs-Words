@@ -10704,6 +10704,82 @@ has never seen this repo.
       expected to fail; the next iteration's step 0 should confirm this
       run's conclusion rather than assume it.
 
+- [x] **2026-09-25 — re-ran all 22 ungated `tools/audit_*.py` (audit-drift
+      fallback; `NEXT_TASK.md` named this exact sweep). The 4 CI-gated
+      ones — `audit_p0.py`, `audit_strongs_tagging.py`,
+      `audit_divine_name.py`, `audit_originals_compounds.py` — were left
+      alone as usual. All 22 ran to completion in the foreground (no
+      `timeout` binary on this Mac; used the Bash tool's own timeout
+      instead), 2 exiting non-zero by design (`audit_note_placement.py`:
+      1 known ATTACHED-ELSEWHERE finding; `audit_speaker_attribution.py`:
+      182 in-quotation attributions, unchanged shape from prior runs).**
+
+      **Two real drifts found, both in the AUDIT TOOLS' own prose, not
+      in any asset — fixed, refuter-confirmed before commit:**
+
+        * `audit_strongs_gloss_refs.py`'s docstring said "4,853 Hebrew and
+          3,744 Greek entries" carry a CBOL citation. Calling the script's
+          own `parse_citations()` against `assets/strongs/{hebrew,greek}.json`
+          directly gives **4,837 Hebrew / 3,699 Greek** — the combined
+          total, 8,536, is unchanged and still matches the script's own
+          headline and the baseline this file already pinned twice
+          (2026-09-21/22, "339 unresolvable of 8,536 cited"). Root cause:
+          `42e35a2a` (2026-09-08, "426 glosses stop mid-word") rewrote
+          `defZh` content in both files after the docstring's 2026-08-12
+          figures were written; the per-language split moved, the total
+          coincidentally re-settled. Docstring corrected in place.
+        * `audit_print_witness.py` carried a bare section-header comment
+          reading "the 37 exceptions" two lines below its own docstring's
+          "every one of the 49 exceptions is enumerated below" — the 49
+          is the already-verified figure from the 2026-09-22 `b6bd459c`
+          pass (which corrected it from a stale 43); the comment was
+          never touched across that correction or whatever came before
+          it. Counting the four dicts it introduces
+          (`ID_ONLY`+`MERGE_ONLY`+`CONTENT`+`VARIANT_CONVENTION`) gives
+          exactly 4+3+28+14 = **49**, confirming the docstring and
+          fixing the comment to match rather than guessing.
+
+      Both corrections were sent to an independent refuter agent before
+      committing, with instructions to re-derive each number from the
+      source files itself rather than trust this pass's arithmetic, and
+      to specifically check whether "37" could refer to a different,
+      legitimate sub-count. It confirmed both, and traced "37" to a
+      genuinely unrelated figure — `check_notes`'s own docstring quotes
+      a queue item that "read this count as 37 losses" (a different
+      check, already resolved: none are actually missing) — so it was a
+      copy-paste leftover from an unrelated metric, not a defect in the
+      exceptions list itself.
+
+      **Everything else: no drift.** Headlines matched their docstrings
+      or the queue's own prior pinned baselines, including
+      `audit_songs_snapshot_churn.py` (118 timestamp-only: cgdc 63,
+      cahaya 47, ydh 5, setapak 2, fydt 1 of 213; cdc 298 + the other
+      212 of fydt fully unchanged), `audit_tagged_quote_balance.py`
+      (2,487/33/4/604, 2,476/9/5 breakdown), `audit_tagged_rendered_extras.py`
+      (381/30,704/17), `audit_lexicon_provenance.py` (opencc s2t plus the
+      24 known hand edits, 侄→姪 now 22 as the docstring's own "grew from
+      88/21" note already documents), `audit_originals_alignment.py`
+      (91 of 1,189 chapters, 1,626 verses), `audit_trivia_claims.py`
+      (36 of 36 mechanically-checkable claims pass), `audit_biblexg_v2_vs_tr.py`
+      (9 candidates, 9 clean), `audit_dropped_characters.py` (90 hits,
+      83 of 83 explained), `audit_inserted_characters.py` (692 hits, 130
+      of 131 explained, 1 pending), `audit_publisher_adoption_drift.py`
+      (0 fresh hits), `audit_quote_bracket_style.py` (28 raw/9 isolated,
+      matching the pinned ids), `audit_untranslated_hant.py` (35,371
+      zh-Hant fields, 1,216 identical, 13 Simplified-only — small growth
+      from the last pinned 35,352/1,210/13 is the same `a7c35696`
+      chronology-asset attribution already recorded above, not new
+      drift), `audit_traditional_glyph_holes.py` (same per-asset
+      mixed/clean/HOLE table, nothing newly flipped),
+      `audit_strongs_alignment.py` (same unpinned informational list),
+      `audit_biblexg_notes.py` (per-verse ok/FEWER/MORE table, all
+      explained). No asset touched; `assets/cuvs-yhwh*.json` untouched
+      and frozen throughout.
+
+      `flutter analyze`/`flutter test` not run — two `tools/*.py`
+      comment/docstring edits and this doc, no `lib/` or `test/*.dart`
+      file touched. No deploy — nothing user-facing changed.
+
 - [ ] **`audit_note_placement.py`'s one ATTACHED ELSEWHERE finding is
       `004001050` (民數記 1:50), not 那鴻書 3:4 — the `b6bd459c` entry
       immediately above mislabels its own finding.** `assets/cuvs-yhwh-tr.json`
