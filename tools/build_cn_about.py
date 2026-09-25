@@ -20,6 +20,7 @@ What it changes, and nothing else:
     at '/cn' so a message says which page it was written on;
   * replaces the script with the same form handler minus the three-script
     machinery;
+  * drops the two Microsoft Store buttons (no mainland-China listing);
   * adds a 「下载 Mac 版」 button (/dl/<app>-mac) beside the APK one on the
     Words and Sword cards.
 """
@@ -175,6 +176,13 @@ def build(src: str) -> str:
     # 2. the language switch.
     src, n = re.subn(r'\s*<nav class="bar">.*?</nav>', '', src, count=1, flags=re.S)
     assert n == 1, 'language switch not found'
+
+    # 2a. the Microsoft Store buttons: the Store listings exclude mainland China
+    #     (ISBN required there), so the link would not work for these readers.
+    #     The Windows download button beside it stays.
+    src, n = re.subn(r'\n?[ \t]*<a class="dl" href="https://apps\.microsoft\.com/[^"]*">.*?</a>',
+                     '', src, flags=re.S)
+    assert n == 2, 'expected two Microsoft Store buttons, found %d' % n
 
     # 2b. the GitHub buttons: GitHub is unreliable from the mainland, and
     #     the Download button beside them already serves the APK.
