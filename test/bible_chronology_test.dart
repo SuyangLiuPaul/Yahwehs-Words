@@ -491,6 +491,55 @@ void main() {
               'either');
     });
 
+    // 2026-09-25 (queue:18651's sub-finding): the test above only proves
+    // the description agrees with itself (`_meta.eventCount` /
+    // `events.length`) — it says nothing about whether "N events" is
+    // actually the SAME set the description claims, "the event list on
+    // this page shows". It is not: `bible_timeline.json` names 105
+    // events and the chart draws 100, because DUPLICATES folds five of
+    // them into the computed markers they duplicate instead of listing
+    // them separately (creation, enoch_walks, flood, abram_called,
+    // isaac_born). This test reads both raw assets independently of the
+    // builder, recomputes that five-event gap by id, and pins the
+    // description to naming both counts and every omitted id — so if a
+    // future edit changes which events get folded, or how many, without
+    // updating the prose, this fails instead of shipping a description
+    // that is self-consistent but not true.
+    test("_meta.description names both event counts and every event "
+        'the placed layer omits', () {
+      final timelineRaw = json.decode(
+        File('assets/bible_timeline.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      final timelineIds = (timelineRaw['events'] as List)
+          .cast<Map<String, dynamic>>()
+          .map((e) => e['id'] as String)
+          .toSet();
+      final chronologyIds =
+          (raw['events'] as List).cast<Map<String, dynamic>>()
+              .map((e) => e['id'] as String)
+              .toSet();
+      // The subset direction is strict, one way: everything the chart
+      // draws also appears on the timeline.
+      expect(chronologyIds.difference(timelineIds), isEmpty,
+          reason: 'a chronology event exists that the timeline does not '
+              '— DUPLICATES or the builder itself must have diverged');
+      final omittedIds = timelineIds.difference(chronologyIds);
+
+      final description = (raw['_meta'] as Map)['description'] as String;
+      expect(description, contains('${chronologyIds.length} events'),
+          reason: 'description does not name the placed-event count '
+              '(${chronologyIds.length})');
+      expect(description, contains('${timelineIds.length}'),
+          reason: 'description does not name the full timeline count '
+              '(${timelineIds.length})');
+      for (final id in omittedIds) {
+        expect(description, contains(id),
+            reason: 'description omits $id from the events it says are '
+                'folded into a computed marker instead of listed — a '
+                'reader has no way to know why the count is short');
+      }
+    });
+
     test('every year is sourced — citations and arithmetic, per locale',
         () {
       for (final l in data.lifelines) {

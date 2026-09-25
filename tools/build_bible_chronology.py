@@ -180,7 +180,7 @@ DUPLICATES = {
 }
 
 # Placed events that earn a "Jump to" chip beside the computed markers.
-# Kept short on purpose: the chips wrap, and a phone cannot carry 98 of
+# Kept short on purpose: the chips wrap, and a phone cannot carry 105 of
 # them. Everything else is reachable by tapping its tick.
 PINNED_EVENTS = [
     "exodus",
@@ -2008,15 +2008,22 @@ def build():
                 "Names from "
                 "assets/family_tree.json, years recomputed from the "
                 "Masoretic ages and cross-checked against it. "
-                "(2) EVENTS — the same %d events the event list on this "
-                "page shows, from assets/bible_timeline.json, placed on "
+                "(2) EVENTS — %d events (of the %d the event list on this "
+                "page shows), from assets/bible_timeline.json, placed on "
                 "the AM axis by their stated BC/AD year through the "
                 "%d BC anchor, so both views of the page span "
-                "Creation to Revelation. The two layers are drawn "
+                "Creation to Revelation. The other %d (%s) duplicate a "
+                "computed marker above (see DUPLICATES in this file) "
+                "rather than being listed as their own event, so each "
+                "one's timeline year is carried on that marker as "
+                "placedYear instead. The two layers are drawn "
                 "differently and labelled, because a placed year is not "
                 "a computed one. No data is taken from the copyrighted "
                 "reference sheet in docs/reference/."
-            ) % (len(events), CREATION_BC),
+            ) % (
+                len(events), len(timeline["events"]), CREATION_BC,
+                len(DUPLICATES), ", ".join(DUPLICATES.keys()),
+            ),
             "computedNote": COMPUTED_NOTE,
             "undrawnLines": UNDRAWN,
             "unanchoredLifespans": UNANCHORED,

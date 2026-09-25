@@ -15145,6 +15145,20 @@ has never seen this repo.
       unanswered: start the `GetMaterialApp` → `.router` migration
       branch, or close this as "won't fix"?
 
+      **Deferred a thirty-seventh consecutive iteration, 2026-09-25** —
+      this hour's NEXT_TASK.md picked the chronology chart's `_meta.
+      description` event-count slice instead (below). NEXT_TASK.md's own
+      text called this "the eighteenth consecutive deferral" — that
+      undercounts; this file's own record above already reached the
+      thirty-sixth on 2026-09-21, so this is the thirty-seventh, not the
+      nineteenth. Noted rather than silently corrected, since an
+      unattended iteration guessing at which count is right is worse
+      than flagging the mismatch. Still branch-scale, still
+      unattended-unsafe, still the only fully open P2 checkbox besides
+      the chronology chart, and the question above to the user is still
+      unanswered: start the `GetMaterialApp` → `.router` migration
+      branch, or close this as "won't fix"?
+
 - [x] **FIXED 2026-09-05 (`3a12f70f`) — On the Bible reader, Back pushed a
       route instead of popping.** Pre-existing, orthogonal to the two
       defects above, flagged 2026-09-03. `_writeStateToUrl` issued a raw
@@ -19060,6 +19074,66 @@ has never seen this repo.
 
       Checkbox stays open; the chart item spans many slices.
 
+      **2026-09-25 slice — the "98 events" fix (`queue:18651`/`queue:19063`
+      below) half-healed into a subtler falsehood, closed properly.** The
+      literal number was gone, but `_meta.description` still said "the
+      same %d events the event list on this page shows" — true only if
+      "the same" meant "the same *set*," and it doesn't: measured this
+      hour from the two raw assets independently, `assets/
+      bible_timeline.json` carries **105** events, `assets/
+      bible_chronology.json`'s placed layer carries **100**. The five
+      missing — `creation`, `flood`, `enoch_walks`, `abram_called`,
+      `isaac_born` — are exactly `DUPLICATES`' keys
+      (`tools/build_bible_chronology.py:174-180`), folded into the
+      computed markers they duplicate (`:1470-1492`) rather than dropped;
+      each marker carries the timeline's own year back as `placedYear`,
+      confirmed present on all five. `chronologyBasisPlaced` /
+      `chronologyAlsoPlaced` (`ui_strings.dart:7566-7584`) were checked
+      and left alone — they say "the same *date*" about one event each,
+      which is true, not the same defect.
+
+      Fixed the sentence to say what's true: "%d events (of the %d the
+      event list on this page shows) … The other %d (%s) duplicate a
+      computed marker above … so each one's timeline year is carried on
+      that marker as placedYear instead," all four values interpolated
+      from `len(events)`, `len(timeline["events"])`, `len(DUPLICATES)`
+      and `DUPLICATES.keys()` — never a literal, per this item's own
+      `era_band_note()` rule, which is how the first version of this
+      defect got typed in. Also fixed two stale-count comments spotted
+      alongside it (comment-only, no behaviour): `build_bible_
+      chronology.py:183` said "a phone cannot carry 98 of them" → 105;
+      `bible_timeline_page.dart:25` said "~97 key biblical events" → 105.
+
+      New named test in `bible_chronology_test.dart`, right beside the
+      existing description-vs-`eventCount` self-consistency test (which
+      only proves the sentence agrees with itself and would not have
+      caught this): reads `bible_timeline.json` and the chronology
+      asset's `events` array independently of the builder, recomputes
+      the id-level difference, asserts the chronology side is a strict
+      subset (the reverse difference is empty), and pins the description
+      to naming both counts and every omitted id. Proved red first by
+      hand-perturbing "100 events" to "99 events" in the built asset
+      (failed with the expected message), then regenerated and confirmed
+      byte-identical to before the perturbation. Existing description-
+      vs-`eventCount` test needed a wording check, not a rewrite: its
+      regex matches the FIRST "`N events`" substring, so the new sentence
+      was phrased "100 events (of the 105 …)" rather than "100 of the 105
+      events" specifically so that first match stays the placed count
+      the old test already pins, not the timeline total.
+
+      Refuted before committing (five claims: the 105/100 counts, the
+      exact five-id difference, the reverse-subset direction, all five
+      markers actually carrying `placedEventId`) — all five confirmed by
+      independent re-parse of the raw JSON, no code trusted on my say-so.
+
+      Asset + code + test only, no version bump, no deploy — this item's
+      own guard rail; `_meta.description` is shipped data but not on
+      screen. `flutter analyze` clean repo-wide; full suite green,
+      6 foreground chunks (`run_test_chunks.py --of 6`), each checked
+      individually, none backgrounded.
+
+      Checkbox stays open; the chart item spans many slices.
+
 - [x] **`build_bible_chronology.py`'s `_meta.description` says "98
       events"; the generator emits 93.** Found 2026-09-17 while adding
       the Joseph lifeline (entry above). `DUPLICATES` dedupes 5 timeline
@@ -22079,6 +22153,12 @@ so the bundle-size answer stays on the record.
       `36069165368` was still `in_progress` past the ~6-minute watch
       budget; next iteration's step 0 should confirm it before picking
       a new item.
+
+      **Confirmed 2026-09-25: CI run `36069165368` (`6c008dd5`) concluded
+      `success`.** `gh run list --branch main --limit 5` showed all five
+      most recent runs green, newest `36073658649` on `c692ae3e`. Not
+      reopening this item — "bounded is not the same claim as explained"
+      stands as written above.
 
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect

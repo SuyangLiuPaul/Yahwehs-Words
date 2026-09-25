@@ -22,7 +22,7 @@ import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
 
-/// Bible timeline — chronological view of ~97 key biblical events
+/// Bible timeline — chronological view of ~105 key biblical events
 /// from Creation (~4000 BC) to John on Patmos (~95 AD), modelled
 /// on BibleHub's timeline structure but localized and visually
 /// nicer.
