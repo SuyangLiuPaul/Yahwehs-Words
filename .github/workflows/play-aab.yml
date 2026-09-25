@@ -99,11 +99,23 @@ jobs:
           } > android/key.properties
           echo "Wrote android/key.properties ($(wc -c < "$RUNNER_TEMP/release.keystore") byte keystore)."
 
+      # Play does not allow an app to install other APKs, and declaring
+      # REQUEST_INSTALL_PACKAGES triggers a policy declaration Play would
+      # reject for a self-updater. The permission exists only for the GitHub
+      # APK's updater, so it is stripped here, for this Play build only.
+      - name: Strip REQUEST_INSTALL_PACKAGES (Play build only)
+        run: |
+          sed -i '/REQUEST_INSTALL_PACKAGES/d' android/app/src/main/AndroidManifest.xml
+          ! grep -rq REQUEST_INSTALL_PACKAGES android/app/src
+
       - name: Build AAB (release, intl flavor)
         # STORE_BUILD switches off the GitHub self-updater
         # (UpdateService.isSupported): a Play install is updated by Play,
         # and downloading an APK from elsewhere is a Play policy violation.
-        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
+        # Play needs a version code above every one already uploaded, and
+        # the pubspec build number is not bumped for Play-only rebuilds, so
+        # the code comes from the run number (offset keeps it monotonic).
+        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true --build-number=$((1000 + GITHUB_RUN_NUMBER))
 
       - name: Check the bundle carries the Play application id
         run: |
@@ -111,6 +123,13 @@ jobs:
           ls -l "$f"
           unzip -p "$f" base/manifest/AndroidManifest.xml | strings | grep -q "com.yahwehword.words" \
             || { echo "::error::AAB does not contain com.yahwehword.words"; exit 1; }
+
+      - name: Check the permission is gone from the bundle
+        run: |
+          f=build/app/outputs/bundle/intlRelease/app-intl-release.aab
+          if unzip -p "$f" base/manifest/AndroidManifest.xml | strings | grep -q REQUEST_INSTALL_PACKAGES; then
+            echo "::error::AAB still declares REQUEST_INSTALL_PACKAGES (a plugin manifest adds it?)"; exit 1
+          fi
 
       - uses: actions/upload-artifact@v7
         with:
