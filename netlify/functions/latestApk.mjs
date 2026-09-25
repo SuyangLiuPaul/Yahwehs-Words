@@ -65,6 +65,17 @@ function pickMac(assets) {
 	return zips.length ? zips[0].browser_download_url || null : null;
 }
 
+// `/dl/<app>-win`: the Inno Setup installer when the release has one
+// (Yahwehs-Words-Setup-v1.6.32.exe), otherwise the Windows zip that every
+// release since v1.6.x carries. So the button works before the first
+// installer-bearing release and upgrades itself the day one is published.
+function pickWin(assets) {
+	const list = (assets || []).filter((a) => typeof a?.name === 'string');
+	const exe = list.find((a) => /setup.*\.exe$/i.test(a.name));
+	const zip = list.find((a) => /windows.*\.zip$/i.test(a.name));
+	return (exe || zip)?.browser_download_url || null;
+}
+
 function pickApk(assets) {
 	const apks = (assets || []).filter(
 		(a) => typeof a?.name === 'string' && a.name.toLowerCase().endsWith('.apk'),
@@ -90,8 +101,8 @@ async function latestApkUrl(slug, repo, kind) {
 	if (!res.ok) throw new Error(`github ${res.status}`);
 
 	const assets = (await res.json())?.assets;
-	const url = kind === 'mac' ? pickMac(assets) : pickApk(assets);
-	if (!url) throw new Error(`no ${kind === 'mac' ? 'macOS zip' : 'apk'} in latest release`);
+	const url = kind === 'mac' ? pickMac(assets) : kind === 'win' ? pickWin(assets) : pickApk(assets);
+	if (!url) throw new Error(`no ${kind} package in latest release`);
 
 	_cache.set(slug, { url, at: Date.now() });
 	return url;
@@ -99,11 +110,11 @@ async function latestApkUrl(slug, repo, kind) {
 
 export default async (req) => {
 	const raw = new URL(req.url).pathname.split('/').filter(Boolean).pop();
-	const isMac = raw.endsWith('-mac');
-	const app = isMac ? raw.slice(0, -4) : raw;
+	const kind = raw.endsWith('-mac') ? 'mac' : raw.endsWith('-win') ? 'win' : 'apk';
+	const app = kind === 'apk' ? raw : raw.slice(0, -4);
 	// Only these two apps publish a macOS package.
 	const slug = raw;
-	const repo = isMac && !['words', 'sword'].includes(app) ? undefined : REPOS[app];
+	const repo = kind !== 'apk' && !['words', 'sword'].includes(app) ? undefined : REPOS[app];
 
 	// An unknown slug is a broken link somewhere in our own pages, not a
 	// visitor's mistake to absorb silently — but there is nothing useful
@@ -117,7 +128,7 @@ export default async (req) => {
 
 	let target;
 	try {
-		target = await latestApkUrl(slug, repo, isMac ? 'mac' : 'apk');
+		target = await latestApkUrl(slug, repo, kind);
 	} catch (e) {
 		console.error('[latestApk]', slug, String(e?.message || e).slice(0, 200));
 		// Not cached: the next visitor should get a fresh attempt at the

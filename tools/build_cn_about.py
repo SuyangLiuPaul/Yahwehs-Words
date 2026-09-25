@@ -210,8 +210,8 @@ def build(src: str) -> str:
                      add_mac, out)
     assert n == 2, 'expected two APK buttons, found %d' % n
     out, n = re.subn(
-        r'(<a class="dl" href="/dl/(?:words|sword)-mac">下载 Mac 版</a>\s*</div>)',
-        r'\1\n      <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。</p>', out)
+        r'(<a class="dl" href="/dl/(?:words|sword)-win">下载 Windows 版</a>\s*</div>)',
+        r'\1\n      <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>', out)
     assert n == 2, 'mac hint anchor not found'
 
     # 5. head: one URL, one language.
