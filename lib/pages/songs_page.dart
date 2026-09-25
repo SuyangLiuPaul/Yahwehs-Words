@@ -2017,88 +2017,116 @@ class _SongDetailSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          song.title,
-                          style: TextStyle(
-                            fontFamily: settings.fontFamily,
-                            fontFamilyFallback: kCjkFontFallback,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onSurface,
-                          ),
+              // The title gets the FULL row width. The six actions used to
+              // sit in this same Row, and on a phone they took ~290 px of
+              // 328, leaving the Expanded title ~20 px: a CJK title wrapped
+              // one character per line. Below 560 px the actions drop to
+              // their own Wrap under the title; wider keeps the one-row look.
+              LayoutBuilder(
+                builder: (context, box) {
+                  final wide = box.maxWidth >= 560;
+                  final titleColumn = Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song.title,
+                        style: TextStyle(
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.onSurface,
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          songMetaLine(song, locale),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: scheme.onSurfaceVariant,
-                          ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        songMetaLine(song, locale),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: scheme.onSurfaceVariant,
                         ),
-                      ],
-                    ),
-                  ),
-                  SongFavouriteButton(song: song, locale: locale),
-                  IconButton(
-                    icon: const Icon(Icons.copy_outlined, size: 20),
-                    tooltip: uiStrings['copySelection']?[locale] ?? 'Copy',
-                    onPressed: () => _copy(context, songCopyText(song, locale)),
-                  ),
-                  // Share: a LINK back to this sheet, and deliberately
-                  // nothing else — see [SongShareButton], which is also
-                  // what the Now Playing screen and the score page draw.
-                  // This was an inline IconButton until 2026-09-07, and
-                  // being inline here is exactly why the player had no
-                  // share at all.
-                  SongShareButton(song: song, locale: locale),
-                  // Downloading was bulk-only: you could take the whole
-                  // filter offline but not the one hymn you are looking
-                  // at, which is the commonest case before a flight or
-                  // a drive out of coverage.
-                  if (SongDownloadService.isSupported &&
-                      song.hasPlayableAudio)
-                    _SongDownloadButton(
-                        song: song, scheme: scheme, locale: locale),
-                  IconButton(
-                    icon: const Icon(Icons.playlist_add_rounded, size: 22),
-                    tooltip: uiStrings['songsAddToPlaylist']?[locale],
-                    onPressed: () => showAddToPlaylistSheet(context, song, locale),
-                  ),
-                  // Queue it without interrupting what is playing.
-                  // Standard in every music app and absent here: you
-                  // heard something you wanted next and the only way to
-                  // get it was to stop the current song.
-                  if (song.hasPlayableAudio)
-                    PopupMenuButton<bool>(
-                      tooltip: '',
-                      icon: const Icon(Icons.queue_rounded, size: 21),
-                      onSelected: (next) => _queueSong(context, song,
-                          playNext: next, locale: locale),
-                      itemBuilder: (_) => [
-                        PopupMenuItem(
-                          value: true,
-                          child: Text(uiStrings['songsPlayNext']?[locale] ??
-                              'Play next'),
-                        ),
-                        PopupMenuItem(
-                          value: false,
-                          child: Text(uiStrings['songsAddToQueue']?[locale] ??
-                              'Add to queue'),
-                        ),
-                      ],
-                    ),
-                  IconButton(
+                      ),
+                    ],
+                  );
+                  final closeButton = IconButton(
                     icon: const Icon(Icons.close, size: 20),
                     onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                ],
+                  );
+                  final actions = <Widget>[
+                    SongFavouriteButton(song: song, locale: locale),
+                    IconButton(
+                      icon: const Icon(Icons.copy_outlined, size: 20),
+                      tooltip: uiStrings['copySelection']?[locale] ?? 'Copy',
+                      onPressed: () => _copy(context, songCopyText(song, locale)),
+                    ),
+                    // Share: a LINK back to this sheet, and deliberately
+                    // nothing else — see [SongShareButton], which is also
+                    // what the Now Playing screen and the score page draw.
+                    // This was an inline IconButton until 2026-09-07, and
+                    // being inline here is exactly why the player had no
+                    // share at all.
+                    SongShareButton(song: song, locale: locale),
+                    // Downloading was bulk-only: you could take the whole
+                    // filter offline but not the one hymn you are looking
+                    // at, which is the commonest case before a flight or
+                    // a drive out of coverage.
+                    if (SongDownloadService.isSupported &&
+                        song.hasPlayableAudio)
+                      _SongDownloadButton(
+                          song: song, scheme: scheme, locale: locale),
+                    IconButton(
+                      icon: const Icon(Icons.playlist_add_rounded, size: 22),
+                      tooltip: uiStrings['songsAddToPlaylist']?[locale],
+                      onPressed: () => showAddToPlaylistSheet(context, song, locale),
+                    ),
+                    // Queue it without interrupting what is playing.
+                    // Standard in every music app and absent here: you
+                    // heard something you wanted next and the only way to
+                    // get it was to stop the current song.
+                    if (song.hasPlayableAudio)
+                      PopupMenuButton<bool>(
+                        tooltip: '',
+                        icon: const Icon(Icons.queue_rounded, size: 21),
+                        onSelected: (next) => _queueSong(context, song,
+                            playNext: next, locale: locale),
+                        itemBuilder: (_) => [
+                          PopupMenuItem(
+                            value: true,
+                            child: Text(uiStrings['songsPlayNext']?[locale] ??
+                                'Play next'),
+                          ),
+                          PopupMenuItem(
+                            value: false,
+                            child: Text(uiStrings['songsAddToQueue']?[locale] ??
+                                'Add to queue'),
+                          ),
+                        ],
+                      ),
+                  ];
+                  if (wide) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: titleColumn),
+                        ...actions,
+                        closeButton,
+                      ],
+                    );
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: titleColumn),
+                          closeButton,
+                        ],
+                      ),
+                      Wrap(children: actions),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Flexible(
