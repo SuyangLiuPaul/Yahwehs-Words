@@ -379,6 +379,62 @@ and quoted.**
       locally, so nothing is expected to fail; the next iteration's step
       0 should confirm this run's conclusion rather than assume it.
 
+- [x] **2026-09-25 — landed the 14:00 stage's stranded test coverage
+      (test coverage), and corrected two factual errors in the plan that
+      assigned this landing.** `git status` at 17:15 showed
+      `lib/utils/responsive.dart` modified and
+      `test/responsive_breakpoints_test.dart` untracked; `run.log` shows
+      the 14:05:03–14:11:46 stage that produced them ended not with the
+      classic "waiting on a backgrounded `flutter test`" message but
+      with `stage 2 end rc=1`, its sole recorded output being *"You've
+      hit your session limit · resets 4:40pm (Australia/Melbourne)"* — a
+      session/usage-limit cutoff, a third distinct cause alongside the
+      "chose to end while waiting" and "killed/timed-out" shapes already
+      catalogued below. The planning pass that assigned this landing had
+      attributed it to the rc=0-background-verification pattern; that
+      attribution is corrected here rather than carried forward.
+
+      The stranded work itself was sound: two comment corrections in
+      `lib/utils/responsive.dart` (iPad Pro 12.9" portrait at 1024 is
+      `desktop`, not `tablet` — `width < 1024` is false at exactly 1024;
+      a 1920 monitor is `tv`, not `desktop` — `width < 1920` is false at
+      exactly 1920, capped at 1800 instead), both re-verified against
+      `classOf`/`maxContentWidth` directly and independently by a
+      refuter — held. The new 178-line, 22-test
+      `test/responsive_breakpoints_test.dart` (boundary exactness at
+      360/600/1024/1920; `isPhone`/`isTabletOrWider`/`isDesktopOrWider`
+      swept 0–2200; monotonicity of the scale getters; three named
+      device cases) ran green as written, 22/22.
+
+      One real defect in the stranded test file's own docstring, also
+      flagged by the plan and confirmed here: it claimed
+      `test/image_asset_audit_test.dart` was "the only other reference
+      to `DeviceClass`" and discussed image assets — that file has
+      **zero** occurrences of `DeviceClass` or `responsive` at all, so
+      there is no "other reference," full stop. Rewritten to state what
+      `grep -rln DeviceClass test/` actually shows: this file is the
+      only test reference to `DeviceClass` in the whole `test/`
+      directory. The "23 files under `lib/` reference
+      `ResponsiveBreakpoints`/`DeviceClass`, 22 import
+      `utils/responsive.dart`" claim was independently re-verified and
+      held.
+
+      **The plan's "ninth recorded recurrence" claim for the item below
+      is also wrong, corrected in that item's own recurrence note**: the
+      item already documents named recurrences through "Twentieth and
+      twenty-first" plus a further unnumbered one on 2026-09-23 — at
+      least 22 documented occurrences, not nine. Both corrections (the
+      rc=1/session-limit cause, and the recurrence count) were reached
+      independently, then checked against a refuter agent's own
+      from-source re-derivation of all six flagged claims; all six held
+      except these same two, which the refuter also caught.
+
+      `flutter analyze` clean (38.8s). New test green in the foreground
+      (22/22). Full suite run as 4 foreground chunks via
+      `tools/run_test_chunks.py`, each chunk's exit code checked — all 4
+      `CHUNK N/4: PASS`. No deploy: a comment-only `lib` change plus a
+      test is not user-visible.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -21672,6 +21728,40 @@ so the bundle-size answer stays on the record.
       4-chunk suite were clean locally, so nothing is expected to fail;
       the next iteration's step 0 should confirm this run's conclusion
       rather than assume it.
+
+      **Another occurrence, a third distinct cause, 2026-09-25
+      14:05:03–14:11:46.** Not either shape above: `run.log` reads
+      `stage 2 end rc=1`, and the stage's entire recorded output is one
+      line, *"You've hit your session limit · resets 4:40pm (Australia/
+      Melbourne)"* — a session/usage-limit cutoff, not a self-chosen
+      wait on a backgrounded job (the `rc=0` pattern) and not an
+      external kill/timeout (the `rc=143` pattern from the eighth
+      occurrence above). Real work was still stranded the same way:
+      `lib/utils/responsive.dart` (two comment corrections) and the new
+      `test/responsive_breakpoints_test.dart` (178 lines, 22 tests) sat
+      uncommitted for three hours. **Exact ordinal not restated here**
+      — this item's own text already numbers occurrences through
+      "Twentieth and twenty-first" plus at least one further unnumbered
+      one (2026-09-23), so this is at minimum the 22nd documented
+      occurrence; a planning pass that assigned landing this one had
+      called it "the ninth recorded recurrence," which is wrong by a
+      wide margin and is corrected here rather than carried forward — a
+      repeat of the exact undercounting this item already flagged once
+      before (the seventeenth-recurrence note above, "corrected to
+      seventeenth here"). Landed 2026-09-25: both comment corrections
+      verified against `classOf`/`maxContentWidth` directly and by an
+      independent refuter (held), the test suite's own docstring had one
+      false clause (claimed `test/image_asset_audit_test.dart` was "the
+      only other reference to `DeviceClass`" when that file has zero
+      such references at all) corrected before commit, `flutter analyze`
+      clean, the new test green in the foreground (22/22), full suite
+      green across 4 foreground chunks. Same conclusion as every prior
+      occurrence: the durable fix is outside this repo's reach, in
+      `run.sh`/`prompt.md` under `~/Library/Application Support/
+      yswords-loop/`, not touched here — though this occurrence's actual
+      cause (a session-limit cutoff mid-stage) is arguably not fixable
+      by a "don't background `flutter test`" rule at all, since nothing
+      was backgrounded; it needs its own handling if the user wants one.
 
 - [x] **The `git secrets` hooks are LIVE as of 2026-08-23.**
       `git-secrets` 1.3.0 installed via brew; hooks chmod +x; an

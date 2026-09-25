@@ -48,13 +48,15 @@ class ResponsiveBreakpoints {
         DeviceClass.phone => double.infinity,
         // 1100 → iPad mini portrait (768) + iPad portrait (810) +
         // iPad Pro 11" portrait (834) all stay under the cap (no
-        // crop). iPad Pro 12.9" portrait (1024) also stays just
-        // under.
+        // crop). iPad Pro 12.9" portrait (1024) is `desktop`, not
+        // `tablet` (width < 1024 is false at exactly 1024).
         DeviceClass.tablet => 1100,
         // 1400 → iPad Pro 11" landscape (1194) stays under (no
         // margin); Xiaomi Pad 7 Ultra landscape (~1800) gets
-        // ~200 px margin per side ≈ 11% (was 26% at 880); 1920
-        // monitor gets ~260 per side ≈ 13.5%.
+        // ~200 px margin per side ≈ 11% (was 26% at 880). A viewport
+        // just under the `tv` boundary (1919) gets ~260 per side ≈
+        // 13.5%; exactly 1920 is `tv` (width < 1920 is false), capped
+        // at 1800 instead.
         DeviceClass.desktop => 1400,
         // 1800 → 27" 4K monitor gets reasonable text width while
         // still leaving substantial margin on ultrawide displays.
