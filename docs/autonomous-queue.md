@@ -10780,6 +10780,8 @@ has never seen this repo.
       comment/docstring edits and this doc, no `lib/` or `test/*.dart`
       file touched. No deploy — nothing user-facing changed.
 
+      Pushed as `f4f96bca`.
+
 - [ ] **`audit_note_placement.py`'s one ATTACHED ELSEWHERE finding is
       `004001050` (民數記 1:50), not 那鴻書 3:4 — the `b6bd459c` entry
       immediately above mislabels its own finding.** `assets/cuvs-yhwh-tr.json`
