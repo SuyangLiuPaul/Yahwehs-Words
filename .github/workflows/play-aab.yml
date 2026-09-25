@@ -100,7 +100,10 @@ jobs:
           echo "Wrote android/key.properties ($(wc -c < "$RUNNER_TEMP/release.keystore") byte keystore)."
 
       - name: Build AAB (release, intl flavor)
-        run: flutter build appbundle --release --flavor intl
+        # STORE_BUILD switches off the GitHub self-updater
+        # (UpdateService.isSupported): a Play install is updated by Play,
+        # and downloading an APK from elsewhere is a Play policy violation.
+        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
 
       - name: Check the bundle carries the Play application id
         run: |
