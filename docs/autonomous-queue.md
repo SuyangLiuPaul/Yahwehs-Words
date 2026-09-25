@@ -22160,6 +22160,12 @@ so the bundle-size answer stays on the record.
       reopening this item — "bounded is not the same claim as explained"
       stands as written above.
 
+      **New unwatched run, same day.** This iteration's own push
+      (`f11dcb59`, the chronology-chart description slice above) started
+      CI run `36077130056`, still `in_progress` past the ~6-minute watch
+      budget; next iteration's step 0 should confirm it before picking a
+      new item.
+
 - [x] **2026-09-21 FIXED — built `tools/queue_open_items.py`, the
       structural parser this item's own sibling defect
       (`queue:14246`'s note, whose own line number will drift — grep
