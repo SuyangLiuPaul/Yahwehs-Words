@@ -3643,6 +3643,78 @@ reported. Work these top-down before P2.
       expected to fail; the next iteration's step 0 should confirm this
       run's conclusion before picking a new item.
 
+- [x] **`test/biblexg_block_note_list_test.dart`'s `allowed` allowlist had
+      the same silent-suppression defect its sibling above just had —
+      worse: half of it was dead.** `allowed` is a `(verseId,
+      blockNotesIndex)` set that excuses a colon-ending footnote from the
+      "must be followed by its recovered list" check, but nothing checked
+      that an excused entry still actually fired. Re-measured all 14
+      entries directly against the four assets (`biblexg-v2*`,
+      `-v3*`) with the test's own predicate: 7 fired 4/4 (still live) and
+      7 fired 0/4 (dead) — a clean split, no entry fired 1-3/4. All 7 dead
+      spots turned out to be the SAME shape: the publisher's recovered
+      list (`tools/backfill_ljk2_comment_lists.py`, 2026-09-24) inserted a
+      new note, shifting later indices so the excused index now either
+      sits ON the recovered list itself (5 of the 7) or its colon note is
+      now correctly followed by that list (the other 2) — mechanism
+      confirmed from the note text itself, not asserted from the backfill
+      script's commit message (`git log -S` on the asset paths wasn't
+      needed since the shifted content is directly visible in both).
+      Two of the removed entries' own comments were not just stale but
+      affirmatively wrong: 加2:21 (`48002021`) and 来10:39 (`58010039`)
+      claimed the publisher had only prose numbering and no real list
+      node — but a genuine `1./2./3.` list now sits exactly where the
+      comment denied one existed. Nothing in `assets/biblexg-*.json` was
+      touched or found wrong; this is a test-only staleness fix, mirroring
+      the sibling above.
+
+      **Fixed the class, not the 7 instances**, same shape as the sibling:
+      added a test asserting every `allowed` entry fires in at least one
+      of the four assets — a **union**, not per-asset, because the
+      docstring itself records the publisher added list nodes at 罗8:30
+      and 多2:15 between the v2 and v3 fetches, so a v3-only entry must
+      not fail. Re-scans independently of the per-path tests rather than
+      sharing mutable state, so it doesn't depend on `test()` declaration
+      order. Proved red before green: put a dead key back by hand, watched
+      the new assertion fail with the exact missing key, removed it again.
+
+      A refuter subagent independently re-derived the 7/7 split from raw
+      JSON (also checking for id-missing-from-asset artifacts from
+      versification drift — none found), re-read all 7 live notes against
+      their comments (one imprecision fixed: 罗2:16's comment said
+      "verses 5-6", the note actually restates 5-16), and confirmed no
+      removed spot shows an *actually* missing or truncated list. It also
+      flagged, out of scope for this item: 约一2:27 has a paragraph
+      present in both Traditional assets but absent from both Simplified
+      ones — unrelated to any allowlist index here, filed below as a new
+      queue item rather than fixed inline.
+
+      `flutter analyze` clean; full suite green (6/6 chunks via
+      `tools/run_test_chunks.py`, foreground, exit code checked each
+      time — one pre-existing, unrelated skip in
+      `web_update_checker_test.dart`'s "maybeAutoReload is inert on
+      native", present before this change).
+
+- [ ] **约一2:27 (Simplified) may be missing a paragraph both Traditional
+      editions carry.** Surfaced by the refuter while checking the
+      `biblexg_block_note_list_test.dart` allowlist fix above, not chased
+      further there since it's unrelated to any of that test's indices:
+      both `biblexg-v3-tr.json` and (per the refuter's report) the v2
+      Traditional pair carry a paragraph reading roughly 「然而，"正對、正
+      對面"和"反對"不同…」 in 约一2:27's block notes that both Simplified
+      assets (`biblexg-v3.json` / `biblexg-v2.json`) lack. Not yet
+      confirmed against `git log -S` on the asset, and not yet checked
+      whether `test/biblexg_verse_integrity_test.dart`'s length-delta
+      check already covers this verse (it doesn't appear in either
+      `knownDifferences` table, and the note text isn't the verse body, so
+      it may not be in scope for that check at all). Needs: re-measure
+      directly, check history for when the two editions diverged here,
+      and decide whether it is a genuine content gap (P0, jumps the queue
+      per the omitted-verse-text exception) or a note-only editorial
+      difference the publisher intended (lower priority, needs the
+      publisher letter). Do not touch `assets/biblexg-*.json` until that
+      is answered.
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's

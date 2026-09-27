@@ -47,33 +47,25 @@ void main() {
     // disputed longer ending and stops; the ending itself is the next
     // verse's text, not a list node.
     ('41016008', 0),
-    // 约1:5 — "...译本（阿拉米语又称亚兰文）：" and "...理据如下：" are both
-    // followed by ordinary prose paragraphs, not `<li>` lists.
-    ('43001005', 8),
+    // 约1:5 — "...理据如下：" is followed by ordinary prose analysing
+    // πρὸς vs μετὰ, not a `<li>` list. (The sibling entry that once sat
+    // here for "...译本（阿拉米语又称亚兰文）：" is gone: that note's
+    // own next note IS a bulleted list — `tools/backfill_ljk2_comment_
+    // lists.py` recovered it — so the entry stopped firing and its
+    // comment had gone false.)
     ('43001005', 19),
-    // 罗1:17 — three colons in one argument, each followed by prose,
-    // not a `comment-list`.
+    // 罗1:17 — "本译本这样理解和翻译的理据如下：" is followed by prose
+    // introducing the argument, not a `comment-list`. (Two sibling
+    // entries in this same verse are gone: one now sits ON the
+    // recovered `1. 站稳；2. 信任…` list itself, so it no longer ends in
+    // a colon; the other's colon IS now followed by that same list.)
     ('45001017', 4),
-    ('45001017', 12),
-    ('45001017', 13),
     // 罗2:16 — "...这样作者的思路更加清晰可见，如下：" introduces a
-    // re-ordered restatement of verses 5-6 as plain text, not a list.
+    // re-ordered restatement of verses 5-16 as plain text, not a list.
     ('45002016', 1),
     // 罗16:24 — the critical-apparatus note about NA28/UBS5 manuscript
     // evidence; nothing follows it (last blockNote of the verse).
     ('45016024', 0),
-    // 加2:21 — "...释义可分以下三类：" is followed by "分类 1：...", "分类
-    // 2：..." etc — the publisher's OWN prose numbering, not our
-    // recovered `1. / 2. / 3.` list markers.
-    ('48002021', 12),
-    // 加3:14 — "...BDAG 及 THAY，πίστις 的释义有：" followed by discursive
-    // prose analysing those definitions, not a list node.
-    ('48003014', 6),
-    // 西2:15 — "...这词组有两种可能的释义：" followed by prose weighing the
-    // two readings, not a `<li>` list.
-    ('51002015', 4),
-    // 来10:39 — "...综合 HALOT 和 BDB，אֱמוּנָה 的释义有：" followed by prose.
-    ('58010039', 6),
     // 约一2:27 — "...现译作'反基督'，原因有三：" followed by "第一，...",
     // "第二，..." as prose paragraphs, not our list markers.
     ('62002027', 1),
@@ -111,6 +103,41 @@ void main() {
       expect(unexplained, isEmpty, reason: unexplained.join('\n'));
     });
   }
+
+  test('every allowed entry is exercised in at least one of the four assets',
+      () {
+    // Unlike the per-path test above, this is a union check: the
+    // publisher's two fetches don't share every list node (罗8:30 and
+    // 多2:15 only exist in v3), so an entry that legitimately fires in
+    // only one of the four assets must not fail here. Re-scans
+    // independently rather than reusing state from the tests above, so
+    // it does not depend on their declaration order.
+    final usedKeys = <(String, int)>{};
+    for (final path in [
+      'assets/biblexg-v2.json',
+      'assets/biblexg-v2-tr.json',
+      'assets/biblexg-v3.json',
+      'assets/biblexg-v3-tr.json',
+    ]) {
+      for (final v in load(path)) {
+        final notes = (v['blockNotes'] as List?)?.cast<String>();
+        if (notes == null) continue;
+        for (var i = 0; i < notes.length; i++) {
+          if (!colonEnd.hasMatch(notes[i].trim())) continue;
+          final next = i + 1 < notes.length ? notes[i + 1].trim() : null;
+          if (next != null && listStart.hasMatch(next)) continue;
+          if (allowed.contains((v['id'] as String, i))) {
+            usedKeys.add((v['id'] as String, i));
+          }
+        }
+      }
+    }
+    expect(usedKeys, equals(allowed),
+        reason: 'an allowed entry no longer matches any colon-ending block '
+            'note left unexplained in any of the four assets — the gap it '
+            'excused has healed (or the entry is wrong). Remove it rather '
+            'than let it keep suppressing nothing.');
+  });
 
   test('no verse in any edition carries an empty blockNotes array', () {
     // 2026-09-24: `tools/apply_ljk_2026_09_17.py` moved 路加福音 23:34a's
