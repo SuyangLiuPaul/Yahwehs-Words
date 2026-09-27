@@ -817,6 +817,13 @@ reported. Work these top-down before P2.
       agent before this note was written; the two corrections above
       are its catches, not self-reported.
 
+      Pushed as `9abded60`. CI run `36332744126` was still `in_progress`
+      past the ~6-minute watch budget — `flutter analyze` and
+      `test/test_audit_songs_snapshot_churn.py` were both clean
+      locally, and this commit touches only `docs/`, so nothing is
+      expected to fail; the next iteration's step 0 should confirm this
+      run's conclusion before picking a new item.
+
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
       was written ONLY on an explicit pause/stop/seek/seekOverall, never
