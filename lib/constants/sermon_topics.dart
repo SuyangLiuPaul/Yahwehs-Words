@@ -1,4 +1,4 @@
-/// Localized labels for the 20 topic series in the Pastor Eric sermon
+/// Localized labels for the 21 topic series in the Pastor Eric sermon
 /// corpus. The topic strings on the right come from SERMON_INDEX.md
 /// (which is English-only), so without this map the SermonsPage and
 /// related-sermons sheet would render the topic chip in English even
@@ -80,8 +80,8 @@ const Map<String, Map<String, String>> sermonTopicI18n = {
     'en': 'Spiritual Direction',
   },
   'Spiritual Experience, Knowing God': {
-    'zh-Hans': '属灵经历:认识神',
-    'zh-Hant': '屬靈經歷:認識神',
+    'zh-Hans': '属灵经历：认识神',
+    'zh-Hant': '屬靈經歷：認識神',
     'en': 'Spiritual Experience: Knowing God',
   },
   'Spiritual Mission': {
