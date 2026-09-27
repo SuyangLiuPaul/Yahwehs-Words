@@ -2232,6 +2232,24 @@ skipped (rate limit) or NEXT_TASK.md wasn't refreshed — not a crash.
     `dict[key] = [filtered items]` needs a `if not kept: del dict[key]`
     branch, or use `.pop(key, None)` when the result is empty, whenever
     "no items" and "key absent" are supposed to mean the same thing.
+75. **Any test that calls `AppSettings.setFontFamily()` with a
+    Google-Fonts key hits a real network fetch inside `flutter test`.**
+    `resolveFontFamily()` (`lib/utils/font_catalog.dart`) calls
+    `GoogleFonts.getFont()`, which returns a fallback TextStyle
+    synchronously but also kicks off a detached, unawaited background
+    fetch. `flutter_test`'s mocked `HttpClient` always answers 400, so
+    that fetch always rejects — and because nothing awaits it, the
+    rejection surfaces asynchronously on whatever *unrelated* test
+    happens to be running next ("test failed after it had already
+    completed"). `GoogleFonts.config.allowRuntimeFetching = false` does
+    not fix this — it just changes the exception's text and still
+    throws it detached. The fix belongs in the test file, not `lib/`:
+    override the package's `@visibleForTesting httpClient`
+    (`package:google_fonts/src/google_fonts_base.dart`, the same seam
+    the package's own test suite uses) with a client whose `get()`
+    never resolves, so the fetch neither succeeds nor rejects. First hit
+    writing `test/app_style_preset_test.dart`'s `apply()` round-trip
+    test, 2026-09-27.
 
 ## Trap: "local green" and "CI green" are different claims
 

@@ -442,6 +442,83 @@ and quoted.**
       locally, so nothing is expected to fail; the next iteration's step
       0 should confirm this run's conclusion rather than assume it.
 
+- [x] **2026-09-27 — fallback iteration (test coverage). Written 18:48,
+      landed 21:26** after two iterations of being stranded uncommitted
+      (see the 21:26 landing note near the end of this entry for why).
+      CI green (`36303677218`/`95166082`), tree clean, no orphaned work.
+      Took `NEXT_TASK.md`'s planning pass at face value on the tier survey
+      (22 open, all genuinely blocked — BUGS on an upstream product
+      call, P2 on the branch-scale `.router` migration plus a
+      loop-tooling item, P1 empty, P3 all publisher/hosting/licence
+      blocked, P0 all frozen-asset or awaiting a publisher letter), but
+      its "largest untested pure-logic file" claim for the chosen target
+      did **not** survive re-derivation — a same-shape sweep of
+      `lib/models`, `lib/utils`, `lib/services` for the largest file
+      with zero `test/` references turns up `lib/services/
+      song_download_io.dart` (551 lines) ahead of it. Went ahead with
+      the plan's actual target anyway
+      (`lib/models/app_style_preset.dart`, 273 lines): it is still a
+      real file with zero prior test references and a genuine
+      shipped-bug history (Round 56 — the active-preset card silently
+      not lighting up after a correct `apply()`, from comparing
+      `fontFamily` against `fontSelection`), which the size framing
+      wasn't needed to justify.
+
+      New `test/app_style_preset_test.dart` (15 cases): all 9
+      `AppStylePreset` values round-trip through `apply()` →
+      `detectActivePreset()`; every `presetDefinitions` entry is
+      pairwise-distinct on the six compared fields (the precondition for
+      the round-trip to mean anything); every entry's `fontFamily`
+      passes `isValidFontKey`; every preset has non-empty
+      `stylePreset_<name>_label`/`_description` uiStrings in all three
+      locales; `presetDefinitions` covers every enum value; a fresh
+      `AppSettings()` and a post-`resetAllSettings()` one both detect as
+      `systemDefault`. A refuter agent independently re-derived all five
+      load-bearing claims (no prior test coverage; 9 enum values = 9 map
+      entries; fresh-AppSettings defaults match `systemDefault` on all
+      six fields; all 9 fontFamily values are valid catalogue keys; the
+      round-trip test is not vacuous, since `detectActivePreset` returns
+      the first entries-order match and no two of the current 9 defs tie
+      on all six fields) — all five held.
+
+      One real wrinkle, not a `lib/` bug: `AppStylePresetExt.apply()`
+      calls `AppSettings.setFontFamily()`, which calls
+      `resolveFontFamily()`, which calls `GoogleFonts.getFont()` — a
+      fire-and-forget background fetch that always fails under
+      `flutter test` (the harness's mocked `HttpClient` always answers
+      400), and because it's unawaited, the rejection surfaced
+      asynchronously on whatever *unrelated* test happened to be running
+      next ("test failed after it had already completed"). Fixed
+      test-side only, matching the pattern the `google_fonts` package's
+      own test suite uses: override its `@visibleForTesting httpClient`
+      (`package:google_fonts/src/google_fonts_base.dart`) with a client
+      whose `get()` never resolves, so the background fetch neither
+      succeeds nor rejects — it just never finishes, which is invisible
+      to a short-lived test process. No `lib/` file touched.
+
+      Proved the test can fail before committing: hand-changed
+      `classic`'s `fontFamily` to a nonexistent key, confirmed
+      `flutter test` went red on exactly the `isValidFontKey` case,
+      restored the file, confirmed `git diff`/`git status` on `lib/` was
+      empty.
+
+      **2026-09-27 21:26 landing note (this is the version to trust):**
+      this work was written by an 18:48 execution stage that died `rc=1`
+      14s after its last write, before `git commit` — so its claim of
+      "repo-wide `flutter analyze` clean (38.1s), full suite run as 6
+      chunks, all 6 `PASS`" could not be confirmed at land time and is
+      **not repeated as fact here**. What was actually re-run at land
+      time: `flutter analyze test/app_style_preset_test.dart` — clean;
+      `flutter test test/app_style_preset_test.dart` standalone — all 15
+      cases pass, exit 0. Landed on that basis per this loop's own
+      "commit first, verify broadly after" rule, so a fourth strand
+      wouldn't happen over a slow full-suite run. The full suite was run
+      immediately after commit+push, in the same iteration — see the
+      commit that follows this one, or CI on this push, for that result.
+      Test-only change (new test file + this queue entry): no deploy,
+      per this loop's own rule that tooling/test/doc-only changes don't
+      publish.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
