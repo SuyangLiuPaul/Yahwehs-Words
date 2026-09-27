@@ -519,6 +519,54 @@ and quoted.**
       per this loop's own rule that tooling/test/doc-only changes don't
       publish.
 
+- [x] **2026-09-28 — fallback iteration (test coverage):
+      `lib/utils/theme_color_helpers.dart`.** `NEXT_TASK.md` picked this
+      because no test file in `test/` imported it (checked by grep, not
+      filename guessing) — confirmed again here and by an independent
+      refuter agent before committing. It backs 8 call sites (also
+      refuter-confirmed) across `family_tree_page.dart`,
+      `evidence_page.dart`, `stats_page.dart`, `settings_page.dart`,
+      `cloud_setup_diagnostic.dart`, `person_detail_sheet.dart`,
+      `gemini_key_card.dart`, `originals_sheet.dart`, all passing one of
+      five real `MaterialColor`s: green, teal, orange, red, blue.
+
+      New `test/theme_color_helpers_test.dart` (13 cases): exact-value
+      pins for all four palette functions in both brightnesses
+      (`paletteBg`/`paletteFg`/`paletteBorder`/`paletteAccent`, light
+      and dark, 5 palettes each); the four `status*` wrappers pinned as
+      pure delegation to `paletteAccent`/`paletteBg`; a contrast-direction
+      invariant over all five real palettes (light: `paletteFg` darker
+      than `paletteBg`; dark: `paletteFg` lighter than `paletteBg`
+      composited over the actual dark `scaffoldBackgroundColor`, since
+      `computeLuminance()` on the translucent dark-mode `paletteBg`
+      directly would silently ignore its alpha).
+
+      One real trap found and documented in the test itself: `MaterialApp`
+      wraps its theme in an `AnimatedTheme`, so calling `pumpWidget` twice
+      with different `ThemeData.brightness` values inside **one**
+      `testWidgets` block reports the *first* call's brightness after the
+      second call too, without an explicit `pumpAndSettle` — reproduced
+      standalone by the refuter agent. Worked around with one
+      `testWidgets` per brightness rather than chasing `pumpAndSettle`
+      timing.
+
+      One measured (not asserted, not fixed) finding: light-mode
+      `Colors.orange`'s `paletteFg`-on-`paletteBg` contrast is ≈2.99:1 —
+      below the WCAG-AA 4.5:1 text threshold that every other real
+      palette clears in both brightnesses (light ~4.7–6.8:1, dark
+      ~4.6–7.1:1; orange itself is ≈6.8:1 in dark mode, so light mode is
+      the specific outlier). Independently re-derived by the refuter from
+      the raw hex values (2.988). This is a UI palette call for the user,
+      not a bug this iteration's scope covers — see the new P3 item below
+      rather than "fixing" the threshold into the test or the code.
+
+      `flutter analyze`: clean. `flutter test`: full suite green, all 6
+      chunks run in the foreground (chunk 3 skipped one pre-existing
+      network-image test, unrelated). No `lib/` file touched, no asset,
+      string or UI changed — test-only, so **no deploy** this iteration.
+      Also closed the `queue:11308` pending-CI note above: confirmed
+      `36322030869` → `success`.
+
 ## BUGS — reported by the user from their own devices
 
 Highest tier since 2026-08-24. Anything the user hit on the phone, the
@@ -11305,9 +11353,8 @@ has never seen this repo.
       Dart source touched). No asset, string or UI changed — tooling
       and docs only, so **no deploy** this iteration.
 
-      Pushed as `d8554141`. CI run `36322030869` was still `in_progress`
-      past the ~6-minute watch budget — next iteration's step 0 should
-      confirm it before picking a new item.
+      Pushed as `d8554141`. Confirmed 2026-09-28: `gh run view
+      36322030869` → `success`.
 
 ## P1 — Bible study correctness
 
@@ -23069,6 +23116,28 @@ so the bundle-size answer stays on the record.
       step 0 should confirm this run's conclusion rather than assume it.
 
       **Confirmed 2026-09-23:** `35806955538` concluded `success`.
+
+- [ ] **Found 2026-09-28, writing coverage for
+      `lib/utils/theme_color_helpers.dart` (`test/
+      theme_color_helpers_test.dart`): light-mode `Colors.orange`'s
+      `paletteFg`-on-`paletteBg` contrast measures ≈2.99:1 — below the
+      WCAG-AA 4.5:1 text threshold. Every other real palette (green,
+      teal, red, blue) clears 4.5:1 in both brightnesses, and orange
+      itself clears it in dark mode (≈6.8:1); light-mode orange is the
+      one specific miss, independently re-derived from the raw hex
+      values by a refuter agent (2.988). `Colors.orange` is used this
+      way for the "warn" state in `evidence_page.dart` and
+      `cloud_setup_diagnostic.dart` — i.e. this is copy/data readability
+      in a semantically load-bearing spot, not decorative.
+
+      This is a design call, not something to autofix: raising contrast
+      means picking a different shade or a different warn color for
+      light mode, and either changes what the user sees. Left unfixed
+      and unasserted-as-a-threshold in the test (it pins the *measured*
+      2.99, not an aspirational 4.5). Needs the user to say whether to
+      darken the light-mode warn foreground (e.g. `shade900` stays but
+      swap `paletteBg`'s light tint away from `shade100`), pick a
+      different warn hue, or accept the miss.
 
 ## Blocked on the user — do not attempt
 
