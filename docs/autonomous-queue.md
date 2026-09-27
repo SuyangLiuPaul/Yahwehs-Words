@@ -11305,6 +11305,10 @@ has never seen this repo.
       Dart source touched). No asset, string or UI changed — tooling
       and docs only, so **no deploy** this iteration.
 
+      Pushed as `d8554141`. CI run `36322030869` was still `in_progress`
+      past the ~6-minute watch budget — next iteration's step 0 should
+      confirm it before picking a new item.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
