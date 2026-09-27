@@ -3695,6 +3695,12 @@ reported. Work these top-down before P2.
       `web_update_checker_test.dart`'s "maybeAutoReload is inert on
       native", present before this change).
 
+      Pushed as `0190321f`. CI run `36350623500` was still `in_progress`
+      past the ~7-minute watch budget — locally clean as above, and this
+      commit touches only `test/biblexg_block_note_list_test.dart` and
+      `docs/`, so nothing is expected to fail; the next iteration's step 0
+      should confirm this run's conclusion before picking a new item.
+
 - [ ] **约一2:27 (Simplified) may be missing a paragraph both Traditional
       editions carry.** Surfaced by the refuter while checking the
       `biblexg_block_note_list_test.dart` allowlist fix above, not chased
