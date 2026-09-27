@@ -767,6 +767,63 @@ void main() {
     expect(eph['text'], contains('<note:參4.6，>'));
   });
 
+  test(
+      '以弗所書 3:15 and 路加福音 11:13 — the two cross-references the '
+      'September v3 fetch revised in the READER-VISIBLE editions', () {
+    // The test above pins only the hidden -v2-tr snapshot. Both
+    // selectable editions (v3 / v3-tr — v2 / v2-tr are in
+    // disabledVersions and not selectable by a reader, though
+    // _kSupersededBy still routes a stored preference or shared link
+    // through them to the v3 rows, bible_versions.dart:384-403) have
+    // since moved, at exactly these two ids, in OPPOSITE directions.
+    // 49003015 (Eph 3:15): v2-tr once had 「參4.6、16」 too (shipped
+    // `f1f82de4`, 2026-04-24) but had regressed to 「參4.6，」 by
+    // `cc55008c` (2026-08-10, exact commit that dropped it not pinned);
+    // v3-tr's 「參4.6、16」 is that same reading restored, not a new
+    // publisher revision arriving only in v3-tr. 42011013 (Luke 11:13):
+    // v3 picked up a revision v3-tr doesn't have — present since v3's
+    // first commit, `16633cad`, which created biblexg-v3.json already
+    // carrying it. Either way, each side of the Simplified/Traditional
+    // pair now disagrees with its own sibling, and neither test above
+    // would have caught it because each reads only one file.
+    //
+    // Which reading is right is publisher territory (§四之二 of
+    // docs/梁家鏗譯本-請教出版方.md), not ours to guess. This pins today's
+    // actual text on all four assets so the NEXT disagreement — not
+    // these two — is what future re-imports have to notice.
+    Map<String, dynamic> verseIn(
+      String path,
+      String book,
+      String chapter,
+      String verseLabel,
+    ) =>
+        load(path).firstWhere((v) =>
+            v['book'] == book &&
+            v['chapter'] == chapter &&
+            v['verseLabel'] == verseLabel);
+
+    final eph2 = verseIn('assets/biblexg-v2.json', '以弗所书', '3', '15');
+    final eph2tr = verseIn('assets/biblexg-v2-tr.json', '以弗所書', '3', '15');
+    final eph3 = verseIn('assets/biblexg-v3.json', '以弗所书', '3', '15');
+    final eph3tr = verseIn('assets/biblexg-v3-tr.json', '以弗所書', '3', '15');
+    expect(eph2['text'], contains('<note:参4.6，>'));
+    expect(eph2tr['text'], contains('<note:參4.6，>'));
+    expect(eph3['text'], contains('<note:参4.6，>'));
+    expect(eph3tr['text'], contains('<note:參4.6、16>'),
+        reason: 'v3-tr restored a reading v2-tr once had '
+            '(f1f82de4) and later lost (by cc55008c)');
+
+    final luke2 = verseIn('assets/biblexg-v2.json', '路加福音', '11', '13');
+    final luke2tr = verseIn('assets/biblexg-v2-tr.json', '路加福音', '11', '13');
+    final luke3 = verseIn('assets/biblexg-v3.json', '路加福音', '11', '13');
+    final luke3tr = verseIn('assets/biblexg-v3-tr.json', '路加福音', '11', '13');
+    expect(luke2['text'], contains('<note:参徒1-2章。>'));
+    expect(luke2tr['text'], contains('<note:參徒1-2章。>'));
+    expect(luke3['text'], contains('<note:参太7.7-11，徒1-2章。>'),
+        reason: 'v3 picked up a publisher revision v3-tr never had');
+    expect(luke3tr['text'], contains('<note:參徒1-2章。>'));
+  });
+
   test('the Traditional still has the 馬可福音 6 that the hidden v2 lost',
       () {
     for (final path in ['assets/biblexg-v2-tr.json', 'assets/biblexg-v3-tr.json']) {

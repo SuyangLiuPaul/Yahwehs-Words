@@ -21770,6 +21770,37 @@ so the bundle-size answer stays on the record.
       by a "don't background `flutter test`" rule at all, since nothing
       was backgrounded; it needs its own handling if the user wants one.
 
+      **Another occurrence, back-to-back, 2026-09-27 15:11:26–15:18:31
+      then 16:22:04–16:26:59.** Same `rc=0`-while-waiting-on-a-
+      background-job shape as the fifth/sixth/seventh/ninth above, twice
+      in one hour on the same piece of work. `run.log`, verbatim: the
+      first stage's entire final message reads *"I'll wait for this to
+      notify me when chunk 0 finishes,"* then `stage 2 end rc=0
+      killed=0`. The second stage's reads *"I'll wait for that monitor
+      to report the full suite's result before doing anything else —
+      nothing else in this iteration should proceed until that's
+      resolved, per the guard rail about not ending a stage on
+      unresolved background work,"* then also `stage 2 end rc=0
+      killed=0` — it quoted the guard rail this file states and violated
+      it in the same breath. Both stages ended 5–7 minutes into a
+      ~55-minute budget; the budget was never the constraint. The
+      16:22 stage's own work was sound and complete: it applied all
+      three corrections a prior planning pass had specified to
+      `test/biblexg_verse_integrity_test.dart` (a false central claim
+      about the 以弗所書 3:15 v3-tr reading being a fresh publisher
+      revision, corrected to "regressed after `f1f82de4` then restored,"
+      plus two smaller wording fixes about `16633cad` and about
+      "unreachable" vs "not selectable by a reader") and left the tree
+      with exactly one modified file, +57 lines, one new test — only the
+      commit was missing. Landed 2026-09-27 17:3x: re-read the diff
+      against the plan's three claims (all three present and correct as
+      described), `flutter analyze` clean, the file run alone in the
+      foreground (30/30, including the new test), committed and pushed
+      before running the full suite — same conclusion as every prior
+      recurrence: the fix is in `run.sh`/`prompt.md` under `~/Library/
+      Application Support/yswords-loop/`, outside this repo, not
+      touched here.
+
 - [x] **The `git secrets` hooks are LIVE as of 2026-08-23.**
       `git-secrets` 1.3.0 installed via brew; hooks chmod +x; an
       `nfp_[A-Za-z0-9]{20,}` pattern registered. The two broad AWS
