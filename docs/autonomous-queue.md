@@ -3635,6 +3635,14 @@ reported. Work these top-down before P2.
       characters changed** — `assets/biblexg-*.json` untouched, this is
       test-only.
 
+      Pushed as `4a9cc798`. CI run `36344515470` was still `in_progress`
+      past the ~6-minute watch budget — `flutter analyze` and the full
+      6-chunk suite (`tools/run_test_chunks.py`, foreground, exit code
+      checked each time) were clean locally, and this commit touches only
+      `test/biblexg_verse_integrity_test.dart` and `docs/`, so nothing is
+      expected to fail; the next iteration's step 0 should confirm this
+      run's conclusion before picking a new item.
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's
