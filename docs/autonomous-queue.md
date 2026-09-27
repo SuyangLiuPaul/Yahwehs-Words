@@ -751,6 +751,72 @@ reported. Work these top-down before P2.
       polling) — next iteration's step 0 should check it before taking
       a new item.
 
+      **2026-09-28 re-measurement — the 118 figure and its per-source
+      split still hold at HEAD (`1b61eccb`; `assets/songs.json` is
+      byte-identical back through `20b64c7b`).** Ran
+      `tools/audit_songs_snapshot_churn.py --history 8`, covering the
+      six sync commits landed since the 2026-09-21 note
+      (`53e647a9`→`20b64c7b`) plus the two boundaries already measured
+      then. All 8 boundaries printed the identical signature —
+      `added:0, removed:0, content_changed:0, timestamp_only:118
+      {ydh:5, cgdc:63, cahaya:47, setapak:2, fydt:1}, unchanged:511
+      {fydt:213, cdc:298}` — with the newest `updatedAt` now
+      `2026-09-25T21:02:05Z` (was `2026-09-18T20:19:04Z` at the last
+      note; the group is the same 118 rows re-stamped again, not new
+      rows). Independently re-verified by a separate refuter agent,
+      who re-parsed `assets/songs.json` directly (byte-for-byte match
+      including against `_meta.bySource`) and re-ran the audit tool
+      itself across all 8 boundaries: **CONFIRMED**, no deviation at
+      any boundary.
+
+      **New finding this pass, not carried forward from 09-21: the
+      upstream `yswords-data` "Refresh songs" workflow failed once,
+      2026-09-26T20:22:54Z (run `36269324247`), and that explains why
+      `_meta.generatedAt` has not advanced past `2026-09-25T21:02:05Z`
+      for two days.** Its own log shows two `GET
+      https://cahayapengharapan.org/...` calls failing with `Network is
+      unreachable` (Errno 101), which its sync script's own safety
+      check reads as "a source collapsed" (`cahaya: 47 → 0`) and
+      **deliberately refuses to publish** rather than ship a catalogue
+      missing a whole source — exit code 1, step summary "REFUSED TO
+      WRITE — nothing was published. The previous catalogue is still
+      live and is now a day older." (First draft of this note
+      attributed the message to the workflow's labeled `rc=2`
+      "DEGRADED" branch; the refuter caught that the actual exit code
+      was 1, which falls through the `case` statement's wildcard `*)`
+      branch — a different, unlabeled path that happens to print
+      similar wording. Corrected here.) This is the safety mechanism
+      working as designed, not a defect: a transient network blip on
+      the runner (or a brief real outage of that church's own site)
+      correctly held back a degraded catalogue instead of publishing
+      one with cahaya's 47 songs missing.
+
+      On the YsWords side, `.github/workflows/sync-songs.yml` has **not**
+      stopped and needs no fix: its 2026-09-26 run (`20b64c7b`) found a
+      real diff against the new `2026-09-25` upstream data and
+      committed it correctly (that commit *is* the current 118-row
+      restamp); its 2026-09-27 run correctly found no diff and made no
+      commit, because upstream had nothing new to offer. (First draft
+      of this note claimed both days were no-ops; the refuter caught
+      that 09-26 was a real commit, only 09-27 was the no-op —
+      corrected here.)
+
+      **Not filed as a new queue item** — the failure is real but
+      singular and already self-limiting (the workflow "REFUSED TO
+      WRITE" rather than publishing bad data), and as of this check
+      (2026-09-27T16:14Z / 2026-09-28 02:10+ AEST) `yswords-data`'s next
+      scheduled run (historically lands ~19:43–20:56 UTC) had not yet
+      fired, so whether it recovered is genuinely unknown rather than
+      confirmed either way. Worth a look next time this item is
+      re-measured, but not worth a standalone bug report for one
+      transient upstream fetch failure that the pipeline already
+      handled correctly.
+
+      Both re-derivations (the 118/8-boundary figures and the two
+      workflow-log claims) were checked by an independent refuter
+      agent before this note was written; the two corrections above
+      are its catches, not self-reported.
+
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
       was written ONLY on an explicit pause/stop/seek/seekOverall, never
