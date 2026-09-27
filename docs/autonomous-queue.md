@@ -3595,6 +3595,46 @@ reported. Work these top-down before P2.
 > actionable. If you reach the second case, say so plainly in the
 > report rather than quietly restarting the glyph work.
 
+- [x] **`test/biblexg_verse_integrity_test.dart`'s two `knownDifferences`
+      allowlists had gone stale, with nothing to say so.** Found by
+      re-measuring rather than from the queue: `knownDifferences` lets a
+      verse-length audit skip a ref by name, but unlike `expectedGaps` it
+      never checked that a skipped ref still actually differs — so an
+      entry whose gap had healed kept silently suppressing nothing,
+      reading as deliberate coverage. Four had: v3's 提摩太后书 3:15 (the
+      opening clause `ebea3499` restored), v3's 使徒行传 8:40 (即向北沿海
+      now an inline note in both v3 files, same commit), and 路加福音 9:5
+      in both the v2 and v3 tables (both editions' body text now matches
+      once notes are stripped — only the note content still differs,
+      which the length check never saw). Re-measured before touching
+      anything: all four now delta 0; v2's still-live 馬可福音 6:7
+      (delta −7) and 使徒行傳 8:41 (delta −6) were left alone.
+
+      **Fixed the class, not just the four instances.** Both tests now
+      also assert every `knownDifferences` key was actually exercised by
+      a verse whose delta exceeded the bound — `expect(usedKeys,
+      equals(knownDifferences.keys.toSet()))`, mirroring the shape
+      `expectedGaps` already used. Proved red before green: put a stale
+      key back by hand, watched the new assertion fail, removed it again.
+
+      **Added the by-name guard 提後 3:15's restoration never got.** Mark
+      6:8-11's restoration was pinned the day it landed; 提摩太後書 3:15's
+      was not, until now — same class of gap as the 路加 23:34a regression
+      that once shipped unnoticed. New test: "the selectable v3 pair has
+      restored 提摩太後書 3:15's opening clause", checked against both
+      `biblexg-v3.json` and `biblexg-v3-tr.json`.
+
+      **Consequence for `queue:9411` and `queue:9427`, not touched here:**
+      both say "Letter drafted, awaiting the user's send" for §一 of
+      `docs/梁家鏗譯本-請教出版方.md`, but the two cases it asks about —
+      馬可福音 6:7-11 (`b35dfce4`) and 提後 3:15 / 徒 8:40 (`ebea3499`) —
+      were already answered by the translator and applied to
+      `biblexg-v3*` on 2026-09-16/18. Both items updated with the finding
+      and left open (they still apply to the hidden `biblexg-v2*`, and
+      whether to trim the letter is the user's call). **Zero scripture
+      characters changed** — `assets/biblexg-*.json` untouched, this is
+      test-only.
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's
@@ -9423,6 +9463,21 @@ has never seen this repo.
       `docs/梁家鏗譯本-請教出版方.md`, complete and unchanged this
       iteration. The letter is now 定稿，可以寄出.
 
+      **2026-09-28: the v3 half of this is already fixed, and it doesn't
+      close the item.** `b35dfce4` (2026-09-16) restored 梁简 馬可福音
+      6:8-11 in `biblexg-v3.json` — the edition a reader can actually
+      select — from the official build via
+      `tools/repair_biblexg_mark6.py`, writing nothing unless the official
+      build and the shipped asset agreed on all 56 other verses of Mark 6.
+      `biblexg-v2.json`, the hidden/superseded snapshot, still has the
+      identical gap and stays deliberately untouched, so this item stays
+      open for that file. Found while re-measuring
+      `test/biblexg_verse_integrity_test.dart`'s `knownDifferences`
+      tables, not by re-opening this item directly. §一 of the letter now
+      asks the translator about a case already resolved for v3; whether to
+      trim a letter already addressed to him is the user's call, recorded
+      once on the sibling item below rather than argued twice here.
+
 
 - [ ] **Ask the publisher about the two official editions disagreeing.**
       Drafted in `docs/梁家鏗譯本-請教出版方.md` — the user is passing it
@@ -9439,6 +9494,25 @@ has never seen this repo.
 
       **Letter drafted, awaiting the user's send** — §一 of
       `docs/梁家鏗譯本-請教出版方.md`. The letter is now 定稿，可以寄出.
+
+      **2026-09-28: both named v3 cases were already answered by the
+      translator and applied — this item stays open only for
+      `biblexg-v2*`.** `ebea3499` (2026-09-18) applied 梁家鏗's own
+      2026-09-17 WhatsApp rulings, forwarded by the user; its commit body
+      names **提後 3:15 (the opening clause)** and **徒 8:40 (即向北沿海 as
+      an inline note)** explicitly. Re-measured directly against the
+      shipped assets: `biblexg-v3.json`'s 提摩太后书 3:15 now carries
+      「而且你自幼便明白神圣的经典，」 in full, and `biblexg-v3.json` /
+      `biblexg-v3-tr.json` both render 使徒行传 8:40's 「即向北沿海」 as the
+      same inline note — no 繁→简 conversion, both sides came from the
+      translator's own 2026-09-17 files. `biblexg-v2*` is untouched and
+      still carries both original gaps, which is why this item is not
+      ticked. §一 of the letter now asks about two cases the translator
+      has already ruled on; whether to strike that section from a letter
+      already addressed to him is the user's call, not this loop's — not
+      rewriting the letter here. New by-name guard for the 提後 3:15
+      clause: `test/biblexg_verse_integrity_test.dart`, "the selectable
+      v3 pair has restored 提摩太後書 3:15's opening clause".
 
 
 - [x] **The Simplified proofread was silently checking only 22 of 27

@@ -327,7 +327,6 @@ void main() {
       '马太福音 27:48': '繁体正文含「士兵解渴的飲料」，简体作注',
       '马太福音 26:29': '繁体正文含「即葡萄酒」，简体作注',
       '使徒行传 8:41': '繁体正文含「即向北沿海」，简体作注',
-      '路加福音 9:5': '繁体正文含「作為警告」，简体作注「意即警告」',
       // Wording: the two official editions differ, pending the publisher.
       '彼得后书 2:21': '用词不同',
       '哥林多后书 5:8': '用词不同',
@@ -343,6 +342,7 @@ void main() {
     final tr = {for (final v in load('assets/biblexg-v2-tr.json')) v['id']: v};
 
     final offenders = <String>[];
+    final usedKeys = <String>{};
     for (final entry in cn.entries) {
       final other = tr[entry.key];
       if (other == null) continue;
@@ -350,11 +350,20 @@ void main() {
       if (delta.abs() <= 3) continue;
       final ref = '${entry.value['book']} '
           '${entry.value['chapter']}:${entry.value['verseLabel']}';
-      if (!knownDifferences.containsKey(ref)) offenders.add('$ref ($delta)');
+      if (knownDifferences.containsKey(ref)) {
+        usedKeys.add(ref);
+      } else {
+        offenders.add('$ref ($delta)');
+      }
     }
     expect(offenders, isEmpty,
         reason: 'a verse differs in length between the two editions by more '
             'than punctuation — one side may have lost a clause');
+    expect(usedKeys, equals(knownDifferences.keys.toSet()),
+        reason: 'a knownDifferences entry no longer matches any verse whose '
+            'delta exceeds the bound — the gap it excused has healed (or '
+            'the ref is wrong). Remove the entry rather than let it keep '
+            'suppressing nothing');
   });
 
   test('the selectable v3 pair carries the same amount of scripture per verse',
@@ -368,15 +377,9 @@ void main() {
       // Carried from the v2/v2-tr table above; reasons are the
       // publisher's, not re-litigated here. 馬可福音 6:7 is not carried —
       // v3 restored it (commit `3cefcab7`, guarded by the test below).
-      '提摩太后书 3:15': '简体缺「而且你自幼便明白神聖的經典，」',
       '马太福音 9:14': '繁体正文含「通常每逢週一週四」，简体无',
       '马太福音 27:48': '繁体正文含「士兵解渴的飲料」，简体作注',
       '马太福音 26:29': '繁体正文含「即葡萄酒」，简体作注',
-      // v2's '使徒行传 8:41' — v3's versification carries the same
-      // clause one verse earlier. Not chased further here; filed as a
-      // by-product in the queue.
-      '使徒行传 8:40': '繁体正文含「即向北沿海」，简体作注',
-      '路加福音 9:5': '繁体正文含「作為警告」，简体作注「意即警告」',
       '彼得后书 2:21': '用词不同',
       '哥林多后书 5:8': '用词不同',
       '使徒行传 20:4': '用词不同',
@@ -402,6 +405,7 @@ void main() {
     final tr = {for (final v in load('assets/biblexg-v3-tr.json')) v['id']: v};
 
     final offenders = <String>[];
+    final usedKeys = <String>{};
     for (final entry in cn.entries) {
       final other = tr[entry.key];
       if (other == null) continue;
@@ -409,11 +413,20 @@ void main() {
       if (delta.abs() <= 3) continue;
       final ref = '${entry.value['book']} '
           '${entry.value['chapter']}:${entry.value['verseLabel']}';
-      if (!knownDifferences.containsKey(ref)) offenders.add('$ref ($delta)');
+      if (knownDifferences.containsKey(ref)) {
+        usedKeys.add(ref);
+      } else {
+        offenders.add('$ref ($delta)');
+      }
     }
     expect(offenders, isEmpty,
         reason: 'a verse differs in length between the v3 pair by more '
             'than punctuation — one side may have lost a clause');
+    expect(usedKeys, equals(knownDifferences.keys.toSet()),
+        reason: 'a knownDifferences entry no longer matches any verse whose '
+            'delta exceeds the bound — the gap it excused has healed (or '
+            'the ref is wrong). Remove the entry rather than let it keep '
+            'suppressing nothing');
   });
 
   test(
@@ -855,5 +868,28 @@ void main() {
     expect(mark6['9'], isNotNull);
     expect(mark6['10'], isNotNull);
     expect(mark6['11'], contains('把脚上的尘土跺落'));
+  });
+
+  test(
+      "the selectable v3 pair has restored 提摩太後書 3:15's opening clause",
+      () {
+    // `ebea3499` applied the translator's 2026-09-17 ruling and supplied
+    // 「而且你自幼便明白神聖的經典，」 to v3's Simplified — the clause the
+    // Traditional (and the printed 註釋本) already had, and the one
+    // knownDifferences above excused Simplified for lacking. Mark 6:8-11
+    // got a guard the day it was restored; this clause never did, and a
+    // guardless restoration is exactly how the 路加 23:34a regression
+    // shipped unnoticed. The hidden biblexg-v2.json keeps the original
+    // gap (pinned by name in knownDifferences above) and is untouched.
+    for (final path in [
+      'assets/biblexg-v3.json',
+      'assets/biblexg-v3-tr.json',
+    ]) {
+      final verse = load(path).firstWhere((v) =>
+          v['chapter'] == '3' &&
+          v['verse'] == '15' &&
+          (v['book'] == '提摩太后书' || v['book'] == '提摩太後書'));
+      expect(verse['text'], contains('自幼便明白'), reason: path);
+    }
   });
 }
