@@ -569,9 +569,74 @@ and quoted.**
 
       Pushed as `f846338f`. CI run `36327871202` was still `in_progress`
       past the ~6-minute watch budget — `flutter analyze` and the full
-      6-chunk suite were clean locally, so nothing is expected to fail;
-      the next iteration's step 0 should confirm this run's conclusion
-      before picking a new item.
+      6-chunk suite were clean locally, so nothing is expected to fail.
+
+      **Confirmed 2026-09-28**: `36327871202` concluded `success`, as did
+      the follow-up note-commit's own run `36328318737` (`1b61eccb`).
+
+- [x] **2026-09-28 — fallback iteration (test coverage):
+      `lib/constants/sermon_topics.dart`.** `NEXT_TASK.md` (this hour's
+      Opus planning step) read all 23 open items across tiers 1–6 and
+      found every one genuinely blocked (BUGS/`queue:606` needs a user
+      product call and its root cause is in yswords-data, not here; P2's
+      two items are correctly deferred/out-of-repo; P3's four are
+      half-landed, unreproducible, user-blocked, or a design call; P1 is
+      empty; tier 5 has no shipped failure to chase; all 16 open P0 items
+      are frozen-asset or gated on the two 定稿-but-unsent publisher
+      letters). Last hour took the audit-rerun fallback option (songs
+      churn, `9abded60`); this hour took the alternate, coverage, so the
+      two don't repeat the same option twice running.
+
+      `grep -rl "sermon_topics\.dart\|sermonTopicI18n\|localizedSermonTopic"
+      test/` was empty — no test file referenced it, despite it backing
+      the topic chip on `sermons_page.dart`, `sermon_detail_page.dart`
+      and `bible_reading_pane.dart`. Its own docstring says "add a new
+      entry here whenever a new topic appears in the corpus index" with
+      nothing enforcing it — a missed entry degrades silently: a
+      zh-locale reader just gets an English topic chip, no error
+      anywhere.
+
+      New `test/sermon_topics_test.dart` (6 cases): every one of the 21
+      distinct `topic` values in `assets/sermons/index.json`'s 429
+      sermons has a `sermonTopicI18n` entry and vice versa (0 missing, 0
+      orphan — confirmed exact-set-match, not just equal cardinality);
+      every entry carries non-blank `zh-Hans`/`zh-Hant`/`en` values; and
+      `localizedSermonTopic`'s fallback chain (unknown topic → verbatim;
+      known topic + unknown locale → the entry's `en` value). Proved the
+      test can fail by deleting the `Baptism` entry, confirming two cases
+      went red, then restoring the file and confirming `git diff` was
+      exactly the two intended fixes below and nothing else.
+
+      Two real defects fixed alongside the test: the docstring said "the
+      20 topic series" (stale since `FYDT Chinese Messages` was added
+      2026-09-06, bringing the real count to 21); and the "Spiritual
+      Experience, Knowing God" entry's `zh-Hans`/`zh-Hant` values were
+      the only 2 of the map's 42 zh values using an ASCII `:` where every
+      other zh value uses the full-width `：`. The map KEY (matched
+      against `index.json`, so it has to stay ASCII per the comment
+      already in the file) was left untouched.
+
+      All claims (429/21/21/exact-match/42/2-ASCII-colon counts, the
+      pre-change zero-coverage claim, the fallback-chain description)
+      were re-derived independently and confirmed by a refuter agent
+      before committing.
+
+      `flutter analyze`: clean. `flutter test`: full suite green, all 4
+      chunks run in the foreground via `tools/run_test_chunks.py`
+      (chunk 0's own run had to be re-issued with an explicit longer
+      Bash timeout after the tool's default 120s auto-backgrounded it —
+      not the same thing as choosing to background `flutter test`
+      itself, but noted in case a future iteration hits the same thing).
+      No asset, string (other than the two colons) or UI behaviour
+      changed beyond the fix above — test-only in substance, so no
+      deploy.
+
+      Also folded in, while already running `gh run list` for step 0:
+      confirmed `36327871202` (`f846338f`) and its own follow-up note
+      commit `36328318737` (`1b61eccb`) both concluded `success`, closing
+      that pending note before it could reach a third generation.
+
+      Pushed as `56ae57d8`.
 
 ## BUGS — reported by the user from their own devices
 
@@ -821,8 +886,11 @@ reported. Work these top-down before P2.
       past the ~6-minute watch budget — `flutter analyze` and
       `test/test_audit_songs_snapshot_churn.py` were both clean
       locally, and this commit touches only `docs/`, so nothing is
-      expected to fail; the next iteration's step 0 should confirm this
-      run's conclusion before picking a new item.
+      expected to fail.
+
+      **Confirmed 2026-09-28**: `36332744126` concluded `success`, as
+      did the follow-up note-commit's own run `36333058634` (`3e3f77dd`).
+      Both green — no third generation of "still pending" needed here.
 
 - [x] **2026-09-18 FIXED — the second half of 「Sword和Words有分几段的
       可以帮我合并 并且上次听到哪里都记录下来吗」: the saved sermon position
