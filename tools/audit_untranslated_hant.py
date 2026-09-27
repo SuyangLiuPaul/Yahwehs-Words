@@ -86,6 +86,7 @@ AMBIGUOUS = set(
 TRADITIONAL_CORPORA = [
     "assets/cuvs-yhwh-tr.json",     # frozen, but read here as evidence only
     "assets/biblexg-v2-tr.json",
+    "assets/biblexg-v3-tr.json",
     "assets/sermons/zh-TW",
 ]
 LIVE_THRESHOLD = 3

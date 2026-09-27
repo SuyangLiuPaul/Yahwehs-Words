@@ -26,13 +26,25 @@ identical in kind to the ones already parked in
 `tools/audit_biblexg_notes.py`'s ACCOUNTED_FOR_TEXT and in
 docs/梁家鏗譯本-請教出版方.md §四之二 — not something to edit our way out of.
 
-Usage:  python3 tools/audit_biblexg_v2_vs_tr.py
+Usage:  python3 tools/audit_biblexg_v2_vs_tr.py [--edition v2|v3]
+
+--edition defaults to v2 so nothing already pinned moves. NOTE: for v3
+the "publisher tw/cn" columns below are not a like-for-like oracle — v3's
+assets carry footnotes adopted from the translator's own site (commit
+c6461080, 2026-09-14: "he publishes 2,209 footnotes; these assets carried
+1,132"), while SOURCE_DIRS/EDITIONS still fetch the older, thinner
+mattwhatsup.github.io snapshot that both editions were originally
+imported from. A v3 divergence the publisher-tw/cn columns call "NEEDS A
+LOOK" is very often just that already-documented, deliberate gap, not a
+new defect — read commit c6461080 before treating a v3 finding here as
+actionable.
 
 Read-only. Never writes to assets/. Skips cleanly (exit 0) if neither
 source cache is present — CI has neither, and this script must never be
 the thing that turns main red for a missing untracked directory.
 """
 
+import argparse
 import json
 import os
 import re
@@ -43,14 +55,18 @@ import sys
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, 'tools'))
 from audit_biblexg_notes import (  # noqa: E402
-    BOOKS, publisher_cites, TAG, ACCOUNTED_FOR_TEXT)
+    BOOKS, EDITIONS, publisher_cites, TAG, ACCOUNTED_FOR_TEXT)
 
-# Prefer the cache tools/audit_biblexg_notes.py already populates; fall
-# back to the gitignored webapp checkout, which carries the same files.
-SOURCE_DIRS = [
-    os.path.expanduser('~/.cache/yswords/ljk-source'),
-    os.path.join(REPO_ROOT, 'ljk-nt-bible-webapp', 'public', 'resources'),
-]
+
+def source_dirs_for(edition: str) -> list:
+    """Prefer the cache tools/audit_biblexg_notes.py already populates;
+    for v2 only, fall back to the gitignored webapp checkout (same files).
+    """
+    dirs = [EDITIONS[edition]['cache_dir']]
+    if edition == 'v2':
+        dirs.append(os.path.join(
+            REPO_ROOT, 'ljk-nt-bible-webapp', 'public', 'resources'))
+    return dirs
 
 NOTE = re.compile(r'<note:(.*?)>', re.S)
 
@@ -72,8 +88,8 @@ SETTLED_BY_PRINTED_EDITION = {
 }
 
 
-def find_source_dir():
-    for d in SOURCE_DIRS:
+def find_source_dir(edition: str):
+    for d in source_dirs_for(edition):
         if os.path.isdir(d) and any(f.startswith('cn-') for f in os.listdir(d)):
             return d
     return None
@@ -106,16 +122,22 @@ def load_ours(path: str) -> dict:
 
 
 def main() -> int:
-    src_dir = find_source_dir()
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--edition', choices=['v2', 'v3'], default='v2')
+    args = ap.parse_args()
+    edition = args.edition
+
+    src_dir = find_source_dir(edition)
     if src_dir is None:
+        dirs = source_dirs_for(edition)
         print('SKIP — no publisher source cache found at '
-              f'{SOURCE_DIRS[0]!r} or {SOURCE_DIRS[1]!r}. '
+              + ' or '.join(repr(d) for d in dirs) + '. '
               'This is expected on CI; run tools/audit_biblexg_notes.py '
-              'once (or check out ljk-nt-bible-webapp/) to populate one.')
+              f'--edition {edition} once to populate one.')
         return 0
 
-    v2 = load_ours('assets/biblexg-v2.json')
-    tr = load_ours('assets/biblexg-v2-tr.json')
+    v2 = load_ours(EDITIONS[edition]['cn_asset'])
+    tr = load_ours(EDITIONS[edition]['tr_asset'])
 
     # Map traditional book name -> simplified, so both sides key the same.
     tr2cn = {row[2]: row[1] for row in BOOKS}
@@ -169,7 +191,7 @@ def main() -> int:
         print(f'   v2              : {v2_notes}')
 
         try:
-            src_dir_now = find_source_dir()
+            src_dir_now = find_source_dir(edition)
             tw_cites = {k: v for k, v in publisher_cites(
                 json.load(open(os.path.join(src_dir_now, f'tw-{abbr}.json'),
                                 encoding='utf-8'))).items()}
@@ -190,8 +212,8 @@ def main() -> int:
             n.strip() for n in tr_notes] == pub_tw
         v2_matches_pub_cn = pub_cn is not None and [
             n.strip() for n in v2_notes] == pub_cn
-        accounted_tw = ACCOUNTED_FOR_TEXT.get(('v2', 'tw', book_tr, chapter))
-        accounted_cn = ACCOUNTED_FOR_TEXT.get(('v2', 'cn', book_cn, chapter))
+        accounted_tw = ACCOUNTED_FOR_TEXT.get((edition, 'tw', book_tr, chapter))
+        accounted_cn = ACCOUNTED_FOR_TEXT.get((edition, 'cn', book_cn, chapter))
         settled = (SETTLED_BY_PRINTED_EDITION.get((book_tr, chapter, verse))
                    or (accounted_tw['reason'] if accounted_tw else None)
                    or (accounted_cn['reason'] if accounted_cn else None))
@@ -223,12 +245,12 @@ def main() -> int:
     print()
     print('== Collapse-char masking check: could t2s be hiding a genuine '
           'divergence behind a false equality?')
-    census_collapse_masking(v2, tr, tr2cn, abbr_of)
+    census_collapse_masking(v2, tr, tr2cn, abbr_of, edition)
     return 0
 
 
 def census_collapse_masking(v2: dict, tr: dict, tr2cn: dict,
-                             abbr_of: dict) -> None:
+                             abbr_of: dict, edition: str) -> None:
     """Among note PAIRS (not whole verses) that fold equal under t2s, flag
     any that touch one of t2s's many-to-one collapse characters (computed
     from this corpus, not hard-coded) or differ in raw character length —
@@ -298,7 +320,7 @@ def census_collapse_masking(v2: dict, tr: dict, tr2cn: dict,
               + ('  [also differs in raw length]' if length_differs else ''))
         print(f'   TR : {a!r}')
         print(f'   v2 : {b!r}')
-        src_dir = find_source_dir()
+        src_dir = find_source_dir(edition)
         try:
             tw_cites = publisher_cites(
                 json.load(open(os.path.join(src_dir, f'tw-{abbr}.json'),

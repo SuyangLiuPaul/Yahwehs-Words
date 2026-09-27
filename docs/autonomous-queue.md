@@ -11211,6 +11211,100 @@ has never seen this repo.
       new P3 item below — unrelated to this change, not a CI risk so
       far (CI has been green every run checked).
 
+- [x] **DONE 2026-09-27 — pointed the two remaining v2-only audits at
+      biblexg-v3 (the reader-selectable edition; v2 has been hidden by
+      `_kSupersededBy` since 2026-09-14 — confirmed at
+      `lib/constants/bible_versions.dart:400-402`), and re-ran the
+      untranslated-Hant oracle with v3-tr added.** Fallback item from
+      `NEXT_TASK.md`'s 2026-09-27 22:5x planning pass (tiers 1–6 had
+      nothing actionable). Measured fresh at `d0334e97` (this commit's
+      parent); tooling/docs only, no deploy.
+
+      **1. `tools/audit_biblexg_notes.py --edition v3` — re-run, NOT a
+      new measurement.** This flag and its v3 output already exist in
+      this file: the 2026-09-21 entries above (search "FAIL count
+      **1890**") record tw 720/726, cn 720/726 (pass 1), tw/cn 219/219
+      (pass 2), total FAIL 1890 — and today's run is **byte-identical**
+      on every number. No drift since 2026-09-21. Flagging this so a
+      future iteration doesn't re-file it as a fresh finding — the plan
+      that generated this iteration's task read the module's `--edition`
+      support correctly but didn't check whether it had already been
+      exercised; it had.
+
+      **2. `tools/audit_biblexg_v2_vs_tr.py` — genuinely new, this
+      script had no `--edition` flag before this commit
+      (confirmed by `git log -p`: commit `2a6f5702`, 2026-09-21, still
+      describes it doing "two positional `.get()`s with the old 3-tuple
+      key" hardcoded to `'v2'`).** Added `--edition v2|v3`, threading
+      through `EDITIONS` from `audit_biblexg_notes.py` for asset paths,
+      cache dir and the `ACCOUNTED_FOR_TEXT` lookup key (was a hardcoded
+      `'v2'` literal at two call sites — same bug class `2a6f5702`
+      already fixed once in the sibling script, just never carried over
+      here). `--edition v2` (the default) is unchanged: 106 divergences,
+      9 collapse-masking candidates, 0 unexplained on both — matches the
+      pinned record above ("9 candidates, 9 clean, 0 unexplained") and a
+      `test_audit_biblexg_v2_vs_tr.py`-style byte comparison.
+
+      `--edition v3`, run for the first time: **478 divergences** (up
+      from v2's 106; 71 are a note-COUNT mismatch), of which only 82
+      classify as "publisher tw/cn disagree with each other" and 396
+      print "NEEDS A LOOK". **Do not read 396 as 396 new defects.** The
+      "publisher tw/cn" columns this script prints come from
+      `mattwhatsup.github.io/ljk-nt-bible-webapp` (`SRC_BASE` in
+      `audit_biblexg_notes.py`) — the same snapshot v2 was built from —
+      but v3's note apparatus was NOT built from that snapshot: commit
+      `c6461080` (2026-09-14) deliberately adopted 2,209 footnotes from
+      the translator's own site via Yahwehdehua's `bible.db`
+      (`tools/adopt_official_ljk.py`), replacing the 1,132/1,134 that
+      came from `SRC_BASE`. That is exactly the gap
+      `audit_biblexg_notes.py --edition v3`'s FAIL 1890 already measures
+      (§1 above) — the two scripts are very likely looking at the same
+      underlying, already-documented, deliberate cause from two angles,
+      not two separate defect populations. Spot-checked 馬太福音 1:16 and
+      1:22: both show `publisher tw: []` / `publisher cn: []` (SRC_BASE
+      has no note there at all) while v3's TR and CN carry substantial,
+      *differently-worded* footnotes on each script (1:22: TR
+      「主藉著先知」 vs CN 「主借着先知」 — 藉 "by means of" vs 借 "borrow",
+      not merely a t2s-normalisation artefact) — consistent with the two
+      scripts' adopted footnotes being sourced or translated
+      independently, the same "publisher's own tw and cn disagree with
+      each other" shape this script already has a whole classification
+      branch for, just not wired to the right oracle for v3 yet.
+      **Not fixed here** — publisher/biblexg wording is out of scope for
+      an unattended pass by this loop's own standing rule, and untangling
+      it needs the classifier pointed at Yahwehdehua's tw/cn export
+      instead of `SRC_BASE`, which is its own tooling job. Filed as
+      follow-up, not fixed: whoever picks this up should NOT read the
+      478/396 as a queue of individual verse defects until that oracle
+      swap happens — most of them are one already-known, deliberate fact
+      wearing 396 different verse numbers.
+
+      **3. `tools/audit_untranslated_hant.py` — added
+      `assets/biblexg-v3-tr.json` to `TRADITIONAL_CORPORA`** (kept
+      `biblexg-v2-tr.json`, per the item's instruction — it is evidence,
+      not a target, and removing it isn't this item's call to make).
+      Finding set **did not move**: 35,371 zh-Hant fields / 1,216
+      identical / 13 Simplified-only, byte-identical before and after
+      (`diff` clean, both runs captured to `/tmp` and compared). v3-tr's
+      live-character set was already covered by the existing corpora at
+      `LIVE_THRESHOLD=3`, so this is a no-op today — it keeps the oracle
+      pointed at a corpus that will still exist once v2 is eventually
+      deleted, not a defect fix.
+
+      New `test/test_audit_biblexg_v2_vs_tr.py` (6 cases, fully
+      monkeypatched, no corpus/network/opencc I/O): proves `--edition`
+      selects the right asset pair and cache dir, and that a
+      `('v3', …)`-keyed `ACCOUNTED_FOR_TEXT` entry does not leak into a
+      `('v2', …)` lookup (mirrors the leak `2a6f5702` fixed in the
+      sibling script). Not wired into CI — `test_audit_biblexg_notes.py`
+      itself isn't either (checked `.github/workflows/flutter-ci.yml`),
+      so this follows existing repo convention rather than inventing a
+      new one.
+
+      `flutter analyze`: clean. `flutter test`: full suite green (no
+      Dart source touched). No asset, string or UI changed — tooling
+      and docs only, so **no deploy** this iteration.
+
 ## P1 — Bible study correctness
 
 - [x] **Fixed 2026-09-23: `buildVerseContentSpans()` now collapses
