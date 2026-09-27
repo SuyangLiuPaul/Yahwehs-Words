@@ -636,7 +636,14 @@ and quoted.**
       commit `36328318737` (`1b61eccb`) both concluded `success`, closing
       that pending note before it could reach a third generation.
 
-      Pushed as `56ae57d8`.
+      Pushed as `56ae57d8`, plus this note ticking it and confirming the
+      other two, `828f2712`. CI run `36338383023` (`828f2712`) was still
+      `in_progress` past the ~6-minute watch budget — `flutter analyze`
+      and the full 4-chunk suite were clean locally, and this commit and
+      the one before it touch only `lib/constants/sermon_topics.dart`,
+      `test/sermon_topics_test.dart` and `docs/`, so nothing is expected
+      to fail; the next iteration's step 0 should confirm this run's
+      conclusion before picking a new item.
 
 ## BUGS — reported by the user from their own devices
 
