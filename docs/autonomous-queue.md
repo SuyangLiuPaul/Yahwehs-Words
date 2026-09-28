@@ -3729,11 +3729,12 @@ reported. Work these top-down before P2.
       question, not something to edit: **see the new item directly below
       this one**, which found this is one instance of a wider class.
 
-- [ ] **`blockNotes` has no SC-vs-TR parity guard, and a systematic
+- [x] **`blockNotes` has no SC-vs-TR parity guard, and a systematic
       sweep found 13 verse-ids (12 table rows) where the two editions'
       block-note *content* genuinely differs — not merely re-split or
-      re-attached. STOP — escalated per the omitted-text carve-out
-      logic, not repaired.**
+      re-attached. RESOLVED 2026-09-28 — every one is the publisher's
+      own two source pages disagreeing with each other, none is ours to
+      fix; see the classification pass below.**
       2026-09-28. Grew directly out of settling the 约一2:27 item above:
       that verse turned out to be a false alarm (a segmentation
       difference), which raised the question of how many of the other
@@ -3818,23 +3819,57 @@ reported. Work these top-down before P2.
       `assets/biblexg-*.json` for any of these 13 ids until that
       comparison is done.**
 
-      **Not done this hour, next steps for whoever picks this up:**
-      extend `tools/audit_biblexg_v2_vs_tr.py`'s publisher-tw/cn
-      comparison to `blockNotes` (it currently only reads inline
-      `<note:…>` tags) for these 13 ids, to sort each into
-      "publisher's own two source pages already disagreed" (not ours to
-      fix) vs "our ingest dropped something the source page had" (ours
-      to fix, but only after `git log -S` confirms no repair commit did
-      it deliberately). The read-only parity-guard tool
-      (`tools/audit_biblexg_blocknote_parity.py`, exit 0 on buckets a/b,
-      nonzero only on new bucket-c growth, skip cleanly without `opencc`)
-      was scoped for this hour but not built — building it before this
-      classification step would have meant hard-coding today's 13-id
-      allowlist without knowing which of them are genuine defects to fix
-      versus permanent publisher-disagreement entries to pin, which is
-      the same mistake the brief warned against for `queue:3704` itself.
-
       **Refuted before landing** (see the commit this item ships in).
+
+      **2026-09-28, later the same day — classification pass built and
+      run.** `tools/audit_biblexg_blocknote_parity.py` now exists: it
+      re-derives the 53 v2 count-mismatches, explains away everything
+      foldable into re-split (t2s + similarity-ratio fold, threshold
+      0.92) or re-attachment (the extra content found, possibly
+      reworded, in a nearby or same-book note, or matched by a shared
+      "N节注:" label within the chapter for a heavily-reworded-but-
+      same-point case like 可12:36/37), and for whatever is left,
+      compares against the publisher's own `cn-*.json`/`tw-*.json`
+      source pages by chapter to decide "their sources already
+      disagreed" vs "our ingest dropped it".
+
+      **Running it found a 14th id the hand sweep above missed**:
+      45012008 (罗12:8) — SC carries an unlabelled third blockNote (on
+      κατὰ τὴν ἀναλογίαν τῆς πίστεως) that TR lacks. Confirmed directly
+      against the cache before trusting the pattern:
+      `cn-rom.json` chapter 12 has 3 `comment` nodes, `tw-rom.json`
+      chapter 12 has 2 — genuinely the publisher's own two pages, not
+      an ingest gap. Added to the tool's `PENDING_CLASSIFICATION`
+      alongside the original 13.
+
+      **All 13 groups (14 ids) verdict `publisher-disagreement`.** Not
+      one needed `our-ingest-dropped-it` — every gap traces to the
+      publisher's own `cn-*.json` and `tw-*.json` pages already
+      disagreeing with each other (see the tool's printed output for
+      each id's actual publisher-page text). `assets/biblexg-*.json`
+      was not touched, and per the standing rule does not need to be:
+      both our editions already faithfully match their own publisher
+      source.
+
+      **Refuted before landing, this pass separately from the sweep
+      above**: an adversarial review of the tool itself (not just its
+      output) found one real methodological soft spot — `find_in_notes`'s
+      0.85 similarity threshold can be cleared by two DIFFERENT notes
+      that both use one of the translator's recurring templates (one
+      such pair scored 0.879 on shared boilerplate alone) — but verified
+      it changes none of the 14 published verdicts today, and
+      independently re-checked 4 of the 13 id-groups against the raw
+      cache JSON by hand (not by re-running the tool) before accepting
+      the rest. The soft spot is recorded in the tool's own docstring
+      rather than silently tuned away, since raising the threshold on a
+      hunch could just as easily hide a real future gap the other
+      direction. `MIN_CHUNK=20` was also checked against all 53
+      original mismatches for a hidden short gap — none found.
+
+      Fixture-based unit tests for the tool's pure matching logic
+      (no `opencc`/cache needed, so they always run on CI) added at
+      `test/test_audit_biblexg_blocknote_parity.py`, wired into
+      `.github/workflows/flutter-ci.yml`.
 
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit

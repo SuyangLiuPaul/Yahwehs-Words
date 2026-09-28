@@ -257,6 +257,16 @@ jobs:
       - name: Originals-compounds audit gate unit tests
         run: python3 test/test_audit_compounds_check.py
 
+      # Unit tests for tools/audit_biblexg_blocknote_parity.py, added
+      # 2026-09-28. The tool itself needs opencc + the ~/.cache/yswords/
+      # ljk-source publisher snapshot (neither present on CI) and exits 0
+      # without doing anything when either is missing — so this test file
+      # exercises only its pure-Python matching primitives (extra_chunks,
+      # find_in_notes, the "N节注:" label matcher, id→book/chapter
+      # parsing) against synthetic fixtures, never opencc or the cache.
+      - name: blockNotes parity tool unit tests
+        run: python3 test/test_audit_biblexg_blocknote_parity.py
+
       # Unit tests for tools/audit_songs_snapshot_churn.py's pure
       # split_song_changes()/restamped_to_generated_at() functions (added
       # 2026-09-16). The tool itself stays out of CI — it shells out to
