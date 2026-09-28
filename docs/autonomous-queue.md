@@ -3946,6 +3946,13 @@ reported. Work these top-down before P2.
       `EditionFlagTest` and `PendingIdStatusTest` (fixture-based, no
       opencc/cache — this file's existing house rule).
 
+      Pushed as `eca625ff`. `flutter analyze` and the full 6-chunk suite
+      (`tools/run_test_chunks.py`, foreground, exit code checked each
+      time) were clean locally; CI run `36389460145` was still
+      `in_progress` past the ~6-minute watch budget — the next
+      iteration's step 0 should confirm this run's conclusion before
+      picking a new item.
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's
