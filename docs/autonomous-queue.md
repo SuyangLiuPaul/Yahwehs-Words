@@ -3871,6 +3871,14 @@ reported. Work these top-down before P2.
       `test/test_audit_biblexg_blocknote_parity.py`, wired into
       `.github/workflows/flutter-ci.yml`.
 
+      Pushed as `10eddd1b`. CI run `36372080275` was still `in_progress`
+      past the ~6-minute watch budget — `flutter analyze`, the full
+      6-chunk suite (`tools/run_test_chunks.py`, foreground, exit code
+      checked each time) and the new
+      `test/test_audit_biblexg_blocknote_parity.py` (18/18) were all
+      clean locally; the next iteration's step 0 should confirm this
+      run's conclusion before picking a new item.
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's
