@@ -189,11 +189,15 @@ class OriginalsStatsService {
         if (c != 0) return c;
         return a.strongs.compareTo(b.strongs);
       });
+      _cache = results;
     } catch (_) {
-      // Asset missing or malformed — return empty list. UI shows
-      // an empty-state instead of crashing.
+      // Asset missing or malformed — return an empty list without
+      // caching it, so the UI shows an empty state instead of
+      // crashing, and a transient failure doesn't poison every later
+      // call for the rest of the process. These are local bundle
+      // assets, not network fetches, so retrying on every call costs
+      // nothing.
     }
-    _cache = results;
     return results;
   }
 
@@ -305,7 +309,7 @@ class OriginalsStatsService {
       return ai.compareTo(bi);
     });
 
-    _aggregateCache = OriginalsAggregateStats(
+    final aggregateStats = OriginalsAggregateStats(
       totalHebrewWords: totalHebrew,
       totalGreekWords: totalGreek,
       uniqueHebrewLemmas: uniqueHebrew,
@@ -316,7 +320,12 @@ class OriginalsStatsService {
       topGreek: topGreek,
       bookStats: bookStats,
     );
-    return _aggregateCache!;
+    // Only cache when `load()` actually produced data — otherwise a
+    // transient asset failure would permanently freeze this into a
+    // zeroed aggregate for the rest of the process, same disease as
+    // the `load()` cache above.
+    if (all.isNotEmpty) _aggregateCache = aggregateStats;
+    return aggregateStats;
   }
 
   static int _canonicalIndex(String book) {

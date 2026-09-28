@@ -23817,7 +23817,24 @@ so the bundle-size answer stays on the record.
       this up: confirm still-zero call sites (Round-56 code moves
       fast) before removing the file.
 
-- [ ] **`OriginalsStatsService.load()` (`lib/services/
+      **Correction, 2026-09-28 (Opus planning pass):** the dead-class
+      claim is right, but *removing the file* would break the build —
+      `bible_stats_service.dart` also defines the `BibleStats` *model*
+      (line 134), and `stats_page.dart` still imports the file (line
+      11) and names `BibleStats` at lines 120, 144, 230, 307 and 486.
+      Those consumers are themselves dead (`_OverviewTab` at 143
+      carries `// ignore: unused_element` and is instantiated nowhere;
+      `_BooksTab` at 306 and `_VocabularyTab` at 485 are never
+      constructed; `_LongestShortestList` at 229 is reached only from
+      `_OverviewTab`'s build) — but they're entangled with widgets that
+      *are* live (`_StatCard`, `_SectionHeader`, `_FrequencyBar` all
+      have live callers in the originals tabs). The real job is
+      excising a several-hundred-line dead widget cluster, not deleting
+      a file — a scoped cleanup slice of its own, not hour-sized. Line
+      numbers are leads, not verified findings — re-check before
+      starting. Left unchecked; do not start by deleting the file.
+
+- [x] **`OriginalsStatsService.load()` (`lib/services/
       originals_stats_service.dart:132`) caches a failed asset load
       permanently, with no retry, for the rest of the process.** Found
       2026-09-28 alongside the item above. `_cache = results` at what
@@ -23845,6 +23862,29 @@ so the bundle-size answer stays on the record.
       `in_progress` past the ~6-minute watch budget — the next
       iteration's step 0 should confirm this run's conclusion before
       picking a new item.
+
+      **FIXED 2026-09-28** (Sonnet execution pass, per Opus's
+      `NEXT_TASK.md` brief). The "can't test without an injectable
+      asset bundle" claim above was wrong: `TestDefaultBinaryMessengerBinding
+      .instance.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', …)`
+      can fail a `rootBundle.loadString` call with no production seam —
+      the one wrinkle is that `rootBundle` is itself a
+      `CachingAssetBundle` with its own internal `_stringCache`
+      (including caching a *rejected* Future on failure), so the test
+      has to `rootBundle.evict(key)` before poisoning and again after
+      un-mocking, or it either replays an earlier successful load or
+      gets stuck on the bundle's own cached failure. `aggregate()`
+      shared the exact same disease — it caches whatever `load()`
+      handed it unconditionally, so a poisoned `load()` also
+      permanently freezes a zeroed `OriginalsAggregateStats`; the
+      original filing missed this because it only looked at `load()`.
+      Fix: moved `_cache = results;` inside the `try` in `load()` (was
+      the last line of the method, outside the try/catch); guarded
+      `aggregate()`'s cache write with `if (all.isNotEmpty)`. Two new
+      tests added (fail-then-recover for `load()` and `aggregate()`),
+      proven red on the pre-fix code, green after. `flutter analyze`
+      clean; full 6-chunk suite green. Refuted before commit (4/4
+      claims confirmed, see commit message).
 
 ## Blocked on the user — do not attempt
 

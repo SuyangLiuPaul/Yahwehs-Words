@@ -6,6 +6,7 @@
 // those go stale as the concordance/lexicon are re-imported (queue has
 // carried-forward counts that drifted: 1,730 → 3,290 → 3,305).
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
@@ -283,6 +284,72 @@ void main() {
       for (final b in agg.bookStats) {
         expect(b.isOt, otBooks.contains(b.englishBook));
       }
+    });
+
+    // `rootBundle` is a `CachingAssetBundle` — it keeps its own
+    // key→Future<String> cache independent of
+    // `OriginalsStatsService._cache`, so the mocked failure below must
+    // `evict()` first (or the bundle just replays the real asset it
+    // already loaded in an earlier test) and evict again after
+    // unmocking (or the bundle would replay its own cached *rejected*
+    // future forever, which would mask exactly the recovery this test
+    // exists to prove).
+    const concordanceKey = 'assets/strongs/concordance.json';
+
+    test('load() does not cache a poisoned asset failure — it retries '
+        'and recovers on the next call', () async {
+      rootBundle.evict(concordanceKey);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+        return null; // asset "not found" — rootBundle.loadString throws
+      });
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', null);
+      });
+
+      final poisoned = await OriginalsStatsService.load();
+      expect(poisoned, isEmpty,
+          reason: 'a failed asset load must still return the empty-state '
+              'list, not throw');
+
+      // Restore real asset loading and call again WITHOUT clearCache().
+      // Pre-fix, `_cache = results` sits outside the try, so the empty
+      // list from the failed call above would have been cached
+      // permanently and this would still be empty.
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', null);
+      rootBundle.evict(concordanceKey);
+      final recovered = await OriginalsStatsService.load();
+      expect(recovered, isNotEmpty,
+          reason: 'load() must retry after a failure instead of being '
+              'stuck on the cached empty list from the poisoned call');
+    });
+
+    test('aggregate() does not cache a zeroed result from a poisoned '
+        'load() — it retries and recovers on the next call', () async {
+      rootBundle.evict(concordanceKey);
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+        return null;
+      });
+      addTearDown(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMessageHandler('flutter/assets', null);
+      });
+
+      final poisoned = await OriginalsStatsService.aggregate();
+      expect(poisoned.totalWords, 0);
+      expect(poisoned.bookStats, isEmpty);
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler('flutter/assets', null);
+      rootBundle.evict(concordanceKey);
+      final recovered = await OriginalsStatsService.aggregate();
+      expect(recovered.totalWords, greaterThan(0),
+          reason: 'aggregate() must not be stuck on the zeroed result '
+              'cached from the poisoned load() above');
+      expect(recovered.bookStats, isNotEmpty);
     });
 
     test('topInBook is per-book (not global), at most 5, descending by '
