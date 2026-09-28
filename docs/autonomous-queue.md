@@ -3701,25 +3701,140 @@ reported. Work these top-down before P2.
       `docs/`, so nothing is expected to fail; the next iteration's step 0
       should confirm this run's conclusion before picking a new item.
 
-- [ ] **约一2:27 (Simplified) may be missing a paragraph both Traditional
-      editions carry.** Surfaced by the refuter while checking the
-      `biblexg_block_note_list_test.dart` allowlist fix above, not chased
-      further there since it's unrelated to any of that test's indices:
-      both `biblexg-v3-tr.json` and (per the refuter's report) the v2
-      Traditional pair carry a paragraph reading roughly 「然而，"正對、正
-      對面"和"反對"不同…」 in 约一2:27's block notes that both Simplified
-      assets (`biblexg-v3.json` / `biblexg-v2.json`) lack. Not yet
-      confirmed against `git log -S` on the asset, and not yet checked
-      whether `test/biblexg_verse_integrity_test.dart`'s length-delta
-      check already covers this verse (it doesn't appear in either
-      `knownDifferences` table, and the note text isn't the verse body, so
-      it may not be in scope for that check at all). Needs: re-measure
-      directly, check history for when the two editions diverged here,
-      and decide whether it is a genuine content gap (P0, jumps the queue
-      per the omitted-verse-text exception) or a note-only editorial
-      difference the publisher intended (lower priority, needs the
-      publisher letter). Do not touch `assets/biblexg-*.json` until that
-      is answered.
+- [x] **约一2:27 (Simplified) may be missing a paragraph both Traditional
+      editions carry.** **RESOLVED 2026-09-28 — the premise was false.**
+      Re-measured directly from the raw JSON, independent of the
+      refuter's original report: `62002027`'s `blockNotes` has **10**
+      entries in both Simplified assets and **11** in both Traditional
+      assets. TR's `[5]` (250 chars) + `[6]` (200 chars) is the same
+      paragraph SC carries as a single, longer `[5]` (444 chars) — SC
+      concatenates into one block what TR splits into two. Verified with
+      `opencc -c t2s`: TR's `[5]+[6]` converted to Simplified equals SC's
+      `[5]` except for one 6-character wording difference inside it
+      (TR 「ἀντί 更以前綴的方式」 vs SC 「也以前缀的方式」 — SC drops the
+      「ἀντί」 token and reads 也 for 更; 444 + 6 = 450 = 250 + 200).
+      **No note text is missing from either edition; this is a
+      segmentation difference, not a content gap**, so it does not
+      qualify for the omitted-verse-text carve-out (which is scripture
+      body text, not commentary).
+
+      `git log -S` on both assets (per the standing rule) traces the
+      note text to the original per-edition ingest, commit `52f81d45`
+      ("LJK2 re-ingest — block notes + poetry line breaks + cites"),
+      which pulled the SC and TR block notes separately from the
+      publisher's own cn-\*.json / tw-\*.json pages. The split-vs-concat
+      difference and the 更/也 wording gap both predate every repair
+      commit this repo has made to this verse — neither is an artifact
+      of our tooling. The wording gap is recorded here as a publisher
+      question, not something to edit: **see the new item directly below
+      this one**, which found this is one instance of a wider class.
+
+- [ ] **`blockNotes` has no SC-vs-TR parity guard, and a systematic
+      sweep found 13 verse-ids (12 table rows) where the two editions'
+      block-note *content* genuinely differs — not merely re-split or
+      re-attached. STOP — escalated per the omitted-text carve-out
+      logic, not repaired.**
+      2026-09-28. Grew directly out of settling the 约一2:27 item above:
+      that verse turned out to be a false alarm (a segmentation
+      difference), which raised the question of how many of the other
+      note-count mismatches between editions are real. `blockNotes` is
+      compared nowhere else in this repo —
+      `tools/audit_biblexg_v2_vs_tr.py` diffs only inline `<note:…>` text
+      (confirmed: `grep -n blockNotes tools/audit_biblexg_v2_vs_tr.py`
+      returns nothing but this sentence's own usage docstring), and
+      `test/biblexg_verse_integrity_test.dart` compares verse *body*
+      length, not note arrays. This field has been unguarded since it
+      was introduced in `52f81d45`.
+
+      **The sweep.** Over the common verse ids in each edition pair,
+      `len(blockNotes)` disagrees for **53** verses (v2/v2-tr, out of
+      7,924 common ids; 1,056 vs 1,058 total notes) and **52** verses
+      (v3/v3-tr, out of 7,927 common ids; 1,076 vs 1,078 total). Each
+      mismatch was classified into one of three buckets, using
+      `opencc -c t2s` (never a hand-rolled character map) to normalise
+      Traditional to Simplified before comparing:
+
+      * **(a) re-split within one verse** — the same id's notes,
+        concatenated, agree after t2s (约一2:27 above is this). **13
+        verses** (v2) / **12** (v3).
+      * **(b) re-attached across verses** — a note's content is missing
+        from one id but its concatenation-with-neighbours matches the
+        other edition's, checked by (i) a small bidirectional window
+        (±8 verses) on cumulative note count, then (ii) same-book
+        pairwise matching for pairs too far apart for a fixed window
+        (found one: 太13:58 in Simplified holds the note Traditional
+        attaches at 太14:11 — the "分封藩王希律" cross-reference, 30+
+        verses and a chapter boundary apart, but the ~99%-identical text
+        proves it's the same note, just anchored differently). **48
+        verses** (v2) / **48** (v3).
+      * **(c) content present in one edition, absent from the other** —
+        survives both of the above, and a corpus-wide search (every
+        `blockNotes` entry in the *other* edition, own-id excluded) finds
+        no near-duplicate above a 0.92 t2s-normalised ratio anywhere in
+        the file. **13 verse-ids appear in both v2's and v3's bucket
+        (c).** This is bucket (c), and it is non-empty.
+
+      **The 13 ids** (shown as 12 rows below, since 罗3:20 and 罗3:26 are
+      one adjacent pair sharing a single leftover gap — id, reference, SC
+      note count → TR note count **in v2**, re-verified 2026-09-28;
+      "extra content is in…" names which edition has content the other
+      lacks; all confirmed absent from the *entire* other-edition file,
+      not just nearby verses, via the corpus-wide search above). 14/14
+      rows' counts match identically between v2 and v3 **except one**:
+      v3's 45010013 (罗10:13) is SC 3 / TR 1, not the v2 SC 2 / TR 1
+      shown below — same SC-has-content-TR-lacks direction, just one more
+      SC note in v3. Every other row's counts and direction hold in both
+      editions:
+
+      | id | ref | SC (v2) | TR (v2) | extra content is in… | one-line description |
+      |---|---|---|---|---|---|
+      | 41001027 | 可1:27 | 0 | 1 | TR | "不潔的靈" gloss (references 1.26-27); SC's equivalent gloss is deferred to 可7:25 instead of repeated here |
+      | 41005001 | 可5:1 | 1 | 2 | TR | TR's 2nd note ("不潔的靈", references 5.8/5.13) has no SC counterpart anywhere |
+      | 42001055 | 路1:55 | 3 | 2 | SC | SC's note on "權能者"/49節 has no TR counterpart |
+      | 42009017 | 路9:17 | 2 | 1 | SC | SC's cross-reference note (12-17节, 参太14.13-21 etc.) has no TR counterpart |
+      | 42012021 | 路12:21 | 2 | 1 | SC | SC's separate "20节注" on 性命/ψυχή has no TR counterpart (TR's single note is also reworded, not just shorter) |
+      | 45003020 / 45003026 | 罗3:20,26 | 0+9 | 7+2 | mostly re-split (bucket b: v20's note moved into v26's array in SC) **but** SC's 22节注 carries one ~217-char paragraph on objective/subjective genitive grammar that TR's 22节注 lacks entirely — a genuine partial gap inside an otherwise-explained pair |
+      | 45010013 | 罗10:13 | 2 | 1 | SC | SC's "8节注" on ῥῆμα/福音 has no TR counterpart (v3: SC has 3 notes, not 2 — see caveat above) |
+      | 46013003 | 林前13:3 | 2 | 1 | SC | SC's "2节注" on πίστις/信心 has no TR counterpart |
+      | 47005010 | 林后5:10 | 3 | 2 | SC | SC's "8节注" on θαρρέω/心中有把握 has no TR counterpart |
+      | 52003005 | 腓3:5 | 0 | 1 | TR | TR's note on πίστις/信仰 (cross-references 2.5-2.10, 5.8) has no SC counterpart |
+      | 62003010 | 约一3:10 | 1 | 2 | TR | TR's 2nd note ("9節註", on the present-tense ἁμαρτίαν grammar) has no SC counterpart |
+      | 66008012 | 启8:12 | 1 | 0 | SC | SC's note ("暗掉……没有光", 参出10.21-23) has no TR counterpart |
+
+      **Why this stops here instead of being fixed.** Per this hour's
+      brief: a defect that makes the app omit or blank *scripture* text
+      jumps the queue; this is commentary, not scripture, so it does not
+      — but "genuinely absent content, confirmed by a corpus-wide search,
+      not explained by re-split or re-attachment" is exactly the shape
+      the brief says to stop and escalate rather than improvise a repair
+      for. Two real possibilities are indistinguishable from the data
+      alone: the publisher's own tw/cn source pages already disagreed
+      here (same class as the existing `ACCOUNTED_FOR_TEXT` entries in
+      `tools/audit_biblexg_notes.py`), or one edition's ingest dropped a
+      note the other kept. Telling those apart needs the same publisher
+      tw/cn source comparison `tools/audit_biblexg_v2_vs_tr.py` already
+      does for inline notes, extended to `blockNotes` — not done this
+      hour, scoped as the next step below. **Do not touch
+      `assets/biblexg-*.json` for any of these 13 ids until that
+      comparison is done.**
+
+      **Not done this hour, next steps for whoever picks this up:**
+      extend `tools/audit_biblexg_v2_vs_tr.py`'s publisher-tw/cn
+      comparison to `blockNotes` (it currently only reads inline
+      `<note:…>` tags) for these 13 ids, to sort each into
+      "publisher's own two source pages already disagreed" (not ours to
+      fix) vs "our ingest dropped something the source page had" (ours
+      to fix, but only after `git log -S` confirms no repair commit did
+      it deliberately). The read-only parity-guard tool
+      (`tools/audit_biblexg_blocknote_parity.py`, exit 0 on buckets a/b,
+      nonzero only on new bucket-c growth, skip cleanly without `opencc`)
+      was scoped for this hour but not built — building it before this
+      classification step would have meant hard-coding today's 13-id
+      allowlist without knowing which of them are genuine defects to fix
+      versus permanent publisher-disagreement entries to pin, which is
+      the same mistake the brief warned against for `queue:3704` itself.
+
+      **Refuted before landing** (see the commit this item ships in).
 
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
@@ -22336,6 +22451,33 @@ so the bundle-size answer stays on the record.
       recurrence: the fix is in `run.sh`/`prompt.md` under `~/Library/
       Application Support/yswords-loop/`, outside this repo, not
       touched here.
+
+      **Another occurrence, a fourth distinct cause, 2026-09-28
+      08:26–08:53:48.** Not the `rc=0`-while-waiting shape, not an
+      external `rc=143` kill, and not the 09-25 session-limit cutoff
+      either — this one is a session-limit cutoff too, but at a
+      different point in the stage lifecycle: `run.log` shows this
+      stage ran until **08:53:48 and exited rc=1 on "You've hit your
+      session limit · resets 11am"**, mid-stage, having already finished
+      the `blockNotes` SC-vs-TR parity sweep (the item directly above
+      this one in the file, `queue:3704`'s bucket-a/b/c analysis) and
+      written it to `docs/autonomous-queue.md`, but with no chance to
+      commit before the cutoff. The two following iterations (09:53,
+      10:53) then died at **stage 1** for the same limit, before doing
+      any work at all, so the 08:41-mtime write sat orphaned for two
+      full hours until this 12:03 planning pass found it and this
+      stage's Task A landed it (see the commit this note ships in).
+      Recorded as its own distinct cause per this item's own rule
+      (differentiate mechanism, not just re-tally the count): every
+      prior recurrence's stranded work was mid-*edit* or waiting on a
+      background job; this one's was a *finished, uncommitted* write
+      that a session-limit cutoff caught between "write the file" and
+      "commit it" — the same class of loss the 09-25 occurrence named,
+      but this time compounded by two subsequent stage-1 deaths that
+      couldn't even see the orphan to report it. Same conclusion as
+      every prior occurrence: the durable fix is outside this repo's
+      reach, in `run.sh`/`prompt.md` under `~/Library/Application
+      Support/yswords-loop/`, not touched here.
 
 - [x] **The `git secrets` hooks are LIVE as of 2026-08-23.**
       `git-secrets` 1.3.0 installed via brew; hooks chmod +x; an
