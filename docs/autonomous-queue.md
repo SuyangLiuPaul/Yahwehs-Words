@@ -23747,6 +23747,11 @@ so the bundle-size answer stays on the record.
       change; queue-only + code, per the definition-of-done's "when not
       to deploy" list), no version bump.
 
+      Pushed as `4c79714e`. CI run `36407597888` was still
+      `in_progress` past the ~6-minute watch budget — the next
+      iteration's step 0 should confirm this run's conclusion before
+      picking a new item.
+
       `_epoch = DateTime(2026, 1, 1)` and `today` are both LOCAL
       DateTimes; `today.difference(_epoch).inDays` computes real
       wall-clock-to-wall-clock elapsed time and `Duration.inDays`
