@@ -50,6 +50,7 @@ void main() {
   tearDown(() {
     resetFuzzySearchForTest();
     resetFuzzyResultLabelForTest();
+    resetPinyinMatchForTest();
   });
 
   Map<FuzzyMatch, int> byKind(
@@ -309,6 +310,130 @@ void main() {
       expect(withText, 383);
       expect(without, 0);
     });
+  });
+
+  group('with the switch on, pinyin — a sixth rung, YsWords\' own rather '
+      'than one `fuzzy_search.dart` ported', () {
+    // 2026-09-28 「search里面类似于我搜索中文 我可以用拼音和汉字吗」.
+    //
+    // Small hand-built verses rather than the shipped corpus, unlike
+    // every group above: converting ~31,000 verses to pinyin the first
+    // time is a real, measured cost (order of a second per thousand
+    // verses in a debug VM; see `_pinyinKeyOf`'s doc comment), and this
+    // file runs on every `flutter test` of the whole suite. A handful
+    // of synthetic strings prove the same claims — the gate, the
+    // divine-name fix, the label — without taxing every run for a
+    // feature that is off by default. The full-corpus counts below
+    // WERE measured once, against `assets/cuvs-yhwh.json`, the same way
+    // every other number in this file was: `yesu` finds 1,632 verses,
+    // the same corpus `耶稣` finds literally; `shenaishiren` and its
+    // initials `sasr` both find exactly the one verse that says 神爱世
+    // 人, 约翰福音 3:16; and `yawei` — the romanisation of the name the
+    // sanitiser now writes — finds 6,121, while `yehehua` — the
+    // romanisation of the name the raw asset still carries — finds 0.
+    setUp(() => setFuzzySearchEnabled(true));
+
+    const johnThreeSixteen = '神爱世人，甚至将他的独生子赐给他们，'
+        '叫一切信他的，不至灭亡，反得永生。';
+    const psalmTwentyThreeOne = '耶和华是我的牧者，我必不至缺乏。';
+
+    test('full pinyin reaches a verse — `shenaishiren` for 神爱世人', () {
+      expect(
+          fuzzySearchMatches(
+              fuzzySearchCorpusKey(johnThreeSixteen),
+              fuzzySearchSegments('shenaishiren'),
+              scriptureText: johnThreeSixteen),
+          isTrue);
+    });
+
+    test('initials reach the same verse more loosely — `sasr` for 神爱世人',
+        () {
+      expect(
+          fuzzySearchMatches(
+              fuzzySearchCorpusKey(johnThreeSixteen),
+              fuzzySearchSegments('sasr'),
+              scriptureText: johnThreeSixteen),
+          isTrue);
+    });
+
+    test('the divine-name fix this whole file exists for reaches pinyin '
+        'too: `yawei` (what the verse now says) hits, `yehehua` (what the '
+        'raw asset still spells) does not', () {
+      expect(
+          fuzzySearchMatches(
+              fuzzySearchCorpusKey(psalmTwentyThreeOne),
+              fuzzySearchSegments('yawei'),
+              scriptureText: psalmTwentyThreeOne),
+          isTrue,
+          reason: 'sanitizeForSearch rewrites 耶和华 to 雅伟 before this '
+              'verse is converted, the same rewrite the corpus key '
+              'already went through — a pinyin key built from the '
+              'UNREWRITTEN asset would reproduce the exact bug '
+              'fuzzy_result_label.dart was written to close');
+      expect(
+          fuzzySearchMatches(
+              fuzzySearchCorpusKey(psalmTwentyThreeOne),
+              fuzzySearchSegments('yehehua'),
+              scriptureText: psalmTwentyThreeOne),
+          isFalse);
+    });
+
+    test('a one-letter query is never tried against pinyin, even though '
+        'the verse\'s own romanisation would otherwise contain it', () {
+      // 雅伟's pinyin starts with exactly the letter being searched for
+      // — proof the gate is doing real work here, not merely never
+      // coming up.
+      expect(
+          fuzzySearchMatches(fuzzySearchCorpusKey(psalmTwentyThreeOne),
+              fuzzySearchSegments('y'),
+              scriptureText: psalmTwentyThreeOne),
+          isFalse);
+    });
+
+    test('a Hanzi query is never tried against pinyin — there is nothing '
+        'for a romanisation to add to a query that is already Chinese',
+        () {
+      // '神' is not literally in this verse, and no ported rung reaches
+      // it either — the assertion that matters is that this is a plain
+      // "no", not a pinyin false positive from comparing a non-ASCII
+      // query against a romanised key.
+      expect(
+          fuzzySearchMatches(
+              fuzzySearchCorpusKey(psalmTwentyThreeOne),
+              fuzzySearchSegments('神'),
+              scriptureText: psalmTwentyThreeOne),
+          isFalse);
+    });
+
+    test('an English edition is unaffected: no Han in the text means the '
+        '"pinyin" of it is a pass-through, which can only rediscover a '
+        'substring the literal rung already tried', () {
+      const verse = 'In the beginning God created the heaven and the earth.';
+      // "created" is already a literal hit — proves the pinyin fallback
+      // is never even reached for a query the ladder above it resolves.
+      expect(
+          fuzzySearchMatchKind(fuzzySearchCorpusKey(verse),
+              fuzzySearchSegments('created'),
+              scriptureText: verse),
+          FuzzyMatch.literal);
+      // "beginningcreated" spans a real space in the source text, so no
+      // rung — literal, pinyin, or otherwise — can find it.
+      expect(
+          fuzzySearchMatches(fuzzySearchCorpusKey(verse),
+              fuzzySearchSegments('beginningcreated'),
+              scriptureText: verse),
+          isFalse);
+    });
+
+    test('labels a pinyin hit distinctly from the other five rungs', () {
+      expect(
+          fuzzyLabelledReference('约翰福音 3:16',
+              query: 'shenaishiren',
+              scriptureText: johnThreeSixteen,
+              locale: 'zh-Hans'),
+          '约翰福音 3:16 · 拼音');
+    });
+
   });
 
   group('what the result row says', () {

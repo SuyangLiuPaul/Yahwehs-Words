@@ -153,7 +153,7 @@ void main() {
       final svc = SermonAudioService.withEngine(engine);
       svc.seedForTest('421', const [partA]);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('sermon.audio.pos.421', '0:45');
+      await prefs.setString('sermon.audio.pos.421', '0:105');
 
       // play() sets _loading = true and does not clear it until the
       // fake reports onPlaying(true) — which this test deliberately
@@ -164,7 +164,7 @@ void main() {
       engine.emitPosition(Duration.zero);
       await Future<void>.delayed(Duration.zero);
 
-      expect(prefs.getString('sermon.audio.pos.421'), '0:45',
+      expect(prefs.getString('sermon.audio.pos.421'), '0:105',
           reason: 'a stray position event during the load must not '
               'overwrite the good position that _savedPosition already '
               'read at the top of play()');
@@ -176,7 +176,7 @@ void main() {
       final svc = SermonAudioService.withEngine(engine);
       svc.seedForTest('421', const [partA]);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('sermon.audio.pos.421', '0:45');
+      await prefs.setString('sermon.audio.pos.421', '0:105');
 
       await svc.play('421');
       // _loading clears, but the resume-to-45s seek has not been
@@ -188,7 +188,7 @@ void main() {
 
       engine.emitPosition(Duration.zero);
       await Future<void>.delayed(Duration.zero);
-      expect(prefs.getString('sermon.audio.pos.421'), '0:45',
+      expect(prefs.getString('sermon.audio.pos.421'), '0:105',
           reason: 'the resume seek to 45s has not landed yet — a save '
               'here would persist "0:0" over the position this whole '
               'play() call exists to restore');
@@ -213,7 +213,7 @@ void main() {
       final svc = SermonAudioService.withEngine(engine);
       svc.seedForTest('421', const [partA]);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('sermon.audio.pos.421', '0:45');
+      await prefs.setString('sermon.audio.pos.421', '0:105');
 
       await svc.play('421');
       engine.emitDuration(const Duration(minutes: 10));
@@ -235,7 +235,7 @@ void main() {
       // that window.
       engine.emitPosition(Duration.zero);
       await Future<void>.delayed(Duration.zero);
-      expect(prefs.getString('sermon.audio.pos.421'), '0:45',
+      expect(prefs.getString('sermon.audio.pos.421'), '0:105',
           reason: '_pendingSeek is already null here, so without a '
               'separate in-flight flag this stale tick would have '
               'overwritten the 45s the whole resume was protecting');
@@ -269,7 +269,7 @@ void main() {
       final svc = SermonAudioService.withEngine(engine);
       svc.seedForTest('421', const [partA, bigPartB]);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('sermon.audio.pos.421', '0:45');
+      await prefs.setString('sermon.audio.pos.421', '0:105');
 
       await svc.play('421');
       engine.emitDuration(const Duration(minutes: 10)); // learns part a's length

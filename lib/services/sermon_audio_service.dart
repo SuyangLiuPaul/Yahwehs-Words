@@ -121,6 +121,19 @@ class SermonAudioService extends ChangeNotifier {
   /// not the whole talk.
   static const Duration _positionSaveInterval = Duration(seconds: 5);
 
+  /// How far back a resume rewinds from where the listener last stopped
+  /// — the same cushion podcast apps (喜马拉雅 among them) give a
+  /// resumed episode, so the listener re-hears the end of the sentence
+  /// they were on instead of picking up mid-word. 2026-09-28 「听录音…
+  /// resume也可以从那里开始 但是要往前1分钟，类似于喜马拉雅」.
+  ///
+  /// Applied only in [play]'s "load" branch — the moment a saved
+  /// position is actually read back and handed to a fresh
+  /// `_playPart`. Toggling play/pause on the sermon already current
+  /// does not go through here, so a five-second pause does not cost
+  /// another fifty-five seconds of the same sentence every time.
+  static const Duration _resumeRewind = Duration(seconds: 60);
+
   /// Bytes per second of the corpus's stated encoding — 32 kbps mono,
   /// CBR, per the header at the top of this file.
   ///
@@ -348,11 +361,41 @@ class SermonAudioService extends ChangeNotifier {
     _error = null;
     await _restoreLengths(parts);
     final saved = await _savedPosition(sermonId);
-    _partIndex = saved.$1.clamp(0, parts.length - 1);
+    final clampedIndex = saved.$1.clamp(0, parts.length - 1);
+    final resumed = _rewindResume(parts, (clampedIndex, saved.$2));
+    _partIndex = resumed.$1;
     _loading = true;
     notifyListeners();
 
-    await _playPart(resumeAt: saved.$2);
+    await _playPart(resumeAt: resumed.$2);
+  }
+
+  /// [_resumeRewind] applied to a saved (part, offset), crossing back
+  /// into an earlier part when the rewind does not fit in the one the
+  /// listener stopped in — a talk saved 10s into part b, rewound 60s,
+  /// is 50s before the end of part a, not clamped to the start of part
+  /// b.
+  ///
+  /// Deliberately does NOT run [saved]'s own part through [lengthOf]:
+  /// `_playPart` has always trusted a saved offset unclamped (the real
+  /// player's own `_duration`, once it arrives, is what
+  /// [applyPendingSeek] checks it against), and this rewind keeps that
+  /// — only a part actually being stepped OVER needs its length known,
+  /// the same trust [overallPosition] already places in [lengthOf].
+  (int, Duration) _rewindResume(
+      List<SermonAudioPart> parts, (int, Duration) saved) {
+    var index = saved.$1;
+    var remaining = _resumeRewind - saved.$2;
+    if (remaining <= Duration.zero) return (index, saved.$2 - _resumeRewind);
+    while (remaining > Duration.zero && index > 0) {
+      index -= 1;
+      final partLen = lengthOf(parts[index]);
+      if (partLen >= remaining) return (index, partLen - remaining);
+      remaining -= partLen;
+    }
+    // Ran off the beginning of the talk (or an earlier part's length is
+    // unknown/shorter than what is still owed) — land at its very start.
+    return (index, Duration.zero);
   }
 
   Future<void> _playPart({Duration? resumeAt}) async {

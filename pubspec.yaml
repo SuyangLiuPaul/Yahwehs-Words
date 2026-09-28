@@ -1,7 +1,7 @@
 name: yahwehs_words
 description: "Yahweh's Words / 雅伟之言 — a bilingual Bible app to help you listen to His voice and abide in Him daily."
 publish_to: 'none'
-version: 1.6.31
+version: 1.6.32
 
 environment:
   sdk: '>=3.2.3 <4.0.0'
@@ -15,6 +15,10 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   shared_preferences: ^2.5.3
   cupertino_icons: ^1.0.2
+  # Hanzi → pinyin, for the pinyin rung of fuzzy search
+  # (`fuzzy_result_label.dart`'s `_pinyinMatches`). Pure Dart, no
+  # Flutter or asset dependency of its own.
+  pinyin: ^3.3.0
   # Cloud sync (optional — see lib/firebase_options.dart for setup).
   #
   # IMPORTANT: keep firebase_core / _auth / cloud_firestore on the

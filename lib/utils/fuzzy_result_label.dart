@@ -52,6 +52,8 @@
 /// characters that say the verse actually spells it 矶法.
 library;
 
+import 'package:pinyin/pinyin.dart' show PinyinHelper;
+
 import 'package:yahwehs_words/constants/fuzzy_search_strings.dart';
 import 'package:yahwehs_words/constants/text_patterns.dart' show sanitizeForSearch;
 import 'package:yahwehs_words/utils/fuzzy_search.dart';
@@ -126,6 +128,94 @@ String fuzzySearchHighlightQuery(String query) => sanitizeForSearch(query);
 String fuzzySearchStemKey(String scriptureText) =>
     stemSearchKey(sanitizeForSearch(scriptureText).toLowerCase())
         .replaceAll(' ', '');
+
+// ── Pinyin, a sixth rung and YsWords' own ───────────────────────────
+//
+// 2026-09-28 「search里面类似于我搜索中文 我可以用拼音和汉字吗」. Not one of
+// `fuzzy_search.dart`'s five ported rungs — it has nothing to do with
+// script, synonym, inflection or word order, and belongs here rather
+// than there for the same reason the rest of this file does: it is
+// how a Chinese HAN character reaches a reader typing on a Latin
+// keyboard, which is a YsWords-shaped question, not a portable one.
+//
+// Two forms are tried, both space-free and lower-cased so they compare
+// the same way every other key in this engine does:
+//   * full pinyin, no tone marks — 神爱世人 → shenaishiren
+//   * initials only — 神爱世人 → sasr
+// `yesu` and `ys` both reach 耶稣; `ys` is also the label on this
+// switch's own subtitle string ("拼音"), not a coincidence.
+
+/// [scriptureText] run through [sanitizeForSearch] BEFORE conversion —
+/// the same divine-name rewrite (耶和华 → 雅伟) `fuzzySearchStemKey`
+/// applies before Porter, and for the identical reason: the raw asset
+/// still spells the old name, and a pinyin key built from that would
+/// send a reader typing `yawei` — the romanisation of what the verse
+/// actually now says — to nothing, the exact shape of bug this file
+/// exists to close.
+final Map<String, String> _pinyinKeys = {};
+final Map<String, String> _pinyinInitials = {};
+
+/// Bound on both memos below, sized the same way `kStemMemoLimit` is:
+/// room for the corpus once over, with a stop past that rather than an
+/// unbounded map for a session that searches several editions.
+const int kPinyinMemoLimit = 60000;
+
+String _pinyinKeyOf(String scriptureText) {
+  final hit = _pinyinKeys[scriptureText];
+  if (hit != null) return hit;
+  final sanitized = sanitizeForSearch(scriptureText);
+  final key =
+      PinyinHelper.getPinyinE(sanitized, separator: '', defPinyin: '')
+          .toLowerCase();
+  if (_pinyinKeys.length < kPinyinMemoLimit) _pinyinKeys[scriptureText] = key;
+  return key;
+}
+
+String _pinyinInitialsOf(String scriptureText) {
+  final hit = _pinyinInitials[scriptureText];
+  if (hit != null) return hit;
+  final sanitized = sanitizeForSearch(scriptureText);
+  // `getShortPinyin` has no `separator: ''` of its own — it hard-codes
+  // a space at a Han/non-Han boundary — so the strip happens here,
+  // the same way every other key in this engine strips it.
+  final key =
+      PinyinHelper.getShortPinyin(sanitized).replaceAll(' ', '').toLowerCase();
+  if (_pinyinInitials.length < kPinyinMemoLimit) {
+    _pinyinInitials[scriptureText] = key;
+  }
+  return key;
+}
+
+/// Whether [literalQuery] — [segments] already joined, exactly what the
+/// literal rung compared — reads as romanised Chinese found in
+/// [scriptureText].
+///
+/// Gated on being PURE `a`-`z`, at least two letters: a Han query has
+/// nothing to gain from a romanisation, so this never runs one, and a
+/// single letter would match almost every verse in the corpus. Beyond
+/// that gate this is deliberately cheap to try even for a query that
+/// turns out to be plain English rather than pinyin — running it over
+/// an English edition's own (Han-free) text is a no-op pass-through
+/// that can only rediscover a substring the literal rung already tried
+/// and missed, never manufacture a new one; see this function's own
+/// test file for the measurement, not just the argument.
+bool _pinyinMatches(String scriptureText, String literalQuery) {
+  if (literalQuery.length < 2) return false;
+  for (var i = 0; i < literalQuery.length; i++) {
+    final c = literalQuery.codeUnitAt(i);
+    if (c < 0x61 || c > 0x7A) return false;
+  }
+  return _pinyinKeyOf(scriptureText).contains(literalQuery) ||
+      _pinyinInitialsOf(scriptureText).contains(literalQuery);
+}
+
+/// Drop both pinyin memos. Tests only — mirrors
+/// `resetFuzzyResultLabelForTest`, which cannot reach into this file's
+/// own private maps.
+void resetPinyinMatchForTest() {
+  _pinyinKeys.clear();
+  _pinyinInitials.clear();
+}
 
 // ── The ladder ──────────────────────────────────────────────────────
 
@@ -265,13 +355,25 @@ FuzzyMatch fuzzySearchMatchKind(
 /// The predicate the scan loop wants, and identical to the bare
 /// `key.contains(query)` it replaced while the switch is off — which is
 /// the shipped default.
+///
+/// Tries the pinyin rung after the ported ladder comes back empty —
+/// [fuzzySearchMatchKind] cannot say so itself, since [FuzzyMatch] is
+/// `fuzzy_search.dart`'s own closed enum and gains no sixth case for a
+/// rung that only exists on this side of the file boundary.
 bool fuzzySearchMatches(
   String key,
   List<String> segments, {
   String? scriptureText,
-}) =>
-    fuzzySearchMatchKind(key, segments, scriptureText: scriptureText) !=
-    FuzzyMatch.none;
+}) {
+  if (fuzzySearchMatchKind(key, segments, scriptureText: scriptureText) !=
+      FuzzyMatch.none) {
+    return true;
+  }
+  if (scriptureText == null || segments.isEmpty || !fuzzySearchEnabled) {
+    return false;
+  }
+  return _pinyinMatches(scriptureText, _literalOf(segments));
+}
 
 // ── What the row says ───────────────────────────────────────────────
 
@@ -328,7 +430,14 @@ String fuzzyLabelledReference(
     segments,
     scriptureText: scriptureText,
   );
-  final key = fuzzyMatchStringKey(kind);
+  // Same fallback `fuzzySearchMatches` makes below the ladder: nothing
+  // on `FuzzyMatch` names this rung, so a `none` from the ported five
+  // gets one more question asked of it before this row is called
+  // literal (or, if it truly is, given no label at all).
+  final key = fuzzyMatchStringKey(kind) ??
+      (kind == FuzzyMatch.none && _pinyinMatches(scriptureText, _literalOf(segments))
+          ? 'fuzzyLabelPinyin'
+          : null);
   if (key == null) return reference;
   final label =
       fuzzySearchStrings[key]?[locale] ?? fuzzySearchStrings[key]?['en'] ?? '';

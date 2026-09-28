@@ -55,12 +55,13 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
   /// finds 0 verses of the Simplified edition and 9 once this is on;
   /// `loved` finds 200 of the KJV and 578.
   'fuzzySearchSettingSubtitle': {
-    'zh-Hans': '磯法 也找 矶法，上帝 也找 神，loved 也找 love。'
-        '放宽找到的经文会另外标示。',
-    'zh-Hant': '磯法 也找 矶法，上帝 也找 神，loved 也找 love。'
-        '放寬找到的經文會另外標示。',
-    'en': 'Lets 磯法 reach 矶法, 上帝 reach 神 and "loved" reach '
-        '"love". Rows found this way are labelled.',
+    'zh-Hans': '磯法 也找 矶法，上帝 也找 神，loved 也找 love，'
+        'yesu 也找 耶稣。放宽找到的经文会另外标示。',
+    'zh-Hant': '磯法 也找 矶法，上帝 也找 神，loved 也找 love，'
+        'yesu 也找 耶穌。放寬找到的經文會另外標示。',
+    'en': 'Lets 磯法 reach 矶法, 上帝 reach 神, "loved" reach '
+        '"love", and "yesu" reach 耶稣. Rows found this way are '
+        'labelled.',
   },
 
   // ── Row labels, one per rung ────────────────────────────────────────
@@ -111,5 +112,15 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
     'zh-Hans': '词分开',
     'zh-Hant': '詞分開',
     'en': 'words apart',
+  },
+
+  /// A fifth rung, YsWords' own rather than one of `fuzzy_search.dart`'s
+  /// ported five (see `fuzzy_result_label.dart`'s `_pinyinMatches`):
+  /// romanised Chinese — `yesu` or `ys` matching 耶稣. Named for what the
+  /// reader typed, the same convention as the other four.
+  'fuzzyLabelPinyin': {
+    'zh-Hans': '拼音',
+    'zh-Hant': '拼音',
+    'en': 'pinyin',
   },
 };

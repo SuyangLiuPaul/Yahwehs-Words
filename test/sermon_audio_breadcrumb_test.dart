@@ -97,7 +97,7 @@ void main() {
     final svc = SermonAudioService.withEngine(engine);
     svc.seedForTest('421', const [part]);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sermon.audio.pos.421', '0:30');
+    await prefs.setString('sermon.audio.pos.421', '0:90');
 
     await svc.play('421');
     engine.emitDuration(const Duration(seconds: 60));
@@ -131,7 +131,7 @@ void main() {
     final svc = SermonAudioService.withEngine(engine);
     svc.seedForTest('421', const [part]);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sermon.audio.pos.421', '0:30');
+    await prefs.setString('sermon.audio.pos.421', '0:90');
 
     await svc.play('421');
     engine.emitPlaying(true);
@@ -158,7 +158,7 @@ void main() {
     final svc = SermonAudioService.withEngine(engine);
     svc.seedForTest('421', const [part]);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sermon.audio.pos.421', '0:45');
+    await prefs.setString('sermon.audio.pos.421', '0:105');
 
     await svc.play('421');
 
@@ -167,6 +167,31 @@ void main() {
         reason: 'the trail must say WHICH part and whether a resume '
             'offset was armed, or a recurrence on part 2 of a 3-part '
             'sermon would be indistinguishable from part 1');
+  });
+
+  test('2026-09-28 「往前1分钟，类似于喜马拉雅」: a resume rewind that does not '
+      'fit in the saved part crosses back into the one before it', () async {
+    // Saved 10s into part b. The 60s rewind does not fit in those 10s,
+    // so it must reach 50s before the end of part a — not clamp to
+    // part b's own start, which is what a naive "clamp to zero within
+    // this part" rewind would do.
+    const partA = SermonAudioPart(part: 'a', file: 'a.mp3', bytes: 800000);
+    const partB = SermonAudioPart(part: 'b', file: 'b.mp3', bytes: 1);
+    final engine = FakeSongPlaybackEngine();
+    final svc = SermonAudioService.withEngine(engine);
+    svc.seedForTest('421', const [partA, partB]);
+    final prefs = await SharedPreferences.getInstance();
+    // part a is 800000 bytes at the corpus's fixed 4000 B/s estimate —
+    // 200s — before it has ever actually played.
+    await prefs.setString('sermon.audio.pos.421', '1:10');
+
+    await svc.play('421');
+
+    final playPart = crumbs().singleWhere((b) => b.action == 'sermon.playPart');
+    expect(playPart.data, 'part=0 resumeAt=0:02:30.000000',
+        reason: 'part a estimated at 200s, minus the 50s still owed after '
+            'part b\'s own 10s is used up, lands at 150s — 0:02:30 — into '
+            'part a, and the crumb must show part 0, not part 1');
   });
 
   test('a PlaybackBlockedException from _playPart is crumbed before the '
