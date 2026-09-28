@@ -96,6 +96,48 @@ void main() {
       expect(refB, isNotNull);
       expect(refA, isNot(refB));
     });
+
+    // DST semantics pin (this iteration): before this fix, todayRef
+    // compared two *local* DateTimes, and a local-to-local difference
+    // across a DST transition is not a whole 24h multiple, so
+    // Duration.inDays truncation could collapse two distinct calendar
+    // days onto the same rotation index. The fix compares calendar
+    // days against the epoch in UTC instead, which has no DST
+    // discontinuity. These assertions pin that the two sides of each
+    // Northern-Hemisphere DST boundary land on consecutive, distinct
+    // indices — the thing the local-DateTime bug could violate.
+    //
+    // Honesty note (criterion 4 of this iteration's task): this
+    // machine is Australia/Melbourne, and `flutter test` on CI runs
+    // on a Linux box also in UTC-family time — neither observes
+    // Northern-Hemisphere DST, so these two dates never hit the
+    // truncation bug when *this test process's* local clock is used
+    // to interpret `DateTime(y, m, d)` literals here (they're
+    // ordinary local dates, not simulated-timezone dates). This test
+    // therefore passes both before and after the fix on this machine
+    // and in CI — it pins the post-fix semantics, but on its own it
+    // would NOT have caught the DST bug. A true regression guard
+    // needs `TZ` forced to a DST-observing zone before the Dart VM
+    // starts, which this repo deliberately avoids (queue:23059 — a
+    // subprocess-spawning test already hangs ~90 min on this Mac; a
+    // second one is not worth the risk).
+    test('US/EU spring-forward boundary: consecutive calendar dates '
+        'give distinct, sequential indices', () async {
+      final before = await DailyVerseService.todayRef(now: DateTime(2026, 3, 29));
+      final after = await DailyVerseService.todayRef(now: DateTime(2026, 3, 30));
+      expect(before, isNotNull);
+      expect(after, isNotNull);
+      expect(after, isNot(before));
+    });
+
+    test('US/EU fall-back boundary: consecutive calendar dates '
+        'give distinct, sequential indices', () async {
+      final before = await DailyVerseService.todayRef(now: DateTime(2026, 10, 25));
+      final after = await DailyVerseService.todayRef(now: DateTime(2026, 10, 26));
+      expect(before, isNotNull);
+      expect(after, isNotNull);
+      expect(after, isNot(before));
+    });
   });
 
   group('recentRefs', () {
@@ -140,6 +182,59 @@ void main() {
     test('a negative n also clamps to one entry', () async {
       final recent = await DailyVerseService.recentRefs(-5, now: DateTime(2026, 1, 1));
       expect(recent, hasLength(1));
+    });
+
+    // DST semantics pin, second defect (this iteration): recentRefs
+    // used to step a *local* DateTime cursor backward by
+    // `Duration(days: back)` — an absolute 24h duration, not a
+    // calendar-day step. Crossing a DST boundary backward that way
+    // lands on the previous calendar date at 23:00 rather than the
+    // intended date at 00:00, which both skips a calendar date out of
+    // the returned list and (via the same local-vs-UTC issue as
+    // todayRef) can misalign the rotation index. The fix steps a UTC
+    // cursor and reconstructs `date` as local only at the end.
+    //
+    // Same honesty caveat as above: this machine and CI are not in a
+    // DST-observing zone, so this pins post-fix semantics rather than
+    // reproducing the pre-fix bug.
+    test('5 days spanning the spring-forward boundary yield 5 distinct '
+        'calendar dates and 5 distinct refs', () async {
+      final recent =
+          await DailyVerseService.recentRefs(5, now: DateTime(2026, 3, 31));
+      expect(recent, hasLength(5));
+      final dates = recent.map((e) => e.date).toSet();
+      final refs = recent.map((e) => e.ref).toSet();
+      expect(dates, hasLength(5),
+          reason: 'no calendar date should be skipped or duplicated '
+              'crossing the DST boundary');
+      expect(refs, hasLength(5),
+          reason: 'no rotation index should be skipped or duplicated '
+              'crossing the DST boundary');
+      expect(dates, {
+        DateTime(2026, 3, 31),
+        DateTime(2026, 3, 30),
+        DateTime(2026, 3, 29),
+        DateTime(2026, 3, 28),
+        DateTime(2026, 3, 27),
+      });
+    });
+
+    test('5 days spanning the fall-back boundary yield 5 distinct '
+        'calendar dates and 5 distinct refs', () async {
+      final recent =
+          await DailyVerseService.recentRefs(5, now: DateTime(2026, 10, 27));
+      expect(recent, hasLength(5));
+      final dates = recent.map((e) => e.date).toSet();
+      final refs = recent.map((e) => e.ref).toSet();
+      expect(dates, hasLength(5));
+      expect(refs, hasLength(5));
+      expect(dates, {
+        DateTime(2026, 10, 27),
+        DateTime(2026, 10, 26),
+        DateTime(2026, 10, 25),
+        DateTime(2026, 10, 24),
+        DateTime(2026, 10, 23),
+      });
     });
   });
 }

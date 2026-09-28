@@ -23712,12 +23712,40 @@ so the bundle-size answer stays on the record.
       swap `paletteBg`'s light tint away from `shade100`), pick a
       different warn hue, or accept the miss.
 
-- [ ] **Found 2026-09-28, writing coverage for `lib/services/
+- [x] **Found 2026-09-28, writing coverage for `lib/services/
       daily_verse_service.dart` (`test/daily_verse_service_test.dart`):
       `todayRef()` has a genuine, reproducible DST bug in every
       DST-observing Northern-Hemisphere timezone — not a test-harness
       artifact; refuted and confirmed by an adversarial subagent, which
       also derived the exact mechanism and widened the sweep.**
+      **FIXED 2026-09-28**, per `NEXT_TASK.md`'s planning pass: both
+      `todayRef` and `recentRefs` now compare UTC calendar days against
+      a UTC epoch instead of differencing local `DateTime`s. Also found
+      and fixed a second, related defect in `recentRefs` this queue
+      entry never named: its day cursor stepped a *local* `DateTime` by
+      `Duration(days: back)`, which crossing a DST boundary backward
+      lands on the wrong calendar date at 23:00 instead of the right
+      one at 00:00 — that cursor is now UTC too, with the returned
+      `DailyVerseEntry.date` reconstructed as local so the public
+      contract is unchanged. Doc comment at the old :61-67 (asserting
+      "no UTC drift... local DateTime... rounds to whole days" — the
+      false claim that let this sit for 4 months) corrected to explain
+      the DST mechanism and the UTC-comparison fix. `test/
+      daily_verse_service_test.dart` gained 4 new cases pinning the
+      post-fix semantics across both the March and October
+      Northern-Hemisphere DST boundaries for `todayRef` and
+      `recentRefs`; each test comment states honestly that this machine
+      (Melbourne) and CI (Linux/UTC) never hit the pre-fix truncation
+      bug, so these pin semantics rather than reproduce the defect — a
+      portable regression guard would need `TZ` forced before the Dart
+      VM starts, which `queue:23059`'s ~90-min subprocess hang makes not
+      worth adding a second copy of. `flutter analyze` clean; full
+      4-chunk suite (`tools/run_test_chunks.py`, foreground, exit code
+      checked each time) passed, 3717 tests across all chunks, 1
+      pre-existing skip unrelated to this change. Landed on `main` for
+      CI only — no prod deploy (behaviour-visible but no UI/asset
+      change; queue-only + code, per the definition-of-done's "when not
+      to deploy" list), no version bump.
 
       `_epoch = DateTime(2026, 1, 1)` and `today` are both LOCAL
       DateTimes; `today.difference(_epoch).inDays` computes real

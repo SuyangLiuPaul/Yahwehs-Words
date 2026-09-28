@@ -41,10 +41,12 @@ class DailyVerseService {
     return list;
   }
 
-  /// Epoch for the rotation: 2026-01-01. The day index used to pick
-  /// today's verse is `daysSinceEpoch % list.length`. See [todayRef]
-  /// for the why behind this constant.
-  static final DateTime _epoch = DateTime(2026, 1, 1);
+  /// Epoch for the rotation: 2026-01-01 UTC. The day index used to
+  /// pick today's verse is `daysSinceEpoch % list.length`. See
+  /// [todayRef] for the why behind this constant, and for why the
+  /// epoch — and every day count derived from it — is UTC rather
+  /// than local.
+  static final DateTime _epoch = DateTime.utc(2026, 1, 1);
 
   /// Returns the canonical English reference (e.g. "John 3:16") for
   /// today, or null if the asset failed to load. Caller is
@@ -62,24 +64,39 @@ class DailyVerseService {
   /// curated list was finalised) and count days since then. The
   /// modulo against `list.length` (3650) now genuinely rotates
   /// across the whole pool, cycling back after ~10 years exactly
-  /// as the corpus intends. Same-day-different-device → same index
-  /// (calendar-day boundary, no UTC drift) because we use local
-  /// DateTime and `inDays` rounds to whole days.
+  /// as the corpus intends.
   ///
   /// Backwards compat: in 2026, `daysSinceEpoch ∈ 0..364` which
   /// happens to equal `dayOfYear`. So users testing on 2026 dates
   /// see the SAME verse as the broken formula — no perceived
   /// regression today, just correct behaviour from 2027 onward.
+  ///
+  /// DST FIX (round 57+, this iteration): the day-count used to be
+  /// taken between two *local* `DateTime`s — `today.difference(_epoch)`
+  /// where both were local midnights. `Duration.inDays` truncates
+  /// toward zero, and a local-to-local difference across a DST
+  /// transition is not a whole number of 24h days (it's 23h or 25h),
+  /// so once a year the truncation collapsed two distinct calendar
+  /// days onto the same index (a repeated verse) and once a year it
+  /// skipped an index entirely (a verse nobody ever sees) — in every
+  /// DST-observing Northern-Hemisphere timezone, every year, directly
+  /// contradicting the "10-year no-repeat" promise above. Comparing
+  /// the calendar day (y/m/d, taken from the caller's local time so
+  /// two devices in the same timezone agree on "today") against the
+  /// epoch **in UTC** removes the DST discontinuity: UTC has no
+  /// daylight-saving transitions, so `inDays` between two UTC
+  /// midnights is always exactly the calendar-day count.
   static Future<String?> todayRef({DateTime? now}) async {
     _cache ??= await (_loading ??= _load());
     final list = _cache;
     if (list == null || list.isEmpty) return null;
     final n = now ?? DateTime.now();
-    // Whole-calendar-day boundary, timezone-independent. Negative
-    // dates (before 2026-01-01) are handled by mathematical modulo
-    // — if `daysSinceEpoch` is negative we add `list.length` to
-    // wrap into [0, list.length).
-    final today = DateTime(n.year, n.month, n.day);
+    // Take the caller's local calendar day, then compare it to the
+    // epoch as UTC midnights — see the DST note above for why.
+    // Negative dates (before 2026-01-01) are handled by mathematical
+    // modulo — if `daysSinceEpoch` is negative we add `list.length`
+    // to wrap into [0, list.length).
+    final today = DateTime.utc(n.year, n.month, n.day);
     final daysSinceEpoch = today.difference(_epoch).inDays;
     final idx =
         ((daysSinceEpoch % list.length) + list.length) % list.length;
@@ -120,13 +137,25 @@ class DailyVerseService {
     // todayRef. Previous formula used `dayOfYear % list.length`
     // which only ever indexed verses 0..365 — see the comment on
     // todayRef for why that was broken.
+    //
+    // DST fix (same iteration as todayRef's): step a UTC cursor, not
+    // a local one. Local-`DateTime.subtract(Duration(days: back))`
+    // walks backward by exactly 24h of wall-clock duration, which
+    // crossing a DST boundary lands on the *previous* calendar date
+    // at 23:00 rather than the intended date at 00:00 — silently
+    // skipping a calendar day out of the returned list. The UTC
+    // cursor always steps by exactly one calendar day; the returned
+    // `date` is then reconstructed as a local `DateTime` so the
+    // public field keeps meaning "local calendar day", per its
+    // docstring on [DailyVerseEntry].
     for (int back = 0; back < cap; back++) {
-      final day = DateTime(base.year, base.month, base.day)
+      final cur = DateTime.utc(base.year, base.month, base.day)
           .subtract(Duration(days: back));
-      final daysSinceEpoch = day.difference(_epoch).inDays;
+      final daysSinceEpoch = cur.difference(_epoch).inDays;
       final idx =
           ((daysSinceEpoch % list.length) + list.length) % list.length;
-      out.add(DailyVerseEntry(date: day, ref: list[idx]));
+      final localDate = DateTime(cur.year, cur.month, cur.day);
+      out.add(DailyVerseEntry(date: localDate, ref: list[idx]));
     }
     return out;
   }
