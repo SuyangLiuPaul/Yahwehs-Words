@@ -23762,6 +23762,13 @@ so the bundle-size answer stays on the record.
       Hemisphere readers' daily verse); otherwise the next iteration can
       just take it as an ordinary one-line bug fix.
 
+      Pushed as `1cd8465f`. `flutter analyze` and the full 6-chunk suite
+      (`tools/run_test_chunks.py`, foreground, exit code checked each
+      time) were clean locally; CI run `36398667236` was still
+      `in_progress` past the ~6-minute watch budget — the next
+      iteration's step 0 should confirm this run's conclusion before
+      picking a new item.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
