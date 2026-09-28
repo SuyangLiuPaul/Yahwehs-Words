@@ -23712,6 +23712,56 @@ so the bundle-size answer stays on the record.
       swap `paletteBg`'s light tint away from `shade100`), pick a
       different warn hue, or accept the miss.
 
+- [ ] **Found 2026-09-28, writing coverage for `lib/services/
+      daily_verse_service.dart` (`test/daily_verse_service_test.dart`):
+      `todayRef()` has a genuine, reproducible DST bug in every
+      DST-observing Northern-Hemisphere timezone — not a test-harness
+      artifact; refuted and confirmed by an adversarial subagent, which
+      also derived the exact mechanism and widened the sweep.**
+
+      `_epoch = DateTime(2026, 1, 1)` and `today` are both LOCAL
+      DateTimes; `today.difference(_epoch).inDays` computes real
+      wall-clock-to-wall-clock elapsed time and `Duration.inDays`
+      truncates toward zero. Because the epoch sits in January
+      (standard time in the Northern Hemisphere, DST season in the
+      Southern), the truncation is asymmetric: a query date whose UTC
+      offset is *greater* than the epoch's (i.e. epoch in standard
+      time, query date in DST) causes the day count to compute one day
+      short for every day of that DST season, until the corresponding
+      fall-back date jumps it back by 2. Confirmed once/year for
+      2026–2035, alternating a collision then a compensating skip,
+      swept across `Europe/London`, `America/New_York`,
+      `America/Chicago`, `Europe/Berlin`, `Europe/Paris` — all show
+      exactly 10 collisions + 10 skips over that span (example:
+      `Europe/London`, 2026-03-29 and 2026-03-30 both compute
+      `daysSinceEpoch=87`, i.e. the same verse shows two days running,
+      and 2026-10-25→2026-10-26 jumps `daysSinceEpoch` 296→298,
+      silently skipping the verse at index 297 for the whole decade).
+      Southern-Hemisphere DST zones (`Australia/Melbourne`,
+      `Australia/Sydney`, `Pacific/Auckland`) show 0/0 under the real
+      Jan-1 epoch — confirmed this is exactly the hemisphere mechanism,
+      not a UK quirk, by moving the epoch to `2026-07-01` (Melbourne's
+      own standard-time season) and watching the same pattern appear
+      there instead. This directly violates the "10-year no-repeat"
+      guarantee documented in the function's own comment (lines 61-64).
+
+      **Not fixed here.** The fix is a one-line normalisation —
+      `DateTime.utc(y,m,d).difference(DateTime.utc(2026,1,1)).inDays`
+      in place of the local-DateTime difference in both `todayRef` and
+      `recentRefs` — but it changes which verse every Northern-
+      Hemisphere DST reader sees for the affected day each year (a
+      behaviour change, not a pure bug-for-bug fix restoring prior
+      output), so per this run's assignment brief it is filed rather
+      than shipped unattended. `test/daily_verse_service_test.dart`
+      does not assert on this — it can't, portably, without forcing the
+      process's `TZ` env var before the Dart VM starts, which is
+      outside a single test file's control — so the guard is this
+      queue entry plus the reproduction scripts' output above, not a
+      committed test. Needs the user only to confirm shipping the
+      one-line fix is fine (it does move a small number of Northern-
+      Hemisphere readers' daily verse); otherwise the next iteration can
+      just take it as an ordinary one-line bug fix.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
