@@ -4685,21 +4685,17 @@ const uiStrings = {
     'zh-Hans': '© 福音电台 / 基督门徒福音会 / cgdc.hk / 雅伟的话 · '
         '经授权使用。音频、视频与乐谱均从原站串流，本应用不作转存。'
         'yahwehdehua.net 的五首诗歌由 Rosablanca Suen 创作，'
-        '歌词按该站所刊载的原文收录。'
-        'setapakcdc.com 的条目为原站 YouTube 链接，版权归各自权利人所有。',
+        '歌词按该站所刊载的原文收录。',
     'zh-Hant': '© 福音電台 / 基督門徒福音會 / cgdc.hk / 雅偉的話 · '
         '經授權使用。音訊、影片與樂譜均從原站串流，本應用不作轉存。'
         'yahwehdehua.net 的五首詩歌由 Rosablanca Suen 創作，'
-        '歌詞按該站所刊載的原文收錄。'
-        'setapakcdc.com 的條目為原站 YouTube 連結，版權歸各自權利人所有。',
+        '歌詞按該站所刊載的原文收錄。',
     'en': '© FYDT / Christian Disciples Church / CGDC Hong Kong / '
         'Yahweh De Hua Ministry · used with permission. Audio, video '
         'and scores stream from the source sites; nothing is rehosted. '
         'The five yahwehdehua.net songs were composed by Rosablanca '
         'Suen and their lyrics are reproduced as that site publishes '
-        'them. The setapakcdc.com entries are links to YouTube uploads '
-        'by that congregation; those songs remain the copyright of '
-        'their respective owners.',
+        'them.',
   },
   'aboutFontsBundled': {
     'zh-Hans': '内置字体：Roboto',
