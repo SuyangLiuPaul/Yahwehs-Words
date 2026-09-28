@@ -67,6 +67,7 @@ untracked directory.
 Usage:  python3 tools/audit_biblexg_blocknote_parity.py
 """
 
+import argparse
 import difflib
 import json
 import os
@@ -261,16 +262,9 @@ def find_in_notes(chunk: str, notes: list, max_window: int = 3) -> bool:
     return False
 
 
-def check_growth(sc_notes: dict, tr_notes: dict) -> list:
-    """Return ids with a blockNotes mismatch not explained by bucket (a)
-    or (b) and not already in PENDING_IDS — i.e. new bucket-(c) growth.
-    """
-    common_ids = sorted(set(sc_notes) & set(tr_notes))
-    mismatches = [vid for vid in common_ids
-                  if len(sc_notes[vid]) != len(tr_notes[vid])]
-    print(f'{len(common_ids)} common ids (v2), {len(mismatches)} with a '
-          'blockNotes count mismatch.')
-
+def _book_indexes(sc_notes: dict, tr_notes: dict, common_ids: list):
+    """Book-scoped note pools used by both the growth guard and the
+    pending-set diagnostic, so the two never compute this differently."""
     sc_by_book: dict = {}
     tr_by_book: dict = {}
     for vid in common_ids:
@@ -279,37 +273,95 @@ def check_growth(sc_notes: dict, tr_notes: dict) -> list:
             [t2s(n) for n in tr_notes[vid]])
     sc_all = [n for notes in sc_by_book.values() for n in notes]
     tr_all = [n for notes in tr_by_book.values() for n in notes]
+    return sc_by_book, tr_by_book, sc_all, tr_all
+
+
+def _genuinely_missing_chunks(vid, sc_notes, tr_notes,
+                               sc_by_book, tr_by_book, sc_all, tr_all):
+    """Bucket-(a)/(b)-fold a single id's mismatch; return the chunks left
+    over (empty if fully explained by (a) or (b)). Shared by check_growth
+    (which gates on PENDING_IDS) and pending_id_status (which does not,
+    since it exists precisely to inspect what PENDING_IDS hides)."""
+    sc_text = norm(' '.join(sc_notes[vid]))
+    tr_text = norm(' '.join(t2s(n) for n in tr_notes[vid]))
+    if ratio(sc_text, tr_text) >= FOLD_RATIO:
+        return []  # bucket (a) — re-split within one verse
+
+    sc_book = sc_by_book.get(vid[:2], [])
+    tr_book = tr_by_book.get(vid[:2], [])
+
+    genuinely_missing = []
+    for chunk in extra_chunks(tr_text, sc_text):   # SC extra vs TR
+        if find_in_notes(chunk, tr_book) or find_in_notes(chunk, tr_all):
+            continue  # bucket (b) — reattached elsewhere
+        label = label_of(chunk)
+        if label and same_chapter_has_label(tr_notes, vid, label):
+            continue  # same annotated point, heavily reworded — not missing
+        genuinely_missing.append(('sc_extra', chunk))
+    for chunk in extra_chunks(sc_text, tr_text):   # TR extra vs SC
+        if find_in_notes(chunk, sc_book) or find_in_notes(chunk, sc_all):
+            continue
+        label = label_of(chunk)
+        if label and same_chapter_has_label(sc_notes, vid, label):
+            continue
+        genuinely_missing.append(('tr_extra', chunk))
+    return genuinely_missing
+
+
+def check_growth(sc_notes: dict, tr_notes: dict, edition: str = 'v2') -> list:
+    """Return ids with a blockNotes mismatch not explained by bucket (a)
+    or (b) and not already in PENDING_IDS — i.e. new bucket-(c) growth.
+    """
+    common_ids = sorted(set(sc_notes) & set(tr_notes))
+    mismatches = [vid for vid in common_ids
+                  if len(sc_notes[vid]) != len(tr_notes[vid])]
+    print(f'{len(common_ids)} common ids ({edition}), {len(mismatches)} with '
+          'a blockNotes count mismatch.')
+
+    sc_by_book, tr_by_book, sc_all, tr_all = _book_indexes(
+        sc_notes, tr_notes, common_ids)
 
     unexplained = []
     for vid in mismatches:
-        sc_text = norm(' '.join(sc_notes[vid]))
-        tr_text = norm(' '.join(t2s(n) for n in tr_notes[vid]))
-        if ratio(sc_text, tr_text) >= FOLD_RATIO:
-            continue  # bucket (a) — re-split within one verse
-
-        sc_book = sc_by_book.get(vid[:2], [])
-        tr_book = tr_by_book.get(vid[:2], [])
-
-        genuinely_missing = []
-        for chunk in extra_chunks(tr_text, sc_text):   # SC extra vs TR
-            if find_in_notes(chunk, tr_book) or find_in_notes(chunk, tr_all):
-                continue  # bucket (b) — reattached elsewhere
-            label = label_of(chunk)
-            if label and same_chapter_has_label(tr_notes, vid, label):
-                continue  # same annotated point, heavily reworded — not missing
-            genuinely_missing.append(('sc_extra', chunk))
-        for chunk in extra_chunks(sc_text, tr_text):   # TR extra vs SC
-            if find_in_notes(chunk, sc_book) or find_in_notes(chunk, sc_all):
-                continue
-            label = label_of(chunk)
-            if label and same_chapter_has_label(sc_notes, vid, label):
-                continue
-            genuinely_missing.append(('tr_extra', chunk))
-
+        genuinely_missing = _genuinely_missing_chunks(
+            vid, sc_notes, tr_notes, sc_by_book, tr_by_book, sc_all, tr_all)
         if genuinely_missing and vid not in PENDING_IDS:
             unexplained.append((vid, genuinely_missing))
 
     return unexplained
+
+
+def pending_id_status(sc_notes: dict, tr_notes: dict) -> list:
+    """Diagnostic only, never gates exit status: for each id pinned in
+    PENDING_CLASSIFICATION (a v2 finding), report whether THIS edition's
+    sc_notes/tr_notes still show a count mismatch on it, and if so
+    whether that mismatch survives bucket (a)/(b) folding here too —
+    i.e. whether the id would independently land in bucket (c) for this
+    edition, not just because v2 said so. Lets the growth guard's
+    PENDING_IDS exclusion (necessary so v2's own known set doesn't
+    trip check_growth) be cross-checked against a second edition
+    instead of taken on faith.
+    """
+    common_ids = sorted(set(sc_notes) & set(tr_notes))
+    sc_by_book, tr_by_book, sc_all, tr_all = _book_indexes(
+        sc_notes, tr_notes, common_ids)
+
+    rows = []
+    for group, ref in PENDING_CLASSIFICATION:
+        for vid in group:
+            if vid not in sc_notes or vid not in tr_notes:
+                rows.append((vid, ref, 'missing-id', None, None))
+                continue
+            sc_n, tr_n = len(sc_notes[vid]), len(tr_notes[vid])
+            if sc_n == tr_n:
+                rows.append((vid, ref, 'no-mismatch', sc_n, tr_n))
+                continue
+            missing = _genuinely_missing_chunks(
+                vid, sc_notes, tr_notes, sc_by_book, tr_by_book,
+                sc_all, tr_all)
+            status = 'survives-bucket-c' if missing else 'folded-a-or-b'
+            rows.append((vid, ref, status, sc_n, tr_n))
+    return rows
 
 
 def classify(sc_notes: dict, tr_notes: dict, src_dir: str) -> None:
@@ -390,23 +442,31 @@ def classify(sc_notes: dict, tr_notes: dict, src_dir: str) -> None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--edition', choices=sorted(EDITIONS), default='v2',
+                         help='which of biblexg-v2*/v3* to check (default: '
+                              'v2, matching this script\'s original scope)')
+    args = parser.parse_args()
+    edition = args.edition
+
     if shutil.which('opencc') is None:
         print('SKIP — opencc not on PATH. Expected on CI; this check needs '
               'the real converter, never a hand-rolled map.')
         return 0
 
-    v2 = EDITIONS['v2']
-    src_dir = find_source_dir('v2')
+    ed = EDITIONS[edition]
+    src_dir = find_source_dir(edition)
     if src_dir is None:
-        print('SKIP — no publisher source cache found for v2 '
-              f"({v2['cache_dir']!r}). Expected on CI; run "
-              'tools/audit_biblexg_notes.py once to populate it.')
+        print(f'SKIP — no publisher source cache found for {edition} '
+              f"({ed['cache_dir']!r}). Expected on CI; run "
+              f'tools/audit_biblexg_notes.py --edition {edition} once to '
+              'populate it.')
         return 0
 
-    sc_notes = load_our_notes(v2['cn_asset'])
-    tr_notes = load_our_notes(v2['tr_asset'])
+    sc_notes = load_our_notes(ed['cn_asset'])
+    tr_notes = load_our_notes(ed['tr_asset'])
 
-    unexplained = check_growth(sc_notes, tr_notes)
+    unexplained = check_growth(sc_notes, tr_notes, edition)
     if unexplained:
         print(f'\nGROWTH — {len(unexplained)} id(s) with genuinely missing '
               'blockNotes content not already in PENDING_CLASSIFICATION:')
@@ -418,7 +478,30 @@ def main() -> int:
               'already pinned.')
         return 1
 
-    print('No growth beyond the pinned PENDING_CLASSIFICATION set.\n')
+    suffix = '' if edition == 'v2' else f' ({edition})'
+    print(f'No growth beyond the pinned PENDING_CLASSIFICATION set{suffix}.\n')
+
+    if edition != 'v2':
+        print('== Pinned v2 bucket-(c) set, cross-checked against '
+              f'{edition} ==\n')
+        for vid, ref, status, sc_n, tr_n in pending_id_status(
+                sc_notes, tr_notes):
+            counts = f'SC {sc_n} / TR {tr_n}' if sc_n is not None else '?'
+            print(f'  {ref:12s} {vid}: {status:18s} ({counts})')
+        print(f'\nSkipping publisher-source verdicts for {edition}: this '
+              "script's own docstring says its source cache "
+              f"({ed['cache_dir']!r}) is not like-for-like with "
+              f"{edition}'s assets — the assets carry footnotes adopted "
+              'from the translator\'s newer site while the cached snapshot '
+              'is the older, thinner one (see audit_biblexg_v2_vs_tr.py\'s '
+              'docstring and commit c6461080). A verdict from a thinner '
+              'snapshot would be a guess dressed as a finding, so this '
+              'stops at the bucket level: every id above marked '
+              "'survives-bucket-c' is inconclusive for this edition — "
+              'cache not like-for-like with assets, not a confirmed '
+              'publisher-disagreement/our-ingest-dropped-it verdict.')
+        return 0
+
     classify(sc_notes, tr_notes, src_dir)
     return 0
 

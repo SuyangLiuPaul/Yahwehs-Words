@@ -3879,6 +3879,73 @@ reported. Work these top-down before P2.
       clean locally; the next iteration's step 0 should confirm this
       run's conclusion before picking a new item.
 
+      **2026-09-28, later still — the v3 growth guard this item deferred
+      is now run; it corrects a claim made earlier in this same item.**
+      `tools/audit_biblexg_blocknote_parity.py` gained `--edition
+      {v2,v3}` (default `v2`, checked byte-identical to the pre-change
+      output for both the bare invocation and `--edition v2` — diffed,
+      not assumed). It also gained a diagnostic, `pending_id_status()`,
+      that cross-checks the 14 pinned ids above against a SECOND
+      edition's own bucket-(a)/(b) folding, rather than trusting a raw
+      count-mismatch the way the earlier claim above ("13 verse-ids
+      appear in both v2's and v3's bucket (c)") effectively did.
+
+      `--edition v3`: **7,927 common ids, 52 with a blockNotes count
+      mismatch** (v2 was 7,924/53). The delta is real asset churn, not a
+      counting bug: v2→v3 removed 4 ids (`42023033a`, `44008041`,
+      `47013013`, `50001002`) and added 7 (`41006008`-`011` i.e. 可6:8-11,
+      `42023034a`, `43005004` i.e. 约5:4, `47013014`); v3 also fixed a
+      v2-only SC/TR id-count asymmetry (v2-tr alone carried 可6:8-11) —
+      v3's SC and TR id-sets are now identical at 7,927 each, unlike
+      v2's. Exit code 0: no NEW bucket-(c) growth beyond `PENDING_IDS`.
+
+      Re-deriving the pinned 14 against v3's OWN text (the earlier "13
+      appear in both" claim never actually did this — it read as a raw
+      count-mismatch check): **12 independently reproduce bucket-(c)
+      shape in v3** (41001027, 42001055, 42009017, 42012021, 45003026,
+      45010013, 45012008, 46013003, 47005010, 52003005, 62003010,
+      66008012 — same gap, same direction, same fold logic
+      `check_growth` already trusts for v2). **1 genuinely resolves**:
+      45003020's fold in v3 is a real bucket-(b) reattachment — its
+      1401-char TR-only chunk (the "20节注" text, distinctive
+      `（20节注完）` end-marker and citation list included) is found
+      near-verbatim inside v3 SC's `45003026` note. **1 is not safe to
+      call either way**: 41005001 only folds via a 0.879-ratio match
+      against an UNRELATED SC note at 41007030 (可7:25's own "不洁的灵"
+      gloss) — exactly the boilerplate-collision false positive
+      `find_in_notes`'s own docstring already names as a known weakness
+      (re-triggered here, not newly discovered). So "13 verse-ids appear
+      in both" should read **12 confirmed, 1 resolved, 1 inconclusive**
+      — the "13" folded one real resolution and one matcher artifact
+      together as if both were data. 罗10:13 (45010013)'s v3 count, SC 3
+      / TR 1 (already noted above), is reconfirmed unchanged.
+
+      `classify()` (the publisher-source verdict step) stays gated off
+      for v3 by default — the general staleness claim behind that gate
+      (`audit_biblexg_v2_vs_tr.py`'s docstring, commit `c6461080`, and
+      `d8554141`'s 478-vs-106 TR/CN-divergence measurement) holds up on
+      its own terms and is not overturned by this pass. A manual
+      spot-check against these exact 14 ids' publisher `cn-*`/`tw-*`
+      pages (not wired into the tool) got `publisher-disagreement` for
+      all of them — identical to v2's verdict — so within this narrow,
+      already-pinned set specifically the cache is not stale. That is a
+      finding about these 14 ids, not a reason to flip the blanket gate:
+      the staleness the gate exists for is the newer 1132→2209 footnote
+      adoption, which this pinned set predates and does not test.
+
+      Refuted before landing: a subagent tried to break the
+      byte-identical claim, the common-id delta, the 12/1/1 breakdown,
+      and the like-for-like gate. It correctly caught the 41005001 false
+      positive and confirmed the 45003020 fold as genuine by reading
+      `_genuinely_missing_chunks`/`find_in_notes` itself rather than
+      trusting the draft; it traced the 7924→7927 delta to real
+      versification churn instead of accepting "unremarkable" on faith.
+
+      No asset touched (`git diff --stat -- assets/` empty at commit
+      time). `test/test_audit_biblexg_blocknote_parity.py` gained
+      `EditionFlagTest` and `PendingIdStatusTest` (fixture-based, no
+      opencc/cache — this file's existing house rule).
+
 **2026-09-16 — `audit_originals_compounds.py --check` run against a
 warm cache (no queue item ticked; this is the fallback's data-audit
 branch, run because every tier above P0 was blocked — see this hour's

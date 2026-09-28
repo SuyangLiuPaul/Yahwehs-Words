@@ -8,6 +8,8 @@ Run:
 """
 import importlib.util
 import os
+import subprocess
+import sys
 import unittest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -134,6 +136,81 @@ class PendingClassificationShapeTest(unittest.TestCase):
         expected = {vid for group, _ in parity.PENDING_CLASSIFICATION
                     for vid in group}
         self.assertEqual(parity.PENDING_IDS, expected)
+
+
+class EditionFlagTest(unittest.TestCase):
+    """`--edition` was added 2026-09-28 so this script can also check
+    biblexg-v3*; these only exercise argparse itself (rejecting an
+    unknown edition happens before the opencc/cache checks main() does,
+    so this needs neither and always runs on CI)."""
+
+    def test_unknown_edition_is_rejected_by_argparse(self):
+        script = os.path.join(REPO, 'tools',
+                               'audit_biblexg_blocknote_parity.py')
+        result = subprocess.run(
+            [sys.executable, script, '--edition', 'bogus'],
+            capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn('invalid choice', result.stderr)
+
+    def test_editions_dict_has_v2_and_v3(self):
+        # pending_id_status()/check_growth() are edition-agnostic; the
+        # only edition-specific piece is this table (from
+        # tools/audit_biblexg_notes.py), so this is what actually gates
+        # which --edition values are meaningful.
+        self.assertIn('v2', parity.EDITIONS)
+        self.assertIn('v3', parity.EDITIONS)
+
+
+class PendingIdStatusTest(unittest.TestCase):
+    """`pending_id_status()` cross-checks the pinned PENDING_CLASSIFICATION
+    ids against a second edition's own notes, without needing opencc or
+    the publisher cache: t2s() no-ops when opencc is absent, and all
+    fixture text here is already Simplified, so the fold/reattachment
+    logic is exercised identically with or without the real converter.
+    Targets 41001027 (可1:27), the first pinned id, and leaves every
+    other pinned id absent from the fixture dicts — pending_id_status()
+    must report those as 'missing-id' rather than raising.
+    """
+
+    VID = '41001027'
+
+    def test_absent_id_is_missing_id(self):
+        rows = parity.pending_id_status({}, {})
+        statuses = {vid: status for vid, _ref, status, _sc, _tr in rows}
+        self.assertEqual(statuses[self.VID], 'missing-id')
+
+    def test_equal_note_counts_is_no_mismatch(self):
+        notes = {self.VID: ['同一条注释内容用于测试无差异情况的字数足够长。']}
+        rows = parity.pending_id_status(notes, notes)
+        row = next(r for r in rows if r[0] == self.VID)
+        self.assertEqual(row[2], 'no-mismatch')
+        self.assertEqual((row[3], row[4]), (1, 1))
+
+    def test_resplit_with_same_total_text_folds(self):
+        # Same content as one block (TR) vs split into two (SC) — bucket
+        # (a), the same fold `check_growth` already applies for v2.
+        part_a = '第一部分内容测试文字总共超过二十个字符长度用于满足最小片段要求。'
+        part_b = '第二部分内容测试文字总共超过二十个字符长度用于满足最小片段要求二。'
+        sc_notes = {self.VID: [part_a, part_b]}
+        tr_notes = {self.VID: [part_a + part_b]}
+        rows = parity.pending_id_status(sc_notes, tr_notes)
+        row = next(r for r in rows if r[0] == self.VID)
+        self.assertEqual(row[2], 'folded-a-or-b')
+        self.assertEqual((row[3], row[4]), (2, 1))
+
+    def test_genuinely_extra_content_survives_bucket_c(self):
+        # TR carries a second note with content absent from SC and not
+        # found reattached anywhere else in the (single-id) fixture —
+        # the shape this hour's v3 run found for 12 of the 14 pinned ids.
+        shared = '关于某个概念的第一条注释内容用于测试满足片段长度要求一。'
+        extra = '这是第二条完全不同的注释内容用于测试真正缺失的情况二二二。'
+        sc_notes = {self.VID: [shared]}
+        tr_notes = {self.VID: [shared, extra]}
+        rows = parity.pending_id_status(sc_notes, tr_notes)
+        row = next(r for r in rows if r[0] == self.VID)
+        self.assertEqual(row[2], 'survives-bucket-c')
+        self.assertEqual((row[3], row[4]), (1, 2))
 
 
 if __name__ == '__main__':
