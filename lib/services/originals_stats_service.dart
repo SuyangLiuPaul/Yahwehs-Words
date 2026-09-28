@@ -125,6 +125,7 @@ class OriginalsStatsService {
   /// code paths.
   static void clearCache() {
     _cache = null;
+    _aggregateCache = null;
   }
 
   /// Load and aggregate. Returns the full list sorted by

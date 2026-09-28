@@ -23802,6 +23802,44 @@ so the bundle-size answer stays on the record.
       iteration's step 0 should confirm this run's conclusion before
       picking a new item.
 
+- [ ] **`lib/services/bible_stats_service.dart`'s `BibleStatsService`
+      class is dead code — zero call sites in `lib/`.** Found
+      2026-09-28 while writing `test/originals_stats_service_test.dart`
+      for its Round-56 replacement (`OriginalsStatsService`). Verified:
+      `grep -rn "BibleStatsService" lib/` returns only the class
+      definition and two `// comments` in `stats_page.dart` (lines 45,
+      103) describing why it's no longer used — no actual invocation,
+      and `stats_page.dart`'s remaining `BibleStats` symbols are
+      `// ignore: unused_element` dead helpers. Independently confirmed
+      by a refuter subagent before this note was filed. Not deleted
+      here — deletion is a scope call the fallback assignment that
+      found this explicitly bars ("do not delete it"). Whoever picks
+      this up: confirm still-zero call sites (Round-56 code moves
+      fast) before removing the file.
+
+- [ ] **`OriginalsStatsService.load()` (`lib/services/
+      originals_stats_service.dart:132`) caches a failed asset load
+      permanently, with no retry, for the rest of the process.** Found
+      2026-09-28 alongside the item above. `_cache = results` at what
+      is now line ~196 sits *outside* the `try`, and the `catch (_)` at
+      ~192 is bare — so one transient failure reading/parsing
+      `assets/strongs/concordance.json` (or `hebrew.json`/`greek.json`)
+      leaves `_cache` set to an empty list forever; every later call to
+      `load()`, `topN()`, `filtered()`, or `aggregate()` returns empty/
+      zeroed stats with no error and no way to recover short of
+      `clearCache()` (which nothing in `lib/` calls) or a process
+      restart. The whole Stats page silently goes blank. Filed, not
+      fixed — per this hour's assignment brief, changing `load()`'s
+      error-caching behaviour is a behaviour change, not the one-line
+      cache-completeness fix (`_aggregateCache = null;` in
+      `clearCache()`) that was in scope. `test/
+      originals_stats_service_test.dart` does not exercise this path —
+      it can't without an injectable asset bundle, which
+      `OriginalsStatsService` doesn't currently support. A fix would
+      need to decide: retry every call, or retry only after some
+      backoff — that's a design call for whoever picks this up, not an
+      obvious one-liner like the cache-clearing bug was.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
