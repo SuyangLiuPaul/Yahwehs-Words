@@ -23840,6 +23840,12 @@ so the bundle-size answer stays on the record.
       backoff — that's a design call for whoever picks this up, not an
       obvious one-liner like the cache-clearing bug was.
 
+      Pushed as `144f6827`. `flutter analyze` and the full 6-chunk
+      suite were clean locally; CI run `36417768340` was still
+      `in_progress` past the ~6-minute watch budget — the next
+      iteration's step 0 should confirm this run's conclusion before
+      picking a new item.
+
 ## Blocked on the user — do not attempt
 
 - ~~**Do GitHub releases resume?**~~ **ANSWERED 2026-09-01, user:
