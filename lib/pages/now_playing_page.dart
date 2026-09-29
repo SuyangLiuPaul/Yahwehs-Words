@@ -54,31 +54,48 @@ class NowPlayingPage extends StatelessWidget {
         // decide you like a song, and until now keeping it meant going
         // back to the list to find it again.
         actions: [
-          if (player.current != null) ...[
-            SongFavouriteButton(song: player.current!, locale: locale),
+          // 2026-09-29: this group used to be built once from
+          // `player.current` and its closures re-read `player.current!` at
+          // tap time. The AppBar does not listen to the player, so when the
+          // song stopped (queue ended, sheet dismissed) the buttons stayed
+          // and the next tap threw "Null check operator used on a null
+          // value" (field report, Android 1.6.32, /NowPlayingPage). It now
+          // rebuilds with the player and binds the song it was built for.
+          ListenableBuilder(
+            listenable: player,
+            builder: (context, _) {
+              final current = player.current;
+              if (current == null) return const SizedBox.shrink();
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+            SongFavouriteButton(song: current, locale: locale),
             IconButton(
               icon: const Icon(Icons.copy_outlined, size: 20),
               tooltip: uiStrings['copySelection']?[locale] ?? 'Copy',
               onPressed: () => ClipboardHelper.copyWithFeedback(
-                  context, songCopyText(player.current!, locale)),
+                  context, songCopyText(current, locale)),
             ),
             // Share. This is the screen the user was on when they
             // said "还是不能share" — the link had shipped a day earlier
             // and lived only on the songs list's detail sheet, which is
             // not where anyone is when they decide to pass a song on.
-            SongShareButton(song: player.current!, locale: locale),
+            SongShareButton(song: current, locale: locale),
             // 2026-09-13: 「可以iPhone Android win mac都可以下载吗」— the
             // file itself, to Downloads / the Files app / the desktop,
             // as distinct from the offline copy the app keeps for its
             // own playback.
-            SongSaveButton(song: player.current!, locale: locale),
+            SongSaveButton(song: current, locale: locale),
             IconButton(
               icon: const Icon(Icons.playlist_add_rounded, size: 22),
               tooltip: uiStrings['songsAddToPlaylist']?[locale],
               onPressed: () =>
-                  showAddToPlaylistSheet(context, player.current!, locale),
+                  showAddToPlaylistSheet(context, current, locale),
             ),
-          ],
+                ],
+              );
+            },
+          ),
           const LanguageSwitcherButton(),
           const HomeIconButton(),
         ],
