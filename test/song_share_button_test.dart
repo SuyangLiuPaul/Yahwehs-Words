@@ -67,9 +67,6 @@ void main() {
         .take(4)
         .toList();
     expect(playable.length, 4, reason: 'need a queue of songs with words');
-    final playing = playable.first;
-    final lyrics = playing.lyrics!.trim();
-
     final player = SongPlayerService.instance;
     await tester.runAsync(() => player.playQueue(playable, label: 'test'));
     // audioplayers reaches for platform channels that do not exist in a
@@ -92,6 +89,13 @@ void main() {
     expect(button, findsOneWidget,
         reason: 'the player is where you are when you decide to pass a '
             'song on; this is the button that was missing');
+
+    // The button follows the player, so what it shares is whatever is
+    // current when it is tapped. On a machine with no audio backend the
+    // queue may already have stepped past the first song (CI does), so the
+    // expectation is read from the player rather than assumed.
+    final playing = player.current!;
+    final lyrics = playing.lyrics!.trim();
 
     await tester.tap(button);
     // Pumped rather than settled: the player screen never reaches a
