@@ -71,6 +71,8 @@ class SongPlaybackEngine {
 
   /// What [_standby] has been prepared with, as the caller spelled it.
   String? _standbyUrl;
+  final _sourceRevisions = <ap.AudioPlayer, int>{};
+  int _sourceRevision = 0;
 
   /// Attach the stream plumbing to [p], reporting only while [p] is the
   /// LIVE player: the standby buffers — and reports a duration, and a
@@ -146,13 +148,44 @@ class SongPlaybackEngine {
     // the gap this exists to close.
     if (_standbyUrl == url) {
       final old = _player;
+      final oldSource = _sourceRevisions[old];
       _player = _standby;
       _standbyUrl = null;
-      await _guard(id, _player.resume);
-      unawaited(_guard(id, old.stop));
+      final active = _player;
+      var started = false;
+      await _guard(id, () async {
+        try {
+          await active.resume();
+          started = true;
+        } finally {
+          if (!identical(old, _player) && _sourceRevisions[old] == oldSource) {
+            unawaited(_guard(id, old.stop));
+          }
+        }
+      });
+      if (started) unawaited(_publishHandoffDuration(active, id));
       return;
     }
-    await _guard(id, () => _player.play(_sourceFor(url)));
+    final active = _player;
+    _sourceRevisions[active] = ++_sourceRevision;
+    await _guard(id, () => active.play(_sourceFor(url)));
+  }
+
+  Future<void> _publishHandoffDuration(ap.AudioPlayer active, int id) async {
+    // Android reports duration when prepared, while this player was still
+    // standby. Metadata discovery must not hold sounding playback loading.
+    try {
+      final duration =
+          await active.getDuration().timeout(const Duration(seconds: 3));
+      if (id == _attempt &&
+          identical(active, _player) &&
+          (active.state == ap.PlayerState.playing ||
+              active.state == ap.PlayerState.paused) &&
+          duration != null &&
+          duration > Duration.zero) {
+        _duration.add(duration);
+      }
+    } catch (_) {/* Metadata failure does not fail sounding audio. */}
   }
 
   Future<void> resume() => _guard(_attempt, _player.resume);
@@ -164,14 +197,6 @@ class SongPlaybackEngine {
 
   /// Warm the NEXT track so the hand-off has nothing to fetch.
   ///
-  /// A no-op here, said plainly rather than faked. audioplayers holds
-  /// one platform player and offers no second source to prime, and the
-  /// gap this exists to close was reported on the web build. The native
-  /// iOS build has its own version of the same gap — audioplayers
-  /// empties the AVPlayer (`replaceCurrentItem(nil)`) before Dart is
-  /// asked what plays next — and closing that needs a second player
-  /// and a background task, which is a separate change. Until then this
-  /// returns immediately so the handler can call it unconditionally.
   /// Prepare the NEXT track on the other player, so the hand-off in
   /// [play] has nothing to fetch.
   ///
@@ -188,8 +213,10 @@ class SongPlaybackEngine {
   Future<void> preload(String url) async {
     if (_unavailable || _standbyUrl == url) return;
     _standbyUrl = url;
+    final standby = _standby;
+    _sourceRevisions[standby] = ++_sourceRevision;
     try {
-      await _standby.setSource(_sourceFor(url));
+      await standby.setSource(_sourceFor(url));
     } catch (_) {
       // A track that will not prepare is not an error here: the play
       // that follows takes the ordinary path and reports it properly.

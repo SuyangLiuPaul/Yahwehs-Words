@@ -1,3 +1,47 @@
+import Foundation
+
+// Pure snapshot rules shared by the display and focused native checks.
+struct WatchPlaybackSnapshot {
+  static func timestamp(_ state: [String: Any]) -> Double {
+    (state["syncedAt"] as? NSNumber)?.doubleValue ?? 0
+  }
+  static func accepts(_ incoming: [String: Any], after current: [String: Any]) -> Bool {
+    timestamp(incoming) >= timestamp(current)
+  }
+  static func isFresh(_ state: [String: Any], now: Date) -> Bool {
+    let stamp = timestamp(state)
+    let age = now.timeIntervalSince1970 * 1000 - stamp
+    return stamp > 0 && age >= -5000 && age <= 45000
+  }
+  static func elapsed(_ state: [String: Any], now: Date, connected: Bool) -> Int {
+    let sampled = max(0, (state["position"] as? NSNumber)?.intValue ?? 0)
+    let total = max(0, (state["duration"] as? NSNumber)?.intValue ?? 0)
+    let advances = connected && isFresh(state, now: now) &&
+      state["playing"] as? Bool == true && state["loading"] as? Bool != true &&
+      (state["error"] as? String ?? "").isEmpty
+    let age = max(0, now.timeIntervalSince1970 - timestamp(state) / 1000)
+    let position = sampled + (advances ? Int(age) : 0)
+    return total > 0 ? min(position, total) : position
+  }
+  static func canControl(_ state: [String: Any], now: Date, connected: Bool, error: String) -> Bool {
+    connected && isFresh(state, now: now) && error.isEmpty &&
+      state["loading"] as? Bool != true && (state["error"] as? String ?? "").isEmpty &&
+      !(state["id"] as? String ?? "").isEmpty
+  }
+  static func clock(_ seconds: Int) -> String {
+    let value = max(0, seconds)
+    return value >= 3600 ? String(format: "%d:%02d:%02d", value / 3600, value / 60 % 60, value % 60)
+      : String(format: "%d:%02d", value / 60, value % 60)
+  }
+}
+
+struct WatchConnectionProof {
+  private(set) var generation = 0
+  mutating func received() { generation += 1 }
+  func canFail(requestGeneration: Int) -> Bool { generation == requestGeneration }
+}
+
+#if !WATCH_COMPANION_LOGIC_TEST
 import SwiftUI
 import WatchConnectivity
 
@@ -21,12 +65,20 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
       WCSession.default.activate()
     }
   }
-  func accept(_ value: [String: Any]) {
-    DispatchQueue.main.async {
-      self.state = value
-      self.error = value["error"] as? String ?? ""
-      UserDefaults.standard.set(value, forKey: "words.lastState")
+  private var connectionProof = WatchConnectionProof()
+  private var pendingRequests = Set<UUID>()
+  private func acceptOnMain(_ value: [String: Any]) {
+    guard WatchPlaybackSnapshot.accepts(value, after: state) else { return }
+    state = value
+    if WatchPlaybackSnapshot.isFresh(value, now: Date()) {
+      connectionProof.received()
+      connected = WCSession.default.isReachable
+      error = value["error"] as? String ?? ""
     }
+    UserDefaults.standard.set(value, forKey: "words.lastState")
+  }
+  func accept(_ value: [String: Any]) {
+    DispatchQueue.main.async { self.acceptOnMain(value) }
   }
   func send(_ action: String, id: String? = nil, reply: (([[String: Any]]) -> Void)? = nil) {
     let session = WCSession.default
@@ -36,20 +88,41 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
       reply?([])
       return
     }
+    let request = UUID()
+    let proofAtRequest = connectionProof.generation
+    pendingRequests.insert(request)
+    var completion = reply
+    func finish(_ value: [String: Any]?, failure: String? = nil) {
+      guard self.pendingRequests.remove(request) != nil else { return }
+      let callback = completion
+      completion = nil
+      if let failure = failure {
+        if self.connectionProof.canFail(requestGeneration: proofAtRequest) {
+          self.connected = false
+          self.error = failure
+        }
+        callback?([])
+      } else if let value = value {
+        if action == "children" || value["syncedAt"] == nil {
+          let currentRequest = self.connectionProof.canFail(requestGeneration: proofAtRequest)
+          self.connectionProof.received()
+          self.connected = session.isReachable
+          if (value["error"] as? String ?? "").isEmpty || currentRequest {
+            self.error = value["error"] as? String ?? ""
+          }
+          callback?(value["items"] as? [[String: Any]] ?? [])
+        } else { self.acceptOnMain(value) }
+      }
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
+      finish(nil, failure: "iPhone did not reply. Open Words and retry.")
+    }
     var data: [String: Any] = ["action": action]
     if let id = id { data["id"] = id }
     session.sendMessage(data, replyHandler: { value in
-      if action == "children" {
-        DispatchQueue.main.async {
-          self.error = value["error"] as? String ?? ""
-          reply?(value["items"] as? [[String: Any]] ?? [])
-        }
-      } else { self.accept(value) }
+      DispatchQueue.main.async { finish(value) }
     }, errorHandler: { _ in
-      DispatchQueue.main.async {
-        self.error = "iPhone unavailable. Try again when connected."
-        reply?([])
-      }
+      DispatchQueue.main.async { finish(nil, failure: "iPhone unavailable. Try again when connected.") }
     })
   }
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
@@ -103,25 +176,36 @@ struct DailyVerseView: View {
 struct WatchPlaybackView: View {
   @EnvironmentObject var companion: WatchCompanion
   var body: some View {
-    let playing = companion.state["playing"] as? Bool ?? false
-    let sermon = companion.state["sermon"] as? Bool ?? false
-    ScrollView {
-      VStack(spacing: 10) {
-        Text((companion.state["title"] as? String ?? "").isEmpty ? "Choose audio from Listen" : companion.state["title"] as? String ?? "").font(.headline).multilineTextAlignment(.center)
-        Text(companion.state["subtitle"] as? String ?? "").font(.caption2).foregroundStyle(.secondary)
-        HStack(spacing: 4) {
-          transport(sermon ? "backward" : "previous", image: sermon ? "gobackward.15" : "backward.end.fill", label: sermon ? "Back 15 seconds" : "Previous hymn")
-          transport(playing ? "pause" : "play", image: playing ? "pause.fill" : "play.fill", label: playing ? "Pause" : "Play")
-          transport(sermon ? "forward" : "next", image: sermon ? "goforward.30" : "forward.end.fill", label: sermon ? "Forward 30 seconds" : "Next hymn")
-        }.disabled(!companion.connected || (companion.state["id"] as? String ?? "").isEmpty)
-        if let p = companion.state["position"] as? Int, let d = companion.state["duration"] as? Int, d > 0 {
-          ProgressView(value: Double(min(p,d)), total: Double(d))
-          Text("\(p/60):\(String(format:"%02d",p%60)) / \(d/60):\(String(format:"%02d",d%60))").font(.caption2)
-        }
-        if !companion.error.isEmpty { Text(companion.error).font(.caption2).foregroundStyle(.orange) }
-        Text("Audio plays on iPhone").font(.caption2).foregroundStyle(.secondary)
-      }.padding(.horizontal, 4)
+    TimelineView(.periodic(from: .now, by: 1)) { timeline in
+      playback(now: timeline.date)
     }.navigationTitle("Now playing")
+  }
+  private func playback(now: Date) -> some View {
+    let state = companion.state
+    let playing = state["playing"] as? Bool ?? false
+    let sermon = state["sermon"] as? Bool ?? false
+    let live = companion.connected && WatchPlaybackSnapshot.isFresh(state, now: now)
+    let enabled = WatchPlaybackSnapshot.canControl(state, now: now, connected: companion.connected, error: companion.error)
+    let canSkip = sermon || state["canSkip"] as? Bool == true
+    let elapsed = WatchPlaybackSnapshot.elapsed(state, now: now, connected: companion.connected)
+    let total = (state["duration"] as? NSNumber)?.intValue ?? 0
+    return ScrollView {
+      VStack(spacing: 10) {
+        Text((state["title"] as? String ?? "").isEmpty ? "Choose audio from Listen" : state["title"] as? String ?? "").font(.headline).multilineTextAlignment(.center)
+        Text(state["subtitle"] as? String ?? "").font(.caption2).foregroundStyle(.secondary)
+        HStack(spacing: 4) {
+          transport(sermon ? "backward" : "previous", image: sermon ? "gobackward.15" : "backward.end.fill", label: sermon ? "Back 15 seconds" : "Previous hymn").disabled(!canSkip)
+          transport(playing ? "pause" : "play", image: playing ? "pause.fill" : "play.fill", label: playing ? "Pause" : "Play")
+          transport(sermon ? "forward" : "next", image: sermon ? "goforward.30" : "forward.end.fill", label: sermon ? "Forward 30 seconds" : "Next hymn").disabled(!canSkip)
+        }.disabled(!enabled)
+        if total > 0 { ProgressView(value: Double(elapsed), total: Double(total)) }
+        Text("\(WatchPlaybackSnapshot.clock(elapsed)) / \(total > 0 ? WatchPlaybackSnapshot.clock(total) : "—")").font(.caption2).monospacedDigit()
+        if !companion.error.isEmpty { Text(companion.error).font(.caption2).foregroundStyle(.orange) }
+        Text(!live ? "Saved playback · Refresh to connect" : state["loading"] as? Bool == true ? "Loading on iPhone…" : "Audio plays on iPhone")
+          .font(.caption2).foregroundStyle(.secondary)
+        Button("Refresh · 刷新") { companion.send("snapshot") }
+      }.padding(.horizontal, 4)
+    }
   }
   func transport(_ action: String, image: String, label: String) -> some View {
     Button { companion.send(action) } label: {
@@ -136,6 +220,7 @@ struct WatchLibrary: View {
   let title: String
   @State private var items: [[String: Any]] = []
   @State private var loading = true
+  @State private var requestVersion = 0
   var body: some View {
     List {
       if !companion.connected { Text("Connect your iPhone to browse and play audio.") }
@@ -158,6 +243,13 @@ struct WatchLibrary: View {
   private func load() {
       loading = companion.connected
       guard companion.connected else { return }
-      companion.send("children", id:id) { items = $0; loading = false }
+      requestVersion += 1
+      let version = requestVersion
+      companion.send("children", id:id) {
+        guard version == requestVersion else { return }
+        items = $0; loading = false
+      }
   }
 }
+
+#endif

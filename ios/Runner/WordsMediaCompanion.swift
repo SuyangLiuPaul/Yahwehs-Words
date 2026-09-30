@@ -8,7 +8,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
   private(set) var channel: FlutterMethodChannel?
   private var ready = false
   private var latest: [String: Any] = [:]
-  private var sentIdentity = ""
+  private var sentIdentity: NSDictionary?
   private var lastTransfer = Date.distantPast
 
   static func register(with registrar: FlutterPluginRegistrar) {
@@ -32,10 +32,10 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     latest = data
     if WCSession.isSupported(), WCSession.default.activationState == .activated,
        WCSession.default.isPaired, WCSession.default.isWatchAppInstalled {
-      let identity = "\(data["id"] ?? "")/\(data["playing"] ?? false)/\(data["error"] ?? "")"
+      let identity = NSDictionary(dictionary: data.filter { ["id", "title", "subtitle", "duration", "loading", "canSkip", "playing", "error", "sermon"].contains($0.key) })
       // Coalesce position updates to spare the watch radio. Pause/change
       // metadata publishes immediately, so controls never wait 15 seconds.
-      if identity != sentIdentity || Date().timeIntervalSince(lastTransfer) >= 15 {
+      if sentIdentity?.isEqual(identity) != true || Date().timeIntervalSince(lastTransfer) >= 15 {
         do {
           try WCSession.default.updateApplicationContext(data)
           sentIdentity = identity; lastTransfer = Date()

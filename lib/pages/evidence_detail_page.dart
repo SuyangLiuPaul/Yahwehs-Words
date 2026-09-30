@@ -358,22 +358,23 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                 ),
               const SizedBox(height: 16),
 
-              // Title + confidence badge row.
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Flow the full title and badge onto separate lines when the
+              // phone width or accessibility text size cannot fit both.
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      evidence.localizedTitle(locale),
-                      style: TextStyle(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                        fontSize: (fs + 6).clamp(20.0, 32.0).toDouble(),
-                        fontWeight: FontWeight.w700,
-                        color: scheme.onSurface,
-                      ),
+                  Text(
+                    evidence.localizedTitle(locale),
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: (fs + 6).clamp(20.0, 32.0).toDouble(),
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
                     ),
                   ),
-                  const SizedBox(width: 8),
                   ConfidenceBadge(
                     level: evidence.confidenceLevel,
                     color: evidence.confidenceColor(scheme),
@@ -655,17 +656,22 @@ class _Meta extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 14, color: scheme.onSurfaceVariant),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-              fontSize:
-                  (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
-              color: scheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
+          Flexible(
+            child: Text(
+              label,
+              softWrap: true,
+              style: TextStyle(
+                fontFamily: settings.fontFamily,
+                fontFamilyFallback: kCjkFontFallback,
+                fontSize:
+                    (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

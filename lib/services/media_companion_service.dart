@@ -17,6 +17,8 @@ class MediaCompanionService {
   static String? _dailyDate;
   static Timer? _timer;
   static Future<void>? _dailyLoading;
+  static final _subscriptions = <StreamSubscription<dynamic>>[];
+  static String? _publishedIdentity;
 
   static void start(SongAudioHandler handler) {
     if (kIsWeb ||
@@ -25,6 +27,35 @@ class MediaCompanionService {
       return;
     }
     _handler = handler;
+    for (final subscription in _subscriptions) {
+      unawaited(subscription.cancel());
+    }
+    _subscriptions.clear();
+    _publishedIdentity = null;
+    void publishChange(dynamic _) {
+      final snapshot = _snapshot();
+      final identity = jsonEncode({
+        for (final key in [
+          'id',
+          'title',
+          'subtitle',
+          'duration',
+          'loading',
+          'canSkip',
+          'playing',
+          'error',
+          'sermon'
+        ])
+          key: snapshot[key],
+      });
+      if (identity != _publishedIdentity) {
+        _publishedIdentity = identity;
+        unawaited(_publish());
+      }
+    }
+
+    _subscriptions.add(handler.mediaItem.listen(publishChange));
+    _subscriptions.add(handler.playbackState.listen(publishChange));
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'snapshot':
@@ -46,6 +77,7 @@ class MediaCompanionService {
         case 'command':
           final args = Map<String, dynamic>.from(call.arguments as Map);
           await _command(args['action'] as String, args['id'] as String?);
+          unawaited(_publish());
           return _snapshot();
         default:
           throw MissingPluginException('Unknown companion method');
@@ -83,8 +115,10 @@ class MediaCompanionService {
     }
   }
 
-  static Map<String, dynamic> _snapshot() {
-    final h = _handler!;
+  static Map<String, dynamic> _snapshot() => snapshotFor(_handler!);
+
+  @visibleForTesting
+  static Map<String, dynamic> snapshotFor(SongAudioHandler h) {
     final item = h.mediaItem.valueOrNull;
     final state = h.playbackState.value;
     return {
@@ -93,8 +127,10 @@ class MediaCompanionService {
       'id': item?.id ?? '',
       'playing': state.playing,
       'loading': state.processingState.name == 'loading',
-      'position': state.updatePosition.inSeconds,
+      'position': state.position.inSeconds,
       'duration': item?.duration?.inSeconds ?? 0,
+      // A cached watch snapshot must not masquerade as a live player.
+      'syncedAt': DateTime.now().millisecondsSinceEpoch,
       'sermon': item?.id.startsWith('car:sermon/') ?? false,
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
       'error': state.errorMessage ?? '',
