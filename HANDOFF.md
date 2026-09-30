@@ -1,3 +1,10 @@
+## 2026-09-30 — searchable fuzzy/pinyin controls
+
+- Added independent, persisted fuzzy and pinyin chips beside the search field. Switching either option re-runs the plain query with its existing scope; previously a settings rebuild changed labels without updating the results. Both remain off for new users; Words migrates the old combined setting for existing pinyin users.
+- Pinyin now reaches Sword's plain matcher and its prefilter. Shared offline matcher supports full romanisation, spaces, tone marks, tone numbers, initials and mixed Han/Latin input. Chinese-only queries retain their meaning. Results explicitly label pinyin hits.
+- First pinyin scans yield every 256 verses. New queries, clearing and disposal cancel obsolete batched work. Strong's numbers, explicit operators and navigation commands retain their exact parser path; chips explain that boundary.
+- Both projects pass Flutter static analysis. No local tests were added or run for this fix. Dev builds/deployments started with no version bump; UI inspection results will be recorded in the PR. Existing store-review binaries do not contain this update, and production is unchanged.
+
 ## 2026-09-30 — CI verification after repairs
 
 - Windows Firebase PR #1: CI run 36690483812 passed at c15fac3d. Repairs add the project scroll physics to the Thayer selectable text and regenerate the 1.6.34 changelog.
