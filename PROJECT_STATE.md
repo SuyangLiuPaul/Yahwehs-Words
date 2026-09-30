@@ -49,7 +49,7 @@ an "and" in the wrong place.
 
 Words **1.6.35** is on all six websites and GitHub; seven release assets include the Wear companion. Google Play closed-test update 1006035 is under review. Signed iOS/Mac 1060037 are processed and waiting for external TestFlight review, with internal Words testing assigned. Existing public iOS 1.6.33/Mac 1.6.34 reviews continue; Microsoft submission 3 is in certification and next 1.6.35 MSIX is prepared. See `docs/release-2026-09-30.md` for exact evidence and remaining gates.
 
-Apple granted CarPlay Audio (case 22573667); App ID capability and actual profile entitlement were verified. Native activation and fresh-boot CarPlay dashboard launch are verified; signed 1060038 delivery is in progress; current 1060037 has no CarPlay. Wear OS 20001005 is published to personal internal testing; public Wear listing/review and physical car/watch validation remain open. Greek-only Words editions remain hidden. Latest local follow-up suite: 3821 pass / 36 existing skips / zero failures; no claim of universal device verification.
+Apple granted CarPlay Audio (case 22573667); App ID capability and actual profile entitlement were verified. Native activation and fresh-boot CarPlay dashboard launch are verified; signed 1.6.35 / 1060038 was delivered at 08:17 Melbourne and is processing; 1060037 has no CarPlay. Wear OS 20001005 is published to personal internal testing; public Wear listing/review and physical car/watch validation remain open. Greek-only Words editions remain hidden. Latest local follow-up suite: 3821 pass / 36 existing skips / zero failures; no claim of universal device verification.
 
 ## The app
 
