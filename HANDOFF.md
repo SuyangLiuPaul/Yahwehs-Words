@@ -1,3 +1,7 @@
+## 2026-09-30 — Mac App Store submission completed
+
+Words macOS 1.6.34, build 1060036, submitted successfully. Apple showed 1 Item Submitted, then Waiting for Review. Automatic release selected. Review submission: https://appstoreconnect.apple.com/apps/6817557892/distribution/reviewsubmissions/details/20cb1baf-827a-4eda-830b-e4d0e87ee889. Standard encryption declaration saved with France excluded, preserving the earlier distribution choice. Words pricing verified 174 countries available and France the one unavailable country. Existing iOS reviews were preserved. This supersedes earlier processing/pending entries below.
+
 ## 2026-09-30 — Mac delivery successful
 
 Transporter verified Delivered for Words build 1060036, at 17:34 Melbourne time. Corrected category package accepted; THE APP IS PROCESSING. Mac version is not yet submitted for review. After processing, choose the matching build, save and submit (automatic release already selected).
