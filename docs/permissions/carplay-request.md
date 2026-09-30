@@ -40,7 +40,7 @@ Website: https://yahwehword.com/.
 4. Submit the new build. Do not call the current TestFlight/Store binary
    CarPlay-compatible while this step remains pending.
 
-Default builds do not access CarPlay APIs: `CARPLAY_ENABLED` is absent and
+Historical preparation state before the grant: default builds did not access CarPlay APIs: `CARPLAY_ENABLED` is absent and
 the ordinary Flutter scene remains in place. Prepared native scene source
 has not been compiled or used against restricted APIs before the grant.
 
@@ -48,4 +48,4 @@ has not been compiled or used against restricted APIs before the grant.
 
 The owner supplied Apple’s approval email for **CarPlay Audio App (CarPlay framework)**, case **22573667**. The capability is now checked and saved on `com.example.yswords` in the existing team. Automatic Xcode signing generated an Apple-issued profile granting `com.apple.developer.carplay-audio`; the activation script verified the entitlement, team and app identity before enabling the scene configuration. The profile is private build material and is not committed.
 
-Native compilation and dashboard cold-launch validation are in progress. Existing iOS TestFlight build **1060037** does not include CarPlay. Do not advertise an available CarPlay binary until a newly signed build has been delivered and its status verified.
+Activated native compilation and fresh-boot dashboard cold-launch validation succeeded. The app icon, audio categories, pagination, sermon browser and Now Playing metadata were inspected. Existing iOS TestFlight build **1060037** does not include CarPlay. Signed iOS 1.6.35 / 1060038 was delivered at 08:17 Melbourne on 1 October and finished Apple processing. The exported IPA was checked for the actual distribution profile, signed CarPlay entitlement and matching embedded Watch version/build. TestFlight availability still requires compliance completion and group assignment after owner re-login.
