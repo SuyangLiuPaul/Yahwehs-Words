@@ -262,7 +262,7 @@ void main() {
       // the count was scraped off the catalog instead of off the picker.
       // The 9: 和合本雅伟版 简/繁, 梁家铿译本 简/繁, KJV, CSB, LEB,
       // BSB (Yahweh), ASV (Yahweh).
-      expect(entries.length, 9,
+      expect(entries.length, 13,
           reason: 'the version list changed — the share card and the '
               'JSON-LD featureList both advertise a count and neither '
               'is derived at build time');

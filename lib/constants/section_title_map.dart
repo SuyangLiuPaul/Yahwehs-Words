@@ -12,6 +12,11 @@
 ///     redistributable.
 const sectionTitleSetByVersion = <String, String>{
   // English family — neutral classic-style headings.
+  'net': 'english-classic',
+  'ogt': 'english-classic',
+  'sblgnt': 'english-classic',
+  'cnet': 'cuv',
+  'cnet-tr': 'cuv-tr',
   'kjv': 'english-classic',
   'leb': 'english-classic',
   'nasb': 'english-classic',
