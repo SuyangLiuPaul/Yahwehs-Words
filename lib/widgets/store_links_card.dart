@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yahwehs_words/services/link_opener.dart';
+import 'package:yahwehs_words/services/update_service.dart';
 
 /// Store and testing links share the website's installation guide so that
 /// approval status and invitation instructions can change without a new binary.
@@ -49,7 +50,7 @@ class StoreLinksCard extends StatelessWidget {
               link(
                   Icons.download_outlined,
                   text('Latest packages', '最新安装包', '最新安裝包'),
-                  'https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest'),
+                  'https://github.com/${UpdateService.repo}/releases/latest'),
             ]),
           ],
         ),
