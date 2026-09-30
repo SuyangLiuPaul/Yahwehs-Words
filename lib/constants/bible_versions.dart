@@ -302,6 +302,38 @@ const bibleVersions = <BibleVersionInfo>[
     language: 'zh-Hant',
     narrowLabel: '梁繁',
   ),
+  // 2026-09-30: new editions in the Yahwehdehua export. Append so
+  // existing defaults and the first same-language comparison stay stable.
+  BibleVersionInfo(
+      value: 'cnet',
+      shortLabel: '网简',
+      menuLabel: '中文 NET（简体）',
+      language: 'zh-Hans',
+      editionYear: '含译者注'),
+  BibleVersionInfo(
+      value: 'cnet-tr',
+      shortLabel: '網繁',
+      menuLabel: '中文 NET（繁體）',
+      language: 'zh-Hant',
+      editionYear: '含譯者註'),
+  BibleVersionInfo(
+      value: 'net',
+      shortLabel: 'NET',
+      menuLabel: 'NET Bible',
+      language: 'en',
+      editionYear: 'English / text only'),
+  BibleVersionInfo(
+      value: 'ogt',
+      shortLabel: 'OGT',
+      menuLabel: 'One God Translation',
+      language: 'en',
+      editionYear: 'New Testament / with notes'),
+  BibleVersionInfo(
+      value: 'sblgnt',
+      shortLabel: 'SBLGNT',
+      menuLabel: 'SBL Greek New Testament',
+      language: 'el',
+      editionYear: '2010 / NT, Strong’s and critical apparatus'),
 ];
 
 /// Versions hidden from the picker on EVERY platform (CUV, CNV, and
@@ -382,6 +414,8 @@ const bibleVersions = <BibleVersionInfo>[
 /// still resolve; [_kSupersededBy] is what sends them to the new rows
 /// instead of to an unrelated edition.
 const disabledVersions = <String>{
+  // Owner confirmed Words keeps Greek hidden on 2026-09-30.
+  'sblgnt',
   'nasb',
   'wh',
   'lxx',
@@ -656,7 +690,10 @@ String narrowBibleVersionLabel(String version) {
 /// already has full OT+NT coverage.
 String? bibleVersionFullCanonFallback(String version) {
   switch (version) {
-    case 'biblexg-v2':    // LJK2 (Simplified Chinese, NT only)
+    case 'ogt':
+    case 'sblgnt':
+      return 'bsb-yhwh';
+    case 'biblexg-v2': // LJK2 (Simplified Chinese, NT only)
     // 2026-09-15: and v3, which is the row a reader can actually pick.
     // 「如果我选的中文是梁简 或繁体 但是选的是旧约 然后就有fallback 雅伟简
     // 繁做backup吗」 — no, it did not, and this is why.
@@ -673,11 +710,11 @@ String? bibleVersionFullCanonFallback(String version) {
     // `nt_only_editions_have_a_fallback_test.dart` now derives this
     // from the assets rather than trusting the table, so the next
     // supersession cannot repeat it.
-    case 'biblexg-v3':    // LJK2 September fetch (Simplified, NT only)
-      return 'cuvs-yhwh';      // 和合本雅伟版 (Simplified, full canon)
+    case 'biblexg-v3': // LJK2 September fetch (Simplified, NT only)
+      return 'cuvs-yhwh'; // 和合本雅伟版 (Simplified, full canon)
     case 'biblexg-v2-tr': // LJK2 (Traditional Chinese, NT only)
     case 'biblexg-v3-tr': // LJK2 September fetch (Traditional, NT only)
-      return 'cuvs-yhwh-tr';   // 和合本雅伟版 (Traditional, full canon)
+      return 'cuvs-yhwh-tr'; // 和合本雅伟版 (Traditional, full canon)
     // 2026-09-08: the Westcott-Hort is the first NT-only edition whose
     // own language family has NO full-canon edition to fall back to.
     // The Greek Old Testament that would have been the obvious partner
@@ -702,14 +739,14 @@ String? bibleVersionFullCanonFallback(String version) {
     // edition existed here. It is the same translation — the Yahweh
     // edition differs only in restoring the divine name, which is what
     // this whole app is for — so the reasoning above transfers intact.
-    case 'lxx':           // Septuagint (Greek, OT only)
+    case 'lxx': // Septuagint (Greek, OT only)
       // The mirror image of `wh` below, and the same partner for the
       // same reason: a reader on the Greek OT who follows a New
       // Testament reference must land somewhere, and BSB (Yahweh) is
       // the modern English this catalogue pairs with Greek.
       return 'bsb-yhwh';
-    case 'wh':            // Westcott-Hort (Greek, NT only)
-      return 'bsb-yhwh';  // Berean Standard Bible (English, full canon)
+    case 'wh': // Westcott-Hort (Greek, NT only)
+      return 'bsb-yhwh'; // Berean Standard Bible (English, full canon)
   }
   return null;
 }

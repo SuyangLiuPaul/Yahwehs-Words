@@ -196,6 +196,11 @@ flutter:
     # until enough new releases accumulated — and because a reader on
     # a tablet with no SIM should still be able to read it.
     - assets/changelog.json
+    - assets/cnet.json
+    - assets/cnet-tr.json
+    - assets/net.json
+    - assets/ogt.json
+    - assets/sblgnt.json
     - assets/kjv.json
     - assets/leb.json
     - assets/cuvs-yhwh.json

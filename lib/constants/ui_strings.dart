@@ -1704,10 +1704,10 @@ const uiStrings = {
   // and this sentence, the first one a new reader sees, went on
   // promising a language the picker has no tab for.
   'onboardWelcomeBody': {
-    'zh-Hans': '双语圣经阅读应用，9 个版本（英文／简体／繁体）。主页的「读经」卡片会带你回到上次离开的位置。',
-    'zh-Hant': '雙語聖經閱讀應用，9 個版本（英文／簡體／繁體）。主頁的「讀經」卡片會帶你回到上次離開的位置。',
+    'zh-Hans': '双语圣经阅读应用，13 个版本（英文／简体／繁体）。主页的「读经」卡片会带你回到上次离开的位置。',
+    'zh-Hant': '雙語聖經閱讀應用，13 個版本（英文／簡體／繁體）。主頁的「讀經」卡片會帶你回到上次離開的位置。',
     'en':
-        'A bilingual Bible reader with 9 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
+        'A bilingual Bible reader with 13 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
   },
   'onboardReadTitle': {
     'zh-Hans': '阅读、高亮、研经',
@@ -1938,9 +1938,9 @@ const uiStrings = {
   // test/offline_pack_counts_test.dart counts THAT list rather than the
   // catalog, so this string and the pack cannot drift apart again.
   'offlinePackBibles': {
-    'zh-Hans': '圣经版本（共 9 个）',
-    'zh-Hant': '聖經版本（共 9 個）',
-    'en': 'Bibles (9 versions)',
+    'zh-Hans': '圣经版本（共 13 个）',
+    'zh-Hant': '聖經版本（共 13 個）',
+    'en': 'Bibles (13 versions)',
   },
   // {name} is filled from sermon_credit.dart — the single source for
   // the preacher's name. The count was 587, which was the sum of every
@@ -9146,5 +9146,57 @@ const uiStrings = {
     'zh-Hans': '去设置',
     'zh-Hant': '去設定',
     'en': 'Open Settings',
+  },
+  // Newly imported Yahwehdehua texts; notices travel with copies.
+  'aboutVerCnet': {
+    'en': 'Chinese NET · Simplified and Traditional, with publisher notes',
+    'zh-Hans': '中文 NET · 简繁两版，含译者注',
+    'zh-Hant': '中文 NET · 簡繁兩版，含譯者注',
+  },
+  'aboutLicenseCnet': {
+    'en':
+        'Chinese NET from bible.org/chinese · supplied by Yahwehdehua and used by permission. Notes and wording retained from the supplied edition.',
+    'zh-Hans': '中文 NET，来自 bible.org/chinese · 雅伟的话提供，经授权使用。保留所提供版本的译文和注释。',
+    'zh-Hant': '中文 NET，來自 bible.org/chinese · 雅偉的話提供，經授權使用。保留所提供版本的譯文和註釋。',
+  },
+  'aboutVerNet': {
+    'en': 'NET Bible · English, text only',
+    'zh-Hans': 'NET Bible · 英文，仅正文',
+    'zh-Hant': 'NET Bible · 英文，僅正文',
+  },
+  'aboutLicenseNet': {
+    'en':
+        'Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. https://netbible.com/ All rights reserved.',
+    'zh-Hans':
+        'Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. https://netbible.com/ All rights reserved.',
+    'zh-Hant':
+        'Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. https://netbible.com/ All rights reserved.',
+  },
+  'aboutVerOgt': {
+    'en': 'One God Translation · Anthony Buzzard, New Testament with notes',
+    'zh-Hans': 'One God Translation · Anthony Buzzard，新约及译者注',
+    'zh-Hant': 'One God Translation · Anthony Buzzard，新約及譯者注',
+  },
+  'aboutLicenseOgt': {
+    'en':
+        'Anthony Buzzard’s One God Translation · supplied by Yahwehdehua and used by permission, relayed by Paul on 2026-09-13. Publisher wording and notes retained.',
+    'zh-Hans':
+        'Anthony Buzzard 的 One God Translation · 雅伟的话提供，经授权使用（Paul 于2026-09-13转达）。保留所提供版本的译文和注释。',
+    'zh-Hant':
+        'Anthony Buzzard 的 One God Translation · 雅偉的話提供，經授權使用（Paul 於2026-09-13轉達）。保留所提供版本的譯文和註釋。',
+  },
+  'aboutVerSblgnt': {
+    'en':
+        'SBL Greek New Testament · 2010, with Strong’s and critical apparatus',
+    'zh-Hans': 'SBL 希腊文新约 · 2010，含 Strong’s 编号及异文校勘',
+    'zh-Hant': 'SBL 希臘文新約 · 2010，含 Strong’s 編號及異文校勘',
+  },
+  'aboutLicenseSblgnt': {
+    'en':
+        'The Greek New Testament: SBL Edition. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. CC BY 4.0 (https://sblgnt.com/license/). Supplied by Yahwehdehua; source notes are mapped to popups and Strong’s/morphology to word runs. Source paragraph and apparatus anchors were already removed upstream. No wording edits in this import.',
+    'zh-Hans':
+        'The Greek New Testament: SBL Edition. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. CC BY 4.0 (https://sblgnt.com/license/). Supplied by Yahwehdehua; source notes are mapped to popups and Strong’s/morphology to word runs. Source paragraph and apparatus anchors were already removed upstream. No wording edits in this import.',
+    'zh-Hant':
+        'The Greek New Testament: SBL Edition. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. CC BY 4.0 (https://sblgnt.com/license/). Supplied by Yahwehdehua; source notes are mapped to popups and Strong’s/morphology to word runs. Source paragraph and apparatus anchors were already removed upstream. No wording edits in this import.',
   },
 };

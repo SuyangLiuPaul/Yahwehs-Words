@@ -476,22 +476,9 @@ class OfflinePackService extends ChangeNotifier {
   int approximateMbFor(OfflinePackCategory c) {
     switch (c) {
       case OfflinePackCategory.bibles:
-        // 51 MB for 9 versions, measured 2026-09-14 by summing the
-        // on-disk bytes of the assets `_bibleUrls` now derives (50.6 MB).
-        // Was 69 MB for 12 — that figure was right for what the pack
-        // fetched and wrong about what a reader got: 15.3 MB of it was
-        // the NASB (404 on prod) plus the two hidden Greek texts.
-        //
-        // **This is the biggest single number on the offline-pack
-        // screen and it is a raw-bytes number, deliberately.** Every
-        // other category here states on-disk size too, so the five stay
-        // comparable to each other; a reader on a metered connection
-        // downloads far less, because Netlify gzips the JSON and these
-        // nine compress to about 11 MB in total. Stating the smaller
-        // number for this one category alone would make the Bibles look
-        // cheaper than the maps, which are 29 MB of already-compressed
-        // JPEG and do not shrink at all.
-        return 51;
+        // 82,370,067 raw bytes across the 13 offered editions, measured
+        // after the Yahwehdehua additions on 2026-09-30.
+        return 82;
       case OfflinePackCategory.sermons:
         // Measured 2026-09-07 by summing the on-disk bytes of every
         // .txt _sermonUrls() actually enumerates (1147 files: 289 en +

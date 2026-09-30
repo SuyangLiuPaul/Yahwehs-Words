@@ -1,3 +1,10 @@
+## 2026-09-30 — newer Yahwehdehua reading editions
+
+- Imported Chinese NET (Simplified / Traditional), English NET text only, One God Translation NT and SBLGNT from the read-only exported database. Exact source SHA, canonical gaps and counts are in `docs/yahwehdehua-edition-import.json`; regeneration script rejects unknown markup or changed source shape. Existing Scripture assets unchanged.
+- CNET has 31,099 records / 26,835 publisher notes per script; NET 31,085 records / no paid notes; OGT 7,945 records / 1,621 notes; SBLGNT 7,957 records / 6,901 apparatus notes. Chinese book names follow the existing simplified/traditional asset spellings.
+- Credits, copy attribution and NT-only daily-verse fallbacks are wired. Words keeps Greek hidden per owner confirmation; Sword offers SBLGNT with its source Strong’s and Robinson morphology. Existing divine-name display/search/copy cleanup still applies; no new restoration pass edited the stored text. No version bump or store upload yet.
+- Static analysis and dev UI inspection recorded in the PR after completion. No local tests added or run.
+
 ## 2026-09-30 — searchable fuzzy/pinyin controls
 
 - Added independent, persisted fuzzy and pinyin chips beside the search field. Switching either option re-runs the plain query with its existing scope; previously a settings rebuild changed labels without updating the results. Both remain off for new users; Words migrates the old combined setting for existing pinyin users.
