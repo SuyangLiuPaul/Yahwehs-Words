@@ -1779,7 +1779,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: _buildStrongsRefList(context, settings),
               ),
             ] else ...[
-            if (_results.isNotEmpty)
+            if (_results.isNotEmpty && !_lastResultsFromAi)
               SearchBookChart(
                 counts: bookCounts,
                 locale: settings.locale,

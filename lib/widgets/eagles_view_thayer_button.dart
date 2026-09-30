@@ -37,17 +37,19 @@ class EaglesViewThayerButton extends StatelessWidget {
                     child: FutureBuilder<Map<String, dynamic>>(
                         future: _load(),
                         builder: (context, snapshot) {
-                          if (snapshot.hasError)
+                          if (snapshot.hasError) {
                             return Text(locale == 'zh-Hans'
                                 ? '无法加载词典条目。'
                                 : locale == 'zh-Hant'
                                     ? '無法載入詞典條目。'
                                     : 'This article could not be loaded.');
-                          if (!snapshot.hasData)
+                          }
+                          if (!snapshot.hasData) {
                             return const SizedBox(
                                 height: 64,
                                 child:
                                     Center(child: CircularProgressIndicator()));
+                          }
                           final data = snapshot.data!;
                           final article = (data['entries']
                               as Map<String, dynamic>)[key] as String?;
