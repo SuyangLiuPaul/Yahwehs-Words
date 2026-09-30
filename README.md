@@ -78,7 +78,7 @@ any APIs themselves**; everything is at the Firebase project level.
 
 - Berean Interlinear NT word study with source Greek forms, English glosses, transliteration, Strong’s numbers and grammar. Greek-only reading editions stay hidden in Words at the owner’s request.
 - Scoped search charts and independent fuzzy / pinyin text search controls.
-- Phone audio companions for Apple Watch and Wear OS, plus Android Auto media browsing. CarPlay remains awaiting Apple’s entitlement approval. [Build and distribution status](docs/car-and-watch.md).
+- Phone audio companions for Apple Watch and Wear OS, plus Android Auto media browsing. Apple approved CarPlay Audio; a newly signed CarPlay build is undergoing activation and validation. [Build and distribution status](docs/car-and-watch.md).
 - [Store and beta installation guide](https://yahwehword.com/beta#words), [release report](docs/release-2026-09-30.md), and [Eagle’s View review](docs/eaglesview-theology-review.md).
 - Validation on 2026-09-30: analysis has no issues; **3,820 tests passed**, with 36 pre-existing skips.
 

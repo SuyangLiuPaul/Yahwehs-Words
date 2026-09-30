@@ -44,16 +44,26 @@ with the new metadata and browser implementation. Google’s car app quality
 review/distribution rules apply. Installing the old phone binary does not
 add this feature.
 
-CarPlay is awaiting Apple’s approval; see permissions/carplay-request.md.
+CarPlay Audio was approved on 1 October; see permissions/carplay-request.md.
 It must not be enabled by adding a guessed entitlement to an ordinary
-signing profile. Default iOS builds exclude restricted CarPlay source.
+signing profile. Activation checked the actual Apple-issued profile before enabling the CarPlay scene and compilation condition.
 
 ## Current status — 2026-09-30
 
-Android phone and Wear OS debug APKs built successfully. The containing iPhone simulator build, including the embedded Apple Watch app, also built successfully after correcting the embed-phase order. Both apps launched in paired iOS 26.5 / watchOS 26.5 simulators. New native artifacts still require signed release builds and store delivery. Physical car/watch playback remains unverified. CarPlay request was received by Apple; entitlement approval is pending.
+Android phone and Wear OS debug APKs built successfully. The containing iPhone simulator build, including the embedded Apple Watch app, also built successfully after correcting the embed-phase order. Both apps launched in paired iOS 26.5 / watchOS 26.5 simulators. New native artifacts still require signed release builds and store delivery. Physical car/watch playback remains unverified. Apple has now granted CarPlay Audio; native activation and new signed delivery are in progress.
 
 ## Delivery evidence
 
 Build results and device/preview inspection are recorded in HANDOFF.md.
 Source implementation and a successful build are not evidence of a Play
 or App Store release, approval, or successful physical vehicle/watch use.
+
+## Store delivery update — 2026-10-01
+
+Signed containing iOS build1.6.35/1060037, including its version-matched Watch app, and Mac build1.6.35/1060037 were processed by Apple and submitted for external TestFlight review. Internal Words testers are assigned. Phone Google Play 1006035 remains in review. Signed Wear OS AAB 20001005 (1.6.35) is available to the existing personal internal-test list at https://play.google.com/apps/internaltest/4699659407499218860; public Wear listing screenshots and opt-in review are still pending. Android Auto is in the new phone binary; it has not been verified in a physical car. The CarPlay capability and granted profile are verified, but1060037 predates activation.
+
+## Granted CarPlay validation — 2026-10-01
+
+The activated native target compiles successfully with Xcode, the actual granted entitlement and shared phone/dashboard engine. The simulator displays the Words icon, hymn/instrumental/sermon root, hymn sources, 60-item pages and native Now Playing metadata. Audio position advanced with a measured 4:03 duration. Forced termination left the simulator host blank despite app logs confirming a new process and three root rows; a fresh-boot cold-start check remains pending. This is not evidence of physical car verification.
+
+Robustness review fixed download-index initialization before cold media browsing, published song errors, Flutter phone-scene lifecycle forwarding, non-nil template presentation completions, stale connection callbacks, bounded channel readiness/timeouts and retained-engine disconnect handling. Final local regression: **3,821 passed / 36 existing skips**, analysis clean; final native simulator build succeeds. Signed iOS 1060038 is being archived for delivery; 1060037 remains in external beta review.

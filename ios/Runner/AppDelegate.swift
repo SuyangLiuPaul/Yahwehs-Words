@@ -8,7 +8,7 @@ import UserNotifications
   private var mediaEngine: FlutterEngine?
   @discardableResult func ensureMediaEngine() -> FlutterEngine {
     if let engine = mediaEngine { return engine }
-    let engine = FlutterEngine(name: "words.shared.media", allowHeadlessExecution: true)
+    let engine = FlutterEngine(name: "words.shared.media", project: nil, allowHeadlessExecution: true)
     mediaEngine = engine
     engine.run()
     GeneratedPluginRegistrant.register(with: engine)

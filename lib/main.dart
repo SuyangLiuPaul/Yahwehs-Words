@@ -134,7 +134,7 @@ void main() {
     // else; the player degrades to no-media-session on failure rather
     // than throwing. See SongPlayerService.init.
     // ignore: unawaited_futures
-    SongPlayerService.init();
+    _startMediaSession();
 
     runApp(
       MultiProvider(
@@ -148,6 +148,18 @@ void main() {
   }, (error, stack) {
     ErrorReporter.report(error, stack, source: 'Zone');
   });
+}
+
+Future<void> _startMediaSession() async {
+  // A dashboard can launch playback before any download page has been
+  // opened. Read the saved index before installing the remote catalogue
+  // handler, so downloaded vocal tracks work on a cold offline launch.
+  try {
+    await SongDownloadService.instance.init();
+  } catch (error) {
+    debugPrint('[Audio] download index unavailable: $error');
+  }
+  await SongPlayerService.init();
 }
 
 /// URL-routing (`docs/url-routing-plan.md`, §6 batch 1): the zero-param

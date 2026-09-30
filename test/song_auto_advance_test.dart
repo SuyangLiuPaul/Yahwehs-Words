@@ -43,8 +43,7 @@ void main() {
   testWidgets(
       'onError for the current, never-started track quarantines it and '
       'advances; a queue where every track dies this way terminates '
-      'instead of spinning forever under repeat-all',
-      (tester) async {
+      'instead of spinning forever under repeat-all', (tester) async {
     final engine = FakeSongPlaybackEngine()..autoErrorBudget = 6;
     final handler = SongAudioHandler(engine: engine);
     await handler.setQueue(
@@ -88,6 +87,13 @@ void main() {
     // exact same onError stream — see song_playback_engine_native.dart.
     engine.emitError('mock pause failure');
     await settle(tester);
+
+    expect(handler.playbackState.value.errorMessage, 'mock pause failure',
+        reason: 'CarPlay and watch snapshots read the published media state');
+    expect(handler.playbackState.value.errorCode, 1);
+    handler.clearError();
+    expect(handler.playbackState.value.errorMessage, isNull);
+    expect(handler.playbackState.value.errorCode, isNull);
 
     expect(handler.songQueue.index, 0,
         reason: 'the user paused (or sought, or stopped); the track '

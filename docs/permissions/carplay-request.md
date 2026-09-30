@@ -43,3 +43,9 @@ Website: https://yahwehword.com/.
 Default builds do not access CarPlay APIs: `CARPLAY_ENABLED` is absent and
 the ordinary Flutter scene remains in place. Prepared native scene source
 has not been compiled or used against restricted APIs before the grant.
+
+## Approval and configuration — 2026-10-01
+
+The owner supplied Apple’s approval email for **CarPlay Audio App (CarPlay framework)**, case **22573667**. The capability is now checked and saved on `com.example.yswords` in the existing team. Automatic Xcode signing generated an Apple-issued profile granting `com.apple.developer.carplay-audio`; the activation script verified the entitlement, team and app identity before enabling the scene configuration. The profile is private build material and is not committed.
+
+Native compilation and dashboard cold-launch validation are in progress. Existing iOS TestFlight build **1060037** does not include CarPlay. Do not advertise an available CarPlay binary until a newly signed build has been delivered and its status verified.

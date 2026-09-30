@@ -5,7 +5,7 @@ right now and the traps that have already cost real time. The per-item
 work list is `docs/autonomous-queue.md`; this file is the orientation
 above it.
 
-Last updated: 2026-09-09.
+Last updated: 2026-10-01.
 
 **The refuter earns its keep — do not drop it to save a turn.** On
 2026-08-23 it broke a punctuation repair's stated reasoning twice in one
@@ -44,6 +44,12 @@ that would quietly delete a real citation the first time the preacher put
 an "and" in the wrong place.
 
 ---
+
+## Current release — 2026-10-01
+
+Words **1.6.35** is on all six websites and GitHub; seven release assets include the Wear companion. Google Play closed-test update 1006035 is under review. Signed iOS/Mac 1060037 are processed and waiting for external TestFlight review, with internal Words testing assigned. Existing public iOS 1.6.33/Mac 1.6.34 reviews continue; Microsoft submission 3 is in certification and next 1.6.35 MSIX is prepared. See `docs/release-2026-09-30.md` for exact evidence and remaining gates.
+
+Apple granted CarPlay Audio (case 22573667); App ID capability and actual profile entitlement were verified. New native activation is being compiled; current 1060037 has no CarPlay. Wear OS 20001005 is published to personal internal testing; public Wear listing/review and physical car/watch validation remain open. Greek-only Words editions remain hidden. Latest local follow-up suite: 3821 pass / 36 existing skips / zero failures; no claim of universal device verification.
 
 ## The app
 
