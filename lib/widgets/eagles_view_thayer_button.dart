@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:yahwehs_words/utils/app_scroll_behavior.dart'
+    show kSelectableTextPhysics;
 
 /// The English Eagle's View article complements the existing Chinese
 /// BDB/Thayer entry. Loading happens only when the reader opens it.
@@ -57,12 +59,14 @@ class EaglesViewThayerButton extends StatelessWidget {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                SelectableText(article ??
-                                    (locale == 'zh-Hans'
-                                        ? '此编号没有 Thayer 条目。'
-                                        : locale == 'zh-Hant'
-                                            ? '此編號沒有 Thayer 條目。'
-                                            : 'No Thayer article for this number.')),
+                                SelectableText(
+                                    article ??
+                                        (locale == 'zh-Hans'
+                                            ? '此编号没有 Thayer 条目。'
+                                            : locale == 'zh-Hant'
+                                                ? '此編號沒有 Thayer 條目。'
+                                                : 'No Thayer article for this number.'),
+                                    scrollPhysics: kSelectableTextPhysics),
                                 const SizedBox(height: 20),
                                 Text(data['attribution'] as String,
                                     style:
