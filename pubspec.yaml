@@ -247,6 +247,7 @@ flutter:
     # network-first, so a bundled asset costs nothing until
     # ChineseLexiconService reads it, which is once per language on the
     # first Chinese word study and never for an English reader.
+    - assets/thayer.json
     - assets/strongs/
     - assets/originals/
     # Both of the above are numbered as the Hebrew and Greek editions

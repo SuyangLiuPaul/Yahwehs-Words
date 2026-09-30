@@ -2,6 +2,7 @@ import 'dart:async' show unawaited;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/eagles_view_thayer_button.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/text_patterns.dart'
@@ -1973,6 +1974,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
             // The grammar codes then follow under their own heading,
             // because they answer a different question — the FORM this
             // word takes in this verse, not what the word means.
+            EaglesViewThayerButton(number: entry.number, locale: locale),
             if (_zhEntry case final zh?)
               ChineseLexiconBlock(entry: zh, locale: locale),
             if (_zhGrammar.isNotEmpty) ...[
