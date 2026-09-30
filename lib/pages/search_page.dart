@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/search_book_chart.dart';
 import 'package:get/get.dart';
 import 'package:yahwehs_words/models/strongs.dart';
 import 'package:yahwehs_words/models/verse.dart';
@@ -1772,10 +1773,19 @@ class _SearchPageState extends State<SearchPage> {
             ]
             else if (_strongsKey != null) ...[
               _buildStrongsHeader(context, settings),
+              if (_strongsResult != null)
+                _strongsChart(context, settings),
               Expanded(
                 child: _buildStrongsRefList(context, settings),
               ),
             ] else ...[
+            if (_results.isNotEmpty)
+              SearchBookChart(
+                counts: bookCounts,
+                locale: settings.locale,
+                scope: filterBook ?? (!searchAll ? Provider.of<MainProvider>(context, listen: false).currentBook : null),
+                bookLabel: (book) => book,
+              ),
             if (_results.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
@@ -2294,6 +2304,21 @@ class _SearchPageState extends State<SearchPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _strongsChart(BuildContext context, AppSettings settings) {
+    final mp = Provider.of<MainProvider>(context, listen: false);
+    final activeBook = filterBook ?? (!searchAll ? mp.currentBook : null);
+    final english = activeBook == null ? null : (toEnglish(activeBook) ?? activeBook);
+    // The index's byBook map is uncapped; tallying its capped verse list
+    // would incorrectly put a common word's peak near the start of the Bible.
+    final counts = {for (final e in _strongsResult!.byBook.entries)
+      if (english == null || e.key == english) e.key: e.value};
+    return SearchBookChart(
+      counts: counts, locale: settings.locale, occurrences: true,
+      scope: activeBook,
+      bookLabel: (book) => localeAwareBookName(book, settings.locale, mp.currentVersion),
     );
   }
 
