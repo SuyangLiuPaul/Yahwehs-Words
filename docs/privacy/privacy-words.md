@@ -8,9 +8,9 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 
 **Without an account.** Notes, highlights, bookmarks, reading plan progress, search history and settings are stored on your device only. Profiles on the device are a local way to keep people's data apart; they are not accounts.
 
-**If you sign in (optional).** You can sign in with Google, Sign in with Apple on iOS, or with an email and password, through Google Firebase Authentication. We receive your sign-in identifier (email address, including a private relay address if you use one, and, where provided, your name and profile photo) and store it with Firebase. When signed in, the following are synced to Firebase (Google Cloud), under an ID tied to your account: highlights, notes and note titles, bookmarks, search history, reading position and app preferences. This data is used only to show it back to you on your other devices. Google processes it under its own terms and privacy policy.
+**If you sign in (optional).** You can sign in with Google, Sign in with Apple on iOS or macOS, or with an email and password, through Google Firebase Authentication. We receive your sign-in identifier (email address, including a private relay address if you use one, and, where provided, your name and profile photo) and store it with Firebase. When signed in, the following are synced to Firebase (Google Cloud), under an ID tied to your account: highlights, notes and note titles, bookmarks, search history, reading position and app preferences. This data is used only to show it back to you on your other devices. Google processes it under its own terms and privacy policy.
 
-**Deleting your data.** On iOS, go to Settings → Account → Delete account to remove your account and synced data. You can also email support@yahwehword.com from the address you signed in with and we will delete it. Signing out stops syncing; data on your device stays until you clear it.
+**Deleting your data.** On iOS or macOS, go to Settings → Account → Delete account to remove your account and synced data. You can also email support@yahwehword.com from the address you signed in with and we will delete it. Signing out stops syncing; data on your device stays until you clear it.
 
 **AI features.** If you use AI search or AI word explanations, the text you enter (such as a search phrase or a word) is sent to our server and then to Google's Gemini service to produce the answer. Do not enter personal information into these boxes.
 
@@ -21,6 +21,8 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 **Network requests.** The app downloads Bible and study data from yswords-data.netlify.app, checks GitHub (api.github.com) for new versions in the versions distributed outside the Microsoft Store, and loads fonts from Google Fonts on some platforms. These servers see your IP address as any website does.
 
 **Feedback.** If you use the feedback form, what you type is emailed to us.
+
+**Optional watch and car controls.** A paired watch or car interface can receive the daily verse and audio titles, playback position and control commands from your phone. A watch keeps the last daily verse locally for offline display. Account credentials, notes and bookmarks are not transferred to the companion. The app does not record microphone audio.
 
 **Advertising, tracking, sale of data.** None. We do not sell personal data.
 
@@ -36,9 +38,9 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 
 **不登录时。** 笔记、标注、书签、读经计划进度、搜索记录和设置只保存在本机。设备上的「个人档案」只是在本机区分不同使用者的方式，不是账号。
 
-**登录后（可选）。** 你可以用 Google、iOS 上的 Apple 登录，或邮箱加密码登录，由 Google Firebase Authentication 处理。我们会收到你的登录标识（邮箱，包括你选择使用的私密转发地址；如有提供，还包括姓名和头像），并保存在 Firebase。登录后，以下内容会同步到 Firebase（Google Cloud），并与你的账号 ID 关联：标注、笔记及标题、书签、搜索记录、阅读位置和应用偏好。这些数据只用于在你的其他设备上还原，Google 按其自身条款和隐私政策处理。
+**登录后（可选）。** 你可以用 Google、iOS 或 macOS 上的 Apple 登录，或邮箱加密码登录，由 Google Firebase Authentication 处理。我们会收到你的登录标识（邮箱，包括你选择使用的私密转发地址；如有提供，还包括姓名和头像），并保存在 Firebase。登录后，以下内容会同步到 Firebase（Google Cloud），并与你的账号 ID 关联：标注、笔记及标题、书签、搜索记录、阅读位置和应用偏好。这些数据只用于在你的其他设备上还原，Google 按其自身条款和隐私政策处理。
 
-**删除数据。** 在 iOS 上，进入「设置 → 账号 → 删除账号」可删除账号及已同步的数据。你也可以用登录邮箱发信至 support@yahwehword.com，我们会删除。退出登录会停止同步；本机上的数据会保留，直到你自己清除。
+**删除数据。** 在 iOS 或 macOS 上，进入「设置 → 账号 → 删除账号」可删除账号及已同步的数据。你也可以用登录邮箱发信至 support@yahwehword.com，我们会删除。退出登录会停止同步；本机上的数据会保留，直到你自己清除。
 
 **AI 功能。** 使用 AI 搜索或 AI 释义时，你输入的文字（如搜索词或词语）会发送到我们的服务器，再转给 Google Gemini 生成结果。请勿在这些输入框中填写个人信息。
 
@@ -49,6 +51,8 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 **网络请求。** 应用从 yswords-data.netlify.app 下载圣经与研经数据；在 Microsoft Store 之外分发的版本还会访问 GitHub（api.github.com）检查新版本；部分平台会从 Google Fonts 加载字体。这些服务器会像任何网站一样看到你的 IP 地址。
 
 **反馈。** 如果你使用反馈表单，你填写的内容会以邮件发给我们。
+
+**可选手表与车载控制。** 配对的手表或车载界面可从手机接收每日经文、音频标题、播放位置及控制指令；手表会在本机缓存最近的每日经文供离线阅读。账户凭据、笔记和书签不会传给配套设备。应用不会录制麦克风音频。
 
 **广告、追踪与出售数据。** 一律没有。我们不出售个人数据。
 

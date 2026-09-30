@@ -32,18 +32,6 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>Yahweh's Words</string>
-	<!-- 2026-06-28: opt the native app into LEGACY iPadOS 26 windowing.
-	     With this YES, iPadOS 26 gives the window its own system title bar
-	     to hold the traffic-light controls, so app content sits below them
-	     (no overlap of the 书卷 header / back button) — the Apple-Notes-
-	     like behaviour. Full-screen is unaffected. Flutter doesn't yet
-	     expose the new inline-control inset API (flutter#170461), so this
-	     is the correct fix for now. Side effect: opts out of iOS 26 Liquid
-	     Glass for native UIKit chrome — negligible for a Flutter app, which
-	     draws its own UI. (Web/PWA can't use this; that's an Apple WebKit
-	     gap with no fix yet.) -->
-	<key>UIDesignRequiresCompatibility</key>
-	<true/>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -65,27 +53,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- Verse-image backgrounds. iOS 14+ picks through PHPicker, which
-	     runs out of process and needs no permission at all — this string
-	     exists for the older path and for the App Store review that asks
-	     what an app that links Photos wants with it. It says "one photo,
-	     onto one card" because that is the whole of it: the app reads the
-	     bytes of the picture the reader hands it, never browses the
-	     library, and keeps nothing after the sheet closes. -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Choose one of your own photos as the background of a verse image. The photo is used only on that card and is not stored or uploaded.</string>
-	<!-- 2026-09-15. A DIFFERENT key from the one above, and both are
-	     needed: NSPhotoLibraryUsageDescription covers READING the
-	     library (image_picker, for a verse card's background), and this
-	     one covers ADDING to it (gal, for 「保存到相册」). iOS terminates
-	     the app rather than refusing the call when the matching key is
-	     absent, so the omission would not have shown up as a failed
-	     save — it would have shown up as the app disappearing the first
-	     time anyone tried. -->
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Save a verse image to your photos, so you can keep it or send it on. Nothing is uploaded.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Yahweh's Words uses system audio services to play Bible and sermon audio. The app does not record from the microphone.</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -101,12 +70,29 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Yahweh's Words uses system audio services to play Bible and sermon audio. The app does not record from the microphone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save a verse image to your photos, so you can keep it or send it on. Nothing is uploaded.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose one of your own photos as the background of a verse image. The photo is used only on that card and is not stored or uploaded.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
+		<true/>
 		<key>UISceneConfigurations</key>
 		<dict>
+			<key>CPTemplateApplicationSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>CPTemplateApplicationScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>CarPlay</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).WordsCarPlayScene</string>
+				</dict>
+			</array>
 			<key>UIWindowSceneSessionRoleApplication</key>
 			<array>
 				<dict>
@@ -115,14 +101,20 @@
 					<key>UISceneConfigurationName</key>
 					<string>flutter</string>
 					<key>UISceneDelegateClassName</key>
-					<string>FlutterSceneDelegate</string>
-					<key>UISceneStoryboardFile</key>
-					<string>Main</string>
+					<string>$(PRODUCT_MODULE_NAME).WordsPhoneScene</string>
 				</dict>
 			</array>
 		</dict>
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -140,29 +132,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<!-- 2026-08-09 (Songs player): background audio.
-
-	     Without this iOS suspends playback the moment the app leaves
-	     the foreground or the screen locks, which made listening while
-	     driving impossible — the reason the player work exists.
-
-	     `audio` is the ONLY mode declared. The app does no background
-	     fetch, location or processing, and declaring modes an app does
-	     not actually use is a common App Store rejection. Paired with
-	     audio_service, which owns the AVAudioSession and publishes the
-	     now-playing info the lock screen and CarPlay read. -->
-	<!-- 2026-09-13: a song or score saved as a file lands in this app's
-	     Documents folder, and these two keys are what make that folder
-	     visible in the Files app (On My iPhone → 雅伟之言) and openable in
-	     place. Without them a saved file exists and cannot be reached. -->
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>
 	</array>
 </dict>
 </plist>

@@ -6,6 +6,7 @@ import WatchConnectivity
 final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
   static let shared = WordsMediaCompanion()
   private(set) var channel: FlutterMethodChannel?
+  private var ready = false
   private var latest: [String: Any] = [:]
   private var sentIdentity = ""
   private var lastTransfer = Date.distantPast
@@ -14,6 +15,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     let bridge = shared
     let channel = FlutterMethodChannel(name: "yswords/media_companion",
                                        binaryMessenger: registrar.messenger())
+    bridge.ready = false
     bridge.channel = channel
     registrar.addMethodCallDelegate(bridge, channel: channel)
     if WCSession.isSupported() {
@@ -26,6 +28,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     guard call.method == "state", let data = call.arguments as? [String: Any] else {
       result(FlutterMethodNotImplemented); return
     }
+    ready = true
     latest = data
     if WCSession.isSupported(), WCSession.default.activationState == .activated,
        WCSession.default.isPaired, WCSession.default.isWatchAppInstalled {
@@ -44,15 +47,36 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
 
   func request(_ method: String, arguments: Any? = nil,
                completion: @escaping (Any?) -> Void) {
-    DispatchQueue.main.async {
-      guard let channel = self.channel else {
-        completion(["error": "Open Words on your iPhone to connect."]); return
+    let deadline = Date().addingTimeInterval(12)
+    var pending: ((Any?) -> Void)? = completion
+    let finish: (Any?) -> Void = { value in
+      guard let callback = pending else { return }
+      pending = nil // Release the row/watch reply even if Dart never answers.
+      callback(value)
+    }
+    func sendWhenReady() {
+      guard pending != nil else { return }
+      // A dashboard can connect before Dart installs its handler. Its
+      // first state publication proves readiness; a missing handler is
+      // not an empty library and never requires unlocking the phone.
+      guard self.ready, let channel = self.channel else {
+        guard Date() < deadline else {
+          finish(["error": "Audio is not ready. Please retry."]); return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: sendWhenReady)
+        return
       }
       channel.invokeMethod(method, arguments: arguments) { value in
         if let error = value as? FlutterError {
-          completion(["error": error.message ?? "Playback unavailable"])
-        } else { completion(value) }
+          finish(["error": error.message ?? "Playback unavailable"])
+        } else { finish(value) }
       }
+    }
+    DispatchQueue.main.async {
+      DispatchQueue.main.asyncAfter(deadline: .now() + max(0, deadline.timeIntervalSinceNow)) {
+        finish(["error": "Audio request timed out. Please retry."])
+      }
+      sendWhenReady()
     }
   }
 

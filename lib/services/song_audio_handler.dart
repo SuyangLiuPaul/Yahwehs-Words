@@ -82,7 +82,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       if (attempt != _currentAttempt) return;
       _error = message;
       _loading = false;
-      notifyUi();
+      _broadcast();
       // A track that already produced real position or duration — the
       // same "is this track alive" signal _armStallWatchdog trusts —
       // is not the one that just failed to start; some other command
@@ -947,9 +947,13 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       androidCompactActionIndices: const [0, 1, 2],
       processingState: _loading
           ? AudioProcessingState.loading
-          : (_queue.isEmpty
-              ? AudioProcessingState.idle
-              : AudioProcessingState.ready),
+          : (_error != null
+              ? AudioProcessingState.error
+              : _queue.isEmpty
+                  ? AudioProcessingState.idle
+                  : AudioProcessingState.ready),
+      errorCode: _error == null ? null : 1,
+      errorMessage: _error,
       playing: _playing,
       updatePosition: _position,
       bufferedPosition: _position,
@@ -975,7 +979,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   void clearError() {
     if (_error == null) return;
     _error = null;
-    notifyUi();
+    _broadcast();
   }
 
   Future<void> dispose() async {

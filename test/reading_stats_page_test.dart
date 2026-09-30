@@ -76,7 +76,9 @@ void main() {
     await ProfileService.instance.init();
     await pumpWith(tester, seededRecord());
 
-    expect(find.textContaining('2026-09-01'), findsOneWidget,
+    // Recent rows also render this date once the relative-age window
+    // passes. Pin the period sentence, not every occurrence of its date.
+    expect(find.textContaining('自 2026-09-01 起记录的阅读'), findsOneWidget,
         reason: 'without the period line every percentage on the page reads '
             'as a lifetime figure');
   });

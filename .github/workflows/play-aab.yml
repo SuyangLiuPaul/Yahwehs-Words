@@ -112,12 +112,12 @@ jobs:
         # STORE_BUILD switches off the GitHub self-updater
         # (UpdateService.isSupported): a Play install is updated by Play,
         # and downloading an APK from elsewhere is a Play policy violation.
-        # Play needs a version code above every one already uploaded, and
-        # the pubspec build number is not bumped for Play-only rebuilds, so
-        # the code comes from the run number (offset keeps it monotonic).
-        # Play already serves code 1006032. A 1000 offset would downgrade it.
-        # Reserve 3,000,000–19,999,999 for phone bundles; Wear starts at 20M.
-        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true --build-number=$((3000000 + GITHUB_RUN_NUMBER))
+        # android/app/build.gradle.kts derives the code from versionName:
+        # major * 1,000,000 + minor * 1,000 + patch. Flutter --build-number
+        # does not override that formula. Play verified 1.6.35 as 1006035,
+        # above the previously published 1006032; bump the app version for
+        # another phone upload rather than suggesting an ignored override.
+        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
 
       - name: Check the bundle carries the Play application id
         run: |
