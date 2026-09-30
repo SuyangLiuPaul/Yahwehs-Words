@@ -1,10 +1,16 @@
+## 2026-09-30 — CI verification after repairs
+
+- Windows Firebase PR #1: CI run 36690483812 passed at c15fac3d. Repairs add the project scroll physics to the Thayer selectable text and regenerate the 1.6.34 changelog.
+- Store/beta guide PR #2: CI run 36695393197 passed at 32a6a38e. The latest-package link shares UpdateService.repo, avoiding the duplicate repository identifier flagged by the source convention check.
+- Both PRs remain draft; production and release tags are pending. No local tests were added or run during these CI repairs.
+
 ## 2026-09-30 — public beta invitations and About installation guide (prepared)
 
 - Created external TestFlight group **Public beta — iPhone, iPad & Mac**.
 - Public invitation: https://testflight.apple.com/join/ghMuTs1m. Enabled and open to anyone; App Store Connect explicitly says users cannot join until an approved build is present.
 - Submitted iOS **1.6.33 (1060036)** and macOS **1.6.34 (1060036)** to Beta App Review. Both visibly **Waiting for Review**. Existing App Store review submissions were preserved.
-- Added localized store/latest-package links in `lib/widgets/store_links_card.dart` and the About page. These source changes are for the next native update; the binaries already waiting for review do not contain this card.
-- Words hosts a three-language, responsive `web/beta.html` at `/beta`, covering both apps, real Google Play opt-in links and actual TestFlight invitations. About store links route to the corresponding app/platform anchor. Source ready; dev deployment/visual review in progress. Do not claim production or a new tagged release is complete yet.
+- Added localized store/latest-package links in `lib/widgets/store_links_card.dart` and the About page. These source changes are for the next native update; the binaries already waiting for review do not contain this card. Latest-package buttons now share `UpdateService.repo` with the updater, avoiding a second repository identifier.
+- Words hosts a three-language, responsive `web/beta.html` at `/beta`, covering both apps, real Google Play opt-in links and actual TestFlight invitations. About store links route to the corresponding app/platform anchor. Guide deployed and visually inspected on `https://yswords-dev.netlify.app/beta`; both icons load, real invitations are present, and the 390px Traditional Chinese layout has no horizontal overflow. Both international dev/qat and China dev/qat verified by the release wrapper; production is unchanged. Do not claim production or a new tagged release is complete yet.
 - Google tester group https://groups.google.com/g/yahweh-bible-app-testers verified using non-member personal account: direct **Join group** dialog, no approval request. Dialog canceled; no extra member added.
 - EV source keyword audit: **76 readable study/dictionary database tables, 827,195 rows**, excluding Bible `.bbl` files and binaries. **Two matching definition fields**: `Thayer.dct` G2304 (`trinity`) and `Strong SCh.dct` H7307 (`三一神的第三位…同荣, 同尊`). Therefore the supplied EV package is not fully stripped of explicit Trinity commentary.
 - App source audit also found existing CBOL-derived Chinese G2316 commentary in `assets/strongs/greek.json` (Simplified/Traditional) and `assets/strongs/thayer_zh.json`, in both apps. This is a separate source from EV. G4151 wording about personality/depersonalised force merits human theological review; a keyword scan is not proof of doctrinal agreement.
