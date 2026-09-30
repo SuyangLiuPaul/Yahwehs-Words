@@ -1,3 +1,18 @@
+## 2026-09-30 — public beta invitations and About installation guide (prepared)
+
+- Created external TestFlight group **Public beta — iPhone, iPad & Mac**.
+- Public invitation: https://testflight.apple.com/join/ghMuTs1m. Enabled and open to anyone; App Store Connect explicitly says users cannot join until an approved build is present.
+- Submitted iOS **1.6.33 (1060036)** and macOS **1.6.34 (1060036)** to Beta App Review. Both visibly **Waiting for Review**. Existing App Store review submissions were preserved.
+- Added localized store/latest-package links in `lib/widgets/store_links_card.dart` and the About page. These source changes are for the next native update; the binaries already waiting for review do not contain this card.
+- Words hosts a three-language, responsive `web/beta.html` at `/beta`, covering both apps, real Google Play opt-in links and actual TestFlight invitations. About store links route to the corresponding app/platform anchor. Source ready; dev deployment/visual review in progress. Do not claim production or a new tagged release is complete yet.
+- Google tester group https://groups.google.com/g/yahweh-bible-app-testers verified using non-member personal account: direct **Join group** dialog, no approval request. Dialog canceled; no extra member added.
+- EV source keyword audit: **76 readable study/dictionary database tables, 827,195 rows**, excluding Bible `.bbl` files and binaries. **Two matching definition fields**: `Thayer.dct` G2304 (`trinity`) and `Strong SCh.dct` H7307 (`三一神的第三位…同荣, 同尊`). Therefore the supplied EV package is not fully stripped of explicit Trinity commentary.
+- App source audit also found existing CBOL-derived Chinese G2316 commentary in `assets/strongs/greek.json` (Simplified/Traditional) and `assets/strongs/thayer_zh.json`, in both apps. This is a separate source from EV. G4151 wording about personality/depersonalised force merits human theological review; a keyword scan is not proof of doctrinal agreement.
+- Original EV files and application dictionary content preserved while the owner answers the pending question about explicitly marked editorial omission. Do not silently attribute new edits to Pastor Ho or to EV.
+- Full keyword-audit evidence stored locally at `/Users/pliu0036/Downloads/Eagles-View-source-review/theology-keyword-review.json`.
+
+- PR #1 CI failure repaired in **c15fac3d**: use `kSelectableTextPhysics` in the EV Thayer dialog; regenerate bundled changelog for 1.6.34. GitHub run **36690483812** completed **success**, including tests and secret scan. Original failed run **36686050194** had one scrolling invariant failure and three stale-changelog failures; analysis had passed.
+
 ## 2026-09-30 — Mac App Store submission completed
 
 Words macOS 1.6.34, build 1060036, submitted successfully. Apple showed 1 Item Submitted, then Waiting for Review. Automatic release selected. Review submission: https://appstoreconnect.apple.com/apps/6817557892/distribution/reviewsubmissions/details/20cb1baf-827a-4eda-830b-e4d0e87ee889. Standard encryption declaration saved with France excluded, preserving the earlier distribution choice. Words pricing verified 174 countries available and France the one unavailable country. Existing iOS reviews were preserved. This supersedes earlier processing/pending entries below.

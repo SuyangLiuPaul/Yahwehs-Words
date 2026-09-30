@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/store_links_card.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/sermon_credit.dart';
@@ -80,6 +81,8 @@ class AboutPage extends StatelessWidget {
               _DisclaimerCard(scheme: scheme, locale: locale),
               const SizedBox(height: 12),
               _ContactCard(scheme: scheme, locale: locale),
+              const SizedBox(height: 12),
+              StoreLinksCard(locale: locale),
               // 2026-05-06: BYOK card was here briefly but the user
               // wanted AI to be fully automatic ("auth gemini for
               // them"). The developer-shared Gemini key already
