@@ -1,3 +1,15 @@
+## 2026-09-30 — Store update preparation, 1.6.34
+
+Added a visible By book chart to ordinary search results and uncapped Strong’s per-book occurrence results. Counts follow the active book scope, label their unit, rank descending with stable ties, and explain that a verse is counted once. Ranked AI suggestions are excluded from the frequency chart. The shared chart layout was inspected in Chrome. Targeted Flutter analysis of the chart, search page, English lexicon button and originals sheet is clean.
+
+Ported the already curated Eagle’s View English Thayer data from Sword to assets/thayer.json and made it available from the Strong’s entry sheet. Source attribution includes Eagle’s View and Used by permission, following the owner’s explicit permission statement on 2026-09-30. Existing Chinese BDB/Thayer and Scripture text are retained.
+
+Windows package: /Users/pliu0036/Downloads/store-msix/words-1.6.34/yahwehs_words.msix. Actions run 36679496549, code commit e03e64752f071c1f6f3d885aab18ac838f0b5229, passed. Inspected AppxManifest: identity YahwehsPeople.YahwehsWords, version 1.6.34.0, x64, existing publisher CN=C4997401-2CEE-44B6-9803-4775768C89A5. Thayer asset is present; restricted NASB files are absent. Microsoft submission 3 is still a draft; package NOT uploaded/submitted yet. Initializer regression checks from the prior entry remain the evidence for the Firebase fix; live Windows login/sync was not run on this Mac.
+
+Mac archive: /Users/pliu0036/Downloads/store-macos/Words-1.6.34.xcarchive, version 1.6.34, build 1060036, com.example.yswords. It was archived from the shared main checkout to retain prior authorized Apple/account changes, with APP_VERSION=1.6.34 and STORE_BUILD=true. The Thayer asset is present. Archive succeeded after clearing regenerable compiler caches and using DEBUG_INFORMATION_FORMAT=dwarf. Export failed because Xcode could not log in to lsy95112@gmail.com / retrieve its cloud-managed Mac distribution certificate. Xcode Apple Accounts login is open and the user has been asked to reauthenticate. Retry export with /Users/pliu0036/Downloads/store-macos/ExportOptions-AppStore.plist after login. Then upload the signed PKG using Transporter and submit the Mac version after processing.
+
+App Store Connect Mac version now 1.6.34, professional English description/promo saved, one real 1440x900 Mac screenshot uploaded, automatic release selected. It is still Prepare for Submission and has no selected build. iOS 1.6.33 remains Waiting for Review. Do not cancel that review.
+
 ## 2026-09-30 — Words Windows Firebase initialization / MS Store 1.6.34
 
 Native Windows boot called `Firebase.initializeApp()` without options. Windows has no auto-loaded Firebase configuration, and the SDK throws `core/not-initialized` when both the default app and explicit options are absent. Pass the existing project Web app configuration explicitly on Windows, as supported by FlutterFire CLI's `--windows-app-id=<WEB_APP_ID>` configuration. Auth and sync remain enabled; Apple/Android retain native configuration loading, and the Web redirect domain stays unchanged.
