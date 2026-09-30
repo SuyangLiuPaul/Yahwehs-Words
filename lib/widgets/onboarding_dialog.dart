@@ -125,7 +125,8 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                                     width: 64,
                                     height: 64,
                                     decoration: BoxDecoration(
-                                      color: scheme.primary.withValues(alpha: 0.10),
+                                      color: scheme.primary
+                                          .withValues(alpha: 0.10),
                                       shape: BoxShape.circle,
                                     ),
                                     alignment: Alignment.center,
@@ -137,7 +138,8 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                                     s.title,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                      fontFamily: settings.fontFamily,
+                                      fontFamilyFallback: kCjkFontFallback,
                                       fontSize: (settings.fontSize + 2)
                                           .clamp(16.0, 26.0)
                                           .toDouble(),
@@ -150,7 +152,8 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                                     s.body,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                      fontFamily: settings.fontFamily,
+                                      fontFamilyFallback: kCjkFontFallback,
                                       fontSize: (settings.fontSize - 2)
                                           .clamp(12.0, 18.0)
                                           .toDouble(),
@@ -180,9 +183,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                     width: selected ? 22 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: selected
-                          ? scheme.primary
-                          : scheme.outlineVariant,
+                      color: selected ? scheme.primary : scheme.outlineVariant,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );
@@ -193,8 +194,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                 children: [
                   TextButton(
                     onPressed: _finish,
-                    child:
-                        Text(uiStrings['skip']?[locale] ?? 'Skip'),
+                    child: Text(uiStrings['skip']?[locale] ?? 'Skip'),
                   ),
                   const Spacer(),
                   if (_index < slides.length - 1)
@@ -206,8 +206,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 4),
-                        child:
-                            Text(uiStrings['next']?[locale] ?? 'Next'),
+                        child: Text(uiStrings['next']?[locale] ?? 'Next'),
                       ),
                     )
                   else
@@ -217,8 +216,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 4),
                         child: Text(
-                            uiStrings['getStarted']?[locale] ??
-                                'Get started'),
+                            uiStrings['getStarted']?[locale] ?? 'Get started'),
                       ),
                     ),
                 ],
@@ -242,7 +240,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
           // was written, and only ever renders for a locale the map is
           // missing — so it would have been wrong invisibly.
           body: uiStrings['onboardWelcomeBody']?[locale] ??
-              'A bilingual Bible reader with 13 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
+              'A bilingual Bible reader with 14 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
         ),
         _Slide(
           icon: Icons.format_color_fill,
@@ -260,8 +258,7 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
         // material" not "AI replaces sermons".
         _Slide(
           icon: Icons.smart_toy_outlined,
-          title: uiStrings['onboardAiTitle']?[locale] ??
-              'AI study helpers',
+          title: uiStrings['onboardAiTitle']?[locale] ?? 'AI study helpers',
           body: uiStrings['onboardAiBody']?[locale] ??
               'Search the Bible by theme ("love", "faith"), tap any Greek or Hebrew word for a BDAG-style deep dive, or ask questions about archaeology and manuscripts. Powered by Gemini — paste your own free key in Settings → AI (and tap Test to verify) to skip the shared developer pool.',
         ),
@@ -295,8 +292,8 @@ class _OnboardingDialogState extends State<OnboardingDialog> {
         // used for both either.)
         _Slide(
           icon: Icons.tune_rounded,
-          title: uiStrings['onboardCustomizeTitle']?[locale] ??
-              'Customize & sync',
+          title:
+              uiStrings['onboardCustomizeTitle']?[locale] ?? 'Customize & sync',
           body: uiStrings['onboardCustomizeBodyEmail']?[locale] ??
               'Drag-reorder or hide any block under Settings → Dashboard layout. Sign in with an email address to sync bookmarks, notes and highlights across devices.',
         ),

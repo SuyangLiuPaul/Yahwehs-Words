@@ -92,7 +92,7 @@ void main() {
     // cannot decide anything here, and the two new English editions
     // have to be named, exactly as the four before them are.
     const english = {'kjv', 'leb', 'nasb', 'csb', 'bsb', 'bsb-yhwh',
-                     'asv-yhwh', 'net', 'ogt'};
+                     'asv-yhwh', 'net', 'ogt', 'bib'};
     // 2026-09-08:  joined . The else-branch below defaults an
     // unlisted code to Simplified, so a new Greek row that is not named
     // here fails with 'should be Simplified' -- which is what happened.

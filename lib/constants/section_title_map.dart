@@ -13,6 +13,7 @@
 const sectionTitleSetByVersion = <String, String>{
   // English family — neutral classic-style headings.
   'net': 'english-classic',
+  'bib': 'english-classic',
   'ogt': 'english-classic',
   'sblgnt': 'english-classic',
   'cnet': 'cuv',
@@ -59,5 +60,4 @@ const sectionTitleFallbackSet = <String, String>{};
 String sectionTitleSetFor(String version) =>
     sectionTitleSetByVersion[version] ?? '';
 
-String? sectionTitleFallbackFor(String setId) =>
-    sectionTitleFallbackSet[setId];
+String? sectionTitleFallbackFor(String setId) => sectionTitleFallbackSet[setId];

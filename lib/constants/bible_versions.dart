@@ -329,6 +329,12 @@ const bibleVersions = <BibleVersionInfo>[
       language: 'en',
       editionYear: 'New Testament / with notes'),
   BibleVersionInfo(
+      value: 'bib',
+      shortLabel: 'BIB',
+      menuLabel: 'Berean Interlinear Bible',
+      language: 'en',
+      editionYear: 'New Testament / Greek–English, Strong’s'),
+  BibleVersionInfo(
       value: 'sblgnt',
       shortLabel: 'SBLGNT',
       menuLabel: 'SBL Greek New Testament',
@@ -690,6 +696,7 @@ String narrowBibleVersionLabel(String version) {
 /// already has full OT+NT coverage.
 String? bibleVersionFullCanonFallback(String version) {
   switch (version) {
+    case 'bib':
     case 'ogt':
     case 'sblgnt':
       return 'bsb-yhwh';

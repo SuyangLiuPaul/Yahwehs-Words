@@ -317,3 +317,7 @@ existing render/search/copy divine-name cleanup still applies; therefore
 the raw source and displayed text should not be described as byte-identical.
 Words keeps Greek hidden, explicitly reconfirmed by the owner; Sword offers
 SBLGNT. Existing hidden editions and locale defaults stay as selected.
+
+## 2026-09-30 — Berean Interlinear Bible NT
+
+Official source: https://interlinearbible.com/bib.docx via https://berean.bible/downloads.htm. The publisher states Berean Bible texts have been public domain since 2023-04-30 (https://berean.bible/licensing.htm). This import contains the available New Testament only, not a completed OT interlinear. Source attribution and SHA-256 are retained in `docs/berean-interlinear-import.json`. One contradictory source tag at 1 Corinthians 7:15 is left untagged rather than guessed.

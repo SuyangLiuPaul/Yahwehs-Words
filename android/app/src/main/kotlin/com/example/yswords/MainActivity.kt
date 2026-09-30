@@ -140,6 +140,7 @@ class MainActivity : AudioServiceActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        WordsWearBridge.install(applicationContext, flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "yswords/android_icon")
             .setMethodCallHandler { call, result ->
                 when (call.method) {

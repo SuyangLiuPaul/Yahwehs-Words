@@ -4,6 +4,22 @@ import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+#if CARPLAY_ENABLED
+  private var mediaEngine: FlutterEngine?
+  @discardableResult func ensureMediaEngine() -> FlutterEngine {
+    if let engine = mediaEngine { return engine }
+    let engine = FlutterEngine(name: "words.shared.media", allowHeadlessExecution: true)
+    mediaEngine = engine
+    engine.run()
+    GeneratedPluginRegistrant.register(with: engine)
+    if let registrar = engine.registrar(forPlugin: "WordsMediaCompanion") {
+      WordsMediaCompanion.register(with: registrar)
+    }
+    registerYsWordsIconChannel(engine.binaryMessenger)
+    return engine
+  }
+#endif
+
 
   override func application(
     _ application: UIApplication,
@@ -41,6 +57,9 @@ import UserNotifications
   // alive before any Dart code can call into it.
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "WordsMediaCompanion") {
+      WordsMediaCompanion.register(with: registrar)
+    }
     // 2026-06-14 (v1.3.75): belt-and-suspenders only. We register the
     // icon channel here too, BUT the channel the Dart side actually
     // reaches is the one registered on the live FlutterViewController's

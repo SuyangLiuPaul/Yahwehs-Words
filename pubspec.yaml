@@ -201,6 +201,9 @@ flutter:
     - assets/net.json
     - assets/ogt.json
     - assets/sblgnt.json
+    - assets/bib.json
+    - assets/bib_chapter_notes.json
+    - assets/tagged/bib/
     - assets/kjv.json
     - assets/leb.json
     - assets/cuvs-yhwh.json
@@ -381,6 +384,9 @@ flutter:
     # through to the CSS-only system-font names (which are still kept
     # as further fallbacks for native iOS / macOS / Android where the
     # OS fonts ARE accessible to Flutter).
+    - family: NotoSansExt-Sub
+      fonts:
+        - asset: assets/fonts/NotoSansExt-Sub.ttf
     - family: NotoSansSC-YahwehsWords
       fonts:
         - asset: assets/fonts/NotoSansSC-YahwehsWords.otf

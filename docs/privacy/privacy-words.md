@@ -1,6 +1,6 @@
 # Yahweh's Words — Privacy Policy / 隐私政策（雅伟的话）
 
-Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
+Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
 
 ## English
 
@@ -8,9 +8,9 @@ Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's Peop
 
 **Without an account.** Notes, highlights, bookmarks, reading plan progress, search history and settings are stored on your device only. Profiles on the device are a local way to keep people's data apart; they are not accounts.
 
-**If you sign in (optional).** You can sign in with Google or with an email and password, through Google Firebase Authentication. We receive your sign-in identifier (email address and, for Google, your name and profile photo) and store it with Firebase. When signed in, the following are synced to Firebase (Google Cloud), under an ID tied to your account: highlights, notes and note titles, bookmarks, search history, reading position and app preferences. This data is used only to show it back to you on your other devices. Google processes it under its own terms and privacy policy.
+**If you sign in (optional).** You can sign in with Google, Sign in with Apple on iOS, or with an email and password, through Google Firebase Authentication. We receive your sign-in identifier (email address, including a private relay address if you use one, and, where provided, your name and profile photo) and store it with Firebase. When signed in, the following are synced to Firebase (Google Cloud), under an ID tied to your account: highlights, notes and note titles, bookmarks, search history, reading position and app preferences. This data is used only to show it back to you on your other devices. Google processes it under its own terms and privacy policy.
 
-**Deleting your data.** To delete your account and synced data, email support@yahwehword.com from the address you signed in with, and we will delete it. You can also stop syncing by signing out; data on your device stays until you clear it.
+**Deleting your data.** On iOS, go to Settings → Account → Delete account to remove your account and synced data. You can also email support@yahwehword.com from the address you signed in with and we will delete it. Signing out stops syncing; data on your device stays until you clear it.
 
 **AI features.** If you use AI search or AI word explanations, the text you enter (such as a search phrase or a word) is sent to our server and then to Google's Gemini service to produce the answer. Do not enter personal information into these boxes.
 
@@ -36,9 +36,9 @@ Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's Peop
 
 **不登录时。** 笔记、标注、书签、读经计划进度、搜索记录和设置只保存在本机。设备上的「个人档案」只是在本机区分不同使用者的方式，不是账号。
 
-**登录后（可选）。** 你可以用 Google 或邮箱加密码登录，由 Google Firebase Authentication 处理。我们会收到你的登录标识（邮箱；Google 登录还包括姓名和头像），并保存在 Firebase。登录后，以下内容会同步到 Firebase（Google Cloud），并与你的账号 ID 关联：标注、笔记及标题、书签、搜索记录、阅读位置和应用偏好。这些数据只用于在你的其他设备上还原，Google 按其自身条款和隐私政策处理。
+**登录后（可选）。** 你可以用 Google、iOS 上的 Apple 登录，或邮箱加密码登录，由 Google Firebase Authentication 处理。我们会收到你的登录标识（邮箱，包括你选择使用的私密转发地址；如有提供，还包括姓名和头像），并保存在 Firebase。登录后，以下内容会同步到 Firebase（Google Cloud），并与你的账号 ID 关联：标注、笔记及标题、书签、搜索记录、阅读位置和应用偏好。这些数据只用于在你的其他设备上还原，Google 按其自身条款和隐私政策处理。
 
-**删除数据。** 如需删除账号及已同步的数据，请用登录邮箱发信至 support@yahwehword.com，我们会删除。你也可以退出登录以停止同步；本机上的数据会保留，直到你自己清除。
+**删除数据。** 在 iOS 上，进入「设置 → 账号 → 删除账号」可删除账号及已同步的数据。你也可以用登录邮箱发信至 support@yahwehword.com，我们会删除。退出登录会停止同步；本机上的数据会保留，直到你自己清除。
 
 **AI 功能。** 使用 AI 搜索或 AI 释义时，你输入的文字（如搜索词或词语）会发送到我们的服务器，再转给 Google Gemini 生成结果。请勿在这些输入框中填写个人信息。
 

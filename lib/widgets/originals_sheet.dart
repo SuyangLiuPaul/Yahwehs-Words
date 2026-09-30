@@ -228,9 +228,15 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     if (msg == null) return false;
     final lower = msg.toLowerCase();
     const triggers = [
-      'quota', 'exhausted', 'rate-limit', 'rate limit',
-      'not configured', 'gemini_api_key',
-      '配额', '用完', '没有配置',
+      'quota',
+      'exhausted',
+      'rate-limit',
+      'rate limit',
+      'not configured',
+      'gemini_api_key',
+      '配额',
+      '用完',
+      '没有配置',
     ];
     for (final t in triggers) {
       if (lower.contains(t)) return true;
@@ -279,8 +285,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     final results = <_VerseOriginals>[];
     for (final v in widget.verses) {
       final english = toEnglish(v.book) ?? v.book;
-      final words = await OriginalsService.forVerse(
-          english, v.chapter, v.verse,
+      var words = await OriginalsService.forVerse(english, v.chapter, v.verse,
           version: widget.currentVersion);
       // The CHOSEN edition, not the reader's own — that is what the
       // picker is for. They are the same code for a reader whose Bible
@@ -293,8 +298,22 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         chapter: v.chapter,
         verse: v.verse,
       );
-      results.add(
-          _VerseOriginals(verse: v, words: words, tagged: tagged));
+      if (_choice.version == 'bib' && tagged != null) {
+        // BIB has its own critical Greek forms. Showing the default WH
+        // witness here would put another edition's form under the gloss.
+        words = [
+          for (final run in tagged)
+            if (run.isTagged && run.originalText != null)
+              OriginalWord(
+                  text: run.originalText!,
+                  strongs: run.strongs,
+                  translit: run.transliteration,
+                  morph: run.grammar.isEmpty
+                      ? null
+                      : 'BIB ${run.grammar.join(' / ')}'),
+        ];
+      }
+      results.add(_VerseOriginals(verse: v, words: words, tagged: tagged));
     }
     // Prefetch Strong's entries for every unique number across all
     // verses so the interlinear gloss row under each chip can render
@@ -316,8 +335,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         uniqueNums.addAll(run.implied);
       }
     }
-    uniqueNums.removeWhere(
-        (n) => n.isEmpty || TaggedRun.isSuppliedMarker(n));
+    uniqueNums.removeWhere((n) => n.isEmpty || TaggedRun.isSuppliedMarker(n));
     await Future.wait(uniqueNums.map((n) async {
       if (_glossCache.containsKey(n)) return;
       _glossCache[n] = await StrongsService.lookup(n);
@@ -363,8 +381,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // concordance is a single shared file that gets warmed by the
     // first lookup of the session.
     final entryFuture = StrongsService.lookup(w.strongs);
-    final concordanceFuture = ConcordanceService.lookup(w.strongs,
-        version: widget.currentVersion);
+    final concordanceFuture =
+        ConcordanceService.lookup(w.strongs, version: widget.currentVersion);
     final entry = await entryFuture;
     final concordance = await concordanceFuture;
     // v1.2.30: bail if the user has tapped a different word while we
@@ -527,9 +545,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         TextSpan(
           text: ' ${n.text}',
           style: n.kind == StrongsNumberKind.lexical ? lexical : secondary,
-          recognizer: n.kind == StrongsNumberKind.lexical
-              ? _runRecognizer(run)
-              : null,
+          recognizer:
+              n.kind == StrongsNumberKind.lexical ? _runRecognizer(run) : null,
         ),
       // Chinese sets no space between words, so without this the next
       // run's first character butts against the number: 地H776是.
@@ -541,8 +558,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   /// A dotted underline rather than link colouring: nearly every word is
   /// tappable, and colouring them all would repaint scripture as a wall
   /// of links.
-  TextStyle _taggableStyle(TextStyle base, ColorScheme scheme) =>
-      base.copyWith(
+  TextStyle _taggableStyle(TextStyle base, ColorScheme scheme) => base.copyWith(
         decoration: TextDecoration.underline,
         decorationStyle: TextDecorationStyle.dotted,
         decorationColor: scheme.primary.withValues(alpha: 0.45),
@@ -617,8 +633,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // visible immediately — saves an extra tap.
     unawaited(_loadRelations(strongsNumber,
         pivotFromNumber: pivotFromNumber, gen: myGen));
-    unawaited(_loadChinese(strongsNumber,
-        grammarFrom: grammarFrom, gen: myGen));
+    unawaited(
+        _loadChinese(strongsNumber, grammarFrom: grammarFrom, gen: myGen));
   }
 
   /// Scroll the entry card into view.
@@ -796,8 +812,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // Race-check: if the user navigated to another entry while we
     // were waiting for Gemini, drop the response on the floor — the
     // displayed entry no longer matches what we asked about.
-    final stillCurrent =
-        (_rootEntry ?? _selectedEntry)?.number == entryNumber;
+    final stillCurrent = (_rootEntry ?? _selectedEntry)?.number == entryNumber;
     if (!mounted || !stillCurrent) return;
     setState(() {
       _aiLoading = false;
@@ -808,7 +823,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         // path was removed — v1.2.40's switch to
         // gemini-3-flash-preview made Deep work on free tier.
         _aiChunks.add(_AiChunk(
-          label: _chunkLabel(length: length, scope: scope, locale: widget.locale),
+          label:
+              _chunkLabel(length: length, scope: scope, locale: widget.locale),
           text: result.explanation,
         ));
       }
@@ -852,7 +868,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     final w = _selectedWord;
     final v = widget.verses.isNotEmpty ? widget.verses.first : null;
     if (w == null || v == null || _aiChunks.isEmpty) return '';
-    final ref = '${v.book} ${v.chapter}:${v.verseLabel} · ${w.text} (${w.strongs})';
+    final ref =
+        '${v.book} ${v.chapter}:${v.verseLabel} · ${w.text} (${w.strongs})';
     final buf = StringBuffer()
       ..writeln(ref)
       ..writeln();
@@ -935,110 +952,111 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: scheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: scheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-              child: Row(
-                children: [
-                  Icon(Icons.auto_stories, color: scheme.primary, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onSurface,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.auto_stories, color: scheme.primary, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface,
+                            ),
                           ),
-                        ),
-                        Text(
-                          uiStrings['interlinearHint']?[locale] ??
-                              'Original · Strong\'s gloss',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: scheme.onSurfaceVariant,
+                          Text(
+                            uiStrings['interlinearHint']?[locale] ??
+                                'Original · Strong\'s gloss',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: scheme.onSurfaceVariant,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  if (_verseOriginals != null)
+                    if (_verseOriginals != null)
+                      IconButton(
+                        icon: const Icon(Icons.copy_outlined),
+                        iconSize: 20,
+                        tooltip: uiStrings['copyTable']?[locale] ??
+                            'Copy word table',
+                        onPressed: () => _copyInterlinearTable(context),
+                      ),
                     IconButton(
-                      icon: const Icon(Icons.copy_outlined),
+                      icon: const Icon(Icons.close),
                       iconSize: 20,
-                      tooltip: uiStrings['copyTable']?[locale] ?? 'Copy word table',
-                      onPressed: () => _copyInterlinearTable(context),
+                      onPressed: () => Navigator.of(context).maybePop(),
                     ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    iconSize: 20,
-                    onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: FutureBuilder<List<_VerseOriginals>>(
-                future: _future,
-                builder: (context, snap) {
-                  if (snap.connectionState != ConnectionState.done) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final data = snap.data ?? const [];
-                  return ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                    children: [
-                      // Scrolls with the content rather than being
-                      // pinned above it: on a phone this sheet's whole
-                      // job is to show a verse and an entry card, and a
-                      // permanently parked control row would spend a
-                      // line of that on something a reader touches once.
-                      _buildInterlinearPicker(scheme, locale),
-                      for (final vo in data) _buildVerseBlock(vo, scheme),
-                      // `_rootEntry` as well as `_selectedWord`: tapping
-                      // a word in the Chinese line, or a chip on the
-                      // implied-coverage line, goes through
-                      // `_loadRootEntry` and never sets `_selectedWord`,
-                      // so gating on the chip selection alone meant the
-                      // first tap of a sheet resolved an entry and then
-                      // rendered nothing at all. `_loadingEntry` keeps
-                      // the spinner in the tree while that first lookup
-                      // is still in flight.
-                      if (_selectedWord != null ||
-                          _rootEntry != null ||
-                          _loadingEntry) ...[
-                        const SizedBox(height: 16),
-                        KeyedSubtree(
-                          key: _entryCardKey,
-                          child: _buildEntryCard(context, scheme, locale),
-                        ),
-                      ] else ...[
-                        const SizedBox(height: 16),
-                        _buildHint(scheme, locale),
+              const Divider(height: 1),
+              Expanded(
+                child: FutureBuilder<List<_VerseOriginals>>(
+                  future: _future,
+                  builder: (context, snap) {
+                    if (snap.connectionState != ConnectionState.done) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final data = snap.data ?? const [];
+                    return ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      children: [
+                        // Scrolls with the content rather than being
+                        // pinned above it: on a phone this sheet's whole
+                        // job is to show a verse and an entry card, and a
+                        // permanently parked control row would spend a
+                        // line of that on something a reader touches once.
+                        _buildInterlinearPicker(scheme, locale),
+                        for (final vo in data) _buildVerseBlock(vo, scheme),
+                        // `_rootEntry` as well as `_selectedWord`: tapping
+                        // a word in the Chinese line, or a chip on the
+                        // implied-coverage line, goes through
+                        // `_loadRootEntry` and never sets `_selectedWord`,
+                        // so gating on the chip selection alone meant the
+                        // first tap of a sheet resolved an entry and then
+                        // rendered nothing at all. `_loadingEntry` keeps
+                        // the spinner in the tree while that first lookup
+                        // is still in flight.
+                        if (_selectedWord != null ||
+                            _rootEntry != null ||
+                            _loadingEntry) ...[
+                          const SizedBox(height: 16),
+                          KeyedSubtree(
+                            key: _entryCardKey,
+                            child: _buildEntryCard(context, scheme, locale),
+                          ),
+                        ] else ...[
+                          const SizedBox(height: 16),
+                          _buildHint(scheme, locale),
+                        ],
                       ],
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         );
       },
     );
@@ -1124,11 +1142,11 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                     ),
                 ],
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest
-                        .withValues(alpha: 0.4),
+                    color:
+                        scheme.surfaceContainerHighest.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: scheme.outlineVariant),
                   ),
@@ -1240,8 +1258,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     final tagged = vo.tagged;
     final runs = (tagged != null &&
             tagged.isNotEmpty &&
-            (!ownEdition ||
-                TaggedTextService.coversVerse(tagged, verseText)))
+            (!ownEdition || TaggedTextService.coversVerse(tagged, verseText)))
         ? tagged
         : null;
 
@@ -1364,6 +1381,10 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
           // where nobody scrolls and the reachability it exists to
           // provide would have been theoretical.
           if (_impliedRunOf(vo) case final run?)
+            if (_choice.version == 'bib')
+              Text(
+                  'BIB · ${run.originalText ?? ''} · ${run.transliteration ?? ''} · ${run.grammar.join(' / ')}'),
+          if (_impliedRunOf(vo) case final run?)
             ImpliedCoverageLine(
               run: run,
               lexicon: _glossCache,
@@ -1397,8 +1418,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     required int chapter,
     required int verse,
   }) {
-    final isSelected = _selectedWord?.strongs == w.strongs &&
-        _selectedWord?.text == w.text;
+    final isSelected =
+        _selectedWord?.strongs == w.strongs && _selectedWord?.text == w.text;
     // Round 56 (continued — Aramaic highlight): tag chips whose word
     // is Aramaic so the reader can see at a glance which embedded
     // tokens are Aramaic vs. surrounding Hebrew/Greek. Teal matches
@@ -1414,8 +1435,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // beneath the original word so a reader who doesn't know
     // Hebrew/Greek can immediately see what each word means.
     final entry = _glossCache[w.strongs];
-    final gloss =
-        entry?.localizedGloss(widget.locale) ?? '';
+    final gloss = entry?.localizedGloss(widget.locale) ?? '';
     // Aramaic chips: teal-tinted background + 1.5px teal border, even
     // when not selected. Selected Aramaic chips switch to the primary
     // colour scheme so the selection cue stays unambiguous.
@@ -1460,15 +1480,14 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               Directionality(
                 textDirection: TextDirection.ltr,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 5, vertical: 1),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                   decoration: BoxDecoration(
                     color: paletteBg(context, Colors.teal),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    uiStrings['aramaicWordBadge']?[widget.locale] ??
-                        'Aramaic',
+                    uiStrings['aramaicWordBadge']?[widget.locale] ?? 'Aramaic',
                     style: TextStyle(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
@@ -1604,8 +1623,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
             style: TextStyle(
               fontSize: bold ? 15 : 13.5,
               fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-              color:
-                  bold ? scheme.onSurface : scheme.onSurface.withValues(alpha: 0.85),
+              color: bold
+                  ? scheme.onSurface
+                  : scheme.onSurface.withValues(alpha: 0.85),
               height: 1.4,
             ),
           ),
@@ -1614,7 +1634,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     );
   }
 
-  Widget _buildEntryCard(BuildContext context, ColorScheme scheme, String locale) {
+  Widget _buildEntryCard(
+      BuildContext context, ColorScheme scheme, String locale) {
     // Null when the reader arrived from the Chinese line or an
     // implied-coverage chip rather than from an original-word chip;
     // the entry itself then carries everything the header needs.
@@ -1628,7 +1649,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // When the user has tapped a root link, show that entry instead.
     final isBrowsingRoot = _rootEntry != null;
     final entry = isBrowsingRoot ? _rootEntry : _selectedEntry;
-    final concordance = isBrowsingRoot ? _rootConcordance : _selectedConcordance;
+    final concordance =
+        isBrowsingRoot ? _rootConcordance : _selectedConcordance;
     // The displayed number: root number when browsing, otherwise the word's.
     final displayNumber = entry?.number ?? w?.strongs ?? '';
     // Round 56 (continued — Aramaic highlight, entry card): tag the
@@ -1671,14 +1693,13 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                   borderRadius: BorderRadius.circular(6),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: Icon(Icons.arrow_back,
-                        size: 18, color: scheme.primary),
+                    child:
+                        Icon(Icons.arrow_back, size: 18, color: scheme.primary),
                   ),
                 ),
               ],
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: scheme.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
@@ -1696,8 +1717,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               if (entryIsAramaic) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: paletteBg(context, Colors.teal),
                     borderRadius: BorderRadius.circular(6),
@@ -1735,8 +1756,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                 // tap target to 48×48 for Material/WCAG a11y. Was
                 // `padding: zero, constraints: BoxConstraints()` =
                 // ~18 dp tap target (well below 48 dp minimum).
-                constraints:
-                    const BoxConstraints(minWidth: 48, minHeight: 48),
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
                 tooltip: uiStrings['distributionTable']?[locale] ??
                     'Distribution Table',
                 onPressed: () => _showDistributionTable(context),
@@ -1745,9 +1765,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                 icon: const Icon(Icons.copy_outlined),
                 iconSize: 18,
                 // v1.2.31: see above — 48 dp minimum tap target.
-                constraints:
-                    const BoxConstraints(minWidth: 48, minHeight: 48),
-                tooltip: uiStrings['copyWordStudy']?[locale] ?? 'Copy word study',
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                tooltip:
+                    uiStrings['copyWordStudy']?[locale] ?? 'Copy word study',
                 onPressed: () => _copyWordEntry(context),
               ),
             ],
@@ -1758,7 +1778,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               Text(
                 [
                   if (entry.translit.isNotEmpty) entry.translit,
-                  if (entry.pronunciation.isNotEmpty) '/${entry.pronunciation}/',
+                  if (entry.pronunciation.isNotEmpty)
+                    '/${entry.pronunciation}/',
                 ].join('  '),
                 style: TextStyle(
                   fontSize: 13,
@@ -1786,8 +1807,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: scheme.tertiaryContainer.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(4),
@@ -1980,8 +2001,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
             if (_zhGrammar.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(
-                uiStrings['chineseLexGrammarTitle']?[locale] ??
-                    'Grammar codes',
+                uiStrings['chineseLexGrammarTitle']?[locale] ?? 'Grammar codes',
                 style: TextStyle(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
@@ -2017,14 +2037,18 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               const SizedBox(height: 12),
               _buildRelatedSection(
                 uiStrings['wordFamily']?[locale] ?? 'Word Family',
-                _wordFamily, scheme, locale,
+                _wordFamily,
+                scheme,
+                locale,
               ),
             ],
             if (_compareWords.isNotEmpty) ...[
               const SizedBox(height: 12),
               _buildRelatedSection(
                 uiStrings['synonyms']?[locale] ?? 'Synonyms',
-                _compareWords, scheme, locale,
+                _compareWords,
+                scheme,
+                locale,
               ),
             ],
             if (_lxxEquivalents.isNotEmpty) ...[
@@ -2045,7 +2069,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               const SizedBox(height: 12),
               _buildRelatedSection(
                 uiStrings['hebrewSources']?[locale] ?? 'Hebrew Sources',
-                _hebrewSources, scheme, locale,
+                _hebrewSources,
+                scheme,
+                locale,
               ),
             ],
           ] else
@@ -2111,10 +2137,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       return const SizedBox.shrink();
     }
     final ref = '${v.book} ${v.chapter}:${v.verseLabel}';
-    final hasChunks =
-        _aiForStrongs == entry.number && _aiChunks.isNotEmpty;
-    final hasError =
-        _aiForStrongs == entry.number && _aiError != null;
+    final hasChunks = _aiForStrongs == entry.number && _aiChunks.isNotEmpty;
+    final hasError = _aiForStrongs == entry.number && _aiError != null;
 
     final initialLabel = _aiLoading
         ? (uiStrings['aiExplainAsking']?[locale] ?? 'Asking Gemini…')
@@ -2136,8 +2160,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome,
-                  size: 16, color: scheme.primary),
+              Icon(Icons.auto_awesome, size: 16, color: scheme.primary),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -2156,9 +2179,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: _aiLoading
-                    ? null
-                    : () => _loadAiExplanation(),
+                onPressed: _aiLoading ? null : () => _loadAiExplanation(),
                 icon: _aiLoading
                     ? const SizedBox(
                         width: 14,
@@ -2166,12 +2187,11 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.auto_awesome, size: 16),
-                label: Text(initialLabel,
-                    style: const TextStyle(fontSize: 13)),
+                label: Text(initialLabel, style: const TextStyle(fontSize: 13)),
                 style: TextButton.styleFrom(
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 ),
               ),
             ),
@@ -2195,9 +2215,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               runSpacing: 4,
               children: [
                 TextButton.icon(
-                  onPressed: _aiLoading
-                      ? null
-                      : () => _loadAiExplanation(),
+                  onPressed: _aiLoading ? null : () => _loadAiExplanation(),
                   icon: const Icon(Icons.refresh, size: 16),
                   label: Text(
                     uiStrings['aiExplainTryAgain']?[locale] ?? 'Try again',
@@ -2205,8 +2223,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                   ),
                   style: TextButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   ),
                 ),
                 if (_shouldOfferByokForError(_aiError) &&
@@ -2297,8 +2315,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    uiStrings['aiExplainAsking']?[locale] ??
-                        'Asking Gemini…',
+                    uiStrings['aiExplainAsking']?[locale] ?? 'Asking Gemini…',
                     style: TextStyle(
                       fontSize: 12,
                       color: scheme.onSurfaceVariant,
@@ -2322,7 +2339,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                   child: Text(
                     uiStrings['aiExplainDisclaimer']?[locale] ??
                         'AI-generated. Verify with primary sources for '
-                        'study or teaching use.',
+                            'study or teaching use.',
                     style: TextStyle(
                       fontSize: 10,
                       color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -2339,8 +2356,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                   ),
                   style: TextButton.styleFrom(
                     visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   ),
                 ),
               ],
@@ -2376,6 +2393,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
       );
     }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2460,8 +2478,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
             // sells via BDAG / HALOT integration.
             chip(
               uiStrings['aiScopeDeepExegesis']?[locale] ?? 'Deep exegesis',
-              () => _loadAiExplanation(
-                  length: 'deep', scope: 'deepExegesis'),
+              () => _loadAiExplanation(length: 'deep', scope: 'deepExegesis'),
               primary: true,
             ),
           ],
@@ -2481,11 +2498,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
           'OT background';
     }
     if (n != null && n.startsWith('H')) {
-      return uiStrings['aiScopeCrossTestamentOtToNt']?[locale] ??
-          'NT echoes';
+      return uiStrings['aiScopeCrossTestamentOtToNt']?[locale] ?? 'NT echoes';
     }
-    return uiStrings['aiScopeCrossTestament']?[locale] ??
-        'Across testaments';
+    return uiStrings['aiScopeCrossTestament']?[locale] ?? 'Across testaments';
   }
 
   /// Copy the entire AI transcript to clipboard with a toast.
@@ -2507,8 +2522,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         spans.add(TextSpan(text: text.substring(last, m.start)));
       }
       final num = m.group(1)!;
-      final rec = TapGestureRecognizer()
-        ..onTap = () => _loadRootEntry(num);
+      final rec = TapGestureRecognizer()..onTap = () => _loadRootEntry(num);
       _tapRecognizers.add(rec);
       spans.add(TextSpan(
         text: num,
@@ -2540,8 +2554,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
 
   // ── Word family + synonyms ──────────────────────────────────────────────────
 
-  Widget _buildRelatedSection(
-      String label, List<StrongsEntry> entries, ColorScheme scheme, String locale,
+  Widget _buildRelatedSection(String label, List<StrongsEntry> entries,
+      ColorScheme scheme, String locale,
       {ConcordanceResult? overrideConcordance, String? overrideHeaderLemma}) {
     // Find which entry (if any) in this section is expanded — only
     // expand inline within the section that owns the chip, so a tap
@@ -2648,8 +2662,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
                   color: scheme.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(4),
@@ -2684,13 +2697,14 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               if (e.number != _pivotFromNumber)
                 InkWell(
                   onTap: () {
-                    final currentNumber = (_rootEntry ?? _selectedEntry)?.number;
+                    final currentNumber =
+                        (_rootEntry ?? _selectedEntry)?.number;
                     _loadRootEntry(e.number, pivotFromNumber: currentNumber);
                   },
                   borderRadius: BorderRadius.circular(4),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 4, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -2707,7 +2721,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                       ],
                     ),
                   ),
-              ),
+                ),
             ],
           ),
           const SizedBox(height: 4),
@@ -2728,8 +2742,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               onTap: () => setState(() => _refsShowAll.add(e.number)),
               borderRadius: BorderRadius.circular(4),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 4, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -2741,8 +2754,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                         color: scheme.primary,
                       ),
                     ),
-                    Icon(Icons.expand_more,
-                        size: 14, color: scheme.primary),
+                    Icon(Icons.expand_more, size: 14, color: scheme.primary),
                   ],
                 ),
               ),
@@ -2755,8 +2767,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               onTap: () => setState(() => _refsShowAll.remove(e.number)),
               borderRadius: BorderRadius.circular(4),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 4, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -2768,8 +2779,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                         color: scheme.primary,
                       ),
                     ),
-                    Icon(Icons.expand_less,
-                        size: 14, color: scheme.primary),
+                    Icon(Icons.expand_less, size: 14, color: scheme.primary),
                   ],
                 ),
               ),
@@ -2789,74 +2799,74 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-      onTap: () => setState(() {
-        _expandedRelatedNumber = isExpanded ? null : e.number;
-      }),
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        constraints: const BoxConstraints(maxWidth: 200),
-        decoration: BoxDecoration(
-          color: isExpanded
-              ? scheme.primaryContainer
-              : scheme.secondaryContainer.withValues(alpha: 0.55),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isExpanded ? scheme.primary : scheme.outlineVariant,
-            width: isExpanded ? 1.5 : 1,
+        onTap: () => setState(() {
+          _expandedRelatedNumber = isExpanded ? null : e.number;
+        }),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          constraints: const BoxConstraints(maxWidth: 200),
+          decoration: BoxDecoration(
+            color: isExpanded
+                ? scheme.primaryContainer
+                : scheme.secondaryContainer.withValues(alpha: 0.55),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isExpanded ? scheme.primary : scheme.outlineVariant,
+              width: isExpanded ? 1.5 : 1,
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: scheme.secondary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      e.number,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.secondary,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(
+                      e.lemma,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                e.localizedGloss(locale),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: scheme.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: scheme.secondary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    e.number,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: scheme.secondary,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Flexible(
-                  child: Text(
-                    e.lemma,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSurface,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              e.localizedGloss(locale),
-              style: TextStyle(
-                fontSize: 11,
-                color: scheme.onSurfaceVariant,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
       ),
     );
   }
@@ -2868,7 +2878,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     if (data == null) return;
     final locale = widget.locale;
     final buf = StringBuffer();
-    buf.writeln("Verse\tWord\tStrong's\tLemma\tTransliteration\tPronunciation\tGloss");
+    buf.writeln(
+        "Verse\tWord\tStrong's\tLemma\tTransliteration\tPronunciation\tGloss");
     for (final vo in data) {
       final en = toEnglish(vo.verse.book) ?? vo.verse.book;
       final verseRef =
@@ -2893,7 +2904,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   Future<void> _copyWordEntry(BuildContext ctx) async {
     final isBrowsingRoot = _rootEntry != null;
     final entry = isBrowsingRoot ? _rootEntry : _selectedEntry;
-    final concordance = isBrowsingRoot ? _rootConcordance : _selectedConcordance;
+    final concordance =
+        isBrowsingRoot ? _rootConcordance : _selectedConcordance;
     final w = _selectedWord;
     if (entry == null && w == null) return;
     final locale = widget.locale;
@@ -2918,8 +2930,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
           final label =
               '${localeAwareBookName(r.englishBook, locale, widget.currentVersion)} '
               '${r.chapter}:${r.verse}';
-          final verseText =
-              (_lookupVerseText(r) ?? '').replaceAll('\t', ' ').replaceAll('\n', ' ');
+          final verseText = (_lookupVerseText(r) ?? '')
+              .replaceAll('\t', ' ')
+              .replaceAll('\n', ' ');
           buf.writeln([...base, label, verseText].join('\t'));
         }
       } else {
@@ -3013,53 +3026,53 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         builder: (_, scrollController) => Scaffold(
           backgroundColor: Colors.transparent,
           body: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: scheme.outlineVariant,
-                borderRadius: BorderRadius.circular(2),
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: scheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 12, 8),
-              child: Row(
-                children: [
-                  Icon(Icons.table_chart_outlined,
-                      color: scheme.primary, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      uiStrings['distributionTable']?[locale] ??
-                          'Distribution Table',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: scheme.onSurface,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 12, 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.table_chart_outlined,
+                        color: scheme.primary, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        uiStrings['distributionTable']?[locale] ??
+                            'Distribution Table',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.onSurface,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    iconSize: 20,
-                    onPressed: () => Navigator.of(sheetCtx).maybePop(),
-                  ),
-                ],
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      iconSize: 20,
+                      onPressed: () => Navigator.of(sheetCtx).maybePop(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: WordDistributionTable(
-                strongsNumber: number,
-                locale: locale,
-                currentVersion: widget.currentVersion,
-                scrollController: scrollController,
+              const Divider(height: 1),
+              Expanded(
+                child: WordDistributionTable(
+                  strongsNumber: number,
+                  locale: locale,
+                  currentVersion: widget.currentVersion,
+                  scrollController: scrollController,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -3265,8 +3278,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color:
-                      canNavigate ? scheme.primary : scheme.onSurfaceVariant,
+                  color: canNavigate ? scheme.primary : scheme.onSurfaceVariant,
                 ),
               ),
               if (preview != null) ...[
@@ -3415,7 +3427,7 @@ const Set<String> _aramaicGreekStrongs = {
   'G5008', // ταλιθα (talitha)
   'G2891', // κουμι / κουμ (koumi/koum)
   'G2188', // εφφαθα (ephphatha)
-  'G5',    // ἀββα (abba)
+  'G5', // ἀββα (abba)
   'G1682', // ἐλωΐ (eloi)
   'G2982', // λεμα (lema)
   'G4518', // σαβαχθανι (sabachthani)

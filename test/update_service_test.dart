@@ -19,7 +19,12 @@ void main() {
     // redirects an old name for a while, which is exactly what makes
     // this failure quiet enough to need a test.
     test('is the repository this checkout actually belongs to', () {
-      final config = File('.git/config').readAsStringSync();
+      // Linked worktrees have a .git pointer file. Ask Git for the
+      // shared config directory rather than assuming a checkout shape.
+      final gitDir = Process.runSync('git', ['rev-parse', '--git-common-dir']);
+      expect(gitDir.exitCode, 0);
+      final config =
+          File('${(gitDir.stdout as String).trim()}/config').readAsStringSync();
       final match = RegExp(r'github\.com[/:]([\w.-]+/[\w.-]+?)(?:\.git)?\s')
           .firstMatch(config);
       expect(match, isNotNull,
@@ -63,7 +68,8 @@ void main() {
     // version. This is what fails the moment the two drift again — the
     // exact failure mode that let the fallback sit at 1.3.113 for two
     // months while pubspec moved to 1.4.170.
-    test('equals pubspec.yaml, so the update check never sees a phantom '
+    test(
+        'equals pubspec.yaml, so the update check never sees a phantom '
         'downgrade', () {
       // Mirrors bump_version.sh's own `awk '/^version:/'` extraction —
       // a single root-level `version:` line, build metadata (`+N`)
@@ -75,8 +81,7 @@ void main() {
       expect(kAppVersion, pubspecVersion);
     });
 
-    test('a real latest release is never "newer" than a correct fallback',
-        () {
+    test('a real latest release is never "newer" than a correct fallback', () {
       // Measured 2026-08-30: GitHub's actual latest release tag is v1.4.6.
       // If the fallback drifts stale again, isNewer would go true and the
       // About tile would tell a reader on 1.4.170 to "update" to 1.4.6 —

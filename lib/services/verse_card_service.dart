@@ -121,6 +121,7 @@ String? verseCardLicence(String version, String locale) {
     'net': 'aboutLicenseNet',
     'ogt': 'aboutLicenseOgt',
     'sblgnt': 'aboutLicenseSblgnt',
+    'bib': 'aboutLicenseBib',
     'kjv': 'aboutLicensePublicDomain',
     'leb': 'aboutLicenseLeb',
     'cuvs-yhwh': 'aboutLicenseCuvsYhwh',

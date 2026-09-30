@@ -84,6 +84,8 @@
 	     time anyone tried. -->
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Save a verse image to your photos, so you can keep it or send it on. Nothing is uploaded.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Yahweh's Words uses system audio services to play Bible and sermon audio. The app does not record from the microphone.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>

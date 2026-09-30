@@ -39,8 +39,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:yahwehs_words/utils/scripture_markup.dart'
-    show isReferentGloss;
+import 'package:yahwehs_words/utils/scripture_markup.dart' show isReferentGloss;
 
 /// One run of translation text and the original-language word behind it.
 @immutable
@@ -50,6 +49,8 @@ class TaggedRun {
     required this.strongs,
     this.implied = const [],
     this.grammar = const [],
+    this.transliteration,
+    this.originalText,
   });
 
   /// The translation text as printed, punctuation included.
@@ -79,10 +80,18 @@ class TaggedRun {
   /// Grammar codes: Hebrew stem/aspect, Greek tense-voice-mood.
   final List<String> grammar;
 
+  /// Source transliteration when the interlinear publisher supplies it.
+  final String? transliteration;
+
+  /// Publisher's Greek form for an English interlinear gloss, when supplied.
+  final String? originalText;
+
   bool get isTagged => strongs.isNotEmpty;
 
   factory TaggedRun.fromJson(Map<String, dynamic> j) => TaggedRun(
         text: (j['w'] ?? '') as String,
+        transliteration: j['t'] as String?,
+        originalText: j['o'] as String?,
         strongs: isSuppliedMarker((j['s'] ?? '') as String)
             ? ''
             : (j['s'] ?? '') as String,
@@ -137,6 +146,7 @@ class TaggedTextService {
   /// Greek original, and an interlinear of the original against itself
   /// is a different feature from this one.
   static const Set<String> taggedVersions = {
+    'bib',
     'cuvs-yhwh',
     // 2026-09-08. Derived from `cuvs-yhwh` rather than tagged afresh —
     // see the library note and `tools/derive_tagged_traditional.py`.
@@ -159,7 +169,6 @@ class TaggedTextService {
     'bsb-yhwh',
     'asv-yhwh',
   };
-
 
   static final Map<String, Map<String, List<TaggedRun>>> _cache = {};
   static final Map<String, Future<Map<String, List<TaggedRun>>>> _inflight = {};
@@ -233,8 +242,7 @@ class TaggedTextService {
     return false;
   }
 
-  static final RegExp _importerMarkup =
-      RegExp(r'[<>#]|[Ww][HhGgJjMm][0-9]+');
+  static final RegExp _importerMarkup = RegExp(r'[<>#]|[Ww][HhGgJjMm][0-9]+');
 
   /// Whether the tagged runs still carry every character of the verse
   /// the reader is looking at.
@@ -348,7 +356,8 @@ class TaggedTextService {
           : runs[i].text.substring(carried.length);
       carried = null;
       final open = text.lastIndexOf('[');
-      if (open >= 0 && !text.substring(open).contains(']') &&
+      if (open >= 0 &&
+          !text.substring(open).contains(']') &&
           i + 1 < runs.length) {
         final next = runs[i + 1].text;
         final close = next.indexOf(']');

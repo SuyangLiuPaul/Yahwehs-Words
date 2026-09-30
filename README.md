@@ -74,6 +74,14 @@ any APIs themselves**; everything is at the Firebase project level.
 
 ---
 
+## Latest additions
+
+- Berean Interlinear NT word study with source Greek forms, English glosses, transliteration, Strong’s numbers and grammar. Greek-only reading editions stay hidden in Words at the owner’s request.
+- Scoped search charts and independent fuzzy / pinyin text search controls.
+- Phone audio companions for Apple Watch and Wear OS, plus Android Auto media browsing. CarPlay remains awaiting Apple’s entitlement approval. [Build and distribution status](docs/car-and-watch.md).
+- [Store and beta installation guide](https://yahwehword.com/beta#words), [release report](docs/release-2026-09-30.md), and [Eagle’s View review](docs/eaglesview-theology-review.md).
+- Validation on 2026-09-30: analysis has no issues; **3,820 tests passed**, with 36 pre-existing skips.
+
 ## Features
 
 | Category     | Details                                                                                                                 |
@@ -87,7 +95,7 @@ any APIs themselves**; everything is at the Firebase project level.
 | Search       | **Live search-as-you-type** with 250 ms debounce · Two explicit modes via chip strip: **Search** (text scan, also Enter default) and **AI** (Gemini-backed fuzzy/thematic, reference-only) · Direct-reference jump (`John 3:16`, `约 3:16`, `Rom 12:1-2`) · Strong's-# pattern (`G2316` / `H7200`) opens the lexicon page · Top-aligned **recent searches** with per-item delete · Bulk **Copy all results** to clipboard · Built-in **"?" help dialog** in your locale · Filter dropdown for whole-Bible vs current-book scope · Every keystroke resets to default scope (entire Bible) · **Tap a hit → smooth 350 ms scroll lands the verse 25 % from the top** with a bold `primaryContainer` wash + inline `►` arrow before the verse number in paragraph mode (auto-clears after 3.5 s) |
 | Word Study   | Tap any verse → "Original" → word-by-word interlinear with Strong's, transliteration, gloss · Tap a chip → full lexicon entry, word family, synonyms, LXX cross-testament refs, concordance · **AI explanation** with adjustable scope: this verse / chapter / book / whole Bible / cross-testament / **deep exegesis (BDAG-level structured analysis)** — all reference-only · **Aramaic words highlighted** in Daniel 2:4-7:28, Ezra 4:8-6:18 + 7:12-26, Genesis 31:47, Jeremiah 10:11, plus NT transliterations (raca, talitha koum, abba, eloi, ephphatha, maranatha) · **Proper-noun complementary glosses** (English etymology + Chinese biblical identification side-by-side) |
 | Annotations  | `{...}` inline badges with linked `<note:...>` pop-ups; `[...]` dotted-underline keywords; Book icon notes              |
-| Section titles | Inline scripture-section headings with optional ⓘ context popovers — covers all 13 versions × 66 books                  |
+| Section titles | Inline scripture-section headings with optional ⓘ context popovers — available by edition/book; NT-only editions retain their own scope                  |
 | Book intros  | Collapsible historical-context card at the top of every chapter 1, bilingual                                            |
 | Cross-refs   | Treasury of Scripture Knowledge (TSK) + OpenBible.info community votes — 29,319 source verses with their highest-voted to-references; surfaced via the cross-refs sheet on any selected verse |
 | Bible Tools  | Originals overview · Strong's lookup · Word distribution table · Daily verse rotation (curated) · Languages card (Hebrew / Aramaic / Greek deep-dives with tappable passage links) |

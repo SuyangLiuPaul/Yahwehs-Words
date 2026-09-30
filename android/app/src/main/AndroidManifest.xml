@@ -200,6 +200,14 @@
              and steering-wheel buttons to the player, which is the
              difference between "plays in the car" and "plays in the
              car but you cannot skip a track without unlocking". -->
+        <service android:name=".WordsWearListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/words/command" />
+            </intent-filter>
+        </service>
+        <meta-data android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
         <service
             android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"

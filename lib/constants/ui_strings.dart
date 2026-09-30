@@ -1,5 +1,5 @@
-
 import 'contact.dart';
+
 /// The Lexham English Bible's required attribution, quoted exactly.
 ///
 /// From the LEB copyright statement: quotations of 100 or more verses
@@ -466,8 +466,7 @@ const uiStrings = {
   },
   'menuSectionReading': {'zh-Hans': '阅读方式', 'zh-Hant': '閱讀方式', 'en': 'Reading'},
   'menuSectionMore': {'zh-Hans': '更多', 'zh-Hant': '更多', 'en': 'More'},
-  'statsOverview':
-      {'zh-Hans': '总览', 'zh-Hant': '總覽', 'en': 'Overview'},
+  'statsOverview': {'zh-Hans': '总览', 'zh-Hant': '總覽', 'en': 'Overview'},
   'statsBooks': {'zh-Hans': '书卷', 'zh-Hant': '書卷', 'en': 'Books'},
   // Round 56: replaces the per-book Statistics tab with a
   // Strong's-first lookup tool. Tapping a result opens the full
@@ -1051,8 +1050,7 @@ const uiStrings = {
   'languagesCardSubtitle': {
     'zh-Hans': '圣经原本由三种语言写成 —— 看看每一种各自承担哪些经文。',
     'zh-Hant': '聖經原本由三種語言寫成 —— 看看每一種各自承擔哪些經文。',
-    'en':
-        'The three source languages and where each appears in the canon.',
+    'en': 'The three source languages and where each appears in the canon.',
   },
   'languageWordCount': {
     'zh-Hans': '{n} 词',
@@ -1076,10 +1074,8 @@ const uiStrings = {
     'en': 'Most of the Old Testament',
   },
   'languageHebrewSections': {
-    'zh-Hans':
-        '旧约 39 卷的绝大部分 —— 摩西五经、历史书、诗歌智慧书、绝大多数先知书。',
-    'zh-Hant':
-        '舊約 39 卷的絕大部分 —— 摩西五經、歷史書、詩歌智慧書、絕大多數先知書。',
+    'zh-Hans': '旧约 39 卷的绝大部分 —— 摩西五经、历史书、诗歌智慧书、绝大多数先知书。',
+    'zh-Hant': '舊約 39 卷的絕大部分 —— 摩西五經、歷史書、詩歌智慧書、絕大多數先知書。',
     'en':
         'Nearly all 39 books of the Old Testament — Pentateuch, histories, poetry / wisdom, and almost the entire prophetic corpus.',
   },
@@ -1300,10 +1296,8 @@ const uiStrings = {
     'en': 'Mark 7:34 — "ephphatha"',
   },
   'aramDescEphphatha': {
-    'zh-Hans':
-        '亚兰文，意为「开了吧」。耶稣对一位耳聋舌结的人说话医治时所用的原话。马可同样紧接着翻译给希腊读者听。',
-    'zh-Hant':
-        '亞蘭文，意為「開了吧」。耶穌對一位耳聾舌結的人說話醫治時所用的原話。馬可同樣緊接著翻譯給希臘讀者聽。',
+    'zh-Hans': '亚兰文，意为「开了吧」。耶稣对一位耳聋舌结的人说话医治时所用的原话。马可同样紧接着翻译给希腊读者听。',
+    'zh-Hant': '亞蘭文，意為「開了吧」。耶穌對一位耳聾舌結的人說話醫治時所用的原話。馬可同樣緊接著翻譯給希臘讀者聽。',
     'en':
         'Aramaic for "be opened." Spoken by Jesus over a deaf-mute man\'s ears at the moment of healing. Mark again preserves the original word and glosses it in Greek.',
   },
@@ -1406,8 +1400,7 @@ const uiStrings = {
   'lookupFeatureFamily': {
     'zh-Hans': '词族（亲属词）+ 同义词对比，相关字根一目了然',
     'zh-Hant': '詞族（親屬詞）+ 同義詞對比，相關字根一目了然',
-    'en':
-        'Word family + synonym comparison — see related lemmas at a glance.',
+    'en': 'Word family + synonym comparison — see related lemmas at a glance.',
   },
   'lookupFeatureConcordance': {
     'zh-Hans': '可点击的经文索引（concordance），该字出现的每一节经文一键直达',
@@ -1418,8 +1411,7 @@ const uiStrings = {
   'lookupFeatureCopy': {
     'zh-Hans': '一键复制原文对照表格，方便讲道预备或笔记',
     'zh-Hant': '一鍵複製原文對照表格，方便講道預備或筆記',
-    'en':
-        'Copy the interlinear table to clipboard for sermon prep or notes.',
+    'en': 'Copy the interlinear table to clipboard for sermon prep or notes.',
   },
   // Round 56: Word Distribution tab — exposes the
   // WordDistributionTable widget (previously only reachable via
@@ -1450,15 +1442,13 @@ const uiStrings = {
   'statsChapters': {'zh-Hans': '章数', 'zh-Hant': '章數', 'en': 'Chapters'},
   'statsVerses': {'zh-Hans': '节数', 'zh-Hant': '節數', 'en': 'Verses'},
   'statsWords': {'zh-Hans': '字词数', 'zh-Hant': '字詞數', 'en': 'Words'},
-  'statsChars':
-      {'zh-Hans': '字符数', 'zh-Hant': '字符數', 'en': 'Characters'},
+  'statsChars': {'zh-Hans': '字符数', 'zh-Hant': '字符數', 'en': 'Characters'},
   'statsAvgWordsVerse': {
     'zh-Hans': '平均字词/节',
     'zh-Hant': '平均字詞/節',
     'en': 'Avg w/v',
   },
-  'statsTime':
-      {'zh-Hans': '阅读时间(分)', 'zh-Hant': '閱讀時間(分)', 'en': 'Time (m)'},
+  'statsTime': {'zh-Hans': '阅读时间(分)', 'zh-Hant': '閱讀時間(分)', 'en': 'Time (m)'},
   'statsReadingTime': {
     'zh-Hans': '阅读时间 @ 200 wpm',
     'zh-Hant': '閱讀時間 @ 200 wpm',
@@ -1479,8 +1469,7 @@ const uiStrings = {
     'zh-Hant': '最短(按字詞數)',
     'en': 'Shortest (by word count)',
   },
-  'statsVocabulary':
-      {'zh-Hans': '词汇', 'zh-Hant': '詞彙', 'en': 'Vocabulary'},
+  'statsVocabulary': {'zh-Hans': '词汇', 'zh-Hant': '詞彙', 'en': 'Vocabulary'},
   'statsTopWords': {
     'zh-Hans': '高频字词',
     'zh-Hant': '高頻字詞',
@@ -1501,8 +1490,7 @@ const uiStrings = {
     'zh-Hant': '在所選範圍內僅出現一次的字詞。',
     'en': 'Words appearing only once in the selected scope.',
   },
-  'statsNoHapax':
-      {'zh-Hans': '— 无 —', 'zh-Hant': '— 無 —', 'en': '— none —'},
+  'statsNoHapax': {'zh-Hans': '— 无 —', 'zh-Hant': '— 無 —', 'en': '— none —'},
   'statsScope': {'zh-Hans': '范围:', 'zh-Hant': '範圍:', 'en': 'Scope:'},
   'statsAllCanon': {
     'zh-Hans': '整本圣经',
@@ -1704,10 +1692,10 @@ const uiStrings = {
   // and this sentence, the first one a new reader sees, went on
   // promising a language the picker has no tab for.
   'onboardWelcomeBody': {
-    'zh-Hans': '双语圣经阅读应用，13 个版本（英文／简体／繁体）。主页的「读经」卡片会带你回到上次离开的位置。',
-    'zh-Hant': '雙語聖經閱讀應用，13 個版本（英文／簡體／繁體）。主頁的「讀經」卡片會帶你回到上次離開的位置。',
+    'zh-Hans': '双语圣经阅读应用，14 个版本（英文／简体／繁体）。主页的「读经」卡片会带你回到上次离开的位置。',
+    'zh-Hant': '雙語聖經閱讀應用，14 個版本（英文／簡體／繁體）。主頁的「讀經」卡片會帶你回到上次離開的位置。',
     'en':
-        'A bilingual Bible reader with 13 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
+        'A bilingual Bible reader with 14 versions across English and Chinese. The "Read Bible" card on Home picks up exactly where you left off.',
   },
   'onboardReadTitle': {
     'zh-Hans': '阅读、高亮、研经',
@@ -1731,8 +1719,10 @@ const uiStrings = {
     'en': 'AI study helpers',
   },
   'onboardAiBody': {
-    'zh-Hans': '按主题搜经文（"爱"、"信心"），点希腊文／希伯来文原文看 BDAG 级深度释义，对考古和手稿提具体问题。AI 由 Gemini 驱动——需要在 设置 → AI 粘贴自己的免费密钥（按 Test 验证）。',
-    'zh-Hant': '按主題搜經文（「愛」、「信心」），點希臘文／希伯來文原文看 BDAG 級深度釋義，對考古和手稿提具體問題。AI 由 Gemini 驅動——需要在 設定 → AI 貼上自己的免費金鑰（按 Test 驗證）。',
+    'zh-Hans':
+        '按主题搜经文（"爱"、"信心"），点希腊文／希伯来文原文看 BDAG 级深度释义，对考古和手稿提具体问题。AI 由 Gemini 驱动——需要在 设置 → AI 粘贴自己的免费密钥（按 Test 验证）。',
+    'zh-Hant':
+        '按主題搜經文（「愛」、「信心」），點希臘文／希伯來文原文看 BDAG 級深度釋義，對考古和手稿提具體問題。AI 由 Gemini 驅動——需要在 設定 → AI 貼上自己的免費金鑰（按 Test 驗證）。',
     'en':
         'Search the Bible by theme ("love", "faith"), tap any Greek or Hebrew word for a BDAG-style deep dive, or ask questions about archaeology and manuscripts. Powered by Gemini — needs your own free key, pasted in Settings → AI (tap Test to verify).',
   },
@@ -1742,8 +1732,10 @@ const uiStrings = {
     'en': 'Sermons',
   },
   'onboardSermonsBody': {
-    'zh-Hans': '429 篇解经讲道，其中 289 篇有英／简／繁三语，另 140 篇为简／繁双语。讲道中的经文引用可弹出小窗预览，无需离开。主页有「继续讲道」卡片显示上次进度。',
-    'zh-Hant': '429 篇解經講道，其中 289 篇有英／簡／繁三語，另 140 篇為簡／繁雙語。講道中的經文引用可彈出小窗預覽，無需離開。主頁有「繼續講道」卡片顯示上次進度。',
+    'zh-Hans':
+        '429 篇解经讲道，其中 289 篇有英／简／繁三语，另 140 篇为简／繁双语。讲道中的经文引用可弹出小窗预览，无需离开。主页有「继续讲道」卡片显示上次进度。',
+    'zh-Hant':
+        '429 篇解經講道，其中 289 篇有英／簡／繁三語，另 140 篇為簡／繁雙語。講道中的經文引用可彈出小窗預覽，無需離開。主頁有「繼續講道」卡片顯示上次進度。',
     'en':
         '429 expository sermons — 289 in EN / 简 / 繁, plus 140 more in 简 / 繁 only. Verse refs in the body open a popup so you can peek at scripture without leaving. Home shows a "Resume sermon" card with your progress.',
   },
@@ -1863,8 +1855,7 @@ const uiStrings = {
   'dashboardLayoutResetConfirm': {
     'zh-Hans': '是否恢复默认顺序，并重新打开所有板块？',
     'zh-Hant': '是否恢復預設順序，並重新打開所有板塊？',
-    'en':
-        'Restore the original section order and turn every block back on?',
+    'en': 'Restore the original section order and turn every block back on?',
   },
   'resetToDefault': {
     'zh-Hans': '恢复默认',
@@ -1938,9 +1929,9 @@ const uiStrings = {
   // test/offline_pack_counts_test.dart counts THAT list rather than the
   // catalog, so this string and the pack cannot drift apart again.
   'offlinePackBibles': {
-    'zh-Hans': '圣经版本（共 13 个）',
-    'zh-Hant': '聖經版本（共 13 個）',
-    'en': 'Bibles (13 versions)',
+    'zh-Hans': '圣经版本（共 14 个）',
+    'zh-Hant': '聖經版本（共 14 個）',
+    'en': 'Bibles (14 versions)',
   },
   // {name} is filled from sermon_credit.dart — the single source for
   // the preacher's name. The count was 587, which was the sum of every
@@ -1955,8 +1946,7 @@ const uiStrings = {
   'offlinePackTools': {
     'zh-Hans': '研经工具（家谱 / 时间轴 / 证据 / 互参 / 福音合参等）',
     'zh-Hant': '研經工具（家譜 / 時間軸 / 證據 / 互參 / 福音合參等）',
-    'en':
-        'Tools & references (tree / timeline / evidence / refs / synopsis)',
+    'en': 'Tools & references (tree / timeline / evidence / refs / synopsis)',
   },
   // Added 2026-05 — exegesis word study + Bible-history maps were
   // previously not pre-cached, so they silently failed offline.
@@ -1998,12 +1988,11 @@ const uiStrings = {
     'zh-Hant': '自動檢測 Firebase Auth、Google Drive 同步、Gemini AI 是否正常。'
         '一般使用者無需啟用任何 API——只有應用作者需要在 Google Cloud Console 啟用一次。'
         '若有問題，應用仍能在降級模式下使用（同步退化為本地保存，AI 顯示「不可用」）。',
-    'en':
-        'Probes Firebase Auth, Drive sync, and the AI proxy. End '
-            'users never need to enable anything — these are '
-            'developer-side checks for the Yahweh\'s Words project. The app '
-            'keeps working in degraded mode either way (sync goes '
-            'local-only, AI shows "not available").',
+    'en': 'Probes Firebase Auth, Drive sync, and the AI proxy. End '
+        'users never need to enable anything — these are '
+        'developer-side checks for the Yahweh\'s Words project. The app '
+        'keeps working in degraded mode either way (sync goes '
+        'local-only, AI shows "not available").',
   },
   'cloudDiagRun': {
     'zh-Hans': '运行检查',
@@ -2062,20 +2051,19 @@ const uiStrings = {
         '【是否影響最終使用者】不影響。一次性的專案級別設定。'
         '點擊「Create Database」然後選擇「United States (us-central1)」區域和「Start in locked mode」。'
         '步驟 3 設定安全規則後才能真正讀寫。',
-    'en':
-        'WHAT: Enables Firebase Realtime Database in the project. '
-            'It\'s a separate product from Firestore — uses '
-            'WebSocket transport (works through more firewalls) and '
-            'doesn\'t need any extra OAuth scope at sign-in.\n\n'
-            "WHY: Sync (highlights / bookmarks / notes) stores each "
-            "user's data at "
-            "users/{uid}/sync.\n\n"
-            "WHAT BREAKS WITHOUT IT: Sign-in works but sync fails "
-            "with code `database-disabled`. AI features still work.\n\n"
-            "DOES IT AFFECT END USERS: No — one-time project-level "
-            'setting. Click "Create Database" → pick a region (US '
-            'is fine) → "Start in locked mode" (Step 3 opens up '
-            'rules afterwards).',
+    'en': 'WHAT: Enables Firebase Realtime Database in the project. '
+        'It\'s a separate product from Firestore — uses '
+        'WebSocket transport (works through more firewalls) and '
+        'doesn\'t need any extra OAuth scope at sign-in.\n\n'
+        "WHY: Sync (highlights / bookmarks / notes) stores each "
+        "user's data at "
+        "users/{uid}/sync.\n\n"
+        "WHAT BREAKS WITHOUT IT: Sign-in works but sync fails "
+        "with code `database-disabled`. AI features still work.\n\n"
+        "DOES IT AFFECT END USERS: No — one-time project-level "
+        'setting. Click "Create Database" → pick a region (US '
+        'is fine) → "Start in locked mode" (Step 3 opens up '
+        'rules afterwards).',
   },
   'setupStep2Detail': {
     'zh-Hans': '【作用】在 ysword 项目里启用 Generative Language API（即 Gemini API）。\n\n'
@@ -2088,18 +2076,17 @@ const uiStrings = {
         '即使你已經有了 GEMINI_API_KEY 環境變數，如果該 API 在金鑰所屬專案中沒啟用，呼叫就會失敗。\n\n'
         '【不啟用會怎樣】AI 釋義和 AI 搜尋功能會顯示「暫時不可用」訊息。其他功能不受影響。\n\n'
         '【是否影響最終使用者】不影響。這是專案級別的設定。',
-    'en':
-        'WHAT: Enables the Generative Language API (the Gemini API) '
-            'in the project.\n\n'
-            "WHY: The Netlify functions (aiExplainWord, aiSearch) "
-            "call Gemini for AI word explanations + AI search. Even "
-            "if GEMINI_API_KEY is set in env vars, the call fails "
-            "if the API isn't enabled in the project that owns the "
-            'key.\n\n'
-            "WHAT BREAKS WITHOUT IT: AI explanation and AI search "
-            'show "not available right now" messages. Other '
-            'features unaffected.\n\n'
-            "DOES IT AFFECT END USERS: No. Project-level setting.",
+    'en': 'WHAT: Enables the Generative Language API (the Gemini API) '
+        'in the project.\n\n'
+        "WHY: The Netlify functions (aiExplainWord, aiSearch) "
+        "call Gemini for AI word explanations + AI search. Even "
+        "if GEMINI_API_KEY is set in env vars, the call fails "
+        "if the API isn't enabled in the project that owns the "
+        'key.\n\n'
+        "WHAT BREAKS WITHOUT IT: AI explanation and AI search "
+        'show "not available right now" messages. Other '
+        'features unaffected.\n\n'
+        "DOES IT AFFECT END USERS: No. Project-level setting.",
   },
   'setupStep3Detail': {
     'zh-Hans': '【作用】配置 Realtime Database 的安全规则，允许已登录用户读写自己的数据。\n\n'
@@ -2134,28 +2121,27 @@ const uiStrings = {
         '}\n\n'
         '【不設定會怎樣】所有同步操作回傳 permission_denied 錯誤。\n\n'
         '【是否影響最終使用者】不影響。一次性的伺服器端設定。',
-    'en':
-        'WHAT: Configures Realtime Database security rules so '
-            'authenticated users can read & write their own data.\n\n'
-            "WHY: Firebase ships RTDB with default rules denying "
-            "everything (.read: false / .write: false). Sync needs "
-            "the path users/<uid>/* opened up to that user only.\n\n"
-            'RECOMMENDED RULES (paste into the Rules tab):\n'
-            '{\n'
-            '  "rules": {\n'
-            '    "users": {\n'
-            '      "\$uid": {\n'
-            '        ".read": "auth != null && auth.uid == \$uid",\n'
-            '        ".write": "auth != null && auth.uid == \$uid"\n'
-            '      }\n'
-            '    }\n'
-            '  }\n'
-            '}\n\n'
-            "WHAT BREAKS WITHOUT IT: Every sync operation returns "
-            '`permission_denied`. The diagnostic surfaces this with '
-            "an 'Open RTDB rules' fix-link.\n\n"
-            "DOES IT AFFECT END USERS: No — one-time server-side "
-            'setting.',
+    'en': 'WHAT: Configures Realtime Database security rules so '
+        'authenticated users can read & write their own data.\n\n'
+        "WHY: Firebase ships RTDB with default rules denying "
+        "everything (.read: false / .write: false). Sync needs "
+        "the path users/<uid>/* opened up to that user only.\n\n"
+        'RECOMMENDED RULES (paste into the Rules tab):\n'
+        '{\n'
+        '  "rules": {\n'
+        '    "users": {\n'
+        '      "\$uid": {\n'
+        '        ".read": "auth != null && auth.uid == \$uid",\n'
+        '        ".write": "auth != null && auth.uid == \$uid"\n'
+        '      }\n'
+        '    }\n'
+        '  }\n'
+        '}\n\n'
+        "WHAT BREAKS WITHOUT IT: Every sync operation returns "
+        '`permission_denied`. The diagnostic surfaces this with '
+        "an 'Open RTDB rules' fix-link.\n\n"
+        "DOES IT AFFECT END USERS: No — one-time server-side "
+        'setting.',
   },
   'setupStep4Detail': {
     'zh-Hans': '【作用】把 yswords.netlify.app 加到 Firebase Auth 的"已授权域名"列表。\n\n'
@@ -2168,16 +2154,15 @@ const uiStrings = {
         '【不啟用會怎樣】登入請求會失敗，錯誤碼 auth/unauthorized-domain。\n\n'
         '【是否影響最終使用者】不影響。這是 Firebase 專案級別的設定。'
         '如果將來部署到新網域（比如自訂網域 yswords.com），也要把那個網域加進來。',
-    'en':
-        'WHAT: Adds yswords.netlify.app to the Firebase Auth '
-            '"Authorized domains" allow-list.\n\n'
-            'WHY: Firebase Auth rejects any sign-in attempt from a '
-            "domain not on this list, as a security measure.\n\n"
-            "WHAT BREAKS WITHOUT IT: Sign-in fails with code "
-            "`auth/unauthorized-domain`.\n\n"
-            "DOES IT AFFECT END USERS: No. Firebase-project-level "
-            'setting. If you ever deploy to a new domain (custom '
-            "domain like yswords.com), add that domain here too.",
+    'en': 'WHAT: Adds yswords.netlify.app to the Firebase Auth '
+        '"Authorized domains" allow-list.\n\n'
+        'WHY: Firebase Auth rejects any sign-in attempt from a '
+        "domain not on this list, as a security measure.\n\n"
+        "WHAT BREAKS WITHOUT IT: Sign-in fails with code "
+        "`auth/unauthorized-domain`.\n\n"
+        "DOES IT AFFECT END USERS: No. Firebase-project-level "
+        'setting. If you ever deploy to a new domain (custom '
+        "domain like yswords.com), add that domain here too.",
   },
   'setupStep5Detail': {
     'zh-Hans': '【作用】在 Netlify 仪表盘的环境变量中设置 GEMINI_API_KEY。\n\n'
@@ -2194,20 +2179,19 @@ const uiStrings = {
         '形成金鑰鏈，主金鑰額度耗盡時自動切換到備用金鑰，提高可用性。\n\n'
         '【不設置會怎樣】AI 功能呼叫時函數會回傳 503 錯誤，提示金鑰未配置。\n\n'
         '【注意】這是 Netlify 環境變數，不是 Google Cloud 設定。修改後需要重新部署生效。',
-    'en':
-        'WHAT: Sets the GEMINI_API_KEY environment variable in '
-            'the Netlify dashboard.\n\n'
-            "WHY: The Netlify functions (aiExplainWord, aiSearch) "
-            "need this credential to authenticate Gemini API calls. "
-            "Generate one for free at https://aistudio.google.com/apikey.\n\n"
-            "OPTIONAL: Set up to 9 backup keys "
-            "(GEMINI_API_KEY_BACKUP_2..9) to form a fallback chain — "
-            "when the primary key's quota is exhausted, the function "
-            "automatically tries the next one. Improves reliability.\n\n"
-            "WHAT BREAKS WITHOUT IT: AI features fail with 503 'GEMINI_"
-            "API_KEY is not configured'.\n\n"
-            "NOTE: This is a Netlify env var, not a Google Cloud "
-            "setting. Changes require a redeploy to take effect.",
+    'en': 'WHAT: Sets the GEMINI_API_KEY environment variable in '
+        'the Netlify dashboard.\n\n'
+        "WHY: The Netlify functions (aiExplainWord, aiSearch) "
+        "need this credential to authenticate Gemini API calls. "
+        "Generate one for free at https://aistudio.google.com/apikey.\n\n"
+        "OPTIONAL: Set up to 9 backup keys "
+        "(GEMINI_API_KEY_BACKUP_2..9) to form a fallback chain — "
+        "when the primary key's quota is exhausted, the function "
+        "automatically tries the next one. Improves reliability.\n\n"
+        "WHAT BREAKS WITHOUT IT: AI features fail with 503 'GEMINI_"
+        "API_KEY is not configured'.\n\n"
+        "NOTE: This is a Netlify env var, not a Google Cloud "
+        "setting. Changes require a redeploy to take effect.",
   },
   // ── Diagnostic probe result strings (localised) ───────────────
   'cloudDiagFirebaseAuthTitle': {
@@ -2223,9 +2207,8 @@ const uiStrings = {
   'cloudDiagFirebaseAuthPlaceholder': {
     'zh-Hans': 'firebase_options.dart 中仍是占位值。云同步和登录已禁用（仅本地模式）。',
     'zh-Hant': 'firebase_options.dart 中仍是佔位值。雲同步和登入已停用（僅本地模式）。',
-    'en':
-        'firebase_options.dart still has placeholder values. Cloud '
-            'sync + sign-in are disabled (local-only mode).',
+    'en': 'firebase_options.dart still has placeholder values. Cloud '
+        'sync + sign-in are disabled (local-only mode).',
   },
   'cloudDiagFirebaseAuthFailed': {
     'zh-Hans': 'Firebase 初始化失败。请在浏览器控制台中查找 [CloudAuthService] 日志。',
@@ -2245,9 +2228,8 @@ const uiStrings = {
   'cloudDiagSignedInWarning': {
     'zh-Hans': '尚未登录。在 设置 → 账户 中登录后，云端同步才会启用。',
     'zh-Hant': '尚未登入。在 設定 → 帳號 中登入後，雲端同步才會啟用。',
-    'en':
-        'Not signed in. Cloud sync stays disabled until the user '
-            'signs in via Settings → Account.',
+    'en': 'Not signed in. Cloud sync stays disabled until the user '
+        'signs in via Settings → Account.',
   },
   'cloudDiagSignedInOk': {
     'zh-Hans': '账号：{email}',
@@ -2269,10 +2251,9 @@ const uiStrings = {
         '请在 设置 → 账户 → 同步 中点击"重新连接 Google Drive"。',
     'zh-Hant': '未捕獲 Drive OAuth 存取權杖。可能是使用者在加入 drive.file 範圍之前登入的——'
         '請在 設定 → 帳號 → 同步 中點擊「重新連接 Google Drive」。',
-    'en':
-        'No Drive OAuth access token captured. User may have signed '
-            'in before the drive.file scope was added — they need to '
-            'click Reconnect Drive in Settings → Account → Sync.',
+    'en': 'No Drive OAuth access token captured. User may have signed '
+        'in before the drive.file scope was added — they need to '
+        'click Reconnect Drive in Settings → Account → Sync.',
   },
   'cloudDiagDriveScopeOk': {
     'zh-Hans': 'OAuth 访问令牌已捕获。',
@@ -2292,8 +2273,7 @@ const uiStrings = {
   'cloudDiagDriveApiOkEmpty': {
     'zh-Hans': 'API 可达；YsWords.json 还不存在（首次同步时会创建）。',
     'zh-Hant': 'API 可達；YsWords.json 還不存在（首次同步時會建立）。',
-    'en':
-        'API reachable; no YsWords.json yet (will be created on first sync).',
+    'en': 'API reachable; no YsWords.json yet (will be created on first sync).',
   },
   'cloudDiagDriveApiOkExists': {
     'zh-Hans': 'API 可达；YsWords.json 已存在。',
@@ -2303,24 +2283,23 @@ const uiStrings = {
   'cloudDiagDriveApi401': {
     'zh-Hans': '401 未授权——访问令牌已过期。下次同步会自动静默刷新。',
     'zh-Hant': '401 未授權——存取權杖已過期。下次同步會自動靜默刷新。',
-    'en':
-        '401 unauthorized — access token expired. The next sync '
-            'will silently refresh it.',
+    'en': '401 unauthorized — access token expired. The next sync '
+        'will silently refresh it.',
   },
   'cloudDiagDriveApiNotEnabled': {
     'zh-Hans': 'ysword 项目中未启用 Drive API。点击下方"打开 Cloud Console"一键启用。',
     'zh-Hant': 'ysword 專案中未啟用 Drive API。點擊下方「打開 Cloud Console」一鍵啟用。',
-    'en':
-        'Drive API is NOT enabled in the ysword project. Click '
-            '"Open Cloud Console" to enable it (one click).',
+    'en': 'Drive API is NOT enabled in the ysword project. Click '
+        '"Open Cloud Console" to enable it (one click).',
   },
   'cloudDiagDriveApi403Other': {
-    'zh-Hans': '403——可能是 OAuth 同意屏幕缺少 drive.file 范围，或者你的账号被 Workspace 管理员禁用了第三方应用。服务器返回：{body}',
-    'zh-Hant': '403——可能是 OAuth 同意畫面缺少 drive.file 範圍，或者你的帳號被 Workspace 管理員停用了第三方應用。伺服器回傳：{body}',
-    'en':
-        '403 — likely the OAuth consent screen is missing the '
-            'drive.file scope, or your account is on a Workspace '
-            'admin that blocks third-party apps. Server said: {body}',
+    'zh-Hans':
+        '403——可能是 OAuth 同意屏幕缺少 drive.file 范围，或者你的账号被 Workspace 管理员禁用了第三方应用。服务器返回：{body}',
+    'zh-Hant':
+        '403——可能是 OAuth 同意畫面缺少 drive.file 範圍，或者你的帳號被 Workspace 管理員停用了第三方應用。伺服器回傳：{body}',
+    'en': '403 — likely the OAuth consent screen is missing the '
+        'drive.file scope, or your account is on a Workspace '
+        'admin that blocks third-party apps. Server said: {body}',
   },
   'cloudDiagAiProxyTitle': {
     'zh-Hans': 'AI 代理（Netlify）',
@@ -2330,24 +2309,21 @@ const uiStrings = {
   'cloudDiagAiProxyOk': {
     'zh-Hans': '函数可达。AI 调用按需访问 Gemini；如有失败请查看 Netlify 控制台中 /api/aiSearch 的日志。',
     'zh-Hant': '函數可達。AI 呼叫按需存取 Gemini；如有失敗請查看 Netlify 控制台中 /api/aiSearch 的日誌。',
-    'en':
-        'Function reachable. Real AI calls go to Gemini on demand; '
-            'if they fail, see /api/aiSearch logs in Netlify '
-            'dashboard.',
+    'en': 'Function reachable. Real AI calls go to Gemini on demand; '
+        'if they fail, see /api/aiSearch logs in Netlify '
+        'dashboard.',
   },
   'cloudDiagAiProxy503': {
     'zh-Hans': '函数报告：GEMINI_API_KEY 未配置。请在 Netlify 仪表盘中设置。',
     'zh-Hant': '函數報告：GEMINI_API_KEY 未配置。請在 Netlify 儀表板中設置。',
-    'en':
-        'Function says GEMINI_API_KEY is not configured. Set it in '
-            'the Netlify dashboard.',
+    'en': 'Function says GEMINI_API_KEY is not configured. Set it in '
+        'the Netlify dashboard.',
   },
   'cloudDiagAiProxy404': {
     'zh-Hans': '函数返回 404——未部署，或 netlify.toml 重定向配置错误。',
     'zh-Hant': '函數回傳 404——未部署，或 netlify.toml 重定向配置錯誤。',
-    'en':
-        'Function returns 404 — not deployed, or netlify.toml '
-            'redirects are misconfigured.',
+    'en': 'Function returns 404 — not deployed, or netlify.toml '
+        'redirects are misconfigured.',
   },
   'cloudDiagTimeout': {
     'zh-Hans': '8 秒后超时。',
@@ -2378,14 +2354,12 @@ const uiStrings = {
   'cloudDiagRtdbOk': {
     'zh-Hans': '读写测试通过。同步数据存放在 users/{uid}/sync 下。',
     'zh-Hant': '讀寫測試通過。同步資料存放在 users/{uid}/sync 下。',
-    'en':
-        'Read + write OK. Sync data lives at users/{uid}/sync.',
+    'en': 'Read + write OK. Sync data lives at users/{uid}/sync.',
   },
   'cloudDiagRtdbOkWithUrl': {
     'zh-Hans': '读写测试通过 · {url}。同步数据存放在 users/{uid}/sync 下。',
     'zh-Hant': '讀寫測試通過 · {url}。同步資料存放在 users/{uid}/sync 下。',
-    'en':
-        'Read + write OK at {url}. Sync data lives at users/{uid}/sync.',
+    'en': 'Read + write OK at {url}. Sync data lives at users/{uid}/sync.',
   },
   'cloudDiagRtdbTimeoutDetail': {
     'zh-Hans': '连接 {url} 超时（8 秒）。最可能的原因是 Firebase 控制台中尚未'
@@ -2394,40 +2368,36 @@ const uiStrings = {
     'zh-Hant': '連接 {url} 逾時（8 秒）。最可能的原因是 Firebase 控制台中尚未'
         '建立資料庫——打開 RTDB 標籤頁點擊「Create Database」即可。'
         '其他可能：URL 的區域和資料庫所在的區域不匹配，或者網路封鎖了 firebaseio.com。',
-    'en':
-        'Timed out after 8s connecting to {url}. The most likely '
-            "cause is that the database hasn't been created yet in "
-            'the Firebase Console — open the RTDB tab and click '
-            '"Create Database". Other possibilities: the URL\'s '
-            'region doesn\'t match where your database lives, or '
-            'your network is blocking firebaseio.com.',
+    'en': 'Timed out after 8s connecting to {url}. The most likely '
+        "cause is that the database hasn't been created yet in "
+        'the Firebase Console — open the RTDB tab and click '
+        '"Create Database". Other possibilities: the URL\'s '
+        'region doesn\'t match where your database lives, or '
+        'your network is blocking firebaseio.com.',
   },
   'cloudDiagRtdbReadback': {
     'zh-Hans': '探针写入成功，但读回的值不一致。可能是监听器过期或规则禁止读取。',
     'zh-Hant': '探針寫入成功，但讀回的值不一致。可能是監聽器過期或規則禁止讀取。',
-    'en':
-        'Wrote a probe value but readback returned a different value. '
-            'Could be a stale listener or rules denying read.',
+    'en': 'Wrote a probe value but readback returned a different value. '
+        'Could be a stale listener or rules denying read.',
   },
   'cloudDiagRtdbPermissionDenied': {
     'zh-Hans': '权限被拒。打开 Firebase 控制台 → Realtime Database → Rules，'
         '允许已登录用户读写自己的 users/{uid}/* 路径。',
     'zh-Hant': '權限被拒。打開 Firebase 控制台 → Realtime Database → Rules，'
         '允許已登入使用者讀寫自己的 users/{uid}/* 路徑。',
-    'en':
-        'Permission denied. Open Firebase Console → Realtime '
-            'Database → Rules and ensure authenticated users can '
-            'read/write their own users/<uid>/* path.',
+    'en': 'Permission denied. Open Firebase Console → Realtime '
+        'Database → Rules and ensure authenticated users can '
+        'read/write their own users/<uid>/* path.',
   },
   'cloudDiagRtdbNotEnabled': {
     'zh-Hans': '该项目尚未启用 Realtime Database。请在 Firebase 控制台的 '
         'Realtime Database 标签页中点击 "Create Database"。',
     'zh-Hant': '該專案尚未啟用 Realtime Database。請在 Firebase 控制台的 '
         'Realtime Database 標籤頁中點擊「Create Database」。',
-    'en':
-        "Realtime Database isn't enabled yet for this project. "
-            'Open Firebase Console and click "Create Database" on '
-            'the Realtime Database tab.',
+    'en': "Realtime Database isn't enabled yet for this project. "
+        'Open Firebase Console and click "Create Database" on '
+        'the Realtime Database tab.',
   },
   'cloudDiagRtdbOpenRules': {
     'zh-Hans': '打开 RTDB 规则',
@@ -2454,9 +2424,8 @@ const uiStrings = {
   'exegesisProperNounNote': {
     'zh-Hans': '英文给词源，中文给身份——都是对的，互相补充。',
     'zh-Hant': '英文給詞源，中文給身份——都是對的，互相補充。',
-    'en':
-        'English gives etymology; Chinese gives biblical identification — '
-            'both correct, complementary perspectives.',
+    'en': 'English gives etymology; Chinese gives biblical identification — '
+        'both correct, complementary perspectives.',
   },
   'exegesisProperNounRoleLabel': {
     'zh-Hans': '此处指',
@@ -2514,8 +2483,7 @@ const uiStrings = {
   'aiBibleSearchNoMatches': {
     'zh-Hans': 'AI 没有找到相关经文，换个说法再试一下吧。',
     'zh-Hant': 'AI 沒有找到相關經文，換個說法再試一下吧。',
-    'en':
-        'AI didn\'t find any matching passages. Try rephrasing.',
+    'en': 'AI didn\'t find any matching passages. Try rephrasing.',
   },
   // 2026-05-08 (v1.1.5): tag + snackbar for AI ref cards that don't
   // resolve to a verse in the user's currently-loaded Bible version.
@@ -2557,7 +2525,8 @@ const uiStrings = {
   'aiNotConfiguredFallback': {
     'zh-Hans': 'AI 功能需要你自己的 Gemini API 密钥（免费），请到「设置」›「AI 释义」设置。',
     'zh-Hant': 'AI 功能需要你自己的 Gemini API 金鑰（免費），請到「設定」›「AI 釋義」設定。',
-    'en': 'AI features need your own Gemini API key (free) — set it in Settings › AI.',
+    'en':
+        'AI features need your own Gemini API key (free) — set it in Settings › AI.',
   },
   // 2026-05-09 (v1.2.0): tag appended to the AboutPage footer when
   // the build was compiled with `--dart-define=CHINA_MODE=true`.
@@ -2582,9 +2551,8 @@ const uiStrings = {
   'aiBibleSearchSomeMissing': {
     'zh-Hans': 'AI 还找到 {n} 处经文，但您当前圣经版本中没有匹配（仅供参考）。',
     'zh-Hant': 'AI 還找到 {n} 處經文，但您當前聖經版本中沒有匹配（僅供參考）。',
-    'en':
-        'AI also suggested {n} passages not in your current '
-            'Bible version (reference only).',
+    'en': 'AI also suggested {n} passages not in your current '
+        'Bible version (reference only).',
   },
   // 2026-05-07 (post-fix v3): AI-result note when the active search
   // filter (e.g. "Search current book") excluded some of the
@@ -2594,9 +2562,8 @@ const uiStrings = {
   'aiBibleSearchOutOfScope': {
     'zh-Hans': 'AI 还推荐了 {n} 处经文，但当前筛选范围之外（仅供参考）。',
     'zh-Hant': 'AI 還推薦了 {n} 處經文，但當前篩選範圍之外（僅供參考）。',
-    'en':
-        'AI also suggested {n} passages outside your current '
-            'filter scope.',
+    'en': 'AI also suggested {n} passages outside your current '
+        'filter scope.',
   },
   // 2026-05-07: italic caveat shown directly below the AI search
   // button. v10 wording aligned with the welcome disclaimer:
@@ -2615,11 +2582,10 @@ const uiStrings = {
         '若您是开发者，请在 设置 → 关于 → 底部 查看云端配置状态。',
     'zh-Hant': '雲端同步尚未配置完成。本地標亮 / 書籤 / 筆記仍可正常使用。'
         '若您是開發者，請在 設定 → 關於 → 底部 查看雲端配置狀態。',
-    'en':
-        "Cloud sync isn't fully set up for this app yet. Local "
-            'highlights / bookmarks / notes still work as normal. '
-            'If you\'re the developer, see Settings → About → '
-            'bottom for the setup walkthrough.',
+    'en': "Cloud sync isn't fully set up for this app yet. Local "
+        'highlights / bookmarks / notes still work as normal. '
+        'If you\'re the developer, see Settings → About → '
+        'bottom for the setup walkthrough.',
   },
   'aiByokTitle': {
     'zh-Hans': '使用我自己的 Gemini API 密钥',
@@ -2699,20 +2665,26 @@ const uiStrings = {
   // the default, (c) relative speed vs depth, and (d) free-tier
   // quota reality so they know when to BYOK.
   'aiModelFastDetail': {
-    'zh-Hans': '快 (默认) · Gemini 2.5 Flash-Lite。最快、最简明的回答，约 1-3 秒。你自己密钥的免费配额最大，基本不会耗尽。适合日常研经、快速查询。',
-    'zh-Hant': '快 (預設) · Gemini 2.5 Flash-Lite。最快、最簡明的回答，約 1-3 秒。你自己金鑰的免費配額最大，基本不會耗盡。適合日常研經、快速查詢。',
+    'zh-Hans':
+        '快 (默认) · Gemini 2.5 Flash-Lite。最快、最简明的回答，约 1-3 秒。你自己密钥的免费配额最大，基本不会耗尽。适合日常研经、快速查询。',
+    'zh-Hant':
+        '快 (預設) · Gemini 2.5 Flash-Lite。最快、最簡明的回答，約 1-3 秒。你自己金鑰的免費配額最大，基本不會耗盡。適合日常研經、快速查詢。',
     'en':
         'Fast (default) · Gemini 2.5 Flash-Lite. Quickest answers (~1-3 s), brief and direct. Your own key\'s largest free-tier quota — it almost never runs out. Best for everyday study and quick lookups.',
   },
   'aiModelStandardDetail': {
-    'zh-Hans': '标准 · Gemini 2.5 Flash。速度和深度的平衡，约 3-6 秒。免费配额中等，平时充足，高峰时段可能耗尽。适合需要稍详细解释的场景。',
-    'zh-Hant': '標準 · Gemini 2.5 Flash。速度和深度的平衡,約 3-6 秒。免費配額中等,平時充足,高峰時段可能耗盡。適合需要稍詳細解釋的場景。',
+    'zh-Hans':
+        '标准 · Gemini 2.5 Flash。速度和深度的平衡，约 3-6 秒。免费配额中等，平时充足，高峰时段可能耗尽。适合需要稍详细解释的场景。',
+    'zh-Hant':
+        '標準 · Gemini 2.5 Flash。速度和深度的平衡,約 3-6 秒。免費配額中等,平時充足,高峰時段可能耗盡。適合需要稍詳細解釋的場景。',
     'en':
         'Standard · Gemini 2.5 Flash. Balanced speed and depth (~3-6 s). Mid-range free-tier quota — usually fine, can run out at peak hours. Best when you want a bit more detail than Fast gives.',
   },
   'aiModelDeepDetail': {
-    'zh-Hans': '深入 · Gemini 3 Flash Preview。带"思考"模式的高速推理模型——接近 Pro 级别的释经深度，但速度快得多（约 4-8 秒）。**免费配额可用**：~250 RPD，独立于 Standard / Fast 配额池。Google 在 2026 年 4 月把 gemini-2.5-pro 收费了——所以我们改用这款，免费即可使用，不需要 BYOK。BYOK 仍然推荐用于高频使用（您自己的密钥有独立配额，更稳定）。',
-    'zh-Hant': '深入 · Gemini 3 Flash Preview。帶「思考」模式的高速推理模型——接近 Pro 級別的釋經深度，但速度快得多（約 4-8 秒）。**免費配額可用**：~250 RPD，獨立於 Standard / Fast 配額池。Google 在 2026 年 4 月把 gemini-2.5-pro 收費了——所以我們改用這款，免費即可使用，不需要 BYOK。BYOK 仍然推薦用於高頻使用（您自己的密鑰有獨立配額，更穩定）。',
+    'zh-Hans':
+        '深入 · Gemini 3 Flash Preview。带"思考"模式的高速推理模型——接近 Pro 级别的释经深度，但速度快得多（约 4-8 秒）。**免费配额可用**：~250 RPD，独立于 Standard / Fast 配额池。Google 在 2026 年 4 月把 gemini-2.5-pro 收费了——所以我们改用这款，免费即可使用，不需要 BYOK。BYOK 仍然推荐用于高频使用（您自己的密钥有独立配额，更稳定）。',
+    'zh-Hant':
+        '深入 · Gemini 3 Flash Preview。帶「思考」模式的高速推理模型——接近 Pro 級別的釋經深度，但速度快得多（約 4-8 秒）。**免費配額可用**：~250 RPD，獨立於 Standard / Fast 配額池。Google 在 2026 年 4 月把 gemini-2.5-pro 收費了——所以我們改用這款，免費即可使用，不需要 BYOK。BYOK 仍然推薦用於高頻使用（您自己的密鑰有獨立配額，更穩定）。',
     'en':
         'Deep · Gemini 3 Flash Preview. High-speed thinking model with near-Pro reasoning quality — substantially faster than Pro (~4-8 s). **Free-tier compatible** at ~250 RPD, with quota separate from the Standard / Fast pools. Google moved gemini-2.5-pro behind a paywall in April 2026, so Yahweh\'s Words switched Deep to this model — free, no BYOK needed. BYOK still recommended for heavy use (your own key has its own quota pool).',
   },
@@ -2758,9 +2730,8 @@ const uiStrings = {
         '（可以从 aistudio.google.com/apikey 复制一个）。',
     'zh-Hant': '看起來不像 Gemini API 金鑰。它應該以 AIza… 開頭'
         '（可以從 aistudio.google.com/apikey 複製一個）。',
-    'en':
-        "Doesn't look like a Gemini API key. It should start with "
-            'AIza… (you can copy one from aistudio.google.com/apikey).',
+    'en': "Doesn't look like a Gemini API key. It should start with "
+        'AIza… (you can copy one from aistudio.google.com/apikey).',
   },
   'aiByokTestUnexpected': {
     'zh-Hans': 'AI 服务返回了意外的响应。',
@@ -2787,10 +2758,9 @@ const uiStrings = {
         '您的高亮 / 笔记 / 书签存放在您自己的 Drive 隐藏应用文件夹（appDataFolder）中。',
     'zh-Hant': 'Google Drive 授權已過期。點擊下方按鈕重新授權以恢復同步——'
         '您的標亮 / 筆記 / 書籤存放在您自己的 Drive 隱藏應用資料夾（appDataFolder）中。',
-    'en':
-        'Google Drive authorization expired. Click below to reconnect '
-            'and resume sync — your highlights / notes / bookmarks live '
-            'in your own Drive AppData folder (hidden, app-private).',
+    'en': 'Google Drive authorization expired. Click below to reconnect '
+        'and resume sync — your highlights / notes / bookmarks live '
+        'in your own Drive AppData folder (hidden, app-private).',
   },
   // 2026-05-07: improved progress + post-download UX:
   // - "{total} files" makes the unit explicit (was just a bare number)
@@ -2814,11 +2784,10 @@ const uiStrings = {
         '以及首次加载非 Roboto 字体（Google Fonts 在线下载，下载后会被浏览器缓存）。',
     'zh-Hant': '以下功能仍需要網路：AI 釋義 / AI 搜尋、雲端同步登入、新聞即時更新，'
         '以及首次載入非 Roboto 字體（Google Fonts 線上下載，下載後會被瀏覽器快取）。',
-    'en':
-        'Network is still required for: AI explanations / search, '
-            'cloud-sync sign-in, live news refresh, and the first load '
-            'of any non-Roboto font (Google Fonts download once, then '
-            'cache in the browser).',
+    'en': 'Network is still required for: AI explanations / search, '
+        'cloud-sync sign-in, live news refresh, and the first load '
+        'of any non-Roboto font (Google Fonts download once, then '
+        'cache in the browser).',
   },
   'offlinePackDownload': {
     'zh-Hans': '下载',
@@ -3040,10 +3009,8 @@ const uiStrings = {
     'en': 'Unique lemmas in book',
   },
   'statsOriginalsHideStopwordsDesc': {
-    'zh-Hans':
-        '过滤"the/and/in/of/who/that"等高频虚词与冠词，让真正有意义的圣经词汇浮上来。',
-    'zh-Hant':
-        '過濾「the/and/in/of/who/that」等高頻虛詞與冠詞，讓真正有意義的聖經詞彙浮上來。',
+    'zh-Hans': '过滤"the/and/in/of/who/that"等高频虚词与冠词，让真正有意义的圣经词汇浮上来。',
+    'zh-Hant': '過濾「the/and/in/of/who/that」等高頻虛詞與冠詞，讓真正有意義的聖經詞彙浮上來。',
     'en':
         'Filter out high-frequency function words like the, and, in, of, who, that — surfacing the meaningful content vocabulary instead.',
   },
@@ -3396,8 +3363,7 @@ const uiStrings = {
   'dashboardSection_todayEvidence_description': {
     'zh-Hans': '每日轮换的考古、抄本、科学或历史发现。',
     'zh-Hant': '每日輪換的考古、抄本、科學或歷史發現。',
-    'en':
-        'One archaeology / manuscript / science / history entry per day.',
+    'en': 'One archaeology / manuscript / science / history entry per day.',
   },
   'dashboardSection_quickLinks_label': {
     'zh-Hans': '快捷入口',
@@ -3435,9 +3401,8 @@ const uiStrings = {
   'notificationsHint': {
     'zh-Hans': '每日经文、圣经证据与每日讲道的轻提醒。',
     'zh-Hant': '每日經文、聖經證據與每日講道的輕提醒。',
-    'en':
-        'Gentle daily reminders for the daily verse, Bible evidence and '
-            'the sermon of the day.',
+    'en': 'Gentle daily reminders for the daily verse, Bible evidence and '
+        'the sermon of the day.',
   },
   'notificationsUnsupported': {
     'zh-Hans': '此浏览器不支持通知。',
@@ -3447,7 +3412,8 @@ const uiStrings = {
   'notificationsBlocked': {
     'zh-Hans': '浏览器已禁止此站点通知。请到浏览器设置中允许后再开启。',
     'zh-Hant': '瀏覽器已禁止此站點通知。請到瀏覽器設定中允許後再開啟。',
-    'en': 'Permission blocked at the browser level. Re-enable in browser settings, then toggle on here.',
+    'en':
+        'Permission blocked at the browser level. Re-enable in browser settings, then toggle on here.',
   },
   'notificationsDenied': {
     'zh-Hans': '浏览器拒绝了通知权限。',
@@ -3596,23 +3562,20 @@ const uiStrings = {
   'searchHelpBasicWord': {
     'zh-Hans': '直接输入字词或短句，可在当前圣经版本中查找包含该内容的经文。',
     'zh-Hant': '直接輸入字詞或短句，可在當前聖經版本中查找包含該內容的經文。',
-    'en':
-        'Type a word or phrase to find every verse that contains it '
-            '(in your current Bible version).',
+    'en': 'Type a word or phrase to find every verse that contains it '
+        '(in your current Bible version).',
   },
   'searchHelpBasicRef': {
     'zh-Hans': '输入经文位置可直接跳转，例如「约 3:16」「John 3:16」「Rom 12:1-2」。',
     'zh-Hant': '輸入經文位置可直接跳轉，例如「約 3:16」「John 3:16」「Rom 12:1-2」。',
-    'en':
-        'Type a reference like "John 3:16", "约 3:16", or '
-            '"Rom 12:1-2" to jump directly to that verse.',
+    'en': 'Type a reference like "John 3:16", "约 3:16", or '
+        '"Rom 12:1-2" to jump directly to that verse.',
   },
   'searchHelpBasicRecent': {
     'zh-Hans': '点击上方任一最近搜索可重复查询；点击右侧 × 可单独删除某条记录。',
     'zh-Hant': '點擊上方任一最近搜尋可重複查詢；點擊右側 × 可單獨刪除某條記錄。',
-    'en':
-        'Tap any recent search above to repeat it. Tap × to remove a '
-            'single entry, or "Clear all" to wipe history.',
+    'en': 'Tap any recent search above to repeat it. Tap × to remove a '
+        'single entry, or "Clear all" to wipe history.',
   },
   'searchHelpAdvancedTitle': {
     'zh-Hans': '进阶',
@@ -3622,25 +3585,21 @@ const uiStrings = {
   'searchHelpAdvStrongs': {
     'zh-Hans': '输入 Strong\'s 编号（如「G2316」「H7200」）打开词典与经文索引。',
     'zh-Hant': '輸入 Strong\'s 編號（如「G2316」「H7200」）打開詞典與經文索引。',
-    'en':
-        'Strong\'s number: type "G2316" / "H7200" to open the lexicon '
-            'entry plus every verse that uses that word.',
+    'en': 'Strong\'s number: type "G2316" / "H7200" to open the lexicon '
+        'entry plus every verse that uses that word.',
   },
   // v1.3.91: combined / boolean Strong's search help + operator tooltips.
   'searchHelpAdvBoolean': {
-    'zh-Hans':
-        '组合检索：用 AND / OR / ✶ 按钮（输入编号后自动出现）组合多个原文编号。'
-            '「G25 AND G26」=同时含两者的经文；「G25 OR G26」=含其一；'
-            '「G25✶」=所有以 G25 开头的编号。',
-    'zh-Hant':
-        '組合檢索：用 AND / OR / ✶ 按鈕（輸入編號後自動出現）組合多個原文編號。'
-            '「G25 AND G26」=同時含兩者的經文；「G25 OR G26」=含其一；'
-            '「G25✶」=所有以 G25 開頭的編號。',
-    'en':
-        'Combine Strong\'s numbers with the AND / OR / ✶ buttons (they '
-            'appear once you type a number): "G25 AND G26" → verses with '
-            'BOTH; "G25 OR G26" → EITHER; "G25✶" → every number starting '
-            'with G25.',
+    'zh-Hans': '组合检索：用 AND / OR / ✶ 按钮（输入编号后自动出现）组合多个原文编号。'
+        '「G25 AND G26」=同时含两者的经文；「G25 OR G26」=含其一；'
+        '「G25✶」=所有以 G25 开头的编号。',
+    'zh-Hant': '組合檢索：用 AND / OR / ✶ 按鈕（輸入編號後自動出現）組合多個原文編號。'
+        '「G25 AND G26」=同時含兩者的經文；「G25 OR G26」=含其一；'
+        '「G25✶」=所有以 G25 開頭的編號。',
+    'en': 'Combine Strong\'s numbers with the AND / OR / ✶ buttons (they '
+        'appear once you type a number): "G25 AND G26" → verses with '
+        'BOTH; "G25 OR G26" → EITHER; "G25✶" → every number starting '
+        'with G25.',
   },
   'booleanSearchHeader': {
     'zh-Hans': '{query} — 共 {count} 节',
@@ -3691,45 +3650,40 @@ const uiStrings = {
   'searchHelpAdvLemma': {
     'zh-Hans': '直接输入希腊文（ἀγάπη）或希伯来文（אהבה）原文词，匹配后会打开对应的词典条目。',
     'zh-Hant': '直接輸入希臘文（ἀγάπη）或希伯來文（אהבה）原文詞，匹配後會打開對應的詞典條目。',
-    'en':
-        'Greek / Hebrew: type the original-language word (e.g. ἀγάπη '
-            'or אהבה). Matching opens the lexicon entry directly.',
+    'en': 'Greek / Hebrew: type the original-language word (e.g. ἀγάπη '
+        'or אהבה). Matching opens the lexicon entry directly.',
   },
   'searchHelpAdvTranslit': {
     'zh-Hans': '输入音译形式（如「agape」「shalom」「logos」）：完全匹配会直接打开词典；'
         '部分匹配则在搜索结果上方显示「您是否在找…」提示。',
     'zh-Hant': '輸入音譯形式（如「agape」「shalom」「logos」）：完全匹配會直接打開詞典；'
         '部分匹配則在搜尋結果上方顯示「您是否在找…」提示。',
-    'en':
-        'Transliteration: type "agape", "shalom", "logos". Exact '
-            'matches open the lexicon; partial matches surface as a '
-            '"Did you mean…" card alongside text results.',
+    'en': 'Transliteration: type "agape", "shalom", "logos". Exact '
+        'matches open the lexicon; partial matches surface as a '
+        '"Did you mean…" card alongside text results.',
   },
   'searchHelpAdvAi': {
     'zh-Hans': 'AI 搜索：当关键字搜索没有结果时，可以点击「用 AI 智能搜索」'
         '让 AI 帮你查找主题或模糊查询（如「最爱的章节」）。结果仅供参考，使用前请自行核对。',
     'zh-Hant': 'AI 搜尋：當關鍵字搜尋沒有結果時，可以點擊「用 AI 智慧搜尋」'
         '讓 AI 幫你查找主題或模糊查詢（如「最愛的章節」）。結果僅供參考，使用前請自行核對。',
-    'en':
-        'AI search: when keyword search returns nothing, tap '
-            '"Search with AI" for fuzzy or thematic queries '
-            '(e.g. "the love chapter"). Results are for reference '
-            'only — verify before use.',
+    'en': 'AI search: when keyword search returns nothing, tap '
+        '"Search with AI" for fuzzy or thematic queries '
+        '(e.g. "the love chapter"). Results are for reference '
+        'only — verify before use.',
   },
   'searchHelpFooter': {
     'zh-Hans': '搜索范围跟随当前阅读的圣经版本，如果结果不符合预期，可在「设置」中切换版本。',
     'zh-Hant': '搜尋範圍跟隨當前閱讀的聖經版本，如果結果不符合預期，可在「設定」中切換版本。',
-    'en':
-        'Search scans the Bible version you currently have loaded — '
-            'change versions in Settings if matches feel off.',
+    'en': 'Search scans the Bible version you currently have loaded — '
+        'change versions in Settings if matches feel off.',
   },
   // Inline tip shown in the no-recents empty state.
   'searchHintQuickList': {
     'zh-Hans': '提示：可输入字词、参考（如「约 3:16」）、Strong\'s 编号「G2316」，或直接输入希腊文 / 希伯来文。',
     'zh-Hant': '提示：可輸入字詞、參考（如「約 3:16」）、Strong\'s 編號「G2316」，或直接輸入希臘文 / 希伯來文。',
-    'en':
-        'Tip: try a word, a reference like "John 3:16", a Strong\'s '
-            'number "G2316", or Greek/Hebrew text directly.',
+    'en': 'Tip: try a word, a reference like "John 3:16", a Strong\'s '
+        'number "G2316", or Greek/Hebrew text directly.',
   },
   // "Did you mean lexicon entry…" card surfaced when a Latin-token
   // query weakly matches a Greek/Hebrew lemma (replaces the previous
@@ -3750,9 +3704,8 @@ const uiStrings = {
   'searchModeTextTip': {
     'zh-Hans': '在当前圣经中查找包含这个字词或短句的经节（按 Enter 也可触发）。',
     'zh-Hant': '在當前聖經中查找包含這個字詞或短句的經節（按 Enter 也可觸發）。',
-    'en':
-        'Find verses containing this word or phrase. Pressing Enter '
-            'also triggers this mode.',
+    'en': 'Find verses containing this word or phrase. Pressing Enter '
+        'also triggers this mode.',
   },
   'searchModeWordStudy': {
     'zh-Hans': '原文 / Strong\'s',
@@ -3764,10 +3717,9 @@ const uiStrings = {
         '或音译形式（agape）。直接跳转到对应词典条目与经文索引。',
     'zh-Hant': 'Strong\'s 編號（G2316 / H7200）、希臘文 / 希伯來文原文，'
         '或音譯形式（agape）。直接跳轉到對應詞典條目與經文索引。',
-    'en':
-        'Strong\'s numbers (G2316 / H7200), Greek / Hebrew text, or '
-            'transliteration (agape). Jumps to the lexicon entry plus '
-            'concordance.',
+    'en': 'Strong\'s numbers (G2316 / H7200), Greek / Hebrew text, or '
+        'transliteration (agape). Jumps to the lexicon entry plus '
+        'concordance.',
   },
   'searchModeAi': {
     'zh-Hans': 'AI',
@@ -3779,19 +3731,17 @@ const uiStrings = {
         '使用前请自行核对。',
     'zh-Hant': '透過 AI 進行模糊或主題搜尋（如「最愛的章節」）。結果僅供參考，'
         '使用前請自行核對。',
-    'en':
-        'Fuzzy / thematic search via AI (e.g. "the love '
-            'chapter"). Results are reference-only — verify before use.',
+    'en': 'Fuzzy / thematic search via AI (e.g. "the love '
+        'chapter"). Results are reference-only — verify before use.',
   },
   'searchWordStudyNoMatch': {
     'zh-Hans': '没有匹配的词典条目。可以尝试 Strong\'s 编号（G2316 / H7200）、'
         '希腊文 / 希伯来文原文，或精确的音译形式（如「agape」）。',
     'zh-Hant': '沒有匹配的詞典條目。可以嘗試 Strong\'s 編號（G2316 / H7200）、'
         '希臘文 / 希伯來文原文，或精確的音譯形式（如「agape」）。',
-    'en':
-        'No lexicon entry matched. Try a Strong\'s number '
-            '(G2316 / H7200), a Greek / Hebrew word, or an exact '
-            'transliteration ("agape").',
+    'en': 'No lexicon entry matched. Try a Strong\'s number '
+        '(G2316 / H7200), a Greek / Hebrew word, or an exact '
+        'transliteration ("agape").',
   },
   // 2026-05-07 (post-fix): scope banner shown in the no-results
   // state. Helps the user spot when a stuck filter is the reason for
@@ -3998,8 +3948,7 @@ const uiStrings = {
   'evidenceScopeBookFallback': {
     'zh-Hans': '{book} 第 {chapter} 章暂无相关条目 — 显示 {book} 全部 {n} 条',
     'zh-Hant': '{book} 第 {chapter} 章暫無相關條目 — 顯示 {book} 全部 {n} 條',
-    'en':
-        'No entries for {book} {chapter} — showing all {n} from {book}',
+    'en': 'No entries for {book} {chapter} — showing all {n} from {book}',
   },
   'evidenceWidenBook': {
     'zh-Hans': '查看 {book} 全部',
@@ -4360,14 +4309,13 @@ const uiStrings = {
     'zh-Hant': '本應用是非商業的個人 / 教會研經工具。應用代碼以 MIT 授權開源，'
         '但聖經文本、字典資料、講道文本、地圖等資源仍由其各自版權方所有，僅在'
         '研習用途下使用。本應用與下方列出的任何出版社、機構、字體廠商均無附屬關係。',
-    'en':
-        'This is a non-commercial personal / community Bible-study tool. '
-            'The application code is open source under MIT, but bundled '
-            'scripture texts, lexicon data, sermons, maps and other '
-            'resources remain the copyright of their respective rights '
-            'holders and are reproduced under fair-use / personal-study '
-            'exemptions. This app is not affiliated with or endorsed by '
-            'any publisher, ministry, or font foundry listed below.',
+    'en': 'This is a non-commercial personal / community Bible-study tool. '
+        'The application code is open source under MIT, but bundled '
+        'scripture texts, lexicon data, sermons, maps and other '
+        'resources remain the copyright of their respective rights '
+        'holders and are reproduced under fair-use / personal-study '
+        'exemptions. This app is not affiliated with or endorsed by '
+        'any publisher, ministry, or font foundry listed below.',
   },
   'aboutContactTitle': {
     'zh-Hans': '联系方式 · 版权下架请求',
@@ -4379,11 +4327,10 @@ const uiStrings = {
         '一封邮件即可——我会及时回复并配合处理。',
     'zh-Hant': '歡迎反饋、提問，或如果您是版權方對本應用中的任何內容有疑義，請通過下方郵箱聯絡我。'
         '一封郵件即可——我會及時回覆並配合處理。',
-    'en':
-        'Feedback and questions are welcome. If you are a rights '
-            'holder and have any concern about content included in this '
-            'app, a single email is sufficient — I will respond and act '
-            'promptly.',
+    'en': 'Feedback and questions are welcome. If you are a rights '
+        'holder and have any concern about content included in this '
+        'app, a single email is sufficient — I will respond and act '
+        'promptly.',
   },
   'aboutContactSla': {
     'zh-Hans': '一般 24 小时内回复 · 如确认下架，72 小时内移除。',
@@ -4425,8 +4372,7 @@ const uiStrings = {
   'aboutLicenseLxx': {
     'zh-Hans': '希腊文旧约 · 模块由《雅伟的话》项目提供 · 模块未注明所依据的校勘本。',
     'zh-Hant': '希臘文舊約 · 模組由《雅偉的話》項目提供 · 模組未註明所依據的校勘本。',
-    'en':
-        'Greek Old Testament. Module supplied by the 雅伟的话 project; it '
+    'en': 'Greek Old Testament. Module supplied by the 雅伟的话 project; it '
         'does not name the critical edition it follows.',
   },
   'aboutLicensePublicDomain': {
@@ -4466,8 +4412,7 @@ const uiStrings = {
   'aboutLicenseNasb': {
     'zh-Hans': '© Lockman 基金会 · 在出版方引用规定下使用。',
     'zh-Hant': '© Lockman 基金會 · 在出版方引用規定下使用。',
-    'en':
-        '© The Lockman Foundation · used under quotation provisions.',
+    'en': '© The Lockman Foundation · used under quotation provisions.',
   },
   'aboutVerCsb': {
     'zh-Hans': 'CSB 2017 基督教标准译本',
@@ -4502,8 +4447,7 @@ const uiStrings = {
   'aboutLicenseCuvsYhwh': {
     'zh-Hans': '© 雅伟的话事工 · 经授权使用。',
     'zh-Hant': '© 雅偉的話事工 · 經授權使用。',
-    'en':
-        '© Yahweh De Hua Ministry · used with permission.',
+    'en': '© Yahweh De Hua Ministry · used with permission.',
   },
   // 2026-09-18: his own name for the current text is 「2026年第二版」 (the
   // copyright line below); it is the electronic edition, not the 2025
@@ -4512,7 +4456,8 @@ const uiStrings = {
   'aboutVerLjk': {
     'zh-Hans': 'LJK1 / LJK2 梁家铿译本（2026年第二版，简 / 繁）',
     'zh-Hant': 'LJK1 / LJK2 梁家鏗譯本（2026年第二版，簡 / 繁）',
-    'en': 'LJK1 / LJK2 — LJK Chinese translation (2026, 2nd edition, simplified / traditional)',
+    'en':
+        'LJK1 / LJK2 — LJK Chinese translation (2026, 2nd edition, simplified / traditional)',
   },
   // 2026-09-18: the translator's own copyright line, verbatim (his
   // web app's footer, commits "update copyright info" / "fix copyright
@@ -4533,12 +4478,11 @@ const uiStrings = {
     'zh-Hant': 'NIV（新國際譯本）此前曾內置，但已於 2026 年 5 月移除——'
         'Biblica / Zondervan 對全文保有商業版權，未經出版方授權不得再分發完整文本。'
         '需要 NIV 的讀者請使用 Bible Gateway / YouVersion 等官方渠道。',
-    'en':
-        'NIV (New International Version) was previously bundled but '
-            'removed in 2026-05. Biblica / Zondervan retain commercial '
-            'copyright on the full text and we cannot redistribute the '
-            'JSON bundle without an explicit publisher licence. Readers '
-            'seeking NIV should use Bible Gateway / YouVersion.',
+    'en': 'NIV (New International Version) was previously bundled but '
+        'removed in 2026-05. Biblica / Zondervan retain commercial '
+        'copyright on the full text and we cannot redistribute the '
+        'JSON bundle without an explicit publisher licence. Readers '
+        'seeking NIV should use Bible Gateway / YouVersion.',
   },
   // Lexicons.
   'aboutLexStrongs': {
@@ -4582,10 +4526,9 @@ const uiStrings = {
         '共 29,319 条经文索引。',
     'zh-Hant': '公有領域（R.A. Torrey, 1834）· 與 OpenBible.info 社群投票資料合併（CC-BY）。'
         '共 29,319 條經文索引。',
-    'en':
-        'Public domain (R.A. Torrey, 1834) · merged with '
-            'OpenBible.info community votes (CC-BY). 29,319 source '
-            'verses indexed.',
+    'en': 'Public domain (R.A. Torrey, 1834) · merged with '
+        'OpenBible.info community votes (CC-BY). 29,319 source '
+        'verses indexed.',
   },
   'aboutLexJfb': {
     'zh-Hans': 'JFB 圣经注释（马太福音）',
@@ -4710,8 +4653,7 @@ const uiStrings = {
   'aboutFontsGoogle': {
     'zh-Hans': '运行时字体：EB Garamond / Lora / Inter / Noto Serif SC 等',
     'zh-Hant': '執行時字體：EB Garamond / Lora / Inter / Noto Serif SC 等',
-    'en':
-        'Runtime fonts: EB Garamond / Lora / Inter / Noto Serif SC / …',
+    'en': 'Runtime fonts: EB Garamond / Lora / Inter / Noto Serif SC / …',
   },
   'aboutLicenseOfl': {
     'zh-Hans': 'SIL OFL · 通过 google_fonts 包按需加载。',
@@ -4737,8 +4679,7 @@ const uiStrings = {
   'aboutLicenseOriginal': {
     'zh-Hans': '本应用原创内容 · MIT（与应用代码同许可）。',
     'zh-Hant': '本應用原創內容 · MIT（與應用程式碼同授權）。',
-    'en':
-        'Original to this app · MIT (same as application code).',
+    'en': 'Original to this app · MIT (same as application code).',
   },
   'aboutAppLicenseHeading': {
     'zh-Hans': '应用代码：MIT 许可证',
@@ -4750,11 +4691,10 @@ const uiStrings = {
         '内置的第三方资源不在此 MIT 许可范围内——见上方各表格。',
     'zh-Hant': '本倉庫內的 Dart / Flutter 原始碼（lib/ 目錄及建構設定）以 MIT 授權開源。'
         '內置的第三方資源不在此 MIT 授權範圍內——見上方各表格。',
-    'en':
-        'The Dart / Flutter source code in this repository (under '
-            '`lib/` and the build configuration) is open source under '
-            'the MIT licence. Bundled third-party resources are NOT '
-            'covered by MIT — see the tables above for each item.',
+    'en': 'The Dart / Flutter source code in this repository (under '
+        '`lib/` and the build configuration) is open source under '
+        'the MIT licence. Bundled third-party resources are NOT '
+        'covered by MIT — see the tables above for each item.',
   },
   'aboutOpenRepo': {
     'zh-Hans': '在 GitHub 查看源代码',
@@ -4855,8 +4795,7 @@ const uiStrings = {
   'welcomeLocalOnlyNotice': {
     'zh-Hans': '账号仅保存在本设备，不需要密码、不上传服务器。',
     'zh-Hant': '帳號僅保存在本裝置，不需要密碼、不上傳伺服器。',
-    'en':
-        'Profiles are stored only on this device. No password, no server.',
+    'en': 'Profiles are stored only on this device. No password, no server.',
   },
   'welcomeNameHint': {
     'zh-Hans': '您的姓名',
@@ -5103,9 +5042,8 @@ const uiStrings = {
   'readingPaperThemeSubtitle': {
     'zh-Hans': '阅经页面改用暖色纸质背景与更柔和的配色，长时间阅读更舒适。',
     'zh-Hant': '閱經頁面改用暖色紙質背景與更柔和的配色，長時間閱讀更舒適。',
-    'en':
-        'Switch the reading pane to a warm, paper-like background for more '
-            'comfortable long reading sessions.',
+    'en': 'Switch the reading pane to a warm, paper-like background for more '
+        'comfortable long reading sessions.',
   },
   'boldVerseText': {
     'zh-Hans': '加粗经文',
@@ -5125,7 +5063,8 @@ const uiStrings = {
   'showStrongsBadgeSubtitle': {
     'zh-Hans': '在释经面板每个希伯来/希腊词卡下方显示 G####/H#### 徽标。',
     'zh-Hant': '在釋經面板每個希伯來/希臘詞卡下方顯示 G####/H#### 徽標。',
-    'en': "Display the G#### / H#### badge under each Hebrew/Greek word in the exegesis sheet.",
+    'en':
+        "Display the G#### / H#### badge under each Hebrew/Greek word in the exegesis sheet.",
   },
   'autoExpandFirstRef': {
     'zh-Hans': '自动展开首个经文分组',
@@ -5135,7 +5074,8 @@ const uiStrings = {
   'autoExpandFirstRefSubtitle': {
     'zh-Hans': '在释经面板自动打开第一处经文分组,免去一次点击。',
     'zh-Hant': '在釋經面板自動打開第一處經文分組,免去一次點擊。',
-    'en': "Automatically open the first book group of concordance refs in the exegesis sheet.",
+    'en':
+        "Automatically open the first book group of concordance refs in the exegesis sheet.",
   },
   'zoomIn': {'zh-Hans': '放大', 'zh-Hant': '放大', 'en': 'Zoom in'},
   'zoomOut': {'zh-Hans': '缩小', 'zh-Hant': '縮小', 'en': 'Zoom out'},
@@ -5290,6 +5230,7 @@ const uiStrings = {
     'zh-Hant': '目錄',
     'en': 'Contents',
   },
+
   /// Unit for a book count in a division header: "律法书 · 5 卷".
   'booksUnit': {
     'zh-Hans': '卷',
@@ -5403,10 +5344,9 @@ const uiStrings = {
         '如果服务暂时不可用，会自动打开您的邮件应用作为备用。',
     'zh-Hant': '點擊「發送」即可直接寄到開發者的信箱。'
         '如果服務暫時不可用，會自動開啟您的郵件應用作為備用。',
-    'en':
-        'Tap "Send" and your feedback goes straight to the developer\'s '
-            'inbox. If the service is temporarily unavailable, your mail '
-            'app opens as a fallback.',
+    'en': 'Tap "Send" and your feedback goes straight to the developer\'s '
+        'inbox. If the service is temporarily unavailable, your mail '
+        'app opens as a fallback.',
   },
   'feedbackCategoryLabel': {
     'zh-Hans': '反馈类别',
@@ -5492,9 +5432,8 @@ const uiStrings = {
         '请粘贴到您的邮件中发到 $kSupportEmail。',
     'zh-Hant': '郵件應用不可用，回饋已複製到剪貼簿。'
         '請貼到您的郵件中發到 $kSupportEmail。',
-    'en':
-        'Mail app unavailable — feedback copied to clipboard. '
-            'Paste it into your email to $kSupportEmail.',
+    'en': 'Mail app unavailable — feedback copied to clipboard. '
+        'Paste it into your email to $kSupportEmail.',
   },
   'feedbackPrivacyNote': {
     'zh-Hans': '为方便排查问题，发送时会一并附上：界面语言、圣经版本、'
@@ -5505,12 +5444,11 @@ const uiStrings = {
         '當前閱讀位置、螢幕尺寸與主題、時區與提交時間、'
         '瀏覽器與系統資訊（IP 由伺服器自動記錄）。'
         '只用於回覆您和定位問題，不會用於其他用途。',
-    'en':
-        'To help debug your report, the submission also includes: '
-            'app locale, Bible version, last position, screen size + '
-            'theme, timezone + timestamp, browser + OS (IP is logged '
-            'server-side). Used only to reply and reproduce — nothing '
-            'else.',
+    'en': 'To help debug your report, the submission also includes: '
+        'app locale, Bible version, last position, screen size + '
+        'theme, timezone + timestamp, browser + OS (IP is logged '
+        'server-side). Used only to reply and reproduce — nothing '
+        'else.',
   },
   'interfaceLanguage': {
     'zh-Hans': '界面语言',
@@ -5730,7 +5668,8 @@ const uiStrings = {
   'loadErrorBody': {
     'zh-Hans': '无法加载圣经经文，请检查网络或重试。',
     'zh-Hant': '無法載入聖經經文，請檢查網絡或重試。',
-    'en': 'Could not load Bible verses. Please check your connection and retry.',
+    'en':
+        'Could not load Bible verses. Please check your connection and retry.',
   },
   // 2026-05-10 (v1.2.10): in-flight progress strings shown on the
   // splash while FetchVerses.execute() is retrying. Keeps users
@@ -6172,17 +6111,26 @@ const uiStrings = {
         'instead of picking a side.',
   },
   'misconceptionsCatText': {
-    'zh-Hans': '经文明说', 'zh-Hant': '經文明說', 'en': 'The text says',
+    'zh-Hans': '经文明说',
+    'zh-Hant': '經文明說',
+    'en': 'The text says',
   },
   'misconceptionsCatAbsent': {
-    'zh-Hans': '圣经没有这句', 'zh-Hant': '聖經沒有這句', 'en': 'Not in scripture',
+    'zh-Hans': '圣经没有这句',
+    'zh-Hant': '聖經沒有這句',
+    'en': 'Not in scripture',
   },
   'misconceptionsCatTradition': {
-    'zh-Hans': '译法或传统', 'zh-Hant': '譯法或傳統', 'en': 'Translation or tradition',
+    'zh-Hans': '译法或传统',
+    'zh-Hant': '譯法或傳統',
+    'en': 'Translation or tradition',
   },
   'misconceptionsCatDisputed': {
-    'zh-Hans': '仍有争议', 'zh-Hant': '仍有爭議', 'en': 'Genuinely disputed',
+    'zh-Hans': '仍有争议',
+    'zh-Hant': '仍有爭議',
+    'en': 'Genuinely disputed',
   },
+
   /// Shorter than [misconceptionsTitle] because the dashboard tile is
   /// half a phone wide. It no longer has to be short ENOUGH — the tile
   /// scales a label that does not fit rather than breaking it — but a
@@ -6201,7 +6149,9 @@ const uiStrings = {
         'cannot reach it.',
   },
   'songsDownloadFailedCount': {
-    'zh-Hans': '{n} 首失败', 'zh-Hant': '{n} 首失敗', 'en': '{n} failed',
+    'zh-Hans': '{n} 首失败',
+    'zh-Hant': '{n} 首失敗',
+    'en': '{n} failed',
   },
   'songsDownloadUnreachable': {
     'zh-Hans': '{host} 没有响应，这些诗歌在当前网络下无法下载。',
@@ -6216,31 +6166,49 @@ const uiStrings = {
         'connection, or try a song from another source.',
   },
   'misconceptionsTile': {
-    'zh-Hans': '常见误解', 'zh-Hant': '常見誤解', 'en': 'Misconceptions',
+    'zh-Hans': '常见误解',
+    'zh-Hant': '常見誤解',
+    'en': 'Misconceptions',
   },
   'misconceptionsTopic': {
-    'zh-Hans': '主题', 'zh-Hant': '主題', 'en': 'Topic',
+    'zh-Hans': '主题',
+    'zh-Hant': '主題',
+    'en': 'Topic',
   },
   'misconceptionsCategory': {
-    'zh-Hans': '类别', 'zh-Hant': '類別', 'en': 'Kind',
+    'zh-Hans': '类别',
+    'zh-Hant': '類別',
+    'en': 'Kind',
   },
   'misconceptionsTopicPeople': {
-    'zh-Hans': '人物', 'zh-Hant': '人物', 'en': 'People',
+    'zh-Hans': '人物',
+    'zh-Hant': '人物',
+    'en': 'People',
   },
   'misconceptionsTopicSayings': {
-    'zh-Hans': '常引的话', 'zh-Hant': '常引的話', 'en': 'Sayings',
+    'zh-Hans': '常引的话',
+    'zh-Hant': '常引的話',
+    'en': 'Sayings',
   },
   'misconceptionsTopicEvents': {
-    'zh-Hans': '事件', 'zh-Hant': '事件', 'en': 'Events',
+    'zh-Hans': '事件',
+    'zh-Hant': '事件',
+    'en': 'Events',
   },
   'misconceptionsTopicTranslation': {
-    'zh-Hans': '翻译', 'zh-Hant': '翻譯', 'en': 'Translation',
+    'zh-Hans': '翻译',
+    'zh-Hant': '翻譯',
+    'en': 'Translation',
   },
   'misconceptionsTopicAuthorship': {
-    'zh-Hans': '作者', 'zh-Hant': '作者', 'en': 'Authorship',
+    'zh-Hans': '作者',
+    'zh-Hant': '作者',
+    'en': 'Authorship',
   },
   'misconceptionsTopicCanon': {
-    'zh-Hans': '正典与编排', 'zh-Hant': '正典與編排', 'en': 'Canon & arrangement',
+    'zh-Hans': '正典与编排',
+    'zh-Hant': '正典與編排',
+    'en': 'Canon & arrangement',
   },
   'misconceptionsNoMatch': {
     'zh-Hans': '这两个筛选条件下没有条目。',
@@ -6248,7 +6216,9 @@ const uiStrings = {
     'en': 'Nothing matches those filters.',
   },
   'misconceptionsSubmit': {
-    'zh-Hans': '我要投稿', 'zh-Hant': '我要投稿', 'en': 'Suggest one',
+    'zh-Hans': '我要投稿',
+    'zh-Hant': '我要投稿',
+    'en': 'Suggest one',
   },
   'misconceptionsSubmitTitle': {
     'zh-Hans': '投稿一个常见误解',
@@ -6265,7 +6235,9 @@ const uiStrings = {
         'without one it may not be usable.',
   },
   'misconceptionsFieldClaim': {
-    'zh-Hans': '大家常说的', 'zh-Hant': '大家常說的', 'en': 'The common claim',
+    'zh-Hans': '大家常说的',
+    'zh-Hant': '大家常說的',
+    'en': 'The common claim',
   },
   'misconceptionsFieldClaimHint': {
     'zh-Hans': '例：扫罗信主后改名叫保罗',
@@ -6278,7 +6250,9 @@ const uiStrings = {
     'en': 'What the text actually says',
   },
   'misconceptionsFieldRefs': {
-    'zh-Hans': '经文出处', 'zh-Hant': '經文出處', 'en': 'References',
+    'zh-Hans': '经文出处',
+    'zh-Hant': '經文出處',
+    'en': 'References',
   },
   'misconceptionsFieldContact': {
     'zh-Hans': '你的邮箱（选填）',
@@ -6727,8 +6701,7 @@ const uiStrings = {
   'aiExplainButton': {
     'zh-Hans': '让 AI 解释此词在这节经文中的含义（仅供参考）',
     'zh-Hant': '讓 AI 解釋此詞在這節經文中的含義（僅供參考）',
-    'en':
-        'Let AI explain this word in this verse (reference only)',
+    'en': 'Let AI explain this word in this verse (reference only)',
   },
   // v1.3.x: reading-pane selection-bar AI verse explanation.
   'aiExplainVerse': {
@@ -6837,9 +6810,8 @@ const uiStrings = {
   'aiExplainDisclaimer': {
     'zh-Hans': 'AI 生成内容仅供参考，如用于研经或教导请核对原始资料。',
     'zh-Hant': 'AI 生成內容僅供參考，如用於研經或教導請核對原始資料。',
-    'en':
-        'AI-generated content for reference only — verify with '
-            'primary sources before using for study or teaching.',
+    'en': 'AI-generated content for reference only — verify with '
+        'primary sources before using for study or teaching.',
   },
   'aiExplainTryAgain': {
     'zh-Hans': '重试',
@@ -7240,12 +7212,14 @@ const uiStrings = {
   // Exodus in 1446 BC when Words took Yahweh's Sword's chronology (80 at
   // the Exodus, dead at 120).
   'familyTreeEraSubMosaic': {
-    'en': 'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1850 – 1406',
+    'en':
+        'Aaron the High Priest, Moses the Lawgiver & Miriam · ~BC 1850 – 1406',
     'zh-Hans': '大祭司亚伦、律法颁布者摩西、米利暗 · 约公元前 1850 – 1406',
     'zh-Hant': '大祭司亞倫、律法頒布者摩西、米利暗 · 約公元前 1850 – 1406',
   },
   'familyTreeEraSubDavidic': {
-    'en': 'Perez through Boaz & Ruth to Jesse, father of David · ~BC 1880 – 1005',
+    'en':
+        'Perez through Boaz & Ruth to Jesse, father of David · ~BC 1880 – 1005',
     'zh-Hans': '法勒斯经波阿斯和路得到大卫之父耶西 · 约公元前 1880 – 1005',
     'zh-Hant': '法勒斯經波阿斯和路得到大衛之父耶西 · 約公元前 1880 – 1005',
   },
@@ -7948,7 +7922,8 @@ const uiStrings = {
   'mapsNoneForChapterFallback': {
     'zh-Hans': '本章无专属插图，以下是相关内容：',
     'zh-Hant': '本章無專屬插畫，以下是相關內容：',
-    'en': 'No illustration specifically for this chapter — here are related ones:',
+    'en':
+        'No illustration specifically for this chapter — here are related ones:',
   },
   // Per-book group label in the All-illustrations tab. {book} is the
   // localized book name; {n} is the count.
@@ -7980,7 +7955,8 @@ const uiStrings = {
   'noHighlights': {
     'zh-Hans': '还没有高亮内容。\n选中经文，点击高亮按钮即可保存。',
     'zh-Hant': '還沒有高亮內容。\n選中經文，點擊高亮按鈕即可儲存。',
-    'en': 'No highlights yet.\nSelect a verse and tap the highlight button to save.',
+    'en':
+        'No highlights yet.\nSelect a verse and tap the highlight button to save.',
   },
   'highlightsVerseCount': {
     'zh-Hans': '{count} 节',
@@ -8136,9 +8112,8 @@ const uiStrings = {
   'authResetSent': {
     'zh-Hans': '如果该地址能收信，重设密码的邮件已经发出。点开邮件里的链接设定密码，然后回来登录。',
     'zh-Hant': '如果該地址能收信，重設密碼的郵件已經寄出。點開郵件裡的連結設定密碼，然後回來登入。',
-    'en':
-        'If that address can receive mail, a reset link is on its way. '
-            'Open it, set a password, then come back and sign in.',
+    'en': 'If that address can receive mail, a reset link is on its way. '
+        'Open it, set a password, then come back and sign in.',
   },
   'authWorking': {
     'zh-Hans': '正在处理…',
@@ -8152,10 +8127,9 @@ const uiStrings = {
   'authNoticeNotSignedIn': {
     'zh-Hans': '用邮箱登录后，高亮、笔记和书签可以在多台设备之间同步。不登录也完全可用——所有内容都保存在本设备。',
     'zh-Hant': '用電郵登入後，高亮、筆記和書籤可以在多台裝置之間同步。不登入也完全可用——所有內容都保存在本裝置。',
-    'en':
-        'Sign in with an email address to sync highlights, notes and '
-            'bookmarks across devices. Without signing in everything '
-            'still works — it just stays on this device.',
+    'en': 'Sign in with an email address to sync highlights, notes and '
+        'bookmarks across devices. Without signing in everything '
+        'still works — it just stays on this device.',
   },
 
   // ---- Error sentences ------------------------------------------------
@@ -8170,10 +8144,9 @@ const uiStrings = {
   'authErrInvalidCredential': {
     'zh-Hans': '这个邮箱和密码对不上。如果你以前用别的方式登录过，用下面的链接设定一个密码即可。',
     'zh-Hant': '這個電郵和密碼對不上。如果你以前用別的方式登入過，用下面的連結設定一個密碼即可。',
-    'en':
-        "That email and password don't match. If you've signed in "
-            'another way before, use the reset link below to set a '
-            'password.',
+    'en': "That email and password don't match. If you've signed in "
+        'another way before, use the reset link below to set a '
+        'password.',
   },
   'authErrWrongPassword': {
     'zh-Hans': '密码不对。',
@@ -8208,9 +8181,8 @@ const uiStrings = {
   'authErrNetwork': {
     'zh-Hans': '连不上登录服务器。什么都没有发送出去。请换个网络再试。',
     'zh-Hant': '連不上登入伺服器。什麼都沒有傳送出去。請換個網路再試。',
-    'en':
-        "Couldn't reach the sign-in server. Nothing was sent. Try "
-            'again, or on another connection.',
+    'en': "Couldn't reach the sign-in server. Nothing was sent. Try "
+        'again, or on another connection.',
   },
   'authErrTooManyRequests': {
     'zh-Hans': '尝试次数太多。请等几分钟再试。',
@@ -8221,10 +8193,9 @@ const uiStrings = {
   'authErrEmailInUse': {
     'zh-Hans': '这个邮箱已经有账户了。发一封重设密码的邮件给自己，设好密码就能用它登录同一个账户，数据都在。',
     'zh-Hant': '這個電郵已經有帳戶了。寄一封重設密碼的郵件給自己，設好密碼就能用它登入同一個帳戶，資料都在。',
-    'en':
-        'There is already an account for that email. Send yourself a '
-            'reset link and set a password — it opens that same '
-            'account, with all of its data.',
+    'en': 'There is already an account for that email. Send yourself a '
+        'reset link and set a password — it opens that same '
+        'account, with all of its data.',
   },
   'authErrUserDisabled': {
     'zh-Hans': '这个账户已被停用。',
@@ -8234,16 +8205,14 @@ const uiStrings = {
   'authErrEmailNotEnabled': {
     'zh-Hans': '这个 Firebase 项目还没有启用「邮箱／密码」登录方式。',
     'zh-Hant': '這個 Firebase 專案還沒有啟用「電郵／密碼」登入方式。',
-    'en':
-        'Email/password sign-in is not enabled on this Firebase '
-            'project yet.',
+    'en': 'Email/password sign-in is not enabled on this Firebase '
+        'project yet.',
   },
   'authErrTimeout': {
     'zh-Hans': '等太久了，已经停下来。什么都没有发送出去。请再试一次。',
     'zh-Hant': '等太久了，已經停下來。什麼都沒有傳送出去。請再試一次。',
-    'en':
-        'That took too long, so we stopped waiting. Nothing was sent. '
-            'Try again.',
+    'en': 'That took too long, so we stopped waiting. Nothing was sent. '
+        'Try again.',
   },
   // Shown when the lazy Firebase init itself could not complete —
   // the China build's most likely failure, and the one that must
@@ -8251,10 +8220,9 @@ const uiStrings = {
   'authErrInitUnavailable': {
     'zh-Hans': '从你的网络连不上登录服务器。什么都没有发送出去，本机上的高亮、笔记和书签都还在。',
     'zh-Hant': '從你的網路連不上登入伺服器。什麼都沒有傳送出去，本機上的高亮、筆記和書籤都還在。',
-    'en':
-        "Couldn't reach the sign-in server from your network. Nothing "
-            'was sent, and your highlights, notes and bookmarks are '
-            'safe on this device.',
+    'en': "Couldn't reach the sign-in server from your network. Nothing "
+        'was sent, and your highlights, notes and bookmarks are '
+        'safe on this device.',
   },
 
   // ---- Sync, told honestly --------------------------------------------
@@ -8263,10 +8231,9 @@ const uiStrings = {
   'syncUnreachable': {
     'zh-Hans': '从你的网络连不上同步服务器。你的高亮、笔记和书签都安全地保存在本设备上。你仍然是登录状态。',
     'zh-Hant': '從你的網路連不上同步伺服器。你的高亮、筆記和書籤都安全地保存在本裝置上。你仍然是登入狀態。',
-    'en':
-        "Couldn't reach the sync server from your network. Your "
-            'highlights, notes and bookmarks are safe on this device. '
-            "You're still signed in.",
+    'en': "Couldn't reach the sync server from your network. Your "
+        'highlights, notes and bookmarks are safe on this device. '
+        "You're still signed in.",
   },
   // Replaces `onboardCustomizeBodyChina` at its one call site. Same
   // reason as authNoticeNotSignedIn: the old copy told China-build
@@ -8274,10 +8241,9 @@ const uiStrings = {
   'onboardCustomizeBodyEmail': {
     'zh-Hans': '在「设置 → 主页布局」中拖动排序或隐藏任意板块；用邮箱登录即可在所有设备同步书签、笔记和高亮。',
     'zh-Hant': '在「設定 → 主頁佈局」中拖動排序或隱藏任意板塊；用電郵登入即可在所有裝置同步書籤、筆記和高亮。',
-    'en':
-        'Drag-reorder or hide any block under Settings → Dashboard '
-            'layout. Sign in with an email address '
-            'to sync bookmarks, notes and highlights across devices.',
+    'en': 'Drag-reorder or hide any block under Settings → Dashboard '
+        'layout. Sign in with an email address '
+        'to sync bookmarks, notes and highlights across devices.',
   },
 
   // ---- Verse image / share card ---------------------------------------
@@ -8373,9 +8339,8 @@ const uiStrings = {
   'verseCardScreenshotHint': {
     'zh-Hans': '这个平台还不能直接保存图片。请为上面的卡片截屏。',
     'zh-Hant': '這個平台還不能直接儲存圖片。請為上面的卡片截圖。',
-    'en':
-        'Saving images is not supported on this platform yet — take a '
-            'screenshot of the card above.',
+    'en': 'Saving images is not supported on this platform yet — take a '
+        'screenshot of the card above.',
   },
   'verseCardFailed': {
     'zh-Hans': '生成图片失败，请再试一次。',
@@ -8389,9 +8354,8 @@ const uiStrings = {
   'verseCardVersionExcluded': {
     'zh-Hans': '这个译本暂不提供图片分享。可以用「复制」把经文分享出去。',
     'zh-Hant': '這個譯本暫不提供圖片分享。可以用「複製」把經文分享出去。',
-    'en':
-        'This translation is not available as an image. You can still '
-            'share it with Copy.',
+    'en': 'This translation is not available as an image. You can still '
+        'share it with Copy.',
   },
 
   // ---- Daily update check ---------------------------------------------
@@ -8416,9 +8380,8 @@ const uiStrings = {
   'autoCheckUpdatesHint': {
     'zh-Hans': '按下面的频率向 GitHub 查询是否有新版本；有新版才会提示。',
     'zh-Hant': '按下面的頻率向 GitHub 查詢是否有新版本；有新版才會提示。',
-    'en':
-        'Asks GitHub at the interval below whether a newer release '
-            'exists. You only hear about it when there is one.',
+    'en': 'Asks GitHub at the interval below whether a newer release '
+        'exists. You only hear about it when there is one.',
   },
   // The interval itself, directly under the switch and disabled when it
   // is off.
@@ -8927,7 +8890,11 @@ const uiStrings = {
     'zh-Hant': '儲存到裝置',
     'en': 'Save to this device',
   },
-  'songsSaveScore': {'zh-Hans': '乐谱（PDF）', 'zh-Hant': '樂譜（PDF）', 'en': 'Score (PDF)'},
+  'songsSaveScore': {
+    'zh-Hans': '乐谱（PDF）',
+    'zh-Hant': '樂譜（PDF）',
+    'en': 'Score (PDF)'
+  },
   'songsSaving': {'zh-Hans': '正在保存…', 'zh-Hant': '正在儲存…', 'en': 'Saving…'},
   'songsSavedTo': {
     'zh-Hans': '已保存到 {where}',
@@ -9115,12 +9082,14 @@ const uiStrings = {
   'aiKeyNeededBody': {
     'zh-Hans': 'AI 功能使用你自己的 Google Gemini API 密钥。免费，大约一分钟就能设好：',
     'zh-Hant': 'AI 功能使用你自己的 Google Gemini API 金鑰。免費，大約一分鐘就能設好：',
-    'en': 'AI features run on your own Google Gemini API key. It is free and takes about a minute:',
+    'en':
+        'AI features run on your own Google Gemini API key. It is free and takes about a minute:',
   },
   'aiKeyStep1': {
     'zh-Hans': '打开 aistudio.google.com/apikey（点下面的「获取免费密钥」），用 Google 账号登录。',
     'zh-Hant': '打開 aistudio.google.com/apikey（點下面的「取得免費金鑰」），用 Google 帳號登入。',
-    'en': 'Open aistudio.google.com/apikey (tap "Get free key" below) and sign in with a Google account.',
+    'en':
+        'Open aistudio.google.com/apikey (tap "Get free key" below) and sign in with a Google account.',
   },
   'aiKeyStep2': {
     'zh-Hans': '点「Create API key」，复制以 AIza 开头的那串密钥。',
@@ -9130,17 +9099,20 @@ const uiStrings = {
   'aiKeyStep3': {
     'zh-Hans': '回到这里，打开「设置」›「AI 释义」，粘贴到「使用我自己的 Gemini API 密钥」，点「测试」。',
     'zh-Hant': '回到這裡，打開「設定」›「AI 釋義」，貼到「使用我自己的 Gemini API 金鑰」，點「測試」。',
-    'en': 'Come back, open Settings › AI, paste it into "Use my own Gemini API key" and tap Test.',
+    'en':
+        'Come back, open Settings › AI, paste it into "Use my own Gemini API key" and tap Test.',
   },
   'aiKeyNeededPrivacy': {
     'zh-Hans': '密钥只存在这台设备上（登录后同步到你自己的其他设备），只随你的 AI 请求发送，我们不保存。',
     'zh-Hant': '金鑰只存在這台裝置上（登入後同步到你自己的其他裝置），只隨你的 AI 請求傳送，我們不保存。',
-    'en': 'The key stays on this device (and syncs to your own devices when signed in). It is sent only with your AI requests and never stored by us.',
+    'en':
+        'The key stays on this device (and syncs to your own devices when signed in). It is sent only with your AI requests and never stored by us.',
   },
   'aiKeyNeededChina': {
     'zh-Hans': '申请密钥需要能访问 Google；设好之后，AI 在这里照常可用。',
     'zh-Hant': '申請金鑰需要能存取 Google；設好之後，AI 在這裡照常可用。',
-    'en': 'Getting the key needs access to Google; once it is saved, AI works here as usual.',
+    'en':
+        'Getting the key needs access to Google; once it is saved, AI works here as usual.',
   },
   'aiKeyNeededOpenSettings': {
     'zh-Hans': '去设置',
@@ -9198,5 +9170,60 @@ const uiStrings = {
         'The Greek New Testament: SBL Edition. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. CC BY 4.0 (https://sblgnt.com/license/). Supplied by Yahwehdehua; source notes are mapped to popups and Strong’s/morphology to word runs. Source paragraph and apparatus anchors were already removed upstream. No wording edits in this import.',
     'zh-Hant':
         'The Greek New Testament: SBL Edition. Copyright © 2010 Society of Biblical Literature and Logos Bible Software. CC BY 4.0 (https://sblgnt.com/license/). Supplied by Yahwehdehua; source notes are mapped to popups and Strong’s/morphology to word runs. Source paragraph and apparatus anchors were already removed upstream. No wording edits in this import.',
+  },
+  'aboutVerBib': {
+    'en': 'Berean Interlinear Bible (BIB) — New Testament',
+    'zh-Hans': '庇哩亚逐词对照圣经（BIB）— 新约',
+    'zh-Hant': '庇哩亞逐詞對照聖經（BIB）— 新約',
+  },
+  'aboutLicenseBib': {
+    'en':
+        'Berean Interlinear Bible, Bible Hub / Berean Bible. Public domain since April 30, 2023. Official Greek–English text with Strong’s numbers, parsing and transliteration. New Testament only; chapter notes are identified as source notes. One conflicting source Strong’s tag is preserved as untagged text. https://berean.bible/licensing.htm',
+    'zh-Hans':
+        '庇哩亚逐词对照圣经，Bible Hub / Berean Bible。2023 年 4 月 30 日起属于公有领域。官方希腊文与英文逐词对照，含 Strong’s 编号、词形及音译。目前仅新约；章注保留来源标签。一处来源编号冲突保留原文但不加编号。https://berean.bible/licensing.htm',
+    'zh-Hant':
+        '庇哩亞逐詞對照聖經，Bible Hub / Berean Bible。2023 年 4 月 30 日起屬於公有領域。官方希臘文與英文逐詞對照，含 Strong’s 編號、詞形及音譯。目前僅新約；章註保留來源標籤。一處來源編號衝突保留原文但不加編號。https://berean.bible/licensing.htm',
+  },
+  'cloudSignInApple': {
+    'zh-Hans': '通过 Apple 登录',
+    'zh-Hant': '透過 Apple 登入',
+    'en': 'Sign in with Apple',
+  },
+  'deleteAccount': {
+    'zh-Hans': '删除账户',
+    'zh-Hant': '刪除帳戶',
+    'en': 'Delete account',
+  },
+  'deleteAccountExplanation': {
+    'zh-Hans': '你的账户及云端同步数据将永久删除。本机保存的阅读数据会保留。',
+    'zh-Hant': '你的帳戶及雲端同步資料將永久刪除。本機儲存的閱讀資料會保留。',
+    'en':
+        'Your account and synced data will be permanently deleted. Reading data saved on this device will remain.',
+  },
+  'deleteAccountPassword': {
+    'zh-Hans': '输入密码确认',
+    'zh-Hant': '輸入密碼確認',
+    'en': 'Confirm with your password',
+  },
+  'deleteAccountConfirm': {
+    'zh-Hans': '永久删除',
+    'zh-Hant': '永久刪除',
+    'en': 'Delete permanently',
+  },
+  'deleteAccountSuccess': {
+    'zh-Hans': '账户和云端数据已删除。本机数据仍会保留。',
+    'zh-Hant': '帳戶及雲端資料已刪除。本機資料仍會保留。',
+    'en': 'Account and cloud data deleted. Data on this device remains.',
+  },
+  'deleteAccountWrongPassword': {
+    'zh-Hans': '密码不正确，请重试。',
+    'zh-Hant': '密碼不正確，請重試。',
+    'en': 'Incorrect password. Please try again.',
+  },
+  'deleteAccountFailure': {
+    'zh-Hans': '未能完成删除。请重试，或联系 support@yahwehword.com。',
+    'zh-Hant': '未能完成刪除。請重試，或聯絡 support@yahwehword.com。',
+    'en':
+        'Could not finish deleting the account. Try again or contact support@yahwehword.com.',
   },
 };

@@ -116,6 +116,7 @@ const List<String> kCjkFontFallback = [
   // can resolve on Flutter web. See `pubspec.yaml` for the bundle
   // declaration + the build script `tools/build_cjk_font_subset.sh`.
   'NotoSansSC-YahwehsWords',
+  'NotoSansExt-Sub',
   // After: native-platform / browser-CSS fallbacks. These work on
   // iOS / macOS / Android where Flutter can access OS-installed fonts,
   // and on the HTML renderer (not CanvasKit) where the browser
@@ -514,7 +515,8 @@ String resolveFontFamily(String key) {
       // option.key) is still the right user-facing behaviour, but
       // log it so production monitoring can catch repeated
       // failures.
-      debugPrint('[font_catalog] GoogleFonts.getFont(${option.key}) failed: $e');
+      debugPrint(
+          '[font_catalog] GoogleFonts.getFont(${option.key}) failed: $e');
       return option.key;
     }
   }

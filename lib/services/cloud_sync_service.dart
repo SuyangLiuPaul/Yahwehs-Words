@@ -253,6 +253,14 @@ class CloudSyncService extends ChangeNotifier {
   /// the same change back to Firestore.
   Future<void> _onAuthChanged() async {
     final auth = CloudAuthService.instance;
+    if (auth.accountDeletionInProgress) {
+      _debounce?.cancel();
+      _docSub?.cancel();
+      _docSub = null;
+      _subscribedUid = null;
+      _setStatus(CloudSyncStatus.disabled);
+      return;
+    }
     if (!auth.isConfigured || !auth.isSignedIn) {
       _setStatus(CloudSyncStatus.disabled);
       _docSub?.cancel();
@@ -325,6 +333,7 @@ class CloudSyncService extends ChangeNotifier {
   ///      propagate).
   Future<void> _onRemoteSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snap) async {
+    if (CloudAuthService.instance.accountDeletionInProgress) return;
     try {
       if (!snap.exists || (snap.data()?['data'] == null)) {
         // No cloud data yet — promote local to cloud as the seed.
@@ -516,7 +525,9 @@ class CloudSyncService extends ChangeNotifier {
   /// re-uploads the data we already have, which is harmless.
   Future<void> _uploadFromLocal({bool bypassSuppress = false}) async {
     final auth = CloudAuthService.instance;
-    if (!auth.isSignedIn) return;
+    if (!auth.isSignedIn || auth.accountDeletionInProgress) {
+      return;
+    }
     // Pin the user once at upload start. Same race-free pattern as
     // _onAuthChanged — currentUser can flip to null between the
     // isSignedIn check above and the .doc(uid) line below, e.g.
@@ -561,6 +572,7 @@ class CloudSyncService extends ChangeNotifier {
     _setStatus(CloudSyncStatus.syncing);
     try {
       final data = await _snapshotLocal();
+      if (auth.accountDeletionInProgress) return;
       // First attempt: trust Firestore's own token-management. With
       // `webExperimentalAutoDetectLongPolling: true` (see
       // CloudAuthService._doInit) the SDK refreshes tokens correctly
@@ -666,7 +678,10 @@ class CloudSyncService extends ChangeNotifier {
   /// is enough.
   Timer? _debounce;
   void requestUpload() {
-    if (!CloudAuthService.instance.isSignedIn) return;
+    if (!CloudAuthService.instance.isSignedIn ||
+        CloudAuthService.instance.accountDeletionInProgress) {
+      return;
+    }
     if (_suppressLocalListener) return;
     _debounce?.cancel();
     // Re-check the suppress flag when the timer FIRES (not just when
@@ -678,7 +693,10 @@ class CloudSyncService extends ChangeNotifier {
     // round-trip. That's the syncing/synced flash loop the user saw
     // even after the migration-once guard landed.
     _debounce = Timer(const Duration(milliseconds: 600), () {
-      if (_suppressLocalListener) return;
+      if (_suppressLocalListener ||
+          CloudAuthService.instance.accountDeletionInProgress) {
+        return;
+      }
       _uploadFromLocal();
     });
   }

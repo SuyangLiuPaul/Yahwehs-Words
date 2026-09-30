@@ -241,6 +241,7 @@ String? zhToEn(String name) {
 const _englishVersionCodes = <String>{
   'net',
   'ogt',
+  'bib',
   'sblgnt',
   'kjv',
   'leb',

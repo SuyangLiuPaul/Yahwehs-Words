@@ -1,3 +1,10 @@
+## 2026-09-30 — BIB integration, robustness review and release preparation
+
+- Imported official Berean Interlinear NT, preserved Greek occurrence + English gloss/transliteration/source grammar, left the conflicting 1 Cor 7:15 tag unassigned, and added corpus integrity regression coverage. Manifest: `docs/berean-interlinear-import.json`.
+- Static analysis has no issues; complete suite: 3820 passed, 36 existing skips, zero failures. Fixed newly exposed BIB attribution/picker/note/font and Words version-copy/worktree test defects.
+- Theology findings and source SHA inventory are in `docs/eaglesview-theology-review.md` / `.json`; two explicit EV entries, one interpretive entry, distinct CBOL app findings. No silent theological rewrite.
+- Release record: `docs/release-2026-09-30.md`. New source must pass current CI before tagging. Store review and CarPlay approval remain separate gates.
+
 ## 2026-09-30 — newer Yahwehdehua reading editions
 
 - Imported Chinese NET (Simplified / Traditional), English NET text only, One God Translation NT and SBLGNT from the read-only exported database. Exact source SHA, canonical gaps and counts are in `docs/yahwehdehua-edition-import.json`; regeneration script rejects unknown markup or changed source shape. Existing Scripture assets unchanged.

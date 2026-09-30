@@ -136,3 +136,20 @@ jobs:
           name: Yahwehs-Words-play-aab
           path: build/app/outputs/bundle/intlRelease/app-intl-release.aab
           if-no-files-found: error
+
+      - name: Build Wear OS AAB (same Play package and upload key)
+        working-directory: android
+        run: ./gradlew :wear:bundleRelease -PwearVersionCode=$((20001000 + GITHUB_RUN_NUMBER))
+
+      - name: Verify Wear form factor and package
+        run: |
+          f=build/wear/outputs/bundle/release/wear-release.aab
+          unzip -p "$f" base/manifest/AndroidManifest.xml | strings > "$RUNNER_TEMP/wear-manifest.txt"
+          grep -q com.yahwehword.words "$RUNNER_TEMP/wear-manifest.txt"
+          grep -q android.hardware.type.watch "$RUNNER_TEMP/wear-manifest.txt"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Yahwehs-Words-wear-play-aab
+          path: build/wear/outputs/bundle/release/wear-release.aab
+          if-no-files-found: error
