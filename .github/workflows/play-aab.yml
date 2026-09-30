@@ -115,7 +115,9 @@ jobs:
         # Play needs a version code above every one already uploaded, and
         # the pubspec build number is not bumped for Play-only rebuilds, so
         # the code comes from the run number (offset keeps it monotonic).
-        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true --build-number=$((1000 + GITHUB_RUN_NUMBER))
+        # Play already serves code 1006032. A 1000 offset would downgrade it.
+        # Reserve 3,000,000–19,999,999 for phone bundles; Wear starts at 20M.
+        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true --build-number=$((3000000 + GITHUB_RUN_NUMBER))
 
       - name: Check the bundle carries the Play application id
         run: |
