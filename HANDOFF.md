@@ -1,3 +1,9 @@
+## 2026-09-30 — Words Windows Firebase initialization / MS Store 1.6.34
+
+Native Windows boot called `Firebase.initializeApp()` without options. Windows has no auto-loaded Firebase configuration, and the SDK throws `core/not-initialized` when both the default app and explicit options are absent. Pass the existing project Web app configuration explicitly on Windows, as supported by FlutterFire CLI's `--windows-app-id=<WEB_APP_ID>` configuration. Auth and sync remain enabled; Apple/Android retain native configuration loading, and the Web redirect domain stays unchanged.
+
+Validation: the new regression test failed against the previous service because captured initialization options were null. All four Windows/Apple/Android configuration tests pass after the fix; targeted analysis is clean. These tests stop at a fake SDK boundary and do not prove live login/sync on Windows. A native Windows runtime check is still required. The branch prepares a 1.6.34 MSIX build; submitting it to Microsoft Store is a separate step. No web, Android, or Apple release was performed.
+
 # YsWords — AI Agent Handoff Document
 
 > Last updated: 2026-08-10 — **v1.4.25 → v1.4.26 — web offline downloads are real, and the Service Worker that was supposed to provide them never ran. dev/qat only; PROD HELD (still on v1.4.5).** analyze clean · **535/535 tests**.

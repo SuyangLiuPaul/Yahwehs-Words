@@ -340,7 +340,7 @@ class CloudAuthService extends ChangeNotifier {
       print('[CloudAuthService] step=$step starting Firebase.initializeApp');
       step = 'Firebase.initializeApp';
       // 2026-05-21 (v1.2.68): use DefaultFirebaseOptions.web on web,
-      // but on native (iOS / Android) pass NO options so the native
+      // but on Apple / Android pass NO options so the native
       // SDK auto-loads from the platform config file (GoogleService-
       // Info.plist on iOS, google-services.json on Android via the
       // gradle plugin). Calling initializeApp with the web options
@@ -350,6 +350,13 @@ class CloudAuthService extends ChangeNotifier {
       if (kIsWeb) {
         await Firebase.initializeApp(
           options: _webOptions(),
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.windows) {
+        // Windows has no auto-loaded GoogleService-Info.plist or Android
+        // resources. With no explicit options Firebase Core throws
+        // core/not-initialized before Auth can start, including in MSIX.
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.windows,
         );
       } else {
         await Firebase.initializeApp();
