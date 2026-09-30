@@ -50,12 +50,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          # 2026-06-16: full history (not the default depth-1 shallow clone).
-          # The Gitleaks step scans the push's commit RANGE (before^..after).
-          # On a multi-commit push the base SHA isn't present in a shallow
-          # checkout, so gitleaks died with `fatal: ambiguous argument
-          # '<sha>^..<sha>': unknown revision` → exit 1 (a CI failure with
-          # ZERO leaks found). fetch-depth: 0 gives it the history it needs.
+          # Bind checkout and scan to the same immutable event revision.
+          # Full history includes the PR merge's parents; an orphaned force-
+          # push `before` object is fetched by SHA by ci_secret_scan.py.
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Setup Flutter
@@ -386,14 +384,35 @@ jobs:
       - name: Test
         run: flutter test --reporter expanded
 
-      # 2026-05-24 (v1.3.24): gitleaks secret scan. Catches an
-      # accidental commit of GEMINI_API_KEY, RESEND_API_KEY, AWS
-      # creds, Firebase service-account JSONs, etc. before they
-      # land on origin/main. Runs against the whole repo on push
-      # + only the PR diff on pull_request (faster). The local
-      # git-secrets hook is broken per memory's env-quirks; this
-      # is the only reliable secret gate.
+      # gitleaks-action@v3 reads the LIVE PR commit list at scan time.
+      # Three Oct 1 runs scanned a newer head absent from their earlier
+      # checkout and failed with Invalid revision range. Use the same
+      # official 8.24.3 engine, pinned to the publisher's archive checksum,
+      # with event-only scope and fail-closed range validation instead.
+      - name: Install verified Gitleaks 8.24.3
+        run: |
+          set -euo pipefail
+          GITLEAKS_ARCHIVE="$RUNNER_TEMP/gitleaks_8.24.3_linux_x64.tar.gz"
+          curl -fL --retry 3 --retry-all-errors --retry-delay 2 \
+            -o "$GITLEAKS_ARCHIVE" \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          echo "9991e0b2903da4c8f6122b5c3186448b927a5da4deef1fe45271c3793f4ee29c  $GITLEAKS_ARCHIVE" | sha256sum --check --strict
+          mkdir -p "$RUNNER_TEMP/gitleaks-bin"
+          tar -xzf "$GITLEAKS_ARCHIVE" -C "$RUNNER_TEMP/gitleaks-bin" gitleaks
+          echo "$RUNNER_TEMP/gitleaks-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/gitleaks-bin/gitleaks" version
+
+      - name: Secret scan event-range regression tests
+        run: python3 test/test_ci_secret_scan.py
+
       - name: Gitleaks secret scan
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: secret-scan
+        run: python3 tools/ci_secret_scan.py
+
+      - name: Preserve redacted Gitleaks report
+        if: ${{ always() && steps.secret-scan.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-results
+          path: results.sarif
+          retention-days: 7
