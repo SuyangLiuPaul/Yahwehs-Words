@@ -1,3 +1,7 @@
+## 2026-09-30 — Mac delivery successful
+
+Transporter verified Delivered for Words build 1060036, at 17:34 Melbourne time. Corrected category package accepted; THE APP IS PROCESSING. Mac version is not yet submitted for review. After processing, choose the matching build, save and submit (automatic release already selected).
+
 ## 2026-09-30 — Mac signing restored and category correction
 
 User completed Xcode login; SUYANG LIU Admin team restored. Initial Mac export succeeded but Transporter rejected Words with 90242, missing LSApplicationCategoryType. Added public.app-category.reference to both source and archived app Info.plist; re-export re-signs all contents. Corrected package: /Users/pliu0036/Downloads/store-macos/words-1.6.34-category-export/Yahweh's Words.pkg. It is now uploading in Transporter, not yet delivered or submitted. Do not use the older words-1.6.34-export package.
