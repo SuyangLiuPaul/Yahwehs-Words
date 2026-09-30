@@ -51,10 +51,12 @@ void main() {
 
   group('index.html head', () {
     test('declares one canonical home, and it is prod', () {
-      final m = RegExp(r'<link rel="canonical" href="([^"]*)"').firstMatch(markup);
-      expect(m, isNotNull, reason: 'no canonical — dev, qat and the two '
-          '*.netlify.app hostnames serve identical HTML and compete with '
-          'prod as duplicates');
+      final m =
+          RegExp(r'<link rel="canonical" href="([^"]*)"').firstMatch(markup);
+      expect(m, isNotNull,
+          reason: 'no canonical — dev, qat and the two '
+              '*.netlify.app hostnames serve identical HTML and compete with '
+              'prod as duplicates');
       expect(m!.group(1), '$_prod/');
       expect(RegExp(r'rel="canonical"').allMatches(markup).length, 1,
           reason: 'two canonicals is the same as none — crawlers ignore '
@@ -136,9 +138,9 @@ void main() {
     });
 
     test('structured data parses, and claims nothing it cannot back', () {
-      final m = RegExp(
-              r'<script type="application/ld\+json">([\s\S]*?)</script>')
-          .firstMatch(markup);
+      final m =
+          RegExp(r'<script type="application/ld\+json">([\s\S]*?)</script>')
+              .firstMatch(markup);
       expect(m, isNotNull, reason: 'JSON-LD block is gone');
 
       // A JSON-LD block that does not parse is worse than none: Search
@@ -172,8 +174,7 @@ void main() {
       // The rule is about the NAME. Describing the app in both languages
       // is fine and deliberate; what must not happen is the two names
       // rendered as a single label.
-      final pair = RegExp(
-          "(Yahweh's Words\\s*[·・|/,、_—–-]?\\s*雅[伟偉]之言)"
+      final pair = RegExp("(Yahweh's Words\\s*[·・|/,、_—–-]?\\s*雅[伟偉]之言)"
           "|(雅[伟偉]之言\\s*[·・|/,、_—–-]?\\s*Yahweh's Words)");
       // manifest.json too: its `description` is what Android and Chrome
       // print in the install prompt, which is a share surface like any
@@ -241,7 +242,8 @@ void main() {
         .where((l) => !l.trimLeft().startsWith('//'))
         .join('\n');
     final appCopy = {
-      'lib/constants/ui_strings.dart': dartCopy('lib/constants/ui_strings.dart'),
+      'lib/constants/ui_strings.dart':
+          dartCopy('lib/constants/ui_strings.dart'),
       'lib/widgets/onboarding_dialog.dart':
           dartCopy('lib/widgets/onboarding_dialog.dart'),
     };
@@ -262,7 +264,7 @@ void main() {
       // the count was scraped off the catalog instead of off the picker.
       // The 9: 和合本雅伟版 简/繁, 梁家铿译本 简/繁, KJV, CSB, LEB,
       // BSB (Yahweh), ASV (Yahweh).
-      expect(entries.length, 9,
+      expect(entries.length, 14,
           reason: 'the version list changed — the share card and the '
               'JSON-LD featureList both advertise a count and neither '
               'is derived at build time');
@@ -313,7 +315,8 @@ void main() {
       };
       final counting = RegExp(r'[^\n]*(?:\d+\s*versions|\d+\s*个\s*版本'
           r'|\d+\s*個\s*版本)[^\n]*');
-      for (final lang in names.keys.where((l) => !bibleLanguageOrder.contains(l))) {
+      for (final lang
+          in names.keys.where((l) => !bibleLanguageOrder.contains(l))) {
         for (final entry in {
           'tools/make_og_card.py': card,
           'web/index.html': markup,
@@ -417,7 +420,8 @@ void main() {
     });
 
     test('points at the sitemap', () {
-      expect(robots.readAsStringSync(), contains('Sitemap: $_prod/sitemap.xml'));
+      expect(
+          robots.readAsStringSync(), contains('Sitemap: $_prod/sitemap.xml'));
     });
 
     test('never blocks what the renderer needs', () {

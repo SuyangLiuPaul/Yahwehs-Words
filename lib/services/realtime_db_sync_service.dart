@@ -195,6 +195,14 @@ class RealtimeDbSyncService extends ChangeNotifier {
 
   Future<void> _onAuthChanged() async {
     final auth = CloudAuthService.instance;
+    if (auth.accountDeletionInProgress) {
+      _debounce?.cancel();
+      _docSub?.cancel();
+      _docSub = null;
+      _subscribedUid = null;
+      _setStatus(CloudSyncStatus.disabled);
+      return;
+    }
     if (!auth.isConfigured || !auth.isSignedIn) {
       _setStatus(CloudSyncStatus.disabled);
       _docSub?.cancel();
@@ -260,6 +268,7 @@ class RealtimeDbSyncService extends ChangeNotifier {
   ///      verbatim (otherwise deletes from another device would
   ///      never propagate here).
   Future<void> _onRemoteSnapshot(DatabaseEvent event) async {
+    if (CloudAuthService.instance.accountDeletionInProgress) return;
     try {
       final raw = event.snapshot.value;
       if (raw == null) {
@@ -363,11 +372,15 @@ class RealtimeDbSyncService extends ChangeNotifier {
   /// removes a highlight on Device A, the absence of that key in
   /// the upload signals the deletion to Device B.
   Future<void> _uploadFromLocal({Map<String, dynamic>? data}) async {
-    if (!CloudAuthService.instance.isSignedIn) return;
+    if (!CloudAuthService.instance.isSignedIn ||
+        CloudAuthService.instance.accountDeletionInProgress) {
+      return;
+    }
     final user = CloudAuthService.instance.currentUser;
     if (user == null) return;
     final uid = user.uid;
     final payload = data ?? await _snapshotLocal();
+    if (CloudAuthService.instance.accountDeletionInProgress) return;
     // 2026-09-04: never let a device that has not yet pulled overwrite
     // the cloud with nothing. The write below is a `set()` on the whole
     // node and `_snapshotLocal()` omits keys this device never wrote,
@@ -542,16 +555,23 @@ class RealtimeDbSyncService extends ChangeNotifier {
   ///   4. step 2's data wasn't a real change but the hash check now
   ///      catches that and stops the loop here at step 4.
   void requestUpload() {
-    if (!CloudAuthService.instance.isSignedIn) return;
+    if (!CloudAuthService.instance.isSignedIn ||
+        CloudAuthService.instance.accountDeletionInProgress) {
+      return;
+    }
     if (_suppressLocalListener) return;
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 600), () async {
-      if (_suppressLocalListener) return;
+      if (_suppressLocalListener ||
+          CloudAuthService.instance.accountDeletionInProgress) {
+        return;
+      }
       // Hash the current snapshot. If it matches what we just
       // uploaded, no-op — saves a round-trip AND prevents the
       // status flicker for "uploads" that wouldn't have changed
       // anything.
       final data = await _snapshotLocal();
+      if (CloudAuthService.instance.accountDeletionInProgress) return;
       final hash = jsonEncode(data);
       if (hash == _lastUploadedDataHash) {
         // Nothing actually changed; stay on whatever status we have.
@@ -795,6 +815,7 @@ class RealtimeDbSyncService extends ChangeNotifier {
   /// build). Empty key → null write (clears cloud copy).
   Future<void> pushGeminiKey(String key) async {
     final auth = CloudAuthService.instance;
+    if (auth.accountDeletionInProgress) return;
     if (!auth.isConfigured) {
       debugPrint('[RTDBSync] pushGeminiKey: not configured, skip');
       return;

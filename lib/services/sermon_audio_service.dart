@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:audio_service/audio_service.dart';
+import 'remote_audio_source.dart';
+import 'sermon_service.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -63,7 +66,7 @@ class SermonAudioPart {
 /// Until it is set, [isAvailable] is false and the UI shows nothing —
 /// which is the honest state. A play button that 404s would be worse
 /// than no play button.
-class SermonAudioService extends ChangeNotifier {
+class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
   SermonAudioService._() : this.withEngine(SongPlaybackEngine());
 
   /// @visibleForTesting — builds an instance around a caller-supplied
@@ -72,13 +75,15 @@ class SermonAudioService extends ChangeNotifier {
   /// without a real audio plugin or a WebKit to reproduce
   /// `docs/autonomous-queue.md:11582`'s AbortError races against.
   @visibleForTesting
-  SermonAudioService.withEngine(SongPlaybackEngine engine)
-      : _player = engine {
+  SermonAudioService.withEngine(SongPlaybackEngine engine) : _player = engine {
     // One sound at a time — a hymn or a video starting pauses the
     // sermon, and vice versa. See [MediaFocus].
-    MediaFocus.instance.register(
-        this, () async => _playing ? await _player.pause() : null);
+    MediaFocus.instance
+        .register(this, () async => _playing ? await _player.pause() : null);
   }
+
+  static void Function(RemoteAudioSource source)? onRemoteActivation;
+  String? _remoteTitle;
 
   static final SermonAudioService instance = SermonAudioService._();
 
@@ -164,6 +169,7 @@ class SermonAudioService extends ChangeNotifier {
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
   bool _wired = false;
+  bool _completed = false;
 
   /// Where the last autosave (not an explicit pause/stop/seek) left the
   /// throttle, for the CURRENT part only — reset to null every time
@@ -213,7 +219,8 @@ class SermonAudioService extends ChangeNotifier {
 
   /// 1-based, for "Part 2 of 4".
   int get partNumber => _partIndex + 1;
-  int get partCount => _sermonId == null ? 0 : (_index?[_sermonId]?.length ?? 0);
+  int get partCount =>
+      _sermonId == null ? 0 : (_index?[_sermonId]?.length ?? 0);
   bool get hasMultipleParts => partCount > 1;
 
   bool isCurrent(String sermonId) => _sermonId == sermonId;
@@ -226,6 +233,67 @@ class SermonAudioService extends ChangeNotifier {
   /// Exposed for the test that pins "all 289, not most of them".
   int get playableSermonCount =>
       _index?.values.where((p) => p.isNotEmpty).length ?? 0;
+
+  @override
+  MediaItem? get remoteItem => _sermonId == null
+      ? null
+      : MediaItem(
+          id: 'car:sermon/$_sermonId',
+          title: _remoteTitle ?? 'Sermon $_sermonId',
+          artist: 'Eric H. H. Chang',
+          album: 'Sermons · 讲道',
+          duration: overallDuration,
+        );
+
+  @override
+  PlaybackState get remoteState => PlaybackState(
+        controls: [
+          MediaControl.rewind,
+          if (_playing) MediaControl.pause else MediaControl.play,
+          MediaControl.fastForward,
+          MediaControl.stop
+        ],
+        systemActions: {
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward
+        },
+        androidCompactActionIndices: const [0, 1, 2],
+        processingState: _error != null
+            ? AudioProcessingState.error
+            : _loading
+                ? AudioProcessingState.loading
+                : _sermonId == null
+                    ? AudioProcessingState.idle
+                    : AudioProcessingState.ready,
+        playing: _playing,
+        updatePosition: overallPosition,
+        bufferedPosition: overallPosition,
+        errorCode: _error == null ? null : 1,
+        errorMessage: _error,
+        speed: 1,
+      );
+
+  @override
+  Future<void> remotePlay() async {
+    if (_sermonId == null || _playing) return;
+    if (_completed) {
+      await play(_sermonId!);
+    } else {
+      await resume();
+    }
+  }
+
+  @override
+  Future<void> remotePause() => pause();
+  @override
+  Future<void> remoteStop() => stop();
+  @override
+  Future<void> remoteSeek(Duration position) => seekOverall(position);
+  @override
+  Future<void> remoteForward() => nudge(const Duration(seconds: 30));
+  @override
+  Future<void> remoteBackward() => nudge(const Duration(seconds: -15));
 
   // ── Setup ───────────────────────────────────────────────────────
 
@@ -335,11 +403,15 @@ class SermonAudioService extends ChangeNotifier {
     ErrorReporter.breadcrumb('sermon.play',
         data: 'id=$sermonId branch=$branch loading=$_loading');
 
+    if (_sermonId == sermonId && _completed) {
+      _sermonId = null;
+    }
     if (_sermonId == sermonId) {
       if (_playing) {
         await _player.pause();
       } else {
         await MediaFocus.instance.claim(this);
+        onRemoteActivation?.call(this);
         try {
           await _player.resume();
         } on PlaybackBlockedException catch (e) {
@@ -356,8 +428,17 @@ class SermonAudioService extends ChangeNotifier {
     }
 
     await MediaFocus.instance.claim(this);
+    onRemoteActivation?.call(this);
 
+    _completed = false;
     _sermonId = sermonId;
+    _remoteTitle = null;
+    unawaited(SermonService.instance.loadIndex().then((items) {
+      if (_sermonId != sermonId) return;
+      final matches = items.where((s) => s.id == sermonId);
+      if (matches.isNotEmpty) _remoteTitle = matches.first.title;
+      notifyListeners();
+    }));
     _error = null;
     await _restoreLengths(parts);
     final saved = await _savedPosition(sermonId);
@@ -443,6 +524,7 @@ class SermonAudioService extends ChangeNotifier {
       // Finished. Clear the saved position so next time starts fresh
       // rather than resuming two seconds from the end.
       _playing = false;
+      _completed = true;
       await _clearPosition(_sermonId!);
       notifyListeners();
       return;
@@ -465,13 +547,20 @@ class SermonAudioService extends ChangeNotifier {
     await _savePosition();
   }
 
-  Future<void> resume() => _player.resume();
+  Future<void> resume() async {
+    await MediaFocus.instance.claim(this);
+    onRemoteActivation?.call(this);
+    await _player.resume();
+  }
 
   Future<void> stop() async {
     await _savePosition();
     await _player.stop();
     _sermonId = null;
     _playing = false;
+    _loading = false;
+    _error = null;
+    _duration = Duration.zero;
     _position = Duration.zero;
     notifyListeners();
   }
@@ -513,10 +602,7 @@ class SermonAudioService extends ChangeNotifier {
       // Pre-2026-09-02 index shape: flat base + filename.
       return '$baseUrl${Uri.encodeComponent(part.file)}';
     }
-    final encoded = part.path
-        .split('/')
-        .map(Uri.encodeComponent)
-        .join('/');
+    final encoded = part.path.split('/').map(Uri.encodeComponent).join('/');
     return '$baseUrl$encoded';
   }
 
@@ -565,14 +651,12 @@ class SermonAudioService extends ChangeNotifier {
 
   /// Which part [at] falls in, and how far into it — the whole of the
   /// mapping, kept pure so it can be tested without a player.
-  static (int, Duration) locate(
-      List<Duration> lengths, Duration at) {
+  static (int, Duration) locate(List<Duration> lengths, Duration at) {
     if (lengths.isEmpty) return (0, Duration.zero);
     var remaining = at < Duration.zero ? Duration.zero : at;
     for (var i = 0; i < lengths.length; i++) {
       if (remaining < lengths[i] || i == lengths.length - 1) {
-        final clamped =
-            remaining > lengths[i] ? lengths[i] : remaining;
+        final clamped = remaining > lengths[i] ? lengths[i] : remaining;
         return (i, clamped);
       }
       remaining -= lengths[i];
@@ -599,8 +683,7 @@ class SermonAudioService extends ChangeNotifier {
   Future<void> seekOverall(Duration to) async {
     final parts = _sermonId == null ? null : _index?[_sermonId];
     if (parts == null || parts.isEmpty) return;
-    final (index, offset) =
-        locate([for (final p in parts) lengthOf(p)], to);
+    final (index, offset) = locate([for (final p in parts) lengthOf(p)], to);
     if (index == _partIndex) {
       await seek(offset);
       return;
@@ -749,6 +832,13 @@ class SermonAudioService extends ChangeNotifier {
       ];
     }
     _sermonId = sermonId;
+    _remoteTitle = null;
+    unawaited(SermonService.instance.loadIndex().then((items) {
+      if (_sermonId != sermonId) return;
+      final matches = items.where((s) => s.id == sermonId);
+      if (matches.isNotEmpty) _remoteTitle = matches.first.title;
+      notifyListeners();
+    }));
     _error = 'blocked';
     _loading = false;
     notifyListeners();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/search_options_bar.dart';
+import 'package:yahwehs_words/widgets/search_book_chart.dart';
 import 'package:get/get.dart';
 import 'package:yahwehs_words/models/strongs.dart';
 import 'package:yahwehs_words/models/verse.dart';
@@ -75,6 +77,10 @@ class _SearchPageState extends State<SearchPage> {
   /// last keystroke -- the user gets results that update as they
   /// type without hammering the for-loop on every character.
   Timer? _liveSearchDebounce;
+
+  (bool, bool)? _searchFlags;
+  int _textSearchGeneration = 0;
+  bool _textSearchBusy = false;
 
   bool searchPerformed = false;
   bool searchAll = true;
@@ -285,6 +291,31 @@ class _SearchPageState extends State<SearchPage> {
         // ignore: unawaited_futures
         _ensureVersesLoaded();
       }
+    });
+  }
+
+  bool get _plainTextQuery {
+    final query = _textEditingController.text.trim();
+    return query.isEmpty || (parseStrongsNumber(query) == null &&
+      parseStrongsBoolean(query) == null && parseReference(query) == null);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final settings = Provider.of<AppSettings>(context);
+    final flags = (settings.fuzzySearch, settings.pinyinSearch);
+    final previous = _searchFlags;
+    _searchFlags = flags;
+    if (previous == null || previous == flags) return;
+    final query = _textEditingController.text.trim();
+    if (query.isEmpty || !_plainTextQuery) return;
+    // A Settings change used to redraw labels without recomputing the
+    // result list. Defer until this build is over, keeping the scope.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _textEditingController.text.trim() != query) return;
+      _liveSearchDebounce?.cancel();
+      unawaited(search());
     });
   }
 
@@ -1154,10 +1185,11 @@ class _SearchPageState extends State<SearchPage> {
     // Strong's-number queries (G2316 / H7200) still navigate to
     // the separate StrongsEntryPage via parseStrongsNumber inside
     // the TextField onSubmitted handler, before _searchImpl runs.
+    final generation = ++_textSearchGeneration;
     final query = _textEditingController.text.trim();
     logDiag('[Yahweh\'s Words search] start query="$query"');
     if (query.isEmpty) {
-      setState(() => _resetSearchState());
+      setState(() { _resetSearchState(); _textSearchBusy = false; });
       return;
     }
 
@@ -1244,7 +1276,19 @@ class _SearchPageState extends State<SearchPage> {
     final useCurBook = !useFilter && !searchAll && mp.currentBook != null;
     final filterTarget = filterBook ?? mp.currentBook;
     int scanCount = 0;
+    if (!mounted || generation != _textSearchGeneration) return;
+    final searchSettings = context.read<AppSettings>();
+    final expanded = searchSettings.fuzzySearch || searchSettings.pinyinSearch;
+    if (expanded) setState(() => _textSearchBusy = true);
+    try {
     for (int i = 0; i < verses.length; i++) {
+      if (expanded && i % 256 == 0) {
+        await Future<void>.delayed(Duration.zero);
+        if (!mounted || generation != _textSearchGeneration ||
+            query != _textEditingController.text.trim()) {
+          return;
+        }
+      }
       final verse = verses[i];
       if (useFilter && verse.book != filterTarget) continue;
       if (useCurBook && verse.book != filterTarget) continue;
@@ -1257,6 +1301,11 @@ class _SearchPageState extends State<SearchPage> {
           scriptureText: verse.text)) {
         matches.add(verse);
         localCounts[verse.book] = (localCounts[verse.book] ?? 0) + 1;
+      }
+    }
+    } finally {
+      if (mounted && generation == _textSearchGeneration) {
+        setState(() => _textSearchBusy = false);
       }
     }
     logDiag('[Yahweh\'s Words search] matches.length=${matches.length}');
@@ -1678,6 +1727,12 @@ class _SearchPageState extends State<SearchPage> {
             ),
             child: Column(
           children: [
+            SearchOptionsBar(locale: settings.locale,
+              fuzzy: settings.fuzzySearch, pinyin: settings.pinyinSearch,
+              plainQuery: _plainTextQuery, busy: _isLoadingVerses || _aiBusy,
+              onFuzzyChanged: settings.setFuzzySearch,
+              onPinyinChanged: settings.setPinyinSearch),
+            if (_textSearchBusy) const LinearProgressIndicator(),
             // v1.3.91: AND / OR / ✶ operator bar — appears once the query
             // contains a Strong's token, so users can build combined
             // original-language searches without typing the syntax.
@@ -1772,10 +1827,19 @@ class _SearchPageState extends State<SearchPage> {
             ]
             else if (_strongsKey != null) ...[
               _buildStrongsHeader(context, settings),
+              if (_strongsResult != null)
+                _strongsChart(context, settings),
               Expanded(
                 child: _buildStrongsRefList(context, settings),
               ),
             ] else ...[
+            if (_results.isNotEmpty && !_lastResultsFromAi)
+              SearchBookChart(
+                counts: bookCounts,
+                locale: settings.locale,
+                scope: filterBook ?? (!searchAll ? Provider.of<MainProvider>(context, listen: false).currentBook : null),
+                bookLabel: (book) => book,
+              ),
             if (_results.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
@@ -2294,6 +2358,21 @@ class _SearchPageState extends State<SearchPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _strongsChart(BuildContext context, AppSettings settings) {
+    final mp = Provider.of<MainProvider>(context, listen: false);
+    final activeBook = filterBook ?? (!searchAll ? mp.currentBook : null);
+    final english = activeBook == null ? null : (toEnglish(activeBook) ?? activeBook);
+    // The index's byBook map is uncapped; tallying its capped verse list
+    // would incorrectly put a common word's peak near the start of the Bible.
+    final counts = {for (final e in _strongsResult!.byBook.entries)
+      if (english == null || e.key == english) e.key: e.value};
+    return SearchBookChart(
+      counts: counts, locale: settings.locale, occurrences: true,
+      scope: activeBook,
+      bookLabel: (book) => localeAwareBookName(book, settings.locale, mp.currentVersion),
     );
   }
 

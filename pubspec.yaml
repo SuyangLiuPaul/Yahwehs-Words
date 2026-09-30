@@ -1,7 +1,7 @@
 name: yahwehs_words
 description: "Yahweh's Words / 雅伟之言 — a bilingual Bible app to help you listen to His voice and abide in Him daily."
 publish_to: 'none'
-version: 1.6.33
+version: 1.6.35
 
 environment:
   sdk: '>=3.2.3 <4.0.0'
@@ -47,9 +47,9 @@ dependencies:
   # Android 13+.
   flutter_local_notifications: ^19.0.0
   # 2026-05-22 (v1.2.71): native Google sign-in on macOS. The
-  # firebase_auth `signInWithProvider` is hard-coded to return null
-  # on macOS (FLTFirebaseAuthPlugin.m line 1701 explicitly:
-  # `signInWithProvider is not supported on the MacOS platform`).
+  # firebase_auth `signInWithProvider` supports Apple but not Google
+  # on macOS (Firebase Auth 6.4):
+  # native Google credentials are exchanged via signInWithCredential.
   # google_sign_in produces an ID token natively via GIDSignIn, which
   # we then exchange for a Firebase credential via signInWithCredential.
   # Only used on macOS — iOS / Android keep using signInWithProvider,
@@ -196,6 +196,14 @@ flutter:
     # until enough new releases accumulated — and because a reader on
     # a tablet with no SIM should still be able to read it.
     - assets/changelog.json
+    - assets/cnet.json
+    - assets/cnet-tr.json
+    - assets/net.json
+    - assets/ogt.json
+    - assets/sblgnt.json
+    - assets/bib.json
+    - assets/bib_chapter_notes.json
+    - assets/tagged/bib/
     - assets/kjv.json
     - assets/leb.json
     - assets/cuvs-yhwh.json
@@ -247,6 +255,7 @@ flutter:
     # network-first, so a bundled asset costs nothing until
     # ChineseLexiconService reads it, which is once per language on the
     # first Chinese word study and never for an English reader.
+    - assets/thayer.json
     - assets/strongs/
     - assets/originals/
     # Both of the above are numbered as the Hebrew and Greek editions
@@ -375,6 +384,9 @@ flutter:
     # through to the CSS-only system-font names (which are still kept
     # as further fallbacks for native iOS / macOS / Android where the
     # OS fonts ARE accessible to Flutter).
+    - family: NotoSansExt-Sub
+      fonts:
+        - asset: assets/fonts/NotoSansExt-Sub.ttf
     - family: NotoSansSC-YahwehsWords
       fonts:
         - asset: assets/fonts/NotoSansSC-YahwehsWords.otf

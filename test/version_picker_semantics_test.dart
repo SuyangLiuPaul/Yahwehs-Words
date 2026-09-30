@@ -265,8 +265,8 @@ void main() {
     // ever left is the reason it might leave again.
     final handle = tester.ensureSemantics();
     final picker = await open(tester);
-    expect(picker.nodeFor('Popup menu')!.rect.size, const Size(320, 159));
-    expect(picker.bodyNode().rect.size, const Size(320, 143));
+    expect(picker.nodeFor('Popup menu')!.rect.size, const Size(320, 216));
+    expect(picker.bodyNode().rect.size, const Size(320, 200));
     for (final p in pillLabels) {
       expect(picker.nodeFor(p)!.rect.size, const Size(96, 48), reason: p);
     }

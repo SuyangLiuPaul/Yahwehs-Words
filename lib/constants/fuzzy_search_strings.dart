@@ -38,30 +38,18 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
   // that row exists so the page that builds it reads a string instead of
   // inventing one.
 
-  /// Deliberately not the word "fuzzy". BibleWorks calls its own version
-  /// fuzzy and its help calls that "more of a curiosity than a refined
-  /// tool"; what this switch actually does is let a search fall back to
-  /// a looser reading when the exact one runs out, which is what the
-  /// label says.
+  /// Search chips and this preference operate the same global matcher.
+  /// Literal hits remain literal; additional hits say why they matched.
   'fuzzySearchSetting': {
-    'zh-Hans': '找不到时放宽搜索',
-    'zh-Hant': '找不到時放寬搜尋',
-    'en': 'Broaden a search that finds nothing',
+    'zh-Hans': '模糊搜索',
+    'zh-Hant': '模糊搜尋',
+    'en': 'Fuzzy search',
   },
-
-  /// The subtitle carries the two facts a reader needs before flipping
-  /// it: what gets added, and that they will be able to tell which rows
-  /// those are. The examples are real, and measured in this repo — 磯法
-  /// finds 0 verses of the Simplified edition and 9 once this is on;
-  /// `loved` finds 200 of the KJV and 578.
   'fuzzySearchSettingSubtitle': {
-    'zh-Hans': '磯法 也找 矶法，上帝 也找 神，loved 也找 love，'
-        'yesu 也找 耶稣。放宽找到的经文会另外标示。',
-    'zh-Hant': '磯法 也找 矶法，上帝 也找 神，loved 也找 love，'
-        'yesu 也找 耶穌。放寬找到的經文會另外標示。',
-    'en': 'Lets 磯法 reach 矶法, 上帝 reach 神, "loved" reach '
-        '"love", and "yesu" reach 耶稣. Rows found this way are '
-        'labelled.',
+    'zh-Hans': '匹配简繁写法、近义词和英文词形，例如 磯法 / 矶法、loved / love。扩展结果会标示原因；拼音在搜索页独立开启。',
+    'zh-Hant': '匹配簡繁寫法、近義詞和英文詞形，例如 磯法 / 矶法、loved / love。擴展結果會標示原因；拼音在搜尋頁獨立開啟。',
+    'en':
+        'Adds script variants, synonyms and English inflections, such as 磯法 / 矶法 and loved / love. Expanded hits are labelled. Pinyin has its own search-page switch.',
   },
 
   // ── Row labels, one per rung ────────────────────────────────────────

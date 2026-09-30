@@ -99,8 +99,7 @@ void main() {
   // check (below, inside the async bootstrap) so a boot hash like
   // `/#/about` is recognised as a registered route rather than
   // silently dropped as unparseable Bible grammar. Native no-op.
-  UrlSyncService.setKnownRoutes(
-      _registeredGetPages.map((p) => p.name).toSet());
+  UrlSyncService.setKnownRoutes(_registeredGetPages.map((p) => p.name).toSet());
 
   // 2026-05-24 (v1.3.21): wrap the whole entrypoint in
   // runZonedGuarded so uncaught zone errors (async work that
@@ -126,8 +125,7 @@ void main() {
     // datacenter traffic — which includes most VPN exits, and the
     // user's report screenshots show a VPN in the status bar. Web is
     // unaffected: it always plays through the proxy already.
-    SongAudioHandler.proxyFallback =
-        SongPlayerService.nativeProxyFallbackUrl;
+    SongAudioHandler.proxyFallback = SongPlayerService.nativeProxyFallbackUrl;
 
     // 2026-08-09 (Songs player): boot the platform media session so
     // playback survives backgrounding and appears on the lock screen /
@@ -324,8 +322,7 @@ final List<GetPage> _registeredGetPages = [
   ),
   GetPage(
     name: '/songs/playlists/:id',
-    page: () =>
-        SongPlaylistDetailPage(playlistId: Get.parameters['id'] ?? ''),
+    page: () => SongPlaylistDetailPage(playlistId: Get.parameters['id'] ?? ''),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,
@@ -686,7 +683,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       // Settings → Offline Pack card can render an accurate label
       // on first paint instead of flickering "Not downloaded".
       // ignore: unawaited_futures
-      OfflinePackService.instance.hydrate().catchError((Object e, StackTrace st) {
+      OfflinePackService.instance
+          .hydrate()
+          .catchError((Object e, StackTrace st) {
         debugPrint('OfflinePackService.hydrate failed: $e\n$st');
       });
       // Pre-warm the section-titles cache so the first chapter
@@ -727,8 +726,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
         ErrorReporter.breadcrumb('boot:step', data: step);
         await FetchVerses.execute(
           mainProvider: mainProvider,
-          onAttempt: (attempt, _) =>
-              mainProvider.setLoadProgress(attempt, 3),
+          onAttempt: (attempt, _) => mainProvider.setLoadProgress(attempt, 3),
         );
       }
       step = 'FetchBooks.execute';
@@ -817,8 +815,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     // caches each fetched bundle so later sessions are instant anyway.
     if (mainProvider.verses.isNotEmpty && !kIsWeb) {
       // ignore: unawaited_futures
-      eagerPreloadAllVersions(mainProvider, isActive: () => mounted)
-          .catchError(
+      eagerPreloadAllVersions(mainProvider, isActive: () => mounted).catchError(
           (Object e, StackTrace st) =>
               debugPrint('background version preload failed: $e'));
     }
@@ -856,9 +853,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     // can't block app launch.
     // ignore: unawaited_futures
     notif_scheduler.rescheduleAll(appSettings).catchError(
-      (Object e, StackTrace st) =>
-          debugPrint('notif scheduler init failed: $e'),
-    );
+          (Object e, StackTrace st) =>
+              debugPrint('notif scheduler init failed: $e'),
+        );
 
     // 2026-09-08: the web's half of the same feature. `rescheduleAll`
     // above returns immediately on the web — a browser tab cannot wake
@@ -1057,6 +1054,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
               // which has the same entry. Cheap to list twice — the
               // engine just walks until it finds a glyph.
               'NotoSansSC-YahwehsWords',
+              'NotoSansExt-Sub',
               'Microsoft YaHei',
               '微软雅黑',
               'Source Han Sans SC',
@@ -1069,15 +1067,18 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
             ],
             textTheme: ThemeData.light().textTheme.copyWith(
                   bodyLarge: ThemeData.light().textTheme.bodyLarge?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize,
                       ),
                   bodyMedium: ThemeData.light().textTheme.bodyMedium?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize - 2,
                       ),
                   titleLarge: ThemeData.light().textTheme.titleLarge?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize + 4,
                       ),
                 ),
@@ -1156,6 +1157,7 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
               'Cantarell',
               'Noto Sans',
               'NotoSansSC-YahwehsWords',
+              'NotoSansExt-Sub',
               'Microsoft YaHei',
               '微软雅黑',
               'Source Han Sans SC',
@@ -1168,17 +1170,20 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
             ],
             textTheme: ThemeData.dark().textTheme.copyWith(
                   bodyLarge: ThemeData.dark().textTheme.bodyLarge?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize,
                         color: Color(0xFFCCCCCC),
                       ),
                   bodyMedium: ThemeData.dark().textTheme.bodyMedium?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize - 2,
                         color: Color(0xFFCCCCCC),
                       ),
                   titleLarge: ThemeData.dark().textTheme.titleLarge?.copyWith(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
                         fontSize: settings.fontSize + 4,
                         color: Color(0xFFCCCCCC),
                       ),
@@ -1501,8 +1506,8 @@ class _RootRouterState extends State<_RootRouter> {
         final ref = BibleReference(
             englishBook: book, chapter: ch, verseStart: v, verseEnd: v);
         final mp = context.read<MainProvider>();
-        final result = await jumper.resolveAndPrepareJump(
-            reference: ref, mp: mp);
+        final result =
+            await jumper.resolveAndPrepareJump(reference: ref, mp: mp);
         if (!mounted) return;
         await jumper.showJumpResultSnackBar(context, result);
         if (!mounted) return;
@@ -1513,8 +1518,7 @@ class _RootRouterState extends State<_RootRouter> {
         // closure's runtimeType to something unpredictable like
         // `/_Closure` — explicit '/HomePage' is the only reliable
         // detection key.
-        pushPage(const HomePage(),
-            routeName: '/HomePage');
+        pushPage(const HomePage(), routeName: '/HomePage');
       });
     }
   }
@@ -1530,8 +1534,7 @@ class _RootRouterState extends State<_RootRouter> {
       _bootHashLandingPending = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        pushPage(const HomePage(),
-            routeName: '/HomePage');
+        pushPage(const HomePage(), routeName: '/HomePage');
       });
     }
     // Put the reader back where our own icon swap threw them from.

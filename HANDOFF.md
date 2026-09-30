@@ -1,3 +1,75 @@
+## 2026-09-30 — BIB integration, robustness review and release preparation
+
+- Imported official Berean Interlinear NT, preserved Greek occurrence + English gloss/transliteration/source grammar, left the conflicting 1 Cor 7:15 tag unassigned, and added corpus integrity regression coverage. Manifest: `docs/berean-interlinear-import.json`.
+- Static analysis has no issues; complete suite: 3820 passed, 36 existing skips, zero failures. Fixed newly exposed BIB attribution/picker/note/font and Words version-copy/worktree test defects.
+- Theology findings and source SHA inventory are in `docs/eaglesview-theology-review.md` / `.json`; two explicit EV entries, one interpretive entry, distinct CBOL app findings. No silent theological rewrite.
+- Release record: `docs/release-2026-09-30.md`. New source must pass current CI before tagging. Store review and CarPlay approval remain separate gates.
+
+## 2026-09-30 — newer Yahwehdehua reading editions
+
+- Imported Chinese NET (Simplified / Traditional), English NET text only, One God Translation NT and SBLGNT from the read-only exported database. Exact source SHA, canonical gaps and counts are in `docs/yahwehdehua-edition-import.json`; regeneration script rejects unknown markup or changed source shape. Existing Scripture assets unchanged.
+- CNET has 31,099 records / 26,835 publisher notes per script; NET 31,085 records / no paid notes; OGT 7,945 records / 1,621 notes; SBLGNT 7,957 records / 6,901 apparatus notes. Chinese book names follow the existing simplified/traditional asset spellings.
+- Credits, copy attribution and NT-only daily-verse fallbacks are wired. Words keeps Greek hidden per owner confirmation; Sword offers SBLGNT with its source Strong’s and Robinson morphology. Existing divine-name display/search/copy cleanup still applies; no new restoration pass edited the stored text. No version bump or store upload yet.
+- Static analysis and dev UI inspection recorded in the PR after completion. No local tests added or run.
+
+## 2026-09-30 — searchable fuzzy/pinyin controls
+
+- Added independent, persisted fuzzy and pinyin chips beside the search field. Switching either option re-runs the plain query with its existing scope; previously a settings rebuild changed labels without updating the results. Both remain off for new users; Words migrates the old combined setting for existing pinyin users.
+- Pinyin now reaches Sword's plain matcher and its prefilter. Shared offline matcher supports full romanisation, spaces, tone marks, tone numbers, initials and mixed Han/Latin input. Chinese-only queries retain their meaning. Results explicitly label pinyin hits.
+- First pinyin scans yield every 256 verses. New queries, clearing and disposal cancel obsolete batched work. Strong's numbers, explicit operators and navigation commands retain their exact parser path; chips explain that boundary.
+- Both projects pass Flutter static analysis. No local tests were added or run for this fix. Dev builds/deployments started with no version bump; UI inspection results will be recorded in the PR. Existing store-review binaries do not contain this update, and production is unchanged.
+
+## 2026-09-30 — CI verification after repairs
+
+- Windows Firebase PR #1: CI run 36690483812 passed at c15fac3d. Repairs add the project scroll physics to the Thayer selectable text and regenerate the 1.6.34 changelog.
+- Store/beta guide PR #2: CI run 36695393197 passed at 32a6a38e. The latest-package link shares UpdateService.repo, avoiding the duplicate repository identifier flagged by the source convention check.
+- Both PRs remain draft; production and release tags are pending. No local tests were added or run during these CI repairs.
+
+## 2026-09-30 — public beta invitations and About installation guide (prepared)
+
+- Created external TestFlight group **Public beta — iPhone, iPad & Mac**.
+- Public invitation: https://testflight.apple.com/join/ghMuTs1m. Enabled and open to anyone; App Store Connect explicitly says users cannot join until an approved build is present.
+- Submitted iOS **1.6.33 (1060036)** and macOS **1.6.34 (1060036)** to Beta App Review. Both visibly **Waiting for Review**. Existing App Store review submissions were preserved.
+- Added localized store/latest-package links in `lib/widgets/store_links_card.dart` and the About page. These source changes are for the next native update; the binaries already waiting for review do not contain this card. Latest-package buttons now share `UpdateService.repo` with the updater, avoiding a second repository identifier.
+- Words hosts a three-language, responsive `web/beta.html` at `/beta`, covering both apps, real Google Play opt-in links and actual TestFlight invitations. About store links route to the corresponding app/platform anchor. Guide deployed and visually inspected on `https://yswords-dev.netlify.app/beta`; both icons load, real invitations are present, and the 390px Traditional Chinese layout has no horizontal overflow. Both international dev/qat and China dev/qat verified by the release wrapper; production is unchanged. Do not claim production or a new tagged release is complete yet.
+- Google tester group https://groups.google.com/g/yahweh-bible-app-testers verified using non-member personal account: direct **Join group** dialog, no approval request. Dialog canceled; no extra member added.
+- EV source keyword audit: **76 readable study/dictionary database tables, 827,195 rows**, excluding Bible `.bbl` files and binaries. **Two matching definition fields**: `Thayer.dct` G2304 (`trinity`) and `Strong SCh.dct` H7307 (`三一神的第三位…同荣, 同尊`). Therefore the supplied EV package is not fully stripped of explicit Trinity commentary.
+- App source audit also found existing CBOL-derived Chinese G2316 commentary in `assets/strongs/greek.json` (Simplified/Traditional) and `assets/strongs/thayer_zh.json`, in both apps. This is a separate source from EV. G4151 wording about personality/depersonalised force merits human theological review; a keyword scan is not proof of doctrinal agreement.
+- Original EV files and application dictionary content preserved while the owner answers the pending question about explicitly marked editorial omission. Do not silently attribute new edits to Pastor Ho or to EV.
+- Full keyword-audit evidence stored locally at `/Users/pliu0036/Downloads/Eagles-View-source-review/theology-keyword-review.json`.
+
+- PR #1 CI failure repaired in **c15fac3d**: use `kSelectableTextPhysics` in the EV Thayer dialog; regenerate bundled changelog for 1.6.34. GitHub run **36690483812** completed **success**, including tests and secret scan. Original failed run **36686050194** had one scrolling invariant failure and three stale-changelog failures; analysis had passed.
+
+## 2026-09-30 — Mac App Store submission completed
+
+Words macOS 1.6.34, build 1060036, submitted successfully. Apple showed 1 Item Submitted, then Waiting for Review. Automatic release selected. Review submission: https://appstoreconnect.apple.com/apps/6817557892/distribution/reviewsubmissions/details/20cb1baf-827a-4eda-830b-e4d0e87ee889. Standard encryption declaration saved with France excluded, preserving the earlier distribution choice. Words pricing verified 174 countries available and France the one unavailable country. Existing iOS reviews were preserved. This supersedes earlier processing/pending entries below.
+
+## 2026-09-30 — Mac delivery successful
+
+Transporter verified Delivered for Words build 1060036, at 17:34 Melbourne time. Corrected category package accepted; THE APP IS PROCESSING. Mac version is not yet submitted for review. After processing, choose the matching build, save and submit (automatic release already selected).
+
+## 2026-09-30 — Mac signing restored and category correction
+
+User completed Xcode login; SUYANG LIU Admin team restored. Initial Mac export succeeded but Transporter rejected Words with 90242, missing LSApplicationCategoryType. Added public.app-category.reference to both source and archived app Info.plist; re-export re-signs all contents. Corrected package: /Users/pliu0036/Downloads/store-macos/words-1.6.34-category-export/Yahweh's Words.pkg. It is now uploading in Transporter, not yet delivered or submitted. Do not use the older words-1.6.34-export package.
+
+## 2026-09-30 — Store update preparation, 1.6.34
+
+Added a visible By book chart to ordinary search results and uncapped Strong’s per-book occurrence results. Counts follow the active book scope, label their unit, rank descending with stable ties, and explain that a verse is counted once. Ranked AI suggestions are excluded from the frequency chart. The shared chart layout was inspected in Chrome. Targeted Flutter analysis of the chart, search page, English lexicon button and originals sheet is clean.
+
+Ported the already curated Eagle’s View English Thayer data from Sword to assets/thayer.json and made it available from the Strong’s entry sheet. Source attribution includes Eagle’s View and Used by permission, following the owner’s explicit permission statement on 2026-09-30. Existing Chinese BDB/Thayer and Scripture text are retained.
+
+Windows package: /Users/pliu0036/Downloads/store-msix/words-1.6.34/yahwehs_words.msix. Actions run 36679496549, code commit e03e64752f071c1f6f3d885aab18ac838f0b5229, passed. Inspected AppxManifest: identity YahwehsPeople.YahwehsWords, version 1.6.34.0, x64, existing publisher CN=C4997401-2CEE-44B6-9803-4775768C89A5. Thayer asset is present; restricted NASB files are absent. Microsoft submission 3 (1152921505702006654) was uploaded and submitted on 2026-09-30 at about 17:20 Melbourne time. Partner Center verified In certification, automatic publication after approval. English, Simplified Chinese and Traditional Chinese release notes now describe Firebase, scoped search charts and Thayer. Initializer regression checks from the prior entry remain the evidence for the Firebase fix; live Windows login/sync was not run on this Mac.
+
+Mac archive: /Users/pliu0036/Downloads/store-macos/Words-1.6.34.xcarchive, version 1.6.34, build 1060036, com.example.yswords. It was archived from the shared main checkout to retain prior authorized Apple/account changes, with APP_VERSION=1.6.34 and STORE_BUILD=true. The Thayer asset is present. Archive succeeded after clearing regenerable compiler caches and using DEBUG_INFORMATION_FORMAT=dwarf. Export failed because Xcode could not log in to lsy95112@gmail.com / retrieve its cloud-managed Mac distribution certificate. Xcode Apple Accounts login is open and the user has been asked to reauthenticate. Retry export with /Users/pliu0036/Downloads/store-macos/ExportOptions-AppStore.plist after login. Then upload the signed PKG using Transporter and submit the Mac version after processing.
+
+App Store Connect Mac version now 1.6.34, professional English description/promo saved, one real 1440x900 Mac screenshot uploaded, automatic release selected. It is still Prepare for Submission and has no selected build. iOS 1.6.33 remains Waiting for Review. Do not cancel that review.
+
+## 2026-09-30 — Words Windows Firebase initialization / MS Store 1.6.34
+
+Native Windows boot called `Firebase.initializeApp()` without options. Windows has no auto-loaded Firebase configuration, and the SDK throws `core/not-initialized` when both the default app and explicit options are absent. Pass the existing project Web app configuration explicitly on Windows, as supported by FlutterFire CLI's `--windows-app-id=<WEB_APP_ID>` configuration. Auth and sync remain enabled; Apple/Android retain native configuration loading, and the Web redirect domain stays unchanged.
+
+Validation: the new regression test failed against the previous service because captured initialization options were null. All four Windows/Apple/Android configuration tests pass after the fix; targeted analysis is clean. These tests stop at a fake SDK boundary and do not prove live login/sync on Windows. A native Windows runtime check is still required. The branch prepares a 1.6.34 MSIX build; submitting it to Microsoft Store is a separate step. No web, Android, or Apple release was performed.
+
 # YsWords — AI Agent Handoff Document
 
 > Last updated: 2026-08-10 — **v1.4.25 → v1.4.26 — web offline downloads are real, and the Service Worker that was supposed to provide them never ran. dev/qat only; PROD HELD (still on v1.4.5).** analyze clean · **535/535 tests**.

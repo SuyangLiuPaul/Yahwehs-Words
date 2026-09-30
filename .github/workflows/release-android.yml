@@ -179,6 +179,16 @@ jobs:
             echo "✓ matches the expected release certificate"
           fi
 
+      - name: Build Wear OS APK and compare phone signing identity
+        working-directory: android
+        run: |
+          ./gradlew :wear:assembleRelease
+          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
+          "$APKSIGNER" verify --print-certs ../build/wear/outputs/apk/release/wear-release.apk > "$RUNNER_TEMP/wear-certs.txt"
+          phone=$(grep -m1 -iE 'certificate SHA-256 digest' /tmp/certs.txt | awk '{print $NF}')
+          watch=$(grep -m1 -iE 'certificate SHA-256 digest' "$RUNNER_TEMP/wear-certs.txt" | awk '{print $NF}')
+          [ -n "$phone" ] && [ "$phone" = "$watch" ] || { echo "::error::Phone and Wear certificates differ"; exit 1; }
+
       - name: Resolve tag
         id: ver
         shell: bash
@@ -198,13 +208,18 @@ jobs:
           pkg="Yahwehs-Words-Android-${tag}.apk"
           cp "$src" "$pkg"
           echo "PKG=$pkg" >> "$GITHUB_ENV"
+          wear="Yahwehs-Words-WearOS-${tag}.apk"
+          cp build/wear/outputs/apk/release/wear-release.apk "$wear"
+          echo "WEAR_PKG=$wear" >> "$GITHUB_ENV"
           echo "Staged $pkg ($(du -h "$pkg" | cut -f1))"
 
       - name: Upload workflow artifact (always)
         uses: actions/upload-artifact@v7
         with:
           name: Yahwehs-Words-Android
-          path: ${{ env.PKG }}
+          path: |
+            ${{ env.PKG }}
+            ${{ env.WEAR_PKG }}
           if-no-files-found: error
 
       - name: Attach to GitHub Release (tag builds only)
@@ -232,4 +247,4 @@ jobs:
               --notes "Automated Android build (intl flavor, signed with the project release key — sideload only, not a Play Store build). Download the .apk, enable 'Install unknown apps' for your browser/file manager, and open it to install. ⚠️ If you installed a build from GitHub before 2026-09-09, uninstall it once before installing this one: those builds were signed with a throwaway debug key, and Android refuses to install over a different certificate (it shows only “App not installed”). After that one reinstall, updates work normally. / ⚠️ 如果你在 2026-09-09 之前从 GitHub 装过，请先卸载再装这个版本：旧包用的是临时调试密钥，证书不同时 Android 会拒绝覆盖安装（只显示「应用未安装」）。重装一次之后，以后的更新都能正常覆盖。" \
               || true
           fi
-          gh release upload "$tag" "$PKG" --clobber
+          gh release upload "$tag" "$PKG" "$WEAR_PKG" --clobber

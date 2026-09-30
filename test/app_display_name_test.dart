@@ -68,10 +68,22 @@ void main() {
     expect(j, greaterThan(i), reason: 'no $end after $begin');
     final section = pbx.substring(i + begin.length, j);
 
-    final lists = RegExp(r'files = \(([^)]*)\)')
+    // Both the iPhone and Watch now have asset catalogues. Follow the
+    // Runner target's own phase IDs instead of choosing by resource name.
+    final target = RegExp(
+      r'/\* Runner \*/ = \{\s*isa = PBXNativeTarget;[\s\S]*?buildPhases = \(([^)]*)\)',
+    ).firstMatch(pbx);
+    expect(target, isNotNull, reason: 'Runner application target missing');
+    final phaseIds = RegExp(r'[A-F0-9]{24}')
+        .allMatches(target!.group(1)!)
+        .map((m) => m.group(0)!)
+        .toSet();
+    final lists = RegExp(
+      r'([A-F0-9]{24}) /\* Resources \*/ = \{[\s\S]*?files = \(([^)]*)\)',
+    )
         .allMatches(section)
-        .map((m) => m.group(1)!)
-        .where((f) => f.contains('Assets.xcassets in Resources'))
+        .where((m) => phaseIds.contains(m.group(1)))
+        .map((m) => m.group(2)!)
         .toList();
     expect(lists, hasLength(1),
         reason: 'expected exactly one resources phase carrying '
@@ -108,8 +120,7 @@ void main() {
     expect(appResourcesFiles(pbx), contains('InfoPlist.strings in Resources'),
         reason: 'the variant group must be in the Resources build phase');
     for (final region in ['"zh-Hans"', '"zh-Hant"']) {
-      expect(pbx, contains(region),
-          reason: 'knownRegions must list $region');
+      expect(pbx, contains(region), reason: 'knownRegions must list $region');
     }
 
     // The plist value is only the fallback for unmatched languages.
@@ -214,5 +225,4 @@ void main() {
     expect(gradle.contains('resValue("string", "app_name"'), isFalse,
         reason: 'a resValue would collide with the res-file definition');
   });
-
 }

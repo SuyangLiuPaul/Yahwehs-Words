@@ -1,0 +1,1204 @@
+{
+  "scope": "Readable EV dictionary/study database fields, excluding .bbl Bible modules and executables. Candidates require human review; negation, quotations and lexical usage can match. Sources unchanged.",
+  "rules": [
+    {
+      "name": "explicit-trinity",
+      "pattern": "\\btrinit(?:y|arian|arianism)\\b|三位一[体體]|三一神|三一論|三一论|三位格|third\\s+(?:person|member).*?(?:Godhead|Trinity)"
+    },
+    {
+      "name": "personhood-or-equality",
+      "pattern": "co[- ]?equal|co[- ]?eternal|consubstantial|same\\s+(?:divine\\s+)?(?:essence|substance)|三個位格|三个位格|同質|同质|同榮.{0,8}同尊|同荣.{0,8}同尊|(?:second|third)\\s+person\\s+(?:of|in)|(?:聖靈|圣灵).{0,35}(?:位格|人格)"
+    },
+    {
+      "name": "christology-review",
+      "pattern": "(?:Christ|Jesus|the Son).{0,90}(?:God himself|very God|true God|Godhead|divine nature|divine essence)|(?:God himself|very God|true God|Godhead).{0,90}(?:Christ|Jesus|the Son)|(?:基督|耶穌|耶稣).{0,40}(?:神性|神格|就是神|即是神|永恆|永恒|真神)|道.{0,20}(?:神格|神性|就是神)"
+    }
+  ],
+  "files": [
+    {
+      "file": "BNames.dct",
+      "sha256": "cf7ed95e6e289d60d6681703604d98959d97f484d4f6524b8e6dbf60b43e6e6d",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Dictionary",
+          "rows": 2622
+        }
+      ]
+    },
+    {
+      "file": "BPlaces.dct",
+      "sha256": "bc68f208ad6e0ab7685c5b0f6a8707a228c7304bc6092c1e39980171669bc096",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Dictionary",
+          "rows": 1276
+        }
+      ]
+    },
+    {
+      "file": "BookAbbr.mdb",
+      "sha256": "6477992e8370658cc1cba882efd0516096810647694958e04bdf3a5e3738cf81",
+      "tables": [
+        {
+          "table": "Names",
+          "rows": 66
+        }
+      ]
+    },
+    {
+      "file": "Bookbase.mdb",
+      "sha256": "d2443bdc38884a644587dabf72ac86474aa89f8dbf2c1af3ae0a31b047305ca7",
+      "tables": [
+        {
+          "table": "Eph",
+          "rows": 155
+        },
+        {
+          "table": "Act",
+          "rows": 1007
+        },
+        {
+          "table": "Gal",
+          "rows": 149
+        },
+        {
+          "table": "Rev",
+          "rows": 404
+        },
+        {
+          "table": "1Co",
+          "rows": 437
+        },
+        {
+          "table": "2Co",
+          "rows": 257
+        },
+        {
+          "table": "Heb",
+          "rows": 303
+        },
+        {
+          "table": "1Th",
+          "rows": 89
+        },
+        {
+          "table": "2Th",
+          "rows": 47
+        },
+        {
+          "table": "1Pe",
+          "rows": 105
+        },
+        {
+          "table": "2Pe",
+          "rows": 61
+        },
+        {
+          "table": "Tit",
+          "rows": 46
+        },
+        {
+          "table": "1Ti",
+          "rows": 113
+        },
+        {
+          "table": "2Ti",
+          "rows": 83
+        },
+        {
+          "table": "Col",
+          "rows": 95
+        },
+        {
+          "table": "Jud",
+          "rows": 25
+        },
+        {
+          "table": "1Jo",
+          "rows": 105
+        },
+        {
+          "table": "3Jo",
+          "rows": 15
+        },
+        {
+          "table": "2Jo",
+          "rows": 13
+        },
+        {
+          "table": "Joh",
+          "rows": 878
+        },
+        {
+          "table": "Rom",
+          "rows": 433
+        },
+        {
+          "table": "Phm",
+          "rows": 25
+        },
+        {
+          "table": "Phi",
+          "rows": 104
+        },
+        {
+          "table": "Luk",
+          "rows": 1151
+        },
+        {
+          "table": "Jam",
+          "rows": 108
+        },
+        {
+          "table": "Mar",
+          "rows": 678
+        },
+        {
+          "table": "Mat",
+          "rows": 1071
+        }
+      ]
+    },
+    {
+      "file": "Default.cdb",
+      "sha256": "bc9a77f27ccf3914f196aea4d2b7095f91b827cc04ac9a67c980d7b8edb026d4",
+      "tables": [
+        {
+          "table": "Data",
+          "rows": 6220
+        },
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Main Search",
+          "rows": 137744
+        },
+        {
+          "table": "SumStat",
+          "rows": 27
+        }
+      ]
+    },
+    {
+      "file": "DefaultSimpCh.cdb",
+      "sha256": "cb2b9b6546eb4ba813b0b99b04b51b6c7dac24342c4dee1fe4889aebfb12d038",
+      "tables": [
+        {
+          "table": "Data",
+          "rows": 5963
+        },
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Main Search",
+          "rows": 137744
+        },
+        {
+          "table": "SumStat",
+          "rows": 27
+        }
+      ]
+    },
+    {
+      "file": "FFG EC.4G",
+      "sha256": "af00dc5304aadd3f49d1d7b115cf9a56c05d07cb383243e805453b7cc26297bb",
+      "tables": [
+        {
+          "table": "Synopsis",
+          "rows": 192
+        }
+      ]
+    },
+    {
+      "file": "FFG SC.4G",
+      "sha256": "f1422070fc0c5ff7bfd285cd5bc1dabc529130288716ec5a46946143d6fa71ba",
+      "tables": [
+        {
+          "table": "Synopsis",
+          "rows": 192
+        }
+      ]
+    },
+    {
+      "file": "Index.mdb",
+      "sha256": "9e60bd4a2db888082694c52ed32237153ddf4db4ea71567b3b748f91fefb8731",
+      "tables": [
+        {
+          "table": "Index",
+          "rows": 22991
+        }
+      ]
+    },
+    {
+      "file": "MC.dct",
+      "sha256": "90f876ce58ae39fe7e45e3765c5c0957ba79024f307ed87a4fd4599f9c324a3e",
+      "tables": [
+        {
+          "table": "tblWordType",
+          "rows": 5
+        },
+        {
+          "table": "~TMPCLP57721",
+          "rows": 22379
+        },
+        {
+          "table": "~TMPCLP407001",
+          "rows": 0
+        },
+        {
+          "table": "~TMPCLP356931",
+          "rows": 696
+        },
+        {
+          "table": "~TMPCLP226511",
+          "rows": 3046
+        },
+        {
+          "table": "~TMPCLP190881",
+          "rows": 7807
+        },
+        {
+          "table": "tblTopic",
+          "rows": 341
+        },
+        {
+          "table": "~TMPCLP388831",
+          "rows": 7751
+        },
+        {
+          "table": "tblEngGk",
+          "rows": 5175
+        },
+        {
+          "table": "~TMPCLP335161",
+          "rows": 7758
+        },
+        {
+          "table": "tblSection",
+          "rows": 1645
+        },
+        {
+          "table": "tblSubsection",
+          "rows": 7758
+        },
+        {
+          "table": "tblVerse",
+          "rows": 63930
+        },
+        {
+          "table": "tblStat_Bak",
+          "rows": 7807
+        },
+        {
+          "table": "~TMPCLP52021",
+          "rows": 1645
+        },
+        {
+          "table": "~TMPCLP341091",
+          "rows": 63930
+        },
+        {
+          "table": "tblStat",
+          "rows": 7750
+        },
+        {
+          "table": "~TMPCLP203671",
+          "rows": 17795
+        }
+      ]
+    },
+    {
+      "file": "OT Synopsis SC.OT",
+      "sha256": "6dbd32402ddf33ee85c22fe37970c8d7f12c5deff57bc7ecd78c7fdedca81c40",
+      "tables": [
+        {
+          "table": "Synopsis",
+          "rows": 212
+        }
+      ]
+    },
+    {
+      "file": "OT Synopsis.OT",
+      "sha256": "a3481ee87a00b0fe648a4156c4dd509950b1969159eba73b7cc6fe0b865c0ed5",
+      "tables": [
+        {
+          "table": "Synopsis",
+          "rows": 212
+        }
+      ]
+    },
+    {
+      "file": "Outline.mdb",
+      "sha256": "07ac837367c98375b0a89f582f646fd3d4654f7d1e2f93db8311f011ec10f079",
+      "tables": [
+        {
+          "table": "Heading",
+          "rows": 2581
+        }
+      ]
+    },
+    {
+      "file": "Overlay.mdb",
+      "sha256": "43291da1942cb26e844f2c844fe64eabc4221ef68f447b369bfada047e09ef8e",
+      "tables": [
+        {
+          "table": "Overlay",
+          "rows": 1
+        }
+      ]
+    },
+    {
+      "file": "Parsing.mdb",
+      "sha256": "66f7479e26748f6d7d394d57a89410d8a806a49b80e4f8e53e9594343be44b10",
+      "tables": [
+        {
+          "table": "Dictionary",
+          "rows": 1100
+        },
+        {
+          "table": "ParsingInfo",
+          "rows": 200836
+        }
+      ]
+    },
+    {
+      "file": "Strong Eng.dct",
+      "sha256": "e220c2dfa4f9018bf5ac52498264a6a2e19f1cd83b6831a724b0db0f8a3c7179",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Dictionary",
+          "rows": 14460
+        }
+      ]
+    },
+    {
+      "file": "Strong SCh.dct",
+      "sha256": "5c1788673525751764ab9bd155061d1d3ec0fae9ecc04a541331b7b2b734cc32",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Dictionary",
+          "rows": 14696
+        }
+      ]
+    },
+    {
+      "file": "Thayer.dct",
+      "sha256": "f5d62cd92dce5a91ab2c666e84c4607ef9b4b52f9c7df94c4c58e71c9b10a110",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 1
+        },
+        {
+          "table": "Dictionary",
+          "rows": 5799
+        }
+      ]
+    },
+    {
+      "file": "WordFam.mdb",
+      "sha256": "d9386f52f6b3bc5c0b46dd32a54db01d0c66f87aa92ee748e751a1c39c172d5c",
+      "tables": [
+        {
+          "table": "Details",
+          "rows": 0
+        },
+        {
+          "table": "WordFam",
+          "rows": 5950
+        }
+      ]
+    },
+    {
+      "file": "study.not",
+      "sha256": "77287416e03182c48f124426b54f4d767a41ec8db793488a68e9c00ce8036658",
+      "tables": [
+        {
+          "table": "Verse Notes",
+          "rows": 31102
+        }
+      ]
+    }
+  ],
+  "hits": [
+    {
+      "file": "Bookbase.mdb",
+      "table": "Eph",
+      "row": 33,
+      "identity": {
+        "Chapter": "2",
+        "Verse": "10",
+        "ID": "33"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督耶稣里造成的，为要叫我们行善，就是神",
+          "context": "我们原是他的工作，在基督耶稣里造成的，为要叫我们行善，就是神所预备叫我们行的。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "Eph",
+      "row": 33,
+      "identity": {
+        "Chapter": "2",
+        "Verse": "10",
+        "ID": "33"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督耶穌裏造成的，爲要叫我們行善，就是神",
+          "context": "我們原是他的工作，在基督耶穌裏造成的，爲要叫我們行善，就是神所預備叫我們行的。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "Rev",
+      "row": 1,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "1",
+        "ID": "1"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "耶稣基督的启示，就是神",
+          "context": "耶稣基督的启示，就是神赐给他，叫他将必要快成的事指示他的众仆人。他就差遣使者，晓谕他的仆人约翰。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "Rev",
+      "row": 1,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "1",
+        "ID": "1"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "耶穌基督的啟示，就是神",
+          "context": "耶穌基督的啟示，就是神賜給他，叫他將必要快成的事指示他的眾僕人。他就差遣使者，曉諭他的僕人約翰。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "1Co",
+      "row": 21,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "21",
+        "ID": "21"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "道理拯救那些信的人；这就是神",
+          "context": "世人凭自己的智慧，既不认识神，神就乐意用人所当做愚拙的道理拯救那些信的人；这就是神的智慧了。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "1Co",
+      "row": 21,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "21",
+        "ID": "21"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "道理拯救那些信的人；這就是神",
+          "context": "世人憑自己的智慧，既不認識神，神就樂意用人所當作愚拙的道理拯救那些信的人；這就是神的智慧了。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "2Co",
+      "row": 21,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "21",
+        "ID": "21"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督里坚固我们和你们，并且膏我们的，就是神",
+          "context": "那在基督里坚固我们和你们，并且膏我们的，就是神。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "2Co",
+      "row": 21,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "21",
+        "ID": "21"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督裏堅固我們和你們，並且膏我們的，就是神",
+          "context": "那在基督裏堅固我們和你們，並且膏我們的，就是神。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "1Jo",
+      "row": 104,
+      "identity": {
+        "Chapter": "5",
+        "Verse": "20",
+        "ID": "104"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "耶稣基督里面。这是真神",
+          "context": "我们也知道神的儿子已经来到，且将智慧赐给我们，使我们认识那位真实的，我们也在那位真实的里面，就是在他儿子耶稣基督里面。这是真神，也是永生。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "1Jo",
+      "row": 104,
+      "identity": {
+        "Chapter": "5",
+        "Verse": "20",
+        "ID": "104"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "耶穌基督裏面。這是真神",
+          "context": "我們也知道神的兒子已經來到，且將智慧賜給我們，使我們認識那位真實的，我們也在那位真實的裏面，就是在他兒子耶穌基督裏面。這是真神，也是永生。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "Joh",
+      "row": 1,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "1",
+        "ID": "1"
+      },
+      "field": "JianTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "道，道与神同在，道就是神",
+          "context": "太初有道，道与神同在，道就是神。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Bookbase.mdb",
+      "table": "Joh",
+      "row": 1,
+      "identity": {
+        "Chapter": "1",
+        "Verse": "1",
+        "ID": "1"
+      },
+      "field": "FanTi",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "道，道與神同在，道就是神",
+          "context": "太初有道，道與神同在，道就是神。"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP226511",
+      "row": 2067,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是)永远，永恒",
+          "context": "(神，基督，国度是)永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP226511",
+      "row": 2068,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是)永远，永恒",
+          "context": "(神，基督，国度是)永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP226511",
+      "row": 2069,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是)永远，永恒",
+          "context": "(神，基督，国度是)永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP388831",
+      "row": 2034,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP388831",
+      "row": 2035,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP388831",
+      "row": 2036,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP335161",
+      "row": 1981,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP335161",
+      "row": 1982,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "~TMPCLP335161",
+      "row": 1983,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblSubsection",
+      "row": 2070,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblSubsection",
+      "row": 2071,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblSubsection",
+      "row": 2072,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblStat_Bak",
+      "row": 508,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblStat_Bak",
+      "row": 3418,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "MC.dct",
+      "table": "tblStat_Bak",
+      "row": 3419,
+      "identity": {},
+      "field": "SubsectionDesc_Chs",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督，国度是) 永远，永恒",
+          "context": "(神，基督，国度是) 永远，永恒"
+        }
+      ],
+      "assessment": "concordance-context"
+    },
+    {
+      "file": "Strong Eng.dct",
+      "table": "Dictionary",
+      "row": 10751,
+      "identity": {
+        "ID": "10751",
+        "Topic": "G2077"
+      },
+      "field": "Definition",
+      "rules": [
+        "personhood-or-equality"
+      ],
+      "snippets": [
+        {
+          "rule": "personhood-or-equality",
+          "match": "third person of",
+          "context": "{å̓́óôù, å̓́óôùóáí\nesto es'-to}\n\n second person singular present imperative of G1510; be thou; also estosan es'-to-san, third person of the same let them be:--be. see G1510"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Strong SCh.dct",
+      "table": "Dictionary",
+      "row": 7491,
+      "identity": {
+        "ID": "7308",
+        "Topic": "H7307"
+      },
+      "field": "Definition",
+      "rules": [
+        "explicit-trinity",
+        "personhood-or-equality"
+      ],
+      "snippets": [
+        {
+          "rule": "explicit-trinity",
+          "match": "三一神",
+          "context": "无法估量与控制的冲动\n 1c7) 先知的灵\n 1d) 灵 (活物的, 人与动物的气息)\n 1d1) 做为礼物, 为神所保存, 神的灵, 离开死者, 无形体存在\n 1e) 灵 (情绪之所在)\n 1e1) 欲望\n 1e2) 忧伤, 苦恼\n 1f) 灵\n 1f1) 心智行动的所在或器官\n 1f2) 绝少为意志上的 \n 1f3) 道德特质的所在\n 1g) 神的灵, 三一神的第三位, 圣灵, 与圣父圣子同荣, 同尊\n 1g1) 激发先知预言状态\n 1g2) 推动先知发言或教导或警告\n 1g3) 赋予似战争的力量包括执行并施展能力\n 1g4) 赐人各样的恩赐\n 1g5) 是生命力\n 1g6) 彰显在神居所(Shekinah)的荣耀\n 1g7) 从未指使人失丧人格的力量 \n }"
+        },
+        {
+          "rule": "personhood-or-equality",
+          "match": "同荣, 同尊",
+          "context": "知的灵\n 1d) 灵 (活物的, 人与动物的气息)\n 1d1) 做为礼物, 为神所保存, 神的灵, 离开死者, 无形体存在\n 1e) 灵 (情绪之所在)\n 1e1) 欲望\n 1e2) 忧伤, 苦恼\n 1f) 灵\n 1f1) 心智行动的所在或器官\n 1f2) 绝少为意志上的 \n 1f3) 道德特质的所在\n 1g) 神的灵, 三一神的第三位, 圣灵, 与圣父圣子同荣, 同尊\n 1g1) 激发先知预言状态\n 1g2) 推动先知发言或教导或警告\n 1g3) 赋予似战争的力量包括执行并施展能力\n 1g4) 赐人各样的恩赐\n 1g5) 是生命力\n 1g6) 彰显在神居所(Shekinah)的荣耀\n 1g7) 从未指使人失丧人格的力量 \n }"
+        }
+      ],
+      "assessment": "explicit-commentary"
+    },
+    {
+      "file": "Strong SCh.dct",
+      "table": "Dictionary",
+      "row": 11041,
+      "identity": {
+        "ID": "10953",
+        "Topic": "G2098"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督死后, 这个词的\n 含义也包括传讲有关于耶稣基督在十字架上受苦受, 带给世\n 人永恒",
+          "context": "; TDNT - 2:721,267; 中性名词\n 钦定本 - gospel 46, gospel of Christ 11, gospel of God 7,\n gospel of the Kingdom 3, misc 10; 77\n 1) 好消息\n 1a) 喜信, 就是神的国度即将被建立, 其后主耶稣基督的国度也\n 要被建立, 祂是这国度的奠基者。耶稣基督死后, 这个词的\n 含义也包括传讲有关于耶稣基督在十字架上受苦受, 带给世\n 人永恒的救恩. 从死里复活, 坐在上帝的右边, 将来要带着\n 荣耀再先.\n\n1b) 藉着耶稣基督得着救恩的好消息\n \n1c) 宣布上帝的恩典已在耶稣基督里显明, 信者得享在基督里\n \n1d) 福音\n\n1e) 耶稣基督所言, 所行, 及其受死证明祂是弥赛亚, 祂的\n\n言行、受死的故事被称为福音或喜信. \n }"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Strong SCh.dct",
+      "table": "Dictionary",
+      "row": 11231,
+      "identity": {
+        "ID": "11143",
+        "Topic": "G2288"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督之死\n 2) 离开神的死亡\n 2a) 属灵上的死\n 2b) 永恒",
+          "context": "{栳́磲麸�\nthanatos \\{than'-at-os\\}\n源自2348; TDNT - 3:7,312; 阳性名词\n AV - death 117, deadly 2; 119\n 1) 死亡\n 1a) 自然的死亡\n 1b) 作为惩罚的死亡\n 1a1) 世俗法庭宣判的死亡\n 1b1) 基督之死\n 2) 离开神的死亡\n 2a) 属灵上的死\n 2b) 永恒之死\n 3) (特殊的死亡方式) 致命的疾病, 瘟疫 (启 2:33, 6:8, 18:8) \n \n }"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Strong SCh.dct",
+      "table": "Dictionary",
+      "row": 12854,
+      "identity": {
+        "ID": "12856",
+        "Topic": "G4102"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督的永恒",
+          "context": "1537 1, belief 1,\n\nthem that believe 1, fidelity 1; 244\n\n1) 对任何真理的坚信, 相信; 在新约里是针对人与神的关系\n\n以及属神的事的坚信和相信，一般都包含着信靠的观念，\n\n以及由相信而生的神圣火热，并加入其中\n \n\n1a) 与神有关\n\n1a1) 坚信神的存在，以及神是万有的创造者和统治者，\n\n是藉着基督的永恒救恩的供应者和赠与者\n\n1b) 与基督有关\n\n1b1) 一种强烈的和欣然接受的坚信或相信耶稣就是那一位弥赛亚，\n\n我们藉着祂在神的国度里得到永恒的救恩\n\n1c) 基督教的信仰\n\n2) 忠贞, 忠实\n\n2a) 能让人信靠的个性 \n }"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Strong SCh.dct",
+      "table": "Dictionary",
+      "row": 12897,
+      "identity": {
+        "ID": "12899",
+        "Topic": "G4145"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "基督里的丰盛并永恒",
+          "context": "{痣秕́箝矧\nplousios \\{ploo'-see-os\\}\n源自 4149; TDNT - 6:318,873; 形容词\n AV - rich 28; 28\n 1) 富裕的, 物质上的丰富\n 2) 隐喻. 富足, 丰富供应\n 2a) 在基督里的丰盛并永恒的财产 \n }"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Thayer.dct",
+      "table": "Dictionary",
+      "row": 1554,
+      "identity": {
+        "ID": "1484",
+        "Topic": "G1484"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "true God, pagans,\n Gentiles\n 5) Paul uses the term for Gentile Christ",
+          "context": " troop, swarm\n 2) a multitude of individuals of the same nature or genus\n 2a) the human family\n 3) a tribe, nation, people group\n 4) in the OT, foreign nations not worshipping the true God, pagans,\n Gentiles\n 5) Paul uses the term for Gentile Christians"
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Thayer.dct",
+      "table": "Dictionary",
+      "row": 1574,
+      "identity": {
+        "ID": "1504",
+        "Topic": "G1504"
+      },
+      "field": "Definition",
+      "rules": [
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "christology-review",
+          "match": "Christ on account of his divine nature",
+          "context": "sed state of mind,\n which Christ possesses\n 1b) the image of one\n 1b1) one in whom the likeness of any one is seen\n 1b2) applied to man on account of his power of command\n 1b3) to Christ on account of his divine nature and absolute\n moral excellence"
+        }
+      ],
+      "assessment": "interpretive-review"
+    },
+    {
+      "file": "Thayer.dct",
+      "table": "Dictionary",
+      "row": 2495,
+      "identity": {
+        "ID": "2425",
+        "Topic": "G2077"
+      },
+      "field": "Definition",
+      "rules": [
+        "personhood-or-equality"
+      ],
+      "snippets": [
+        {
+          "rule": "personhood-or-equality",
+          "match": "third person of",
+          "context": "esto {es'-to}\n\n second person singular present imperative of 1510, estosan {es'-to-san}\n third person of the same;; v\n\n AV - let be 10, be 5, not tr 1; 16\n\n 1) third persons singular imperative of \"to be\""
+        }
+      ],
+      "assessment": "keyword-false-positive"
+    },
+    {
+      "file": "Thayer.dct",
+      "table": "Dictionary",
+      "row": 2722,
+      "identity": {
+        "ID": "2652",
+        "Topic": "G2304"
+      },
+      "field": "Definition",
+      "rules": [
+        "explicit-trinity",
+        "christology-review"
+      ],
+      "snippets": [
+        {
+          "rule": "explicit-trinity",
+          "match": "trinity",
+          "context": "theios {thi'-os}\n\n from 2316; TDNT - 3:122,322; adj\n\n AV - divine 2\n\n\n1) a general name of deities or divinities as used by the Greeks\n\n2) spoken of the only and true God, trinity\n\n2a) of Christ\n\n2b) Holy Spirit\n\n2c) the Father"
+        },
+        {
+          "rule": "christology-review",
+          "match": "true God, trinity\n\n2a) of Christ",
+          "context": "theios {thi'-os}\n\n from 2316; TDNT - 3:122,322; adj\n\n AV - divine 2\n\n\n1) a general name of deities or divinities as used by the Greeks\n\n2) spoken of the only and true God, trinity\n\n2a) of Christ\n\n2b) Holy Spirit\n\n2c) the Father"
+        }
+      ],
+      "assessment": "explicit-commentary"
+    }
+  ],
+  "errors": [],
+  "review_date": "2026-09-30",
+  "manual_review": "All 37 matched fields classified; no original source or application definition rewritten. Absence of a keyword match is not proof that every sentence is doctrinally acceptable."
+}

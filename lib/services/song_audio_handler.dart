@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'remote_audio_source.dart';
+import 'car_audio_catalogue.dart';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
@@ -65,6 +67,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // setVolume alike — so this listener cannot tell "the track is
     // dead" apart from "the user's pause failed" by the message alone.
     _player.onError.listen((event) {
+      if (_remote != null) return;
       final (attempt, message) = event;
       // Discard an error that belongs to a play() attempt this handler
       // has already moved past — see `_playCurrent`, which records
@@ -133,8 +136,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
         ),
         // Pause for a phone call, duck for a nav prompt, and resume
         // after — the behaviour a driver expects.
-        androidAudioFocusGainType:
-            AndroidAudioFocusGainType.gain,
+        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
         androidWillPauseWhenDucked: false,
       ));
     } catch (e) {
@@ -143,6 +145,67 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       debugPrint('[SongAudioHandler] audio session config failed: $e');
     }
   }
+
+  RemoteAudioSource? _remote;
+
+  void attachRemote(RemoteAudioSource source) {
+    if (!identical(_remote, source)) {
+      _remote?.removeListener(_broadcast);
+      _remote = source;
+      source.addListener(_broadcast);
+    }
+    _broadcast();
+  }
+
+  Future<void> pauseSongForFocus() {
+    _cancelStallWatchdog();
+    return _player.pause();
+  }
+
+  void useSongs() {
+    _remote?.removeListener(_broadcast);
+    _remote = null;
+    _publishMediaItem();
+    unawaited(_publishQueue());
+    _broadcast();
+  }
+
+  @override
+  Future<List<MediaItem>> getChildren(String parentMediaId,
+          [Map<String, dynamic>? options]) =>
+      CarAudioCatalogue.children(parentMediaId);
+
+  @override
+  Future<void> playFromMediaId(String mediaId,
+          [Map<String, dynamic>? extras]) =>
+      CarAudioCatalogue.play(mediaId);
+
+  @override
+  Future<MediaItem?> getMediaItem(String mediaId) =>
+      CarAudioCatalogue.item(mediaId);
+
+  @override
+  Future<List<MediaItem>> search(String query,
+          [Map<String, dynamic>? extras]) =>
+      CarAudioCatalogue.search(query);
+
+  @override
+  Future<void> playFromSearch(String query,
+      [Map<String, dynamic>? extras]) async {
+    final matches = await CarAudioCatalogue.search(query);
+    if (matches.isNotEmpty) await playFromMediaId(matches.first.id);
+  }
+
+  @override
+  Future<void> fastForward() =>
+      _remote?.remoteForward() ?? seek(_position + const Duration(seconds: 30));
+
+  @override
+  Future<void> rewind() =>
+      _remote?.remoteBackward() ??
+      seek(_position > const Duration(seconds: 15)
+          ? _position - const Duration(seconds: 15)
+          : Duration.zero);
 
   final SongPlaybackEngine _player;
 
@@ -227,8 +290,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _preloadedUrl = url;
     unawaited(_player.preload(url));
   }
+
   Timer? _sleepTimer;
   DateTime? _sleepAt;
+
   /// "Pause when the current track ends" — no DateTime, because
   /// seeking, skipping or a track of unknown duration would desync one
   /// faked from the remaining position. A separate flag instead, read
@@ -489,6 +554,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> play() async {
+    if (_remote != null) return _remote!.remotePlay();
     if (_queue.isEmpty) return;
     if (currentItem == null) return;
     await _player.resume();
@@ -496,6 +562,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> pause() {
+    if (_remote != null) return _remote!.remotePause();
     // A user pause is not a stall; the watchdog would otherwise fire
     // on a track paused within 20s of starting.
     _cancelStallWatchdog();
@@ -504,6 +571,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> stop() async {
+    if (_remote != null) {
+      await _remote!.remoteStop();
+      _broadcast();
+      return;
+    }
     _cancelStallWatchdog();
     _sleepTimer?.cancel();
     _sleepAt = null;
@@ -551,10 +623,12 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   @override
-  Future<void> seek(Duration position) => _player.seek(position);
+  Future<void> seek(Duration position) =>
+      _remote?.remoteSeek(position) ?? _player.seek(position);
 
   @override
   Future<void> skipToNext() async {
+    if (_remote != null) return _remote!.remoteForward();
     final next = _queue.nextIndex();
     if (next == null) {
       await stop();
@@ -566,6 +640,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> skipToPrevious() async {
+    if (_remote != null) return _remote!.remoteBackward();
     // Standard media behaviour: past a few seconds in, "previous"
     // restarts the current track rather than leaving it.
     if (_position > const Duration(seconds: 3)) {
@@ -602,6 +677,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   // ── Internals ───────────────────────────────────────────────────
 
   Future<void> _playCurrent() async {
+    if (_remote != null) useSongs();
     final item = _queue.current;
     if (item == null) return;
 
@@ -762,6 +838,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> _onTrackFinished() async {
+    if (_remote != null) return;
     // Checked before repeat-one: "end of this song" means pause, even
     // for a track set to repeat itself — it must not seek back to zero
     // and keep playing.
@@ -782,10 +859,12 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   /// Publish the queue to the OS so CarPlay / Android Auto can show
   /// and jump around the track list, not just play/pause.
   Future<void> _publishQueue() async {
+    if (_remote != null) return;
     queue.add([for (final item in _queue.items) _toMediaItem(item)]);
   }
 
   void _publishMediaItem() {
+    if (_remote != null) return;
     final item = _queue.current;
     // An empty queue publishes NULL, it does not return early.
     //
@@ -818,9 +897,8 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       title: '${s.title}$suffix',
       artist: s.creditLine ?? s.sourceLabel,
       album: s.album ?? _queue.sourceLabel,
-      duration: s.durationSec == null
-          ? null
-          : Duration(seconds: s.durationSec!),
+      duration:
+          s.durationSec == null ? null : Duration(seconds: s.durationSec!),
       artUri: s.artworkUrl == null ? null : Uri.tryParse(s.artworkUrl!),
       extras: {'songId': s.id, 'kind': item.kind},
     );
@@ -828,6 +906,14 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   /// Push transport state to the OS + any listening UI.
   void _broadcast() {
+    final remote = _remote;
+    if (remote != null) {
+      mediaItem.add(remote.remoteItem);
+      queue.add(remote.remoteItem == null ? [] : [remote.remoteItem!]);
+      playbackState.add(remote.remoteState);
+      notifyUi();
+      return;
+    }
     // Skip controls are offered whenever there is a queue at all, not
     // only when there is something on that side of it.
     //
@@ -893,6 +979,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> dispose() async {
+    _remote?.removeListener(_broadcast);
     _sleepTimer?.cancel();
     await _player.dispose();
   }

@@ -23,7 +23,8 @@ import 'package:yahwehs_words/utils/interlinear_editions.dart';
 /// inside the native binary, and the only thing keeping it out of every
 /// list in the app is that every list is computed.
 void main() {
-  test('the picker offers exactly the tagged editions the app will show, '
+  test(
+      'the picker offers exactly the tagged editions the app will show, '
       'in catalogue order', () {
     // 2026-09-09: `asv-yhwh` left this list for ninety minutes and came
     // back, without a line of code changing here either time — the
@@ -33,7 +34,7 @@ void main() {
     // module and it was re-imported. See
     // `test/asv_yhwh_none_regression_test.dart`.
     expect(interlinearEditions,
-        ['bsb-yhwh', 'asv-yhwh', 'cuvs-yhwh', 'cuvs-yhwh-tr']);
+        ['bsb-yhwh', 'asv-yhwh', 'cuvs-yhwh', 'cuvs-yhwh-tr', 'bib']);
   });
 
   test('every offered code is in BOTH halves of the intersection', () {
@@ -47,8 +48,7 @@ void main() {
     }
   });
 
-  test('a hidden edition cannot be offered, however it came to be hidden',
-      () {
+  test('a hidden edition cannot be offered, however it came to be hidden', () {
     for (final hidden in disabledVersions) {
       expect(interlinearEditions, isNot(contains(hidden)));
     }
@@ -120,7 +120,8 @@ void main() {
       expect(en.source, InterlinearSource.substituted);
     });
 
-    test('the Greek NT falls back to the neighbour the CATALOGUE already '
+    test(
+        'the Greek NT falls back to the neighbour the CATALOGUE already '
         'names for it', () {
       // `wh` is the one edition whose language family has no tagged
       // member. `bibleVersionFullCanonFallback('wh')` answers "which
@@ -171,13 +172,12 @@ void main() {
     for (final locale in ['zh-Hans', 'zh-Hant', 'en']) {
       expect(uiStrings['interlinearSubstituted']![locale]!,
           allOf(contains('{reading}'), contains('{shown}')));
-      expect(uiStrings['interlinearVerseMissing']![locale]!,
-          contains('{shown}'));
+      expect(
+          uiStrings['interlinearVerseMissing']![locale]!, contains('{shown}'));
     }
   });
 
-  test('every offered edition has a full label that is not just its code',
-      () {
+  test('every offered edition has a full label that is not just its code', () {
     for (final code in interlinearEditions) {
       expect(fullBibleVersionLabel(code), isNot(code),
           reason: 'the picker would show a reader the bare code $code — '

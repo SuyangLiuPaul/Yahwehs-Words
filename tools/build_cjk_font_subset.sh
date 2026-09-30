@@ -40,12 +40,12 @@ NOTO_URL='https://github.com/notofonts/noto-cjk/raw/main/Sans/OTF/SimplifiedChin
 cd "$WORK"
 
 echo "==> 1/4 Extracting charset from app data"
-python3 << 'PY' > charset.txt
+YAHWEH_FONT_PROJECT="$PROJECT" python3 << 'PY' > charset.txt
 import os, glob, sys
 chars = set()
 roots = [
-  '/Users/pliu0036/Documents/yswords/assets',
-  '/Users/pliu0036/Documents/yswords/lib',
+  os.path.join(os.environ['YAHWEH_FONT_PROJECT'], 'assets'),
+  os.path.join(os.environ['YAHWEH_FONT_PROJECT'], 'lib'),
 ]
 for root in roots:
   for ext in ('json', 'dart', 'txt', 'md'):
@@ -54,7 +54,9 @@ for root in roots:
         with open(f, encoding='utf-8') as fh:
           chars.update(fh.read())
       except Exception: pass
-keep = set()
+from fontTools.ttLib import TTFont
+fontpath = os.path.join(os.environ['YAHWEH_FONT_PROJECT'], 'assets/fonts/NotoSansSC-YahwehsWords.otf')
+keep = {chr(c) for c in TTFont(fontpath).getBestCmap()} if os.path.exists(fontpath) else set()
 keep.update(chr(i) for i in range(0x20, 0x7F))
 keep.update(chr(i) for i in range(0xA0, 0x100))
 keep.update(chr(i) for i in range(0x2000, 0x206F))

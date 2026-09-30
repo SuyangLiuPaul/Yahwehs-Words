@@ -239,6 +239,10 @@ String? zhToEn(String name) {
 /// `toLocale` would silently route it through the Chinese mapping
 /// table — which is what made NASB/NIV book names render in Chinese.
 const _englishVersionCodes = <String>{
+  'net',
+  'ogt',
+  'bib',
+  'sblgnt',
   'kjv',
   'leb',
   'nasb',

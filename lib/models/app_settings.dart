@@ -23,6 +23,7 @@ import 'package:yahwehs_words/services/realtime_db_sync_service.dart';
 import 'package:yahwehs_words/utils/font_catalog.dart';
 import 'package:yahwehs_words/utils/fuzzy_search.dart'
     show setFuzzySearchEnabled;
+import '../utils/pinyin_search.dart' as pinyin;
 import 'package:yahwehs_words/utils/log_diag.dart';
 
 const _kFontFamily = 'fontFamily';
@@ -82,6 +83,7 @@ String normalizeBooksViewMode(String? raw) =>
 
 const _kBoldVerseText = 'boldVerseText';
 const _kFuzzySearch = 'fuzzySearch';
+const _kPinyinSearch = 'pinyinSearch';
 const _kShowStrongsInOriginals = 'showStrongsInOriginals';
 const _kAutoExpandFirstRef = 'autoExpandFirstRef';
 const _kShowBibleEvidence = 'showBibleEvidence';
@@ -333,6 +335,7 @@ class AppSettings extends ChangeNotifier {
   /// this field is only the persisted half, and every write to it also
   /// writes there.
   bool _fuzzySearch = false;
+  bool _pinyinSearch = false;
   /// Show the Strong's # badge inside each word chip in the originals
   /// (exegesis) sheet — handy for power users, distracting for some.
   bool _showStrongsInOriginals = true;
@@ -458,6 +461,7 @@ class AppSettings extends ChangeNotifier {
   String get booksViewMode => _booksViewMode;
   bool get boldVerseText => _boldVerseText;
   bool get fuzzySearch => _fuzzySearch;
+  bool get pinyinSearch => _pinyinSearch;
   bool get showStrongsInOriginals => _showStrongsInOriginals;
   bool get autoExpandFirstRef => _autoExpandFirstRef;
   bool get showBibleEvidence => _showBibleEvidence;
@@ -1111,6 +1115,15 @@ class AppSettings extends ChangeNotifier {
     await prefs.setBool(_kFuzzySearch, enabled);
   }
 
+  Future<void> setPinyinSearch(bool enabled) async {
+    if (_pinyinSearch == enabled) return;
+    _pinyinSearch = enabled;
+    pinyin.setPinyinSearchEnabled(enabled);
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kPinyinSearch, enabled);
+  }
+
   Future<void> setShowStrongsInOriginals(bool enabled) async {
     if (_showStrongsInOriginals == enabled) return;
     _showStrongsInOriginals = enabled;
@@ -1348,6 +1361,8 @@ class AppSettings extends ChangeNotifier {
     _boldVerseText = false;
     _fuzzySearch = false;
     setFuzzySearchEnabled(false);
+    _pinyinSearch = false;
+    pinyin.setPinyinSearchEnabled(false);
     _showStrongsInOriginals = true;
     _interlinearVersion = '';
     // 2026-09-09: the projection setup goes back to factory too — the
@@ -1397,6 +1412,7 @@ class AppSettings extends ChangeNotifier {
       _kBooksViewMode,
       _kBoldVerseText,
       _kFuzzySearch,
+      _kPinyinSearch,
       _kShowStrongsInOriginals,
       _kInterlinearVersion,
       _kProjectionTypeStep,
@@ -1570,6 +1586,8 @@ class AppSettings extends ChangeNotifier {
     _boldVerseText = prefs.getBool(_kBoldVerseText) ?? false;
     _fuzzySearch = prefs.getBool(_kFuzzySearch) ?? false;
     setFuzzySearchEnabled(_fuzzySearch);
+    _pinyinSearch = prefs.getBool(_kPinyinSearch) ?? _fuzzySearch;
+    pinyin.setPinyinSearchEnabled(_pinyinSearch);
     _showStrongsInOriginals =
         prefs.getBool(_kShowStrongsInOriginals) ?? true;
     _autoExpandFirstRef = prefs.getBool(_kAutoExpandFirstRef) ?? false;

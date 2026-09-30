@@ -57,9 +57,8 @@ bool get firebaseConfigured =>
 const _placeholder = 'FILL_ME_IN';
 
 class DefaultFirebaseOptions {
-  /// Web-target options. We don't ship native iOS/Android right now;
-  /// if you ever do, run `flutterfire configure` to regenerate this
-  /// file with android/ios/macos/windows entries too.
+  /// Web-target options. Android and Apple builds read their native
+  /// configuration files; Windows needs explicit options (see [windows]).
   ///
   /// These values are public by design — they identify the project,
   /// not authenticate it. Privacy is enforced by Firestore security
@@ -83,4 +82,11 @@ class DefaultFirebaseOptions {
     // shows in the data-tab URL bar.
     databaseURL: 'https://ysword-default-rtdb.firebaseio.com',
   );
+
+  /// FlutterFire configures Windows with a Firebase Web app registration
+  /// (`flutterfire configure --windows-app-id=<WEB_APP_ID>`). Reuse this
+  /// project's existing registration, with its fixed Firebase auth domain;
+  /// the web service's origin-based redirect domain does not apply to a
+  /// native desktop executable.
+  static const FirebaseOptions windows = web;
 }

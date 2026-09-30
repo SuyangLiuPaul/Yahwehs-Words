@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'sermon_audio_service.dart';
+import 'media_companion_service.dart';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
@@ -72,7 +74,9 @@ class SongPlayerService extends ChangeNotifier {
         builder: () => handler,
         config: const AudioServiceConfig(
           androidNotificationChannelId: 'app.yswords.songs.playback',
-          androidNotificationChannelName: 'Songs playback',
+          androidNotificationChannelName: 'Words audio',
+          fastForwardInterval: Duration(seconds: 30),
+          rewindInterval: Duration(seconds: 15),
           // Keep the notification while paused: a driver who pauses at
           // a light must still be able to resume from the lock screen
           // without unlocking the phone.
@@ -89,6 +93,8 @@ class SongPlayerService extends ChangeNotifier {
       _mediaSession = false;
     }
     _handler!.revision.addListener(instance.notifyListeners);
+    SermonAudioService.onRemoteActivation = _handler!.attachRemote;
+    MediaCompanionService.start(_handler!);
   }
 
   static SongAudioHandler get _h {
@@ -116,8 +122,7 @@ class SongPlayerService extends ChangeNotifier {
   /// `/song-media/*` returns the SPA's index.html (verified 2026-08-23,
   /// `content-type: text/html`), which an audio element cannot play.
   /// qat always carries the same netlify.toml dev just verified.
-  static const String _fallbackProxyOrigin =
-      'https://yswords-qat.netlify.app';
+  static const String _fallbackProxyOrigin = 'https://yswords-qat.netlify.app';
 
   /// Absolute proxy URL for [url], or null when no rule covers it.
   /// Native only — web ALWAYS goes through the proxy via
@@ -179,6 +184,7 @@ class SongPlayerService extends ChangeNotifier {
     if (url == null) return;
 
     if (isCurrentUrl(song, url)) {
+      _h.useSongs();
       if (isPlaying) {
         await _h.pause();
       } else {
@@ -242,7 +248,8 @@ class SongPlayerService extends ChangeNotifier {
 
   /// Registered with [MediaFocus] so a video can silence the hymn.
   /// Pause, never stop: the queue and the position stay put.
-  Future<void> _pauseForFocus() => isPlaying ? _h.pause() : Future.value();
+  Future<void> _pauseForFocus() =>
+      isPlaying ? _h.pauseSongForFocus() : Future.value();
 
   Future<void> previous() => _h.skipToPrevious();
   Future<void> playAt(int index) => _h.playAt(index);

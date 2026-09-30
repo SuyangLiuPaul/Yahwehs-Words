@@ -231,6 +231,11 @@
 # the file existed, that being the catch-all handing back the Flutter
 # shell. "It loads" proves nothing here.
 [[redirects]]
+  from = "/beta"
+  to = "/beta.html"
+  status = 200
+
+[[redirects]]
   from = "/about"
   to = "/about.html"
   status = 200

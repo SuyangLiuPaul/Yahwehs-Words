@@ -3,6 +3,7 @@ import 'dart:async' show StreamSubscription, TimeoutException;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 
@@ -82,6 +83,7 @@ class CloudAuthService extends ChangeNotifier {
   StreamSubscription<User?>? _userChangesSub;
   String? _initError;
   User? _user;
+  bool _accountDeletionInProgress = false;
 
   /// OAuth access token captured during the most recent Google sign-in
   /// — used by DriveSyncService to call the Drive REST API on the
@@ -153,6 +155,11 @@ class CloudAuthService extends ChangeNotifier {
   /// (or Firebase isn't configured).
   User? get currentUser => _user;
   bool get isSignedIn => _user != null;
+  bool get accountDeletionInProgress => _accountDeletionInProgress;
+  bool get deletionRequiresPassword {
+    final providers = _user?.providerData.map((p) => p.providerId).toSet() ?? {};
+    return !providers.contains('apple.com') && !providers.contains('google.com');
+  }
 
   /// Initialise Firebase if config has been filled in. Safe to call
   /// from main(); on misconfiguration logs a debug message and
@@ -340,7 +347,7 @@ class CloudAuthService extends ChangeNotifier {
       print('[CloudAuthService] step=$step starting Firebase.initializeApp');
       step = 'Firebase.initializeApp';
       // 2026-05-21 (v1.2.68): use DefaultFirebaseOptions.web on web,
-      // but on native (iOS / Android) pass NO options so the native
+      // but on Apple / Android pass NO options so the native
       // SDK auto-loads from the platform config file (GoogleService-
       // Info.plist on iOS, google-services.json on Android via the
       // gradle plugin). Calling initializeApp with the web options
@@ -350,6 +357,13 @@ class CloudAuthService extends ChangeNotifier {
       if (kIsWeb) {
         await Firebase.initializeApp(
           options: _webOptions(),
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.windows) {
+        // Windows has no auto-loaded GoogleService-Info.plist or Android
+        // resources. With no explicit options Firebase Core throws
+        // core/not-initialized before Auth can start, including in MSIX.
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.windows,
         );
       } else {
         await Firebase.initializeApp();
@@ -517,6 +531,67 @@ class CloudAuthService extends ChangeNotifier {
       await FirebaseAuth.instance.signOut();
     } catch (e) {
       debugPrint('signOut failed: $e');
+    }
+  }
+
+  /// Reauthenticate first, then remove account-scoped cloud data and Auth.
+  /// Local profiles remain available on this device after deletion.
+  Future<CloudAuthActionResult> deleteCurrentAccount(String? password) async {
+    if (!_configured || _accountDeletionInProgress) {
+      return const CloudAuthActionResult.error(codeUnavailable);
+    }
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return const CloudAuthActionResult.error(codeUnavailable);
+    final providers = user.providerData.map((p) => p.providerId).toSet();
+    try {
+      String? appleAuthorizationCode;
+      if (providers.contains('apple.com')) {
+        final credential = await user.reauthenticateWithProvider(AppleAuthProvider())
+            .timeout(kAuthOpTimeout);
+        appleAuthorizationCode = credential.additionalUserInfo?.authorizationCode;
+      } else if (providers.contains('google.com')) {
+        await user.reauthenticateWithProvider(GoogleAuthProvider())
+            .timeout(kAuthOpTimeout);
+      } else if (providers.contains('password') &&
+          user.email != null && password != null && password.isNotEmpty) {
+        await user.reauthenticateWithCredential(
+          EmailAuthProvider.credential(email: user.email!, password: password),
+        ).timeout(kAuthOpTimeout);
+      } else {
+        return const CloudAuthActionResult.error('yswords/reauth-unavailable');
+      }
+      _accountDeletionInProgress = true;
+      notifyListeners(); // Sync listeners stop before cloud nodes are removed.
+      await FirebaseDatabase.instance.ref('users/${user.uid}').remove()
+          .timeout(kAuthOpTimeout);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('profileData')
+          .doc('main')
+          .delete()
+          .timeout(kAuthOpTimeout);
+      if (appleAuthorizationCode != null) {
+        await FirebaseAuth.instance
+            .revokeTokenWithAuthorizationCode(appleAuthorizationCode)
+            .timeout(kAuthOpTimeout);
+      }
+      await user.delete().timeout(kAuthOpTimeout);
+      _driveAccessToken = null;
+      _driveTokenExpiresAt = null;
+      return const CloudAuthActionResult.ok();
+    } on FirebaseAuthException catch (e) {
+      return CloudAuthActionResult.error(e.code);
+    } on FirebaseException catch (e) {
+      return CloudAuthActionResult.error(e.code);
+    } on TimeoutException {
+      return const CloudAuthActionResult.error(codeTimeout);
+    } catch (e) {
+      debugPrint('deleteCurrentAccount failed: $e');
+      return const CloudAuthActionResult.error('yswords/deletion-failed');
+    } finally {
+      _accountDeletionInProgress = false;
+      notifyListeners();
     }
   }
 
@@ -769,6 +844,28 @@ class CloudAuthService extends ChangeNotifier {
     if (!result.isOk) return result;
     await _adoptProfileFor(result.user!);
     return result;
+  }
+
+  Future<CloudAuthResult> signInWithAppleAndAdoptProfile() async {
+    if (!_configured) {
+      return const CloudAuthResult.error('Cloud sync not configured.');
+    }
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithProvider(AppleAuthProvider());
+      final user = credential.user;
+      if (user == null) {
+        return const CloudAuthResult.error('Apple sign-in returned no account.');
+      }
+      _user = user;
+      notifyListeners();
+      await _adoptProfileFor(user);
+      return CloudAuthResult.ok(user);
+    } on FirebaseAuthException catch (e) {
+      return CloudAuthResult.error(_friendlyError(e));
+    } catch (e) {
+      return CloudAuthResult.error(e.toString());
+    }
   }
 
   // ===================================================================

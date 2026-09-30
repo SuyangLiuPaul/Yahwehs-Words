@@ -1800,11 +1800,33 @@ class _AccountSectionState extends State<_AccountSection> {
               _signedInRow(context, auth, settings, locale, scheme),
               SizedBox(height: 6 * s),
               _SyncStatusRow(settings: settings),
+              if (!kIsWeb &&
+                  (defaultTargetPlatform == TargetPlatform.iOS ||
+                      defaultTargetPlatform == TargetPlatform.macOS))
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    key: const Key('settings.deleteAccount'),
+                    onPressed: auth.accountDeletionInProgress
+                        ? null
+                        : () => _confirmDeleteAccount(context, locale),
+                    icon: const Icon(Icons.delete_outline, size: 17),
+                    label: Text(uiStrings['deleteAccount']?[locale] ??
+                        'Delete account'),
+                  ),
+                ),
             ] else ...[
               if (auth.hasFirebaseCredentials) ...[
                 const Divider(height: 24),
                 if (!kChinaMode && auth.isConfigured) ...[
                   _googleSignInButton(context, settings, locale),
+                  SizedBox(height: 8 * s),
+                ],
+                if (!kIsWeb &&
+                    (defaultTargetPlatform == TargetPlatform.iOS ||
+                        defaultTargetPlatform == TargetPlatform.macOS) &&
+                    auth.isConfigured) ...[
+                  _appleSignInButton(context, settings, locale),
                   SizedBox(height: 8 * s),
                 ],
                 OutlinedButton.icon(
@@ -1929,6 +1951,95 @@ class _AccountSectionState extends State<_AccountSection> {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context, String locale) async {
+    final auth = CloudAuthService.instance;
+    final needsPassword = auth.deletionRequiresPassword;
+    final passwordController = TextEditingController();
+    final password = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(uiStrings['deleteAccount']?[locale] ?? 'Delete account'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(uiStrings['deleteAccountExplanation']?[locale] ??
+                'Your account and synced data will be permanently deleted. '
+                    'Reading data saved on this device will remain.'),
+            if (needsPassword) ...[
+              const SizedBox(height: 16),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                autofillHints: const [AutofillHints.password],
+                decoration: InputDecoration(
+                  labelText: uiStrings['deleteAccountPassword']?[locale] ??
+                      'Confirm with your password',
+                ),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(uiStrings['cancel']?[locale] ?? 'Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (!needsPassword || passwordController.text.isNotEmpty) {
+                Navigator.of(dialogContext).pop(passwordController.text);
+              }
+            },
+            child: Text(uiStrings['deleteAccountConfirm']?[locale] ??
+                'Delete permanently'),
+          ),
+        ],
+      ),
+    );
+    passwordController.dispose();
+    if (password == null || !context.mounted) return;
+    final result = await auth.deleteCurrentAccount(
+      needsPassword ? password : null,
+    );
+    if (!context.mounted) return;
+    final message = result.isOk
+        ? (uiStrings['deleteAccountSuccess']?[locale] ??
+            'Account and cloud data deleted. Data on this device remains.')
+        : (result.errorCode == 'wrong-password' ||
+                result.errorCode == 'invalid-credential'
+            ? (uiStrings['deleteAccountWrongPassword']?[locale] ??
+                'Incorrect password. Please try again.')
+            : (uiStrings['deleteAccountFailure']?[locale] ??
+                'Could not finish deleting the account. Try again or contact support@yahwehword.com.'));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Widget _appleSignInButton(
+    BuildContext context,
+    AppSettings settings,
+    String locale,
+  ) {
+    return FilledButton.icon(
+      key: const Key('settings.appleSignIn'),
+      style: FilledButton.styleFrom(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+      ),
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final result = await CloudAuthService.instance
+            .signInWithAppleAndAdoptProfile();
+        if (!context.mounted || result.isOk) return;
+        messenger.showSnackBar(SnackBar(
+          content: Text(result.errorMessage ?? 'Apple sign-in failed.'),
+        ));
+      },
+      icon: const Icon(Icons.apple, size: 18),
+      label: Text(uiStrings['cloudSignInApple']?[locale] ??
+          'Sign in with Apple'),
     );
   }
 

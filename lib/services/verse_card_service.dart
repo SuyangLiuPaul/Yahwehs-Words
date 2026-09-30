@@ -116,6 +116,12 @@ bool verseImageAllowed(String version) =>
 /// footer.
 String? verseCardLicence(String version, String locale) {
   const keys = <String, String>{
+    'cnet': 'aboutLicenseCnet',
+    'cnet-tr': 'aboutLicenseCnet',
+    'net': 'aboutLicenseNet',
+    'ogt': 'aboutLicenseOgt',
+    'sblgnt': 'aboutLicenseSblgnt',
+    'bib': 'aboutLicenseBib',
     'kjv': 'aboutLicensePublicDomain',
     'leb': 'aboutLicenseLeb',
     'cuvs-yhwh': 'aboutLicenseCuvsYhwh',
