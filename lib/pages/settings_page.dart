@@ -1800,7 +1800,9 @@ class _AccountSectionState extends State<_AccountSection> {
               _signedInRow(context, auth, settings, locale, scheme),
               SizedBox(height: 6 * s),
               _SyncStatusRow(settings: settings),
-              if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
+              if (!kIsWeb &&
+                  (defaultTargetPlatform == TargetPlatform.iOS ||
+                      defaultTargetPlatform == TargetPlatform.macOS))
                 Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton.icon(
@@ -1821,7 +1823,8 @@ class _AccountSectionState extends State<_AccountSection> {
                   SizedBox(height: 8 * s),
                 ],
                 if (!kIsWeb &&
-                    defaultTargetPlatform == TargetPlatform.iOS &&
+                    (defaultTargetPlatform == TargetPlatform.iOS ||
+                        defaultTargetPlatform == TargetPlatform.macOS) &&
                     auth.isConfigured) ...[
                   _appleSignInButton(context, settings, locale),
                   SizedBox(height: 8 * s),

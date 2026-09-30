@@ -47,9 +47,9 @@ dependencies:
   # Android 13+.
   flutter_local_notifications: ^19.0.0
   # 2026-05-22 (v1.2.71): native Google sign-in on macOS. The
-  # firebase_auth `signInWithProvider` is hard-coded to return null
-  # on macOS (FLTFirebaseAuthPlugin.m line 1701 explicitly:
-  # `signInWithProvider is not supported on the MacOS platform`).
+  # firebase_auth `signInWithProvider` supports Apple but not Google
+  # on macOS (Firebase Auth 6.4):
+  # native Google credentials are exchanged via signInWithCredential.
   # google_sign_in produces an ID token natively via GIDSignIn, which
   # we then exchange for a Firebase credential via signInWithCredential.
   # Only used on macOS — iOS / Android keep using signInWithProvider,

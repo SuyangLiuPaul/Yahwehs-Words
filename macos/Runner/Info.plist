@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Yahweh’s Words uses system audio services to play Bible and sermon audio. The app does not record from the microphone.</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.reference</string>
 	<!-- 2026-05-21 (v1.2.68): URL scheme registration for the
