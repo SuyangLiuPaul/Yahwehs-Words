@@ -499,3 +499,7 @@ email to that address is sufficient. I will acknowledge within
 ---
 
 > "Your word is a lamp to my feet and a light for my path." — Psalm 119:105
+
+### Learning release 1.7.0
+
+[Features and sources](docs/learning-features-2026-10-01.md) · [Responsive browser gallery](docs/screenshots/2026-10-01/web-learning/README.md) · [Delivery checkpoint](docs/release-learning-1.7.0-2026-10-01.md).
