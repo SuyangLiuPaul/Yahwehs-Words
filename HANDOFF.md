@@ -1,3 +1,7 @@
+## Native media verification follow-up — 2026-10-02 Melbourne
+
+Words1.7.3 CarPlay Next track changed the phone song. Native MPNowPlayingInfoCenter contained real artwork, rate1 and advancing elapsed time; the simulator system screen still showed0:00/play after reconnection. The current delivery record distinguishes verified publication/command routing from the remaining system-display and physical-device checks. No app source or immutable release tag changed.
+
 ## Verified platform delivery — 1.7.3, 2026-10-01
 
 GitHub releases, all eight websites, four processed signed Apple builds, Google phone review submissions and Words Wear internal publication are recorded in [the delivery checkpoint](docs/delivery-1.7.3-2026-10-01.md). Mac external beta and Sword iOS external beta are Waiting for Review; Words iOS external beta needs the daily limit to reset. Preserve public Apple reviews and Microsoft submission4 certification. Physical pairing and Google production qualification remain open. Verified1.7.3 Microsoft packages are queued, not certified. Older dated checkpoints below remain historical.
