@@ -222,6 +222,10 @@ void main() {
         flow, isNot(contains('localStorage.'))); // Comments below also guarded.
     expect(flow, isNot(contains('client_secret')));
     expect(flow, isNot(contains('drive.file')));
+    expect(flow, contains('meta[name="referrer"]'));
+    expect(flow, contains(".content = 'origin'"));
+    expect(File('web/desktop-google-sign-in.html').readAsStringSync(),
+        contains('name="referrer" content="no-referrer"'));
     final auth =
         File('lib/services/cloud_auth_service.dart').readAsStringSync();
     expect(auth, contains('TargetPlatform.windows'));

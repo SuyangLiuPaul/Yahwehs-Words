@@ -40,6 +40,10 @@ async function returnToApp(fields) {
   for (const [name,value] of Object.entries({state,...fields})) {
     const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = value; form.append(input);
   }
+  // For a non-CORS form POST, no-referrer makes Origin opaque (null).
+  // Switch only for this fixed loopback handoff: origin sends the helper's
+  // domain, never its path/query, preserving the native exact-Origin check.
+  document.querySelector('meta[name="referrer"]').content = 'origin';
   document.body.append(form); form.submit();
 }
 
