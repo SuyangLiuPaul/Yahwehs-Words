@@ -1,5 +1,16 @@
 # YsWords — project state
 
+## Exclusive search release delivered — 2026-10-01
+
+- **Words 1.6.37** contains fuzzy OR pinyin OR neither. Selecting either clears the other; selecting the active option turns both off. Old both-on settings migrate to fuzzy-only; serialized writes preserve the final rapid-tap/reset choice. Thirteen new regression cases per app cover model, persistence and responsive widgets.
+- [Release CI 36803137914](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36803137914) succeeded: **3866 passed / 40 existing skips**, zero failures, analysis and secret scan green. Independent source/release refuter found no substantive blocker.
+- Immutable **v1.6.37** published with **seven GitHub assets**; all five platform release workflows succeeded. Canonical web wrapper deployed **all six international/China sites**; served versions/bundles verified, and actual browser UI confirmed mode switching and both-off behavior.
+- Signed **iOS and macOS 1.6.37/1060040** delivered and processed. Compliance and test details saved; existing internal group assigned and both external Public beta reviews submitted. Initial public App Store reviews remain pending and preserved; this is not public App Store approval.
+- Microsoft Words submission3 published; new submission4 (ID1152921505702016585),1.6.37.0 x64, was validated and submitted for certification with automatic publication after approval. All three localized notes were read back and verified; approved descriptions/screens retained. Google phone1.6.35 remains in review;1.6.37/1006037 is uploaded and validated in a saved draft. Wear1.6.36/20001006 is available internally; new Wear37 is prepared only. Fully successful [MSIX run 36803185289](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36803185289) provides the verified x64 follow-up package. Existing daily automation now targets these latest packages, retaining approved descriptions, screenshots and all three languages.
+- Ten genuine phone screenshots per app remain committed. Device-size matching, held Words Watch Now Playing capture, Android companion captures, physical Windows/car/watch verification and Google production tester qualification remain open. Sword has no Firebase or car/watch companion.
+- Current disk measurement is about **9.3 GiB available** after new archives/exports and cache cleanup; gross cache deletions are not the remaining free space. Signed archives, dSYMs, exported packages, source and simulator user data retained. Exact package hashes and store proofs are kept in the local publication evidence folder.
+
+
 **Read this first when picking the project up.** It records what is true
 right now and the traps that have already cost real time. The per-item
 work list is `docs/autonomous-queue.md`; this file is the orientation
@@ -45,11 +56,11 @@ an "and" in the wrong place.
 
 ---
 
-## Search mode release preparation — 2026-10-01
+## Earlier search mode preparation — 2026-10-01
 
 - Latest owner requirement: fuzzy OR pinyin OR neither; selecting either clears the other, and selecting the active mode turns both off. Legacy both-on preferences migrate to fuzzy-only. Serialized preference writes preserve the final choice during rapid taps and reset.
 - Functional source merged as `64a974d1b7042d7040c2e7a24b478704cbd1dc4a`. [CI 36801903761](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36801903761) passed: **3866 tests / 40 existing skips / zero failures**, analysis and secret scan green. Independent refuter found no substantive blocker. Widget coverage includes 320/402/1024px with 1.8x text scaling.
-- Canonical wrapper is preparing **1.6.37**. A later immutable tag/package is required; already delivered **1.6.36** does not include this newer requirement. Do not relabel, retag or cancel pending store reviews. See `docs/search-modes.md`.
+- At this earlier snapshot, the canonical wrapper was preparing **1.6.37**. A later immutable tag/package is required; already delivered **1.6.36** does not include this newer requirement. Do not relabel, retag or cancel pending store reviews. See `docs/search-modes.md`.
 - Previous1.6.36 is verified on all six websites and GitHub with seven assets. Signed iOS/Mac1060039 processing/compliance complete, internal group assigned, both external Beta reviews submitted. Microsoft submission3 remains in certification;1.6.36.0 MSIX is prepared. Google phone1.6.35 remains in review,1.6.36/1006036 is a saved draft; Wear1.6.36/20001006 is available to internal testers.
 - Preserve initial public Apple reviews and approved store listings. Ten actual phone screenshots per app are committed; matching store device size is required. Words Watch Now Playing 03 is held, Android companion capture and physical Windows/car/watch validation remain open. Google production qualification still requires actual testers.
 - Regenerable cache cleanup removed 33.49 GiB gross; approximately 15 GiB free after measured cleanup, with sources, signed archives, packages and simulator user data preserved. Measurements and delivery proofs are in the local publication asset folder.
@@ -63,7 +74,7 @@ an "and" in the wrong place.
 - Microsoft Words submission3 remains in certification. Existing public Apple and external beta reviews are preserved; do not cancel them for this update. New screenshot sets belong in the next editable listing and must match each required device size.
 
 
-## Current release — 2026-10-01
+## Earlier release snapshot — 2026-10-01
 
 Words **1.6.35** is on all six websites and GitHub; seven release assets include the Wear companion. Google Play closed-test update 1006035 is under review. Signed iOS/Mac 1060037 are processed and waiting for external TestFlight review, with internal Words testing assigned. Existing public iOS 1.6.33/Mac 1.6.34 reviews continue; Microsoft submission 3 is in certification and next 1.6.35 MSIX is prepared. See `docs/release-2026-09-30.md` for exact evidence and remaining gates.
 
