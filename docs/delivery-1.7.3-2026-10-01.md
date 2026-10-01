@@ -8,7 +8,7 @@ This record distinguishes released downloads, submitted store builds and public 
 |---|---|---|
 | GitHub v1.7.3 | Published, seven assets; all five platform workflows passed | Published, six assets; all five platform workflows passed |
 | Websites | Six sites serve 1.7.3; international and China bundles verified separately | Dev and production serve 1.7.3 with matching bundle |
-| Google Play phone | Closed Alpha 1.7.3 / 1007003 submitted for review | Closed Alpha 1.7.3 / 2000010 submitted for review |
+| Google Play phone | Closed Alpha 1.7.3 / 1007003 submitted for review | Closed Alpha 1.7.3 / 2000010 available to selected testers; released October1 at22:31 |
 | Wear OS | Internal test 1.7.3 / 20001011 published at 22:07 on October 1 | Not an application capability |
 | Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external submission hit Apple's daily beta-review limit | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Apple macOS | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review |
