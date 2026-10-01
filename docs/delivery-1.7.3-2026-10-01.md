@@ -42,6 +42,8 @@ The source includes Words phone/watch current-chapter and shared audio progress,
 
 Recoverable generated caches were removed; full signed archives, dSYMs, exports, source, private keys and existing simulator data were retained. Verified older archives and current iOS archives are on T7 with recorded file hashes. New signed Mac archives are retained in the APFS sparse image `/Volumes/T7/Yahweh-Release-Backups-20261001/YahwehSignedMac173.sparseimage`, mounted at `/Volumes/YahwehSignedMac173`. Original archive paths are symlinks; mount the image before reopening them. Keep the external disk and image intact. After completed simulator-build cache cleanup and stopping only dedicated capture processes, measured free space at23:37 Melbourne was7,884,750,848 bytes (about7.34GiB). Signed archives/dSYMs, source and installed simulator data remained intact. Local record: `storage-final-173.json`. This is a dated measurement, not guaranteed remaining capacity.
 
+**Additional cache cleanup, October2 at01:23 Melbourne:** after confirming no local Dart/Xcode/Gradle build was running, removed only the two worktrees’ regenerable `.dart_tool/flutter_build` directories. Net measured recovery was6,597,242,880bytes; free space then18,923,130,880bytes (about17.62GiB). Package configuration, signed archives, dSYMs, exports, source, signing keys, screenshots and original simulator data remained intact. Local record: `storage-flutter-build-cache-173.json`.
+
 ## Follow-up rules
 
 1. Recheck Words iOS external TestFlight once its daily submission limit resets; submit processed1070003 to the existing Public beta group with current test notes. Preserve pending older beta reviews.
