@@ -129,19 +129,23 @@ class DesktopGoogleBridge {
           } else {
             final idToken = fields['idToken'];
             final accessToken = fields['accessToken'];
-            if (idToken == null ||
-                idToken.isEmpty ||
-                idToken.length > 16384 ||
-                accessToken == null ||
-                accessToken.isEmpty ||
-                accessToken.length > 16384) {
+            // Firebase's Google redirect credential may contain only an
+            // access token. The native SDK accepts either Google token;
+            // requiring both incorrectly rejects a successful browser login.
+            if ((idToken == null || idToken.isEmpty) &&
+                    (accessToken == null || accessToken.isEmpty) ||
+                (idToken?.length ?? 0) > 16384 ||
+                (accessToken?.length ?? 0) > 16384) {
               response.statusCode = HttpStatus.badRequest;
               response.write('Missing Google credential.');
               return;
             }
             claimed = true;
             receivedCredential = GoogleAuthProvider.credential(
-                idToken: idToken, accessToken: accessToken);
+                idToken: idToken == null || idToken.isEmpty ? null : idToken,
+                accessToken: accessToken == null || accessToken.isEmpty
+                    ? null
+                    : accessToken);
             response.write(
                 '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Yahweh’s Words</title><style>body{font:18px system-ui;max-width:40rem;margin:12vh auto;padding:24px;line-height:1.7}</style><h1>Return to Yahweh’s Words</h1><p>Your Google response was received. Return to the app to finish signing in.</p><p>请返回应用完成登录。請返回應用完成登入。</p>');
           }

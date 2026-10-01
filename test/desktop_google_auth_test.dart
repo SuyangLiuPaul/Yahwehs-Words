@@ -61,6 +61,21 @@ void main() {
     await expectLater(post(requests.last), throwsA(isA<SocketException>()));
   });
 
+  for (final absent in ['idToken', 'accessToken']) {
+    test('accepts a Google credential without $absent', () async {
+      late Future<int> posted;
+      final bridge = DesktopGoogleBridge(openBrowser: (uri) async {
+        posted = post(uri, fields: {absent: ''});
+        return true;
+      });
+      final credential = await bridge.signIn() as OAuthCredential;
+      expect(credential.providerId, 'google.com');
+      expect(absent == 'idToken' ? credential.idToken : credential.accessToken,
+          isNull);
+      expect(await posted, 200);
+    });
+  }
+
   for (final invalid in [
     'state',
     'origin',
@@ -81,7 +96,9 @@ void main() {
               path: invalid == 'path' ? '/other' : '/google-sign-in',
               method: invalid == 'method' ? 'GET' : 'POST',
               rawBody: invalid == 'oversize' ? 'x' * 65537 : null,
-              fields: invalid == 'missing' ? {'idToken': ''} : null);
+              fields: invalid == 'missing'
+                  ? {'idToken': '', 'accessToken': ''}
+                  : null);
           expect(
               status,
               invalid == 'oversize'
@@ -190,6 +207,8 @@ void main() {
     final config =
         jsonDecode(js.substring(js.indexOf('{'), js.lastIndexOf('}') + 1))
             as Map;
+    expect(config.keys.toSet(),
+        {'apiKey', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'});
     expect(config['apiKey'], DefaultFirebaseOptions.web.apiKey);
     expect(config['appId'], DefaultFirebaseOptions.web.appId);
     expect(config['projectId'], DefaultFirebaseOptions.web.projectId);

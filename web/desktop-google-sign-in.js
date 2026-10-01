@@ -56,8 +56,8 @@ if (!valid) {
       const started = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
       if (!started || started.state !== state || started.port !== port || Date.now()-started.time > 300000) throw new Error('Expired request');
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      if (!credential?.idToken || !credential?.accessToken) throw new Error('Missing credential');
-      await returnToApp({idToken:credential.idToken,accessToken:credential.accessToken});
+      if (!credential?.idToken && !credential?.accessToken) throw new Error('Missing credential');
+      await returnToApp({...(credential.idToken ? {idToken:credential.idToken} : {}),...(credential.accessToken ? {accessToken:credential.accessToken} : {})});
     } else {
       status('ready');
       document.getElementById('continue').disabled = false;
@@ -73,5 +73,13 @@ if (!valid) {
       } catch (_) {status('failed');document.getElementById('continue').disabled=false;}
     });
     document.getElementById('cancel').addEventListener('click',()=>returnToApp({error:'cancelled'}).catch(()=>status('failed')));
-  } catch (_) {status('failed');}
+  } catch (error) {
+    // A fixed, non-identifying reason helps diagnose the browser handoff.
+    // Never log the SDK error object, user or credential.
+    const reason = error?.message === 'Expired request' ? 'expired-request' :
+      error?.message === 'Missing credential' ? 'missing-google-credential' :
+      ['auth/unauthorized-domain','auth/operation-not-allowed','auth/network-request-failed'].includes(error?.code) ? error.code : 'browser-sign-in-failed';
+    console.error('Desktop Google sign-in:', reason);
+    status(reason === 'expired-request' ? 'invalid' : 'failed');
+  }
 }

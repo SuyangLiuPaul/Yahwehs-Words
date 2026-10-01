@@ -339,6 +339,29 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                       '外圈：白昼 · 内圈：夜晚。点击时刻查看。琥珀色空心点：原图估计；绿色点：经文时辰。',
                       '外圈：白晝 · 內圈：夜晚。點擊時刻查看。琥珀色空心點：原圖估計；綠色點：經文時辰。'),
                   textAlign: TextAlign.center),
+              const SizedBox(height: 8),
+              Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _bandLegend(const Color(0xff226176),
+                        _l(locale, 'Daytime work', '白天工作', '白天工作')),
+                    _bandLegend(
+                        const Color(0xff66529a),
+                        _l(locale, 'Evening meal and family gathering',
+                            '傍晚用餐与家庭团聚', '傍晚用餐與家庭團聚')),
+                    _bandLegend(const Color(0xff263a68),
+                        _l(locale, 'Night rest', '夜间休息', '夜間休息')),
+                  ]),
+              if (_referenceTiming)
+                Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(_l(
+                        locale,
+                        'The source’s evening band includes Sabbath gatherings and meals. The night band represents usual rest; Jesus remained awake through the hearings. These bands describe the diagram, not exact event times.',
+                        '原图傍晚色带包括安息日聚会与圣餐晚饭；夜间色带表示通常的睡觉时间，而主耶稣通宵受审未眠。色带说明原图的日夜分区，不代表各事件的准确钟点。',
+                        '原圖傍晚色帶包括安息日聚會與聖餐晚飯；夜間色帶表示通常的睡覺時間，而主耶穌通宵受審未眠。色帶說明原圖的日夜分區，不代表各事件的準確鐘點。'))),
               if (_referenceTiming)
                 Padding(
                     padding: const EdgeInsets.only(top: 8),
@@ -349,6 +372,17 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                         '來源：你提供的福音電台參考圖（fydt.org）。現代鐘點為近似或估計，原圖附件見上方。'))),
             ])));
   }
+
+  Widget _bandLegend(Color color, String label) =>
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+                color: color, borderRadius: BorderRadius.circular(3))),
+        const SizedBox(width: 6),
+        Flexible(child: Text(label)),
+      ]);
 
   Widget _marker(int hour, List<PassionEvent> marks, PassionEvent selected,
       double side, String locale) {
@@ -524,7 +558,7 @@ class _PassionPainter extends CustomPainter {
       ..strokeWidth = w * .12
       ..color = const Color(0xff66529a).withValues(alpha: .55);
     canvas.drawArc(Rect.fromCircle(center: center, radius: w * .285),
-        passionClockAngle(20), math.pi * 2 / 3, false, p);
+        passionClockAngle(18), math.pi, false, p);
     if (showDarkness) {
       p
         ..strokeWidth = w * .12

@@ -21,3 +21,7 @@ Public authentication-endpoint probes of the actual Android APK/Play, Apple and 
 Loopback regressions cover valid completion, wrong state/origin/path/method, oversized/missing credentials, cancellation, duplicate attempts, browser disconnect, deadline, retries, closed listener and config consistency. Existing email authentication, Windows Firebase initialization and PWA tests are retained. The full updated GitHub CI, actual browser flow and signed Windows build must be checked before declaring release complete. Device credentials remain for the owner to enter.
 
 References: [Firebase Google provider](https://firebase.google.com/docs/auth/web/google-signin), [redirect storage requirements](https://firebase.google.com/docs/auth/web/redirect-best-practices), [Firebase API restrictions](https://firebase.google.com/docs/projects/api-keys).
+
+### Browser validation correction
+
+A real Google redirect exposed an overly strict requirement for both token types. Firebase may return an access token without an ID token; both the browser helper and native bridge now accept either, normalize missing tokens to null and retain all state, origin and size checks. Dedicated regressions cover both single-token cases and reject a response with neither. The public helper config is allowlisted by its exact file path in Gitleaks, alongside the existing Firebase client configs, and its complete key set and values are checked in tests. No private credential is added.

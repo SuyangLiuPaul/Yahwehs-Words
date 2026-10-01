@@ -1,3 +1,7 @@
+## Complete source captions and further Gospel scenes — 2026-10-01
+
+All 14 diagram placements retain their complete source commentary in three locales, including the two distinct 08:00 scenes, source-attributed 14 Abib dating and the temple-offering interpretation. The three translated color legends and 18:00–00:00 evening band are included. The complete list now has 23 scenes: footwashing, Judas returning the silver and Jesus’ thirst are additionally linked to verified Gospel passages, with no assigned clock or diagram hour. Focused learning/image/visibility checks passed (Words combined with bridge:55; Sword with type ratchet:49). Full current-head CI, live browser sign-in and new native deliveries remain gates.
+
 ## Authentication follow-up — 2026-10-01
 
 Words Windows Google login now uses an external-browser credential bridge, with loopback state/Origin validation, bounded lifecycle, session-only named Firebase browser auth and existing Firebase credential/profile adoption. Android’s client key was Pollen-only; owner approved restoring Identity Toolkit + Token Service and the console now shows3APIs. Actual APK/Play, Apple and web/Windows public Google authorization probes return HTTP200. Focused authentication/PWA tests:92passed before the two additional disconnect/deadline cases; updated bridge tests:14passed. Full CI, live browser round-trip, physical device confirmation and latest store delivery remain pending. No claim of all-platform login verification yet. See `docs/windows-browser-google-sign-in.md`.

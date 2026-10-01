@@ -20,3 +20,9 @@ Two independent review rounds checked all diagram placements/references, origina
 ## Translation and completeness follow-up
 
 All 14 diagram event placements carry English, Simplified Chinese and Traditional Chinese descriptions, including both final judgment and soldiers’ mockery at 08:00. Gospel filter names use locale-aware book names, and both Passion/principles pages reserve a visible language button even on narrow phones. The original attached image is unchanged and remains Chinese; the interactive content supplies its translated companion. Diagram commentary about the temple offering is attributed to the diagram author, distinct from Gospel time statements. Image failure handling and bounded original-size decoding prevent a broken attachment from generating a Flutter crash.
+
+The evening/night bands and all three original legend meanings are translated. Original comments about14Abib, council condemnation and the claimed temple-offering phrase are included as attributed diagram commentary, without presenting disputed dating or that temple claim as established Gospel facts.
+
+### Further Gospel scenes (no assigned hour)
+
+The complete list now contains 23 scenes. Footwashing (John 13:1–17), Judas returning the silver (Matthew 27:3–10), and Jesus’ thirst (John 19:28–30) have English, Simplified Chinese and Traditional Chinese summaries and reader links. These three additions have neither `clockHour` nor `diagramHour`; all 14 original diagram placements remain unchanged. References were checked against the bundled KJV passage boundaries.

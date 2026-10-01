@@ -48,7 +48,7 @@ void main() {
     final keys = {
       for (final v in verses) '${v['book']} ${v['chapter']}:${v['verse']}'
     };
-    expect(events.length, 20);
+    expect(events.length, 23);
     expect(events.map((e) => e.id).toSet().length, events.length);
     for (final e in events) {
       expect(e.refs, isNotEmpty);
@@ -73,6 +73,11 @@ void main() {
         ['cross', 'darkness', 'death']);
     expect(events.firstWhere((e) => e.id == 'sentence').clockHour, isNull);
     expect(events.firstWhere((e) => e.id == 'peter').clockHour, isNull);
+    for (final id in ['footwashing', 'judas-remorse', 'thirst']) {
+      final event = events.firstWhere((e) => e.id == id);
+      expect(event.clockHour, isNull);
+      expect(event.diagramHour, isNull);
+    }
   });
   test('Gospel filters do not borrow another Gospel’s clock', () {
     expect(events.firstWhere((e) => e.id == 'cross').hourFor('John'), isNull);
@@ -314,6 +319,30 @@ void main() {
     expect(find.byKey(const ValueKey('passion.selected.title')), findsNothing);
     expect(tester.takeException(), isNull);
   });
+  for (final hour in events
+      .where((e) => e.diagramHour != null)
+      .map((e) => e.diagramHour!)
+      .toSet()) {
+    testWidgets('every diagram point opens its complete descriptions: $hour',
+        (tester) async {
+      await mount(tester, PassionWheelPage(key: ValueKey('hour.$hour')),
+          width: 402, locale: 'zh-Hans');
+      final atHour = events.where((e) => e.diagramHour == hour).toList();
+      final marker = find.byKey(ValueKey('passion.marker.${atHour.first.id}'));
+      await tester.scrollUntilVisible(marker.hitTestable(), 100);
+      await tester.tap(marker);
+      await tester.pumpAndSettle();
+      for (final event in atHour) {
+        final description =
+            find.byKey(ValueKey('passion.diagram-summary.${event.id}'));
+        await tester.scrollUntilVisible(description, 100);
+        expect((tester.widget(description) as Text).data,
+            event.diagramSummary['zh-Hans']);
+        expect(event.diagramRefs, isNotEmpty);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
   testWidgets('original diagram opens in a zoomable attachment viewer',
       (tester) async {
     await mount(tester, const PassionWheelPage(), width: 320, scale: 1.8);
