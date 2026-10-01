@@ -1,0 +1,24 @@
+{
+  "kind": "actual browser capture",
+  "viewport": {
+    "width": 402,
+    "height": 874
+  },
+  "source": "2041a176693e00a149e24e7f9b19731322d9a0c6",
+  "site": "yswords-dev.netlify.app",
+  "storeScreenshot": false,
+  "images": [
+    {
+      "file": "words-principles-402-reviewed.jpg",
+      "sha256": "ea4ce8585425b1867ceab4635dcc84fa7a3b154e5169395b23eb3c80f04ddb58"
+    },
+    {
+      "file": "words-world-wheel-402-reviewed.jpg",
+      "sha256": "7d565668a69f4795e20e38394d121d3f7aafec4fe784f84970b23c0c7b11086b"
+    },
+    {
+      "file": "words-world-evidence-402-reviewed.jpg",
+      "sha256": "40124e005efbb107c0b32e2c6f117e37a83dd527540bc5b3cb2b70be29f85001"
+    }
+  ]
+}

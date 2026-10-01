@@ -62,12 +62,9 @@ The existing video health check includes these IDs.
 
 ## Delivery
 
-These additions are pending a new tested release. Previously published
-Words 1.6.37 and Sword 1.6.332 do not contain them. Store certification and App
-Store/TestFlight review are separate gates; existing pending submissions are
-preserved. Physical car/watch/Windows verification and Google's production-access
-qualification are still open. Signed archives, screenshots and installation
-packages were retained during regenerable build-cache cleanup.
+The additions are published on the production websites as **1.7.0** through the canonical release wrappers; all served versions and bundles were verified. Native GitHub assets and freshly signed Apple/store deliveries are being prepared. Previous Words 1.6.37 and Sword 1.6.332 binaries do not contain these additions. Existing certification/reviews are preserved. Physical car/watch/Windows verification and Google production-access qualification remain open.
+
+Authentic responsive browser previews are in [the gallery](screenshots/2026-10-01/web-learning/README.md); these are explicitly browser captures, not native device store screenshots.
 
 ## Verification follow-up
 
@@ -78,5 +75,4 @@ Words world-wheel issues: canvas CJK fallback and an unlabelled mix of narrative
 passages/dating evidence. Both are corrected with focused regression coverage.
 Actual 402×874 browser inspection also found opaque dial marker backgrounds
 overlapping hour labels; transparent markers retain 48px touch targets, and
-each marker now exposes one actionable accessible button. Final CI is required
-for the corrected commits.
+each marker now exposes one actionable accessible button. Corrected source CI [36813965746](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36813965746) passed with 3886 passed / 40 platform skips, zero failures, clean analysis and secret scan. Both independent review rounds found no remaining blocker.
