@@ -1,3 +1,6 @@
+import 'package:yahwehs_words/pages/passion_wheel_page.dart';
+import 'package:yahwehs_words/pages/bible_principles_page.dart';
+import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:flutter/material.dart';
@@ -293,8 +296,32 @@ final List<GetPage> _registeredGetPages = [
     curve: AppMotion.enter,
   ),
   GetPage(
+    name: '/passion-wheel',
+    page: () => const PassionWheelPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/bible-principles',
+    page: () => const BiblePrinciplesPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/world-history-wheel',
+    page: () => const WorldHistoryWheelPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
     name: '/sermons',
-    page: () => const SermonsPage(),
+    page: () => SermonsPage(
+        resumeSermonId: Get.arguments is SermonResumeRequest
+            ? (Get.arguments as SermonResumeRequest).sermonId
+            : null),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,

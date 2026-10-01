@@ -21,8 +21,7 @@ void main() {
   final cross = series.firstWhere((s) => s.id == 'cross');
 
   test('the model parses refs off the asset', () {
-    final total =
-        cross.episodes.fold<int>(0, (n, e) => n + e.refs.length);
+    final total = cross.episodes.fold<int>(0, (n, e) => n + e.refs.length);
     expect(total, 17,
         reason: 'the asset carries 17 references; the model must see '
             'all of them, not silently drop the key');
@@ -58,8 +57,10 @@ void main() {
 
   test('an episode with no refs key at all still parses', () {
     // 獨一真神's episodes have never carried the key. Parsing must not
-    // require it.
-    final other = series.where((s) => s.id != 'cross');
+    // require it. The imported Jesus’s Disciples teaching pair has explicit
+    // Philippians references, so it is checked separately rather than assumed empty.
+    final other =
+        series.where((s) => s.id != 'cross' && s.id != 'jesussdisciples1251');
     expect(other, isNotEmpty);
     for (final s in other) {
       for (final e in s.episodes) {
@@ -77,7 +78,8 @@ void main() {
 void _compilationTests() {
   final doc = json.decode(File('assets/videos.json').readAsStringSync())
       as Map<String, dynamic>;
-  final cross = VideoSeries.listFromJson(doc).firstWhere((s) => s.id == 'cross');
+  final cross =
+      VideoSeries.listFromJson(doc).firstWhere((s) => s.id == 'cross');
 
   test('the cross series offers both compilations', () {
     expect(cross.compilations.map((c) => c.youtubeId),
@@ -86,7 +88,8 @@ void _compilationTests() {
 
   test('they are not also episodes', () {
     final episodeIds = {
-      for (final e in cross.episodes) for (final t in e.tracks) t.youtubeId
+      for (final e in cross.episodes)
+        for (final t in e.tracks) t.youtubeId
     };
     for (final c in cross.compilations) {
       expect(episodeIds, isNot(contains(c.youtubeId)),

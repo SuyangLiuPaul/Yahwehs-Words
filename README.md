@@ -25,6 +25,10 @@
 
 ---
 
+## Learning guides
+
+Interactive Gospel Passion hours and a source-linked selection of Pastor Eric H. H. Chang’s biblical principles are documented in [Learning features](docs/learning-features-2026-10-01.md). Scripture dates and approximate modern hours are distinguished; principle explanations are editorial guides with original sermon links.
+
 ## Try it now
 
 🌐 **<https://yahwehword.com>** — opens in any modern browser. No install, no sign-in needed. Optional Google sign-in syncs highlights / bookmarks / notes / last-read position across devices.

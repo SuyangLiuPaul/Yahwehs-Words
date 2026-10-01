@@ -1,0 +1,602 @@
+{
+  "_meta": {
+    "schema": 1,
+    "editorial": true,
+    "checkedAt": "2026-10-01",
+    "sourcePassages": [
+      "Matthew 26-27",
+      "Mark 14-15",
+      "Luke 22-23",
+      "John 18-19"
+    ],
+    "sources": [
+      "https://www.biblegateway.com/passage/?search=Matthew%2026-27&version=KJV",
+      "https://www.biblegateway.com/passage/?search=Mark%2014-15&version=KJV",
+      "https://www.biblegateway.com/passage/?search=Luke%2022-23&version=KJV",
+      "https://www.biblegateway.com/passage/?search=John%2018-19&version=KJV"
+    ],
+    "method": "Short editorial summaries, parallel Gospel references. Only explicit third/sixth/ninth daytime hours have approximate modern clock markers. Untimed scenes have no invented clock coordinate. Event order is a reading guide; John’s hearing time and differing narrative placement are explicitly retained."
+  },
+  "events": [
+    {
+      "id": "supper",
+      "title": {
+        "en": "The Last Supper",
+        "zh-Hans": "最后的晚餐",
+        "zh-Hant": "最後的晚餐"
+      },
+      "place": {
+        "en": "Jerusalem · prepared room",
+        "zh-Hans": "耶路撒冷 · 预备的房间",
+        "zh-Hant": "耶路撒冷 · 預備的房間"
+      },
+      "period": {
+        "en": "Evening · hour unspecified",
+        "zh-Hans": "晚上 · 未记确切时辰",
+        "zh-Hant": "晚上 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Jesus shares the meal with his disciples and gives the bread and cup. The Gospels do not give a modern clock time.",
+        "zh-Hans": "耶稣与门徒同席，分饼和杯。福音书没有给出现代钟表时间。",
+        "zh-Hant": "耶穌與門徒同席，分餅和杯。福音書沒有給出現代鐘錶時間。"
+      },
+      "refs": [
+        "Matthew 26:20-30",
+        "Mark 14:17-26",
+        "Luke 22:14-20"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "garden",
+      "title": {
+        "en": "Prayer in Gethsemane",
+        "zh-Hans": "客西马尼祷告",
+        "zh-Hant": "客西馬尼禱告"
+      },
+      "place": {
+        "en": "Gethsemane · Mount of Olives",
+        "zh-Hans": "客西马尼 · 橄榄山",
+        "zh-Hant": "客西馬尼 · 橄欖山"
+      },
+      "period": {
+        "en": "Night · hour unspecified",
+        "zh-Hans": "夜间 · 未记确切时辰",
+        "zh-Hant": "夜間 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Jesus prays that the Father’s will be done and asks the disciples to watch and pray.",
+        "zh-Hans": "耶稣祷告愿父的旨意成就，并嘱咐门徒警醒祷告。",
+        "zh-Hant": "耶穌禱告願父的旨意成就，並囑咐門徒警醒禱告。"
+      },
+      "refs": [
+        "Matthew 26:36-46",
+        "Mark 14:32-42",
+        "Luke 22:39-46"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "arrest",
+      "title": {
+        "en": "Betrayal and arrest",
+        "zh-Hans": "被出卖与被捕",
+        "zh-Hant": "被出賣與被捕"
+      },
+      "place": {
+        "en": "Gethsemane / garden across the Kidron",
+        "zh-Hans": "客西马尼／汲沦溪对面的园子",
+        "zh-Hant": "客西馬尼／汲淪溪對面的園子"
+      },
+      "period": {
+        "en": "Night · hour unspecified",
+        "zh-Hans": "夜间 · 未记确切时辰",
+        "zh-Hant": "夜間 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Judas arrives with an armed party. Jesus is arrested; the disciples flee. John describes the garden across the Kidron.",
+        "zh-Hans": "犹大带人来到，耶稣被捕，门徒离散。约翰记载地点在汲沦溪对面的园子。",
+        "zh-Hant": "猶大帶人來到，耶穌被捕，門徒離散。約翰記載地點在汲淪溪對面的園子。"
+      },
+      "refs": [
+        "Matthew 26:47-56",
+        "Mark 14:43-52",
+        "Luke 22:47-53",
+        "John 18:1-12"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "annas",
+      "title": {
+        "en": "Brought to Annas",
+        "zh-Hans": "先被带到亚那面前",
+        "zh-Hant": "先被帶到亞那面前"
+      },
+      "place": {
+        "en": "Annas · exact building unspecified",
+        "zh-Hans": "亚那面前 · 未记具体建筑",
+        "zh-Hant": "亞那面前 · 未記具體建築"
+      },
+      "period": {
+        "en": "After arrest · hour unspecified",
+        "zh-Hans": "被捕后 · 未记确切时辰",
+        "zh-Hant": "被捕後 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "John records that Jesus is taken first to Annas, questioned, and then sent bound to Caiaphas.",
+        "zh-Hans": "约翰记载耶稣先被带到亚那面前受问，随后被捆着送往该亚法。",
+        "zh-Hant": "約翰記載耶穌先被帶到亞那面前受問，隨後被捆著送往該亞法。"
+      },
+      "refs": [
+        "John 18:13-24"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "caiaphas",
+      "title": {
+        "en": "Questioned before the high priest",
+        "zh-Hans": "在大祭司面前受审",
+        "zh-Hant": "在大祭司面前受審"
+      },
+      "place": {
+        "en": "High priest’s residence",
+        "zh-Hans": "大祭司的院宅",
+        "zh-Hant": "大祭司的院宅"
+      },
+      "period": {
+        "en": "Night · hour unspecified",
+        "zh-Hans": "夜间 · 未记确切时辰",
+        "zh-Hant": "夜間 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Witnesses accuse Jesus. He is questioned about being the Messiah, condemned and mistreated.",
+        "zh-Hans": "见证人控告耶稣；他被问是否为基督，随后被定罪并受侮辱。",
+        "zh-Hant": "見證人控告耶穌；他被問是否為基督，隨後被定罪並受侮辱。"
+      },
+      "refs": [
+        "Matthew 26:57-68",
+        "Mark 14:53-65"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "peter",
+      "title": {
+        "en": "Peter denies Jesus",
+        "zh-Hans": "彼得三次不认主",
+        "zh-Hant": "彼得三次不認主"
+      },
+      "place": {
+        "en": "High priest’s courtyard",
+        "zh-Hans": "大祭司的院子",
+        "zh-Hant": "大祭司的院子"
+      },
+      "period": {
+        "en": "Before the cockcrow · hour unspecified",
+        "zh-Hans": "鸡叫以前 · 未记确切时辰",
+        "zh-Hant": "雞叫以前 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Peter denies knowing Jesus three times. The cockcrow is a narrative marker, not a stated 3 a.m. appointment.",
+        "zh-Hans": "彼得三次否认认识耶稣。鸡叫是叙事标记，经文并未说是凌晨三点。",
+        "zh-Hant": "彼得三次否認認識耶穌。雞叫是敘事標記，經文並未說是凌晨三點。"
+      },
+      "refs": [
+        "Matthew 26:69-75",
+        "Mark 14:66-72",
+        "Luke 22:54-62",
+        "John 18:15-18",
+        "John 18:25-27"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "council",
+      "title": {
+        "en": "The council meets at daybreak",
+        "zh-Hans": "天亮时公会审问",
+        "zh-Hant": "天亮時公會審問"
+      },
+      "place": {
+        "en": "Council · Jerusalem",
+        "zh-Hans": "公会 · 耶路撒冷",
+        "zh-Hant": "公會 · 耶路撒冷"
+      },
+      "period": {
+        "en": "Daybreak / early morning",
+        "zh-Hans": "天亮／清早",
+        "zh-Hant": "天亮／清早"
+      },
+      "summary": {
+        "en": "Luke places the council’s questioning at daybreak. Matthew and Mark describe an early-morning consultation before delivery to Pilate.",
+        "zh-Hans": "路加把公会的审问记在天亮时；马太和马可记载清早商议后把耶稣交给彼拉多。",
+        "zh-Hant": "路加把公會的審問記在天亮時；馬太和馬可記載清早商議後把耶穌交給彼拉多。"
+      },
+      "refs": [
+        "Luke 22:66-71",
+        "Matthew 27:1-2",
+        "Mark 15:1"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "pilate",
+      "title": {
+        "en": "Before Pontius Pilate",
+        "zh-Hans": "在彼拉多面前",
+        "zh-Hant": "在彼拉多面前"
+      },
+      "place": {
+        "en": "Praetorium / governor’s judgment place",
+        "zh-Hans": "总督府／审判处",
+        "zh-Hant": "總督府／審判處"
+      },
+      "period": {
+        "en": "Early morning · hour unspecified",
+        "zh-Hans": "清早 · 未记确切时辰",
+        "zh-Hant": "清早 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Jesus is delivered to the governor and questioned. John explicitly calls the arrival early.",
+        "zh-Hans": "耶稣被交给总督受审；约翰明确说到达时是清早。",
+        "zh-Hant": "耶穌被交給總督受審；約翰明確說到達時是清早。"
+      },
+      "refs": [
+        "Matthew 27:11-14",
+        "Mark 15:1-5",
+        "Luke 23:1-5",
+        "John 18:28-38"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "herod",
+      "title": {
+        "en": "Sent to Herod",
+        "zh-Hans": "被送往希律那里",
+        "zh-Hant": "被送往希律那裡"
+      },
+      "place": {
+        "en": "Herod in Jerusalem · exact building unspecified",
+        "zh-Hans": "耶路撒冷的希律那里 · 未记具体建筑",
+        "zh-Hant": "耶路撒冷的希律那裡 · 未記具體建築"
+      },
+      "period": {
+        "en": "During the hearings · hour unspecified",
+        "zh-Hans": "受审期间 · 未记确切时辰",
+        "zh-Hant": "受審期間 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Luke records a hearing before Herod, mockery, and Jesus being sent back to Pilate.",
+        "zh-Hans": "路加记载希律审问并戏弄耶稣，然后把他送回彼拉多那里。",
+        "zh-Hant": "路加記載希律審問並戲弄耶穌，然後把他送回彼拉多那裡。"
+      },
+      "refs": [
+        "Luke 23:6-12"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "sentence",
+      "title": {
+        "en": "Barabbas released; Jesus condemned",
+        "zh-Hans": "释放巴拉巴，判耶稣受刑",
+        "zh-Hant": "釋放巴拉巴，判耶穌受刑"
+      },
+      "place": {
+        "en": "Pilate’s judgment seat · Gabbatha (John)",
+        "zh-Hans": "彼拉多审判席 · 厄巴大（约翰）",
+        "zh-Hant": "彼拉多審判席 · 厄巴大（約翰）"
+      },
+      "period": {
+        "en": "John: about the sixth hour · chronology differs",
+        "zh-Hans": "约翰：约第六时 · 与马可时序不同",
+        "zh-Hant": "約翰：約第六時 · 與馬可時序不同"
+      },
+      "summary": {
+        "en": "John 19:14 places Jesus before Pilate at about the sixth hour; Mark 15:25 places crucifixion at the third hour. These statements are retained separately. This wheel does not choose a disputed clock-system explanation.",
+        "zh-Hans": "约19:14记耶稣在彼拉多面前时约第六时；可15:25记钉十字架为第三时。本图分别保留这两项记载，不擅自选定有争议的计时解释。",
+        "zh-Hant": "約19:14記耶穌在彼拉多面前時約第六時；可15:25記釘十字架為第三時。本圖分別保留這兩項記載，不擅自選定有爭議的計時解釋。"
+      },
+      "refs": [
+        "Matthew 27:15-26",
+        "Mark 15:6-15",
+        "Luke 23:13-25",
+        "John 19:13-16"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "mockery",
+      "title": {
+        "en": "Scourged and mocked",
+        "zh-Hans": "受鞭打与戏弄",
+        "zh-Hant": "受鞭打與戲弄"
+      },
+      "place": {
+        "en": "Governor’s headquarters · soldiers’ gathering",
+        "zh-Hans": "总督府 · 兵丁聚集处",
+        "zh-Hant": "總督府 · 兵丁聚集處"
+      },
+      "period": {
+        "en": "Before crucifixion · hour unspecified",
+        "zh-Hans": "钉十字架以前 · 未记确切时辰",
+        "zh-Hant": "釘十字架以前 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Soldiers mock Jesus with a robe and crown of thorns. John narrates the scourging before the final judgment scene; Matthew and Mark place the soldiers’ mockery after the sentence.",
+        "zh-Hans": "兵丁给耶稣穿袍、戴荆棘冠冕并戏弄他。约翰把鞭打记在最终审判场景之前；马太与马可把兵丁戏弄记在宣判之后。",
+        "zh-Hant": "兵丁給耶穌穿袍、戴荊棘冠冕並戲弄他。約翰把鞭打記在最終審判場景之前；馬太與馬可把兵丁戲弄記在宣判之後。"
+      },
+      "refs": [
+        "Matthew 27:26-31",
+        "Mark 15:15-20",
+        "John 19:1-5"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "road",
+      "title": {
+        "en": "On the way to Golgotha",
+        "zh-Hans": "前往各各他",
+        "zh-Hant": "前往各各他"
+      },
+      "place": {
+        "en": "Road to Golgotha · precise route unspecified",
+        "zh-Hans": "通往各各他的路 · 未记具体路线",
+        "zh-Hant": "通往各各他的路 · 未記具體路線"
+      },
+      "period": {
+        "en": "Before crucifixion · hour unspecified",
+        "zh-Hans": "钉十字架以前 · 未记确切时辰",
+        "zh-Hant": "釘十字架以前 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "John says Jesus goes out bearing the cross. The Synoptic Gospels name Simon of Cyrene carrying it; Luke also records Jesus speaking to the women.",
+        "zh-Hans": "约翰记耶稣背着十字架出去；符类福音记古利奈人西门背十字架，路加还记耶稣向妇女说话。",
+        "zh-Hant": "約翰記耶穌背著十字架出去；符類福音記古利奈人西門背十字架，路加還記耶穌向婦女說話。"
+      },
+      "refs": [
+        "Matthew 27:32-34",
+        "Mark 15:21-23",
+        "Luke 23:26-31",
+        "John 19:17"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "cross",
+      "title": {
+        "en": "Jesus is crucified",
+        "zh-Hans": "耶稣被钉十字架",
+        "zh-Hant": "耶穌被釘十字架"
+      },
+      "place": {
+        "en": "Golgotha · the place of a skull",
+        "zh-Hans": "各各他 · 髑髅地",
+        "zh-Hant": "各各他 · 髑髏地"
+      },
+      "period": {
+        "en": "Mark: third hour ≈ 9 a.m.",
+        "zh-Hans": "马可：第三时 ≈ 上午9时",
+        "zh-Hant": "馬可：第三時 ≈ 上午9時"
+      },
+      "summary": {
+        "en": "Mark gives the third hour. The modern 9 a.m. label is an approximate conversion from daytime hours counted from sunrise, not an exact minute recorded by Scripture.",
+        "zh-Hans": "马可记第三时。上午9时是按日出起算白昼时辰的大致换算，并非经文记载的精确分钟。",
+        "zh-Hant": "馬可記第三時。上午9時是按日出起算白晝時辰的大致換算，並非經文記載的精確分鐘。"
+      },
+      "refs": [
+        "Mark 15:24-28",
+        "Matthew 27:35-38",
+        "Luke 23:32-34",
+        "John 19:18-24"
+      ],
+      "clockHour": 9
+    },
+    {
+      "id": "taunts",
+      "title": {
+        "en": "Mockery at the cross",
+        "zh-Hans": "十字架旁的讥诮",
+        "zh-Hant": "十字架旁的譏誚"
+      },
+      "place": {
+        "en": "Golgotha",
+        "zh-Hans": "各各他",
+        "zh-Hant": "各各他"
+      },
+      "period": {
+        "en": "While on the cross · hour unspecified",
+        "zh-Hans": "在十字架上 · 未记确切时辰",
+        "zh-Hant": "在十字架上 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Passers-by and leaders mock Jesus. Luke records the conversation with the repentant criminal.",
+        "zh-Hans": "路人和领袖讥诮耶稣；路加记载他与悔改的犯人对话。",
+        "zh-Hant": "路人和領袖譏誚耶穌；路加記載他與悔改的犯人對話。"
+      },
+      "refs": [
+        "Matthew 27:39-44",
+        "Mark 15:29-32",
+        "Luke 23:35-43"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "mother",
+      "title": {
+        "en": "Mother and beloved disciple",
+        "zh-Hans": "母亲与所爱的门徒",
+        "zh-Hant": "母親與所愛的門徒"
+      },
+      "place": {
+        "en": "Beside Jesus’ cross",
+        "zh-Hans": "耶稣十字架旁",
+        "zh-Hant": "耶穌十字架旁"
+      },
+      "period": {
+        "en": "While on the cross · hour unspecified",
+        "zh-Hans": "在十字架上 · 未记确切时辰",
+        "zh-Hant": "在十字架上 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Jesus entrusts his mother and the beloved disciple to one another. John gives no clock hour for this scene.",
+        "zh-Hans": "耶稣把母亲和所爱的门徒彼此托付；约翰没有记此事的钟点。",
+        "zh-Hant": "耶穌把母親和所愛的門徒彼此託付；約翰沒有記此事的鐘點。"
+      },
+      "refs": [
+        "John 19:25-27"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "darkness",
+      "title": {
+        "en": "Darkness over the land",
+        "zh-Hans": "遍地黑暗",
+        "zh-Hant": "遍地黑暗"
+      },
+      "place": {
+        "en": "The land · Jesus remains at Golgotha",
+        "zh-Hans": "遍地 · 耶稣仍在各各他",
+        "zh-Hant": "遍地 · 耶穌仍在各各他"
+      },
+      "period": {
+        "en": "Sixth to ninth hour ≈ noon–3 p.m.",
+        "zh-Hans": "第六至第九时 ≈ 正午至下午3时",
+        "zh-Hant": "第六至第九時 ≈ 正午至下午3時"
+      },
+      "summary": {
+        "en": "Matthew, Mark and Luke describe darkness from about the sixth hour until the ninth. The shaded outer arc marks this stated interval.",
+        "zh-Hans": "马太、马可和路加记约第六时至第九时遍地黑暗。外圈阴影表示这一经文所记的时段。",
+        "zh-Hant": "馬太、馬可和路加記約第六時至第九時遍地黑暗。外圈陰影表示這一經文所記的時段。"
+      },
+      "refs": [
+        "Matthew 27:45",
+        "Mark 15:33",
+        "Luke 23:44-45"
+      ],
+      "clockHour": 12
+    },
+    {
+      "id": "death",
+      "title": {
+        "en": "The final cry and Jesus’ death",
+        "zh-Hans": "最后的呼喊与耶稣的死",
+        "zh-Hant": "最後的呼喊與耶穌的死"
+      },
+      "place": {
+        "en": "Golgotha",
+        "zh-Hans": "各各他",
+        "zh-Hant": "各各他"
+      },
+      "period": {
+        "en": "About the ninth hour ≈ 3 p.m.; death follows",
+        "zh-Hans": "约第九时 ≈ 下午3时；随后断气",
+        "zh-Hant": "約第九時 ≈ 下午3時；隨後斷氣"
+      },
+      "summary": {
+        "en": "Matthew and Mark place the cry about the ninth hour, followed by Jesus’ death. Luke and John record additional final words without giving a separate exact hour. The accounts are read side by side, not forced into an undocumented order of sayings.",
+        "zh-Hans": "马太和马可记约第九时耶稣呼喊，随后断气。路加和约翰记另一些最后的话，却未另记精确时辰。本图并列阅读，不强行编排未有记载的话语顺序。",
+        "zh-Hant": "馬太和馬可記約第九時耶穌呼喊，隨後斷氣。路加和約翰記另一些最後的話，卻未另記精確時辰。本圖並列閱讀，不強行編排未有記載的話語順序。"
+      },
+      "refs": [
+        "Matthew 27:46-50",
+        "Mark 15:34-37",
+        "Luke 23:46",
+        "John 19:28-30"
+      ],
+      "clockHour": 15
+    },
+    {
+      "id": "witness",
+      "title": {
+        "en": "The curtain and the witnesses",
+        "zh-Hans": "幔子与见证人",
+        "zh-Hant": "幔子與見證人"
+      },
+      "place": {
+        "en": "Temple; Golgotha and nearby observers",
+        "zh-Hans": "圣殿；各各他与旁观的人",
+        "zh-Hant": "聖殿；各各他與旁觀的人"
+      },
+      "period": {
+        "en": "Around Jesus’ death · exact sequence varies",
+        "zh-Hans": "耶稣死亡前后 · 各记载顺序有别",
+        "zh-Hant": "耶穌死亡前後 · 各記載順序有別"
+      },
+      "summary": {
+        "en": "The Synoptic Gospels record the torn temple curtain and the centurion’s response. Matthew also records an earthquake; Luke narrates the curtain before the final cry.",
+        "zh-Hans": "符类福音记圣殿幔子裂开及百夫长的回应。马太还记地震；路加把幔子裂开记在最后呼喊之前。",
+        "zh-Hant": "符類福音記聖殿幔子裂開及百夫長的回應。馬太還記地震；路加把幔子裂開記在最後呼喊之前。"
+      },
+      "refs": [
+        "Matthew 27:51-56",
+        "Mark 15:38-41",
+        "Luke 23:45-49"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "pierced",
+      "title": {
+        "en": "Jesus’ side is pierced",
+        "zh-Hans": "耶稣肋旁被刺",
+        "zh-Hant": "耶穌肋旁被刺"
+      },
+      "place": {
+        "en": "Golgotha",
+        "zh-Hans": "各各他",
+        "zh-Hant": "各各他"
+      },
+      "period": {
+        "en": "After death · before removal",
+        "zh-Hans": "死后 · 被取下以前",
+        "zh-Hant": "死後 · 被取下以前"
+      },
+      "summary": {
+        "en": "John records that the soldiers do not break Jesus’ legs because he is already dead; one pierces his side.",
+        "zh-Hans": "约翰记兵丁见耶稣已死，没有打断他的腿，却有兵丁刺他的肋旁。",
+        "zh-Hant": "約翰記兵丁見耶穌已死，沒有打斷他的腿，卻有兵丁刺他的肋旁。"
+      },
+      "refs": [
+        "John 19:31-37"
+      ],
+      "clockHour": null
+    },
+    {
+      "id": "burial",
+      "title": {
+        "en": "Burial before the Sabbath",
+        "zh-Hans": "安息日前安葬",
+        "zh-Hant": "安息日前安葬"
+      },
+      "place": {
+        "en": "New tomb · garden near the crucifixion (John)",
+        "zh-Hans": "新坟墓 · 钉十字架处附近的园子（约翰）",
+        "zh-Hant": "新墳墓 · 釘十字架處附近的園子（約翰）"
+      },
+      "period": {
+        "en": "Evening / preparation day · no exact hour",
+        "zh-Hans": "傍晚／预备日 · 未记确切时辰",
+        "zh-Hant": "傍晚／預備日 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Joseph requests the body; Jesus is laid in a tomb. John names Nicodemus and the nearby garden. No exact modern burial time is stated.",
+        "zh-Hans": "约瑟求取遗体，耶稣被安放在坟墓里。约翰记尼哥底母和附近的园子；未记现代钟表的精确安葬时间。",
+        "zh-Hant": "約瑟求取遺體，耶穌被安放在墳墓裡。約翰記尼哥底母和附近的園子；未記現代鐘錶的精確安葬時間。"
+      },
+      "refs": [
+        "Matthew 27:57-61",
+        "Mark 15:42-47",
+        "Luke 23:50-56",
+        "John 19:38-42"
+      ],
+      "clockHour": null
+    }
+  ]
+}

@@ -25,6 +25,11 @@ const Map<String, String> kLebAttributionLinks = {
 };
 
 const uiStrings = {
+  'jesusDisciplesVideoCredit': {
+    'en': 'Jesus’s Disciples · YouTube channel @jesussdisciples1251',
+    'zh-Hans': 'Jesus’s Disciples · YouTube频道 @jesussdisciples1251',
+    'zh-Hant': 'Jesus’s Disciples · YouTube頻道 @jesussdisciples1251',
+  },
   // ====== Search Page ======
   'search': {
     'zh-Hans': '搜索',

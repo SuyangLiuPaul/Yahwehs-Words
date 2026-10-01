@@ -1,0 +1,23 @@
+{
+  "sourceRepository": "SuyangLiuPaul/Yahwehs-Sword",
+  "sourceCommit": "74e086bd93e6b8d1d74be455e09852798fd2b9c9",
+  "sha256": {
+    "lib/models/biblical_person.dart": "c2812c68b2974a047854dfd5daca7ce6708ce4d2224f57133935f29daadfb2e0",
+    "lib/models/chronology.dart": "f2c1ea1836ff0815b7c8847d00f6c1fe7bb549331785e2e497b876c45a6f403b",
+    "lib/models/hebrew_king.dart": "8d7869aa0964a8b2f1cecd365d2b2c86beb7db278ae5fac847706e8cb0cf798d",
+    "lib/models/timeline_event.dart": "266f344e51174a0f8b909e2e1c3290ca5e7875acdec885ce410ccb716c996a51",
+    "lib/models/wheel_history.dart": "a9eb75f06107bd41f6bb63417b5199bc8191e64b953a2a55884ea320d96ed215",
+    "lib/services/chronology_service.dart": "221d8af2e04b2eab33855f21b8d263e63739a345dffb33b5bf869807f4d8c2ce",
+    "lib/services/family_tree_service.dart": "555573d8dc9b97967285e9b0f0557f2959fe7993df5d6f5e532779133ba1bcf1",
+    "lib/services/hebrew_kings_service.dart": "8d843d3bd23d6a3cfc407d6584ed646657dc90913e4c275504f30e069ac190b7",
+    "lib/services/timeline_service.dart": "7aa84d25782829fcf5a2f354d3ea3595d41926102027c1a36ee75cfbe10fc01d",
+    "lib/utils/date_hedge.dart": "3996c02a018861caedf9bb4b4c208fa599b00a90936d94a25ea590c0b3536457",
+    "lib/utils/kings_contemporaries.dart": "33821f13e524886053bee1f3fa81ef8e6a23727e5442331d8d7238777f42c0d6",
+    "assets/wheel_history.json": "8628f7625a9df34859a5b04a8da68f17405c7d83f454904e1652ef66580eab3d",
+    "assets/chronology.json": "adc3fe8a7fbb075acfbb02f2cf91eda8d52330686890e2253d7867c4e99f1948",
+    "assets/family_tree.json": "054ac726747ba63b8de902f7d49947e97848ddcdeb74f6c945714d5b0ab9d1f3",
+    "assets/hebrew_kings.json": "881858ef6e8ed18af58ad08d040395821fa7bb8d7dd761e0a2743b19bad4333d",
+    "assets/bible_timeline.json": "bffc9ec1a5652e8eb1c20e94710d81ef7dbc8e6b213e8cc1c002a5528aaa9d6f"
+  },
+  "policy": "Same audited data and merge loader, namespaced to preserve Words existing chronology/family models. Dedicated mobile wheel renderer; existing Sword stacked wheel retained."
+}

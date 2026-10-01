@@ -18,8 +18,10 @@ import 'package:yahwehs_words/services/fetch_books.dart' show standardBookOrder;
 import 'package:yahwehs_words/services/sermon_audio_service.dart';
 import 'package:yahwehs_words/services/sermon_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
-import 'package:yahwehs_words/utils/passage_localizer.dart' show localizePassage;
-import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
+import 'package:yahwehs_words/utils/passage_localizer.dart'
+    show localizePassage;
+import 'package:yahwehs_words/utils/version_mapper.dart'
+    show localeAwareBookName;
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
@@ -87,12 +89,21 @@ String? sermonAudioClause({
   if (playable >= total) {
     return uiStrings['sermonAudioAll']?[locale] ?? 'every one has a recording';
   }
-  final tmpl = uiStrings['sermonAudioSome']?[locale] ?? '{audioCount} with recordings';
+  final tmpl =
+      uiStrings['sermonAudioSome']?[locale] ?? '{audioCount} with recordings';
   return tmpl.replaceAll('{audioCount}', playable.toString());
 }
 
+/// A dashboard resume keeps the library beneath the detail route. A typed
+/// argument survives named-route dispatch, which otherwise discards the widget.
+class SermonResumeRequest {
+  final String sermonId;
+  const SermonResumeRequest(this.sermonId);
+}
+
 class SermonsPage extends StatefulWidget {
-  const SermonsPage({super.key});
+  final String? resumeSermonId;
+  const SermonsPage({super.key, this.resumeSermonId});
 
   @override
   State<SermonsPage> createState() => _SermonsPageState();
@@ -100,6 +111,42 @@ class SermonsPage extends StatefulWidget {
 
 class _SermonsPageState extends State<SermonsPage> {
   Future<_PageData>? _future;
+  final GlobalKey _currentRowKey = GlobalKey();
+  bool _resumeScheduled = false;
+  bool _preferencesReady = false;
+
+  void _scheduleResume(_PageData data) {
+    final id = widget.resumeSermonId;
+    if (id == null || !_preferencesReady || _resumeScheduled) return;
+    _resumeScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      Sermon? target;
+      for (final group in data.groups.values) {
+        for (final sermon in group) {
+          if (sermon.id == id) target = sermon;
+        }
+      }
+      if (target == null) {
+        return;
+      } // An obsolete saved id still opens the library.
+      await _focusCurrentRow(afterLayout: true);
+      if (mounted) await _openSermon(target);
+    });
+  }
+
+  Future<void> _focusCurrentRow({bool afterLayout = false}) async {
+    if (!afterLayout) {
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    if (!mounted) return;
+    final row = _currentRowKey.currentContext;
+    if (row != null && row.mounted) {
+      await Scrollable.ensureVisible(row,
+          alignment: 0.25, duration: AppMotion.standard);
+    }
+  }
+
   String _query = '';
 
   /// Currently-active passage filter. Both null = no filter; book set
@@ -148,10 +195,11 @@ class _SermonsPageState extends State<SermonsPage> {
 
   Future<void> _restoreState() async {
     final prefs = await SharedPreferences.getInstance();
-    final lastId = prefs.getString(_kLastReadKey);
+    final lastId = widget.resumeSermonId ?? prefs.getString(_kLastReadKey);
     final savedOffset = prefs.getDouble(_kListScrollKey);
     if (!mounted) return;
     setState(() {
+      _preferencesReady = true;
       _lastReadSermonId = lastId;
       _flashActive = lastId != null;
     });
@@ -162,7 +210,9 @@ class _SermonsPageState extends State<SermonsPage> {
       });
     }
     // Wait for the list to render, then restore scroll position.
-    if (savedOffset != null && savedOffset > 0) {
+    if (widget.resumeSermonId == null &&
+        savedOffset != null &&
+        savedOffset > 0) {
       await Future.delayed(const Duration(milliseconds: 350));
       if (!mounted || !_scrollController.hasClients) return;
       final max = _scrollController.position.maxScrollExtent;
@@ -181,8 +231,7 @@ class _SermonsPageState extends State<SermonsPage> {
   Future<void> _persistScroll() async {
     if (!_scrollController.hasClients) return;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(
-        _kListScrollKey, _scrollController.position.pixels);
+    await prefs.setDouble(_kListScrollKey, _scrollController.position.pixels);
   }
 
   /// Called when the user taps a sermon tile — navigates to the
@@ -218,12 +267,14 @@ class _SermonsPageState extends State<SermonsPage> {
     _flashTimer = Timer(const Duration(seconds: 4), () {
       if (mounted) setState(() => _flashActive = false);
     });
+    if (widget.resumeSermonId != null) {
+      await _focusCurrentRow();
+      return;
+    }
     // Also restore scroll position after returning from detail.
     final savedOffset =
         (await SharedPreferences.getInstance()).getDouble(_kListScrollKey);
-    if (!mounted ||
-        savedOffset == null ||
-        !_scrollController.hasClients) {
+    if (!mounted || savedOffset == null || !_scrollController.hasClients) {
       return;
     }
     final max = _scrollController.position.maxScrollExtent;
@@ -302,9 +353,6 @@ class _SermonsPageState extends State<SermonsPage> {
       body: FutureBuilder<_PageData>(
         future: _future,
         builder: (context, snap) {
-          if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
           if (snap.hasError) {
             return Center(
               child: Padding(
@@ -319,7 +367,11 @@ class _SermonsPageState extends State<SermonsPage> {
               ),
             );
           }
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final data = snap.data!;
+          _scheduleResume(data);
           final groups = _filtered(data, _query, locale);
           return Column(
             children: [
@@ -341,16 +393,14 @@ class _SermonsPageState extends State<SermonsPage> {
                               .withValues(alpha: 0.6),
                           prefixIcon: Icon(Icons.search_rounded,
                               size: 20, color: scheme.onSurfaceVariant),
-                          hintText:
-                              uiStrings['sermonSearchHint']?[locale] ??
-                                  'Search sermons by title or passage…',
+                          hintText: uiStrings['sermonSearchHint']?[locale] ??
+                              'Search sermons by title or passage…',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        onChanged: (v) =>
-                            setState(() => _query = v.trim()),
+                        onChanged: (v) => setState(() => _query = v.trim()),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -363,8 +413,7 @@ class _SermonsPageState extends State<SermonsPage> {
                         size: 18,
                       ),
                       label: Text(
-                        uiStrings['sermonFilterByPassage']?[locale] ??
-                            'Filter',
+                        uiStrings['sermonFilterByPassage']?[locale] ?? 'Filter',
                         style: const TextStyle(fontSize: 13),
                       ),
                       style: OutlinedButton.styleFrom(
@@ -373,8 +422,7 @@ class _SermonsPageState extends State<SermonsPage> {
                         side: BorderSide(color: scheme.outlineVariant),
                         backgroundColor: _filter == null
                             ? null
-                            : scheme.primaryContainer
-                                .withValues(alpha: 0.4),
+                            : scheme.primaryContainer.withValues(alpha: 0.4),
                       ),
                     ),
                   ],
@@ -386,8 +434,8 @@ class _SermonsPageState extends State<SermonsPage> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InputChip(
-                      avatar: Icon(Icons.bookmark, size: 16,
-                          color: scheme.primary),
+                      avatar:
+                          Icon(Icons.bookmark, size: 16, color: scheme.primary),
                       label: Text(_activeFilterLabel(locale)),
                       onDeleted: () => setState(() => _filter = null),
                       backgroundColor:
@@ -399,46 +447,53 @@ class _SermonsPageState extends State<SermonsPage> {
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                 child: Row(
                   children: [
-                    Text(
+                    Expanded(
+                        child: Text(
                       _summaryLine(groups, data, locale),
                       style: TextStyle(
                         fontSize: 12,
                         color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
-                    ),
+                    )),
                   ],
                 ),
               ),
               Expanded(
-                child: groups.isEmpty
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: Text(
-                            uiStrings['sermonNoMatches']?[locale] ??
-                                'No sermons match your filters.',
-                            style: TextStyle(
-                                color: scheme.onSurface
-                                    .withValues(alpha: 0.6)),
+                  child: groups.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Text(
+                              uiStrings['sermonNoMatches']?[locale] ??
+                                  'No sermons match your filters.',
+                              style: TextStyle(
+                                  color:
+                                      scheme.onSurface.withValues(alpha: 0.6)),
+                            ),
                           ),
-                        ),
-                      )
-                    : ScrollToTopOnStatusBarTap(
-                        controller: _scrollController,
-                        child: ListView(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        children: [
-                          for (final entry in groups.entries)
-                            _TopicGroup(
-                                topic: entry.key,
-                                sermons: entry.value,
-                                lastReadId: _lastReadSermonId,
-                                flashActive: _flashActive,
-                                onSermonTap: _openSermon),
-                        ],
-                      ),)
-              ),
+                        )
+                      : ScrollToTopOnStatusBarTap(
+                          controller: _scrollController,
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                for (final entry in groups.entries)
+                                  _TopicGroup(
+                                      topic: entry.key,
+                                      sermons: entry.value,
+                                      key: ValueKey(
+                                          '${entry.key}:$_lastReadSermonId'),
+                                      currentRowKey: _currentRowKey,
+                                      lastReadId: _lastReadSermonId,
+                                      flashActive: _flashActive,
+                                      onSermonTap: _openSermon),
+                              ],
+                            ),
+                          ),
+                        )),
             ],
           );
         },
@@ -543,9 +598,9 @@ class _SermonsPageState extends State<SermonsPage> {
         final chStr = colon == -1 ? tail : tail.substring(0, colon);
         final ch = int.tryParse(chStr);
         if (ch == null) continue;
-        final verses =
-            perBook.putIfAbsent(book, () => <int, Set<int>>{})
-                .putIfAbsent(ch, () => <int>{});
+        final verses = perBook
+            .putIfAbsent(book, () => <int, Set<int>>{})
+            .putIfAbsent(ch, () => <int>{});
         if (colon != -1) {
           final v = int.tryParse(tail.substring(colon + 1).trim());
           if (v != null) verses.add(v);
@@ -699,8 +754,7 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                   if (widget.initial != null)
                     TextButton(
                       onPressed: widget.onClear,
-                      child: Text(
-                          uiStrings['clearFilter']?[locale] ?? 'Clear'),
+                      child: Text(uiStrings['clearFilter']?[locale] ?? 'Clear'),
                     ),
                   IconButton(
                     icon: const Icon(Icons.close, size: 20),
@@ -730,8 +784,7 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                             _BookChip(
                               book: book,
                               locale: locale,
-                              hasSermons:
-                                  widget.versesByBook.containsKey(book),
+                              hasSermons: widget.versesByBook.containsKey(book),
                               selected: _selectedBook == book,
                               onTap: () => setState(() {
                                 if (_selectedBook == book) {
@@ -752,8 +805,7 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                               'Chapter',
                           style: TextStyle(
                               fontSize: 12,
-                              color:
-                                  scheme.onSurface.withValues(alpha: 0.65)),
+                              color: scheme.onSurface.withValues(alpha: 0.65)),
                         ),
                         const SizedBox(height: 6),
                         Wrap(
@@ -761,10 +813,9 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                           runSpacing: 6,
                           children: [
                             ChoiceChip(
-                              label: Text(
-                                  uiStrings['sermonFilterAllChapters']
-                                          ?[locale] ??
-                                      'All'),
+                              label: Text(uiStrings['sermonFilterAllChapters']
+                                      ?[locale] ??
+                                  'All'),
                               selected: _selectedChapter == null,
                               onSelected: (_) => setState(() {
                                 _selectedChapter = null;
@@ -800,8 +851,7 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                               'Verse',
                           style: TextStyle(
                               fontSize: 12,
-                              color:
-                                  scheme.onSurface.withValues(alpha: 0.65)),
+                              color: scheme.onSurface.withValues(alpha: 0.65)),
                         ),
                         const SizedBox(height: 6),
                         Wrap(
@@ -809,10 +859,9 @@ class _PassageFilterSheetState extends State<_PassageFilterSheet> {
                           runSpacing: 6,
                           children: [
                             ChoiceChip(
-                              label: Text(
-                                  uiStrings['sermonFilterAllVerses']
-                                          ?[locale] ??
-                                      'All'),
+                              label: Text(uiStrings['sermonFilterAllVerses']
+                                      ?[locale] ??
+                                  'All'),
                               selected: _selectedVerse == null,
                               onSelected: (_) =>
                                   setState(() => _selectedVerse = null),
@@ -886,8 +935,11 @@ class _TopicGroup extends StatelessWidget {
   final String? lastReadId;
   final bool flashActive;
   final Future<void> Function(Sermon) onSermonTap;
+  final GlobalKey currentRowKey;
 
   const _TopicGroup({
+    super.key,
+    required this.currentRowKey,
     required this.topic,
     required this.sermons,
     required this.lastReadId,
@@ -947,6 +999,7 @@ class _TopicGroup extends StatelessWidget {
         children: [
           for (final s in sermons)
             _SermonRow(
+              key: s.id == lastReadId ? currentRowKey : ValueKey(s.id),
               sermon: s,
               isLastRead: s.id == lastReadId,
               flashActive: flashActive,
@@ -989,6 +1042,7 @@ class _SermonRow extends StatelessWidget {
   final VoidCallback onTap;
 
   const _SermonRow({
+    super.key,
     required this.sermon,
     required this.isLastRead,
     required this.flashActive,
@@ -1015,75 +1069,75 @@ class _SermonRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      child: ListTile(
+      child: Material(color: Colors.transparent, borderRadius: BorderRadius.circular(8), child: ListTile(
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      title: Builder(
-        builder: (ctx) {
-          final locale = ctx.watch<AppSettings>().locale;
-          return Text(
-            sermon.localizedTitle(locale),
-            style: const TextStyle(fontWeight: FontWeight.w500),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          );
-        },
-      ),
-      subtitle: Builder(
-        builder: (ctx) {
-          final locale = ctx.watch<AppSettings>().locale;
-          return Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  '#${sermon.id}',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: scheme.onSurface.withValues(alpha: 0.55),
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-                if (sermon.displayDate != '—')
+        title: Builder(
+          builder: (ctx) {
+            final locale = ctx.watch<AppSettings>().locale;
+            return Text(
+              sermon.localizedTitle(locale),
+              style: const TextStyle(fontWeight: FontWeight.w500),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            );
+          },
+        ),
+        subtitle: Builder(
+          builder: (ctx) {
+            final locale = ctx.watch<AppSettings>().locale;
+            return Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
                   Text(
-                    sermon.displayDate,
+                    '#${sermon.id}',
                     style: TextStyle(
                       fontSize: 11,
                       color: scheme.onSurface.withValues(alpha: 0.55),
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
-                // Multi-passage sermons (e.g. "Mt 3:15 and Mt 4:17")
-                // render as one badge per ref so each reads cleanly
-                // and the user isn't confused by an "and" tag.
-                for (final seg in _splitSermonPassage(sermon.passage))
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 1),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      localizePassage(seg, locale),
+                  if (sermon.displayDate != '—')
+                    Text(
+                      sermon.displayDate,
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        color: scheme.onPrimaryContainer,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
+                  // Multi-passage sermons (e.g. "Mt 3:15 and Mt 4:17")
+                  // render as one badge per ref so each reads cleanly
+                  // and the user isn't confused by an "and" tag.
+                  for (final seg in _splitSermonPassage(sermon.passage))
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        localizePassage(seg, locale),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: scheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
         trailing: Icon(Icons.chevron_right,
             size: 20, color: scheme.onSurface.withValues(alpha: 0.4)),
         onTap: onTap,
-      ),
+      )),
     );
   }
 }

@@ -1,0 +1,443 @@
+{
+  "_meta": {
+    "schema": 1,
+    "editorial": true,
+    "author": "Pastor Eric H. H. Chang",
+    "method": "Selected study-guide summaries anchored in bundled sermons. Open the source for the original argument. Scripture links are the complete existing indexed references of each cited sermon; this is not a claim to exhaust every principle or every possible related Bible passage.",
+    "checkedAt": "2026-10-01"
+  },
+  "principles": [
+    {
+      "id": "turn-other-cheek",
+      "title": {
+        "en": "Turning the other cheek",
+        "zh-Hans": "转脸原则 · 不以报复回应",
+        "zh-Hant": "轉臉原則 · 不以報復回應"
+      },
+      "summary": {
+        "en": "The sermon explains turning the other cheek as trusting God for our defence and judgment, rather than taking revenge. It connects Jesus’ teaching with waiting on the Lord in Psalm 37.",
+        "zh-Hans": "讲道把转过另一边脸理解为信靠神的保护与判断，而非自行报复；并把耶稣的教导与诗篇37篇等候神相连。",
+        "zh-Hant": "講道把轉過另一邊臉理解為信靠神的保護與判斷，而非自行報復；並把耶穌的教導與詩篇37篇等候神相連。"
+      },
+      "sermonIds": [
+        "010"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "010",
+          "locale": "en",
+          "text": "A person who turns the other cheek is one who trusts in God for his defense.",
+          "sha256": "91be3ca0bff3b8cf3cb2f7a35ca58ffa6194720492abc2406b15f741e13f6812"
+        }
+      ]
+    },
+    {
+      "id": "follow-face-back",
+      "title": {
+        "en": "Knowing God by following him · face and back",
+        "zh-Hans": "跟随神而认识神 · 面与背",
+        "zh-Hant": "跟隨神而認識神 · 面與背"
+      },
+      "summary": {
+        "en": "The face-and-back illustration distinguishes observing from following. Moses seeks God’s presence to lead the people; knowing God grows through following, not merely seeing a display.",
+        "zh-Hans": "面与背的比喻区分旁观和跟随。摩西求神同在带领百姓；认识神是在跟随中加深，并不只是看见奇事。",
+        "zh-Hant": "面與背的比喻區分旁觀和跟隨。摩西求神同在帶領百姓；認識神是在跟隨中加深，並不只是看見奇事。"
+      },
+      "sermonIds": [
+        "194-1"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "194-1",
+          "locale": "en",
+          "text": "It is in following the person that you know better and better",
+          "sha256": "e97d338a683269810b9719ee219cb370fe075e836aac232d9cf1f7435a9908de"
+        }
+      ]
+    },
+    {
+      "id": "golden-rule",
+      "title": {
+        "en": "Taking the initiative in love",
+        "zh-Hans": "主动以爱待人",
+        "zh-Hant": "主動以愛待人"
+      },
+      "summary": {
+        "en": "The Golden Rule calls for active good toward others, beyond merely avoiding harm. Treat people as you would wish to be treated.",
+        "zh-Hans": "金律要求主动善待人，不只是避免伤害；愿别人怎样待自己，也照样待人。",
+        "zh-Hant": "金律要求主動善待人，不只是避免傷害；願別人怎樣待自己，也照樣待人。"
+      },
+      "sermonIds": [
+        "043"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "043",
+          "locale": "en",
+          "text": "the negative form is a weak form",
+          "sha256": "d75a2423c470986983f3793be12cb26f27b6fa540db6722978b3fba82b361ae6"
+        }
+      ]
+    },
+    {
+      "id": "love-god-neighbour",
+      "title": {
+        "en": "Love of God and love of people",
+        "zh-Hans": "爱神与爱人的关系",
+        "zh-Hant": "愛神與愛人的關係"
+      },
+      "summary": {
+        "en": "A claimed love for God is tested in real relationships. Loving the visible brother cannot be separated from loving the unseen God.",
+        "zh-Hans": "宣称爱神，要在真实的人际关系中受检验；爱看得见的弟兄与爱看不见的神不能分开。",
+        "zh-Hant": "宣稱愛神，要在真實的人際關係中受檢驗；愛看得見的弟兄與愛看不見的神不能分開。"
+      },
+      "sermonIds": [
+        "047"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "047",
+          "locale": "en",
+          "text": "your relationship with God is the same as your relationship with people",
+          "sha256": "efd28c1893ef925bc97e9c062c95aff68a49112de27f90cc2093fe0d5e39ec77"
+        }
+      ]
+    },
+    {
+      "id": "kingdom-first",
+      "title": {
+        "en": "Putting the Lord first",
+        "zh-Hans": "以主为先",
+        "zh-Hant": "以主為先"
+      },
+      "summary": {
+        "en": "Putting the Lord first does not mean loving family less. His love purifies and strengthens how we love them; discipleship also requires counting its cost.",
+        "zh-Hans": "以主为先并不表示少爱家人；他的爱洁净并坚固对家人的爱。作门徒也要计算代价。",
+        "zh-Hant": "以主為先並不表示少愛家人；他的愛潔淨並堅固對家人的愛。作門徒也要計算代價。"
+      },
+      "sermonIds": [
+        "049"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "049",
+          "locale": "en",
+          "text": "when you love the Lord more than father or mother",
+          "sha256": "e008dfcfb3d08f08e9c0a0f9217c658ae3cff78b883cf5ce0163808949eb5958"
+        }
+      ]
+    },
+    {
+      "id": "faith-fear",
+      "title": {
+        "en": "Faith in the face of fear",
+        "zh-Hans": "在惧怕中信靠",
+        "zh-Hant": "在懼怕中信靠"
+      },
+      "summary": {
+        "en": "Jesus’ repeated “fear not” directs disciples toward trust in the Father. Faith addresses the fears that hinder following him.",
+        "zh-Hans": "耶稣反复说不要怕，引导门徒信靠父；信心面对拦阻跟随主的惧怕。",
+        "zh-Hant": "耶穌反覆說不要怕，引導門徒信靠父；信心面對攔阻跟隨主的懼怕。"
+      },
+      "sermonIds": [
+        "053"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "053",
+          "locale": "en",
+          "text": "Faith Is the Exact Opposite of Fear",
+          "sha256": "96d05228b3bbe56a795e31acccb9082b72fc68542cbfce7495d4e7ccd4ac19b3"
+        }
+      ]
+    },
+    {
+      "id": "receiving",
+      "title": {
+        "en": "Receiving God’s messenger",
+        "zh-Hans": "接待神所差来的人",
+        "zh-Hant": "接待神所差來的人"
+      },
+      "summary": {
+        "en": "Receive a messenger for the word of God he carries, rather than personality or charm. The sermon connects receiving Christ’s representatives with receiving Christ.",
+        "zh-Hans": "接待使者，是因他所带来的神的话，而非个人魅力；讲道把接待基督的代表与接待基督相连。",
+        "zh-Hant": "接待使者，是因他所帶來的神的話，而非個人魅力；講道把接待基督的代表與接待基督相連。"
+      },
+      "sermonIds": [
+        "056"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "056",
+          "locale": "en",
+          "text": "The receiving must be for the right reason",
+          "sha256": "ecf4af1274d8aaa01ab4e714c50c3f7f141994f5fafa5cd41fc188077c4bebec"
+        }
+      ]
+    },
+    {
+      "id": "humility",
+      "title": {
+        "en": "Grace for the humble",
+        "zh-Hans": "神赐恩给谦卑的人",
+        "zh-Hant": "神賜恩給謙卑的人"
+      },
+      "summary": {
+        "en": "True greatness is expressed through humility. The sermon connects John the Baptist’s attitude with Jesus’ lowliness and God’s grace to the humble.",
+        "zh-Hans": "真正的伟大表现在谦卑中；讲道把施洗约翰的态度、耶稣的柔和谦卑与神赐恩给谦卑者相连。",
+        "zh-Hant": "真正的偉大表現在謙卑中；講道把施洗約翰的態度、耶穌的柔和謙卑與神賜恩給謙卑者相連。"
+      },
+      "sermonIds": [
+        "057"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "057",
+          "locale": "en",
+          "text": "God resists the proud and gives grace to the humble",
+          "sha256": "0cb28e0e3999d9555371512f5cdc1c3fba2596f6002633d6408f66d112801416"
+        }
+      ]
+    },
+    {
+      "id": "rest-service",
+      "title": {
+        "en": "Rest and service",
+        "zh-Hans": "安息与事奉",
+        "zh-Hant": "安息與事奉"
+      },
+      "summary": {
+        "en": "The sermon reads Sabbath rest through belonging to and serving God. It uses David and the priests to explain why rest is more than inactivity.",
+        "zh-Hans": "讲道从归属神、事奉神来理解安息，并以大卫和祭司说明安息不只是停止活动。",
+        "zh-Hant": "講道從歸屬神、事奉神來理解安息，並以大衛和祭司說明安息不只是停止活動。"
+      },
+      "sermonIds": [
+        "063"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "063",
+          "locale": "en",
+          "text": "when you serve God, you have truly",
+          "sha256": "284dfff3c4cf16fdb653e7ccf8f49d3739766c31ac54c1d259bee1d1d6077bff"
+        }
+      ]
+    },
+    {
+      "id": "hear-response",
+      "title": {
+        "en": "Taking care how we hear",
+        "zh-Hans": "谨慎怎样听",
+        "zh-Hant": "謹慎怎樣聽"
+      },
+      "summary": {
+        "en": "Hearing brings responsibility: God’s word calls for a response. The sermon warns against receiving light while refusing to live by it.",
+        "zh-Hans": "听道带来责任，神的话要求回应；讲道警告人不可领受光却拒绝按光生活。",
+        "zh-Hant": "聽道帶來責任，神的話要求回應；講道警告人不可領受光卻拒絕按光生活。"
+      },
+      "sermonIds": [
+        "075"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "075",
+          "locale": "en",
+          "text": "Take heed. Watch. Be careful how you hear",
+          "sha256": "91389e47638782f3a2a18d4da941a2207708f0760aff8106c671a24ea6ad26c9"
+        }
+      ]
+    },
+    {
+      "id": "humble-exalted",
+      "title": {
+        "en": "Humbling ourselves before God",
+        "zh-Hans": "在神面前降卑",
+        "zh-Hant": "在神面前降卑"
+      },
+      "summary": {
+        "en": "In the Pharisee and tax collector, self-exaltation is contrasted with pleading for mercy. God, rather than our comparison with others, gives the verdict.",
+        "zh-Hans": "法利赛人与税吏的比喻对照自高和求怜悯；判定在神，不在我们与别人的比较。",
+        "zh-Hant": "法利賽人與稅吏的比喻對照自高和求憐憫；判定在神，不在我們與別人的比較。"
+      },
+      "sermonIds": [
+        "099"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "099",
+          "locale": "en",
+          "text": "He who humbles himself, God will exalt",
+          "sha256": "275c30468effebfdf67cdf7ea7197c589e78ded49920196973b34717a982121a"
+        }
+      ]
+    },
+    {
+      "id": "agreement",
+      "title": {
+        "en": "Openness and agreement",
+        "zh-Hans": "敞开与同心",
+        "zh-Hant": "敞開與同心"
+      },
+      "summary": {
+        "en": "The sermon links truthful communication, reconciliation, witness and shared prayer. Agreement grows through dealing honestly with offence, not hiding it.",
+        "zh-Hans": "讲道联系真实沟通、和好、见证与共同祷告；同心需要诚实处理得罪人的事，而不是掩盖。",
+        "zh-Hant": "講道聯繫真實溝通、和好、見證與共同禱告；同心需要誠實處理得罪人的事，而不是掩蓋。"
+      },
+      "sermonIds": [
+        "116"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "116",
+          "locale": "en",
+          "text": "openness, union, and agreement between at least two or three people",
+          "sha256": "34cb7f0613052f978034a1652e322377d732730d4927909e3ff4c63b8e23bf5e"
+        }
+      ]
+    },
+    {
+      "id": "grace-good-works",
+      "title": {
+        "en": "Grace leading to good works",
+        "zh-Hans": "恩典引向善行",
+        "zh-Hant": "恩典引向善行"
+      },
+      "summary": {
+        "en": "Forgiveness is freely given by grace. The sermon also reads Ephesians 2:10: those created in Christ are called to live in the good works God prepares.",
+        "zh-Hans": "赦免是白白赐下的恩典；讲道也读以弗所书2:10，指出在基督里被造的人要行神所预备的善行。",
+        "zh-Hant": "赦免是白白賜下的恩典；講道也讀以弗所書2:10，指出在基督裡被造的人要行神所預備的善行。"
+      },
+      "sermonIds": [
+        "118"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "118",
+          "locale": "en",
+          "text": "The first principle is grace",
+          "sha256": "56635d0716a3f47ffae40f77e8dc36679b51be5b93719b8241c75816d41ff9a8"
+        }
+      ]
+    },
+    {
+      "id": "first-last",
+      "title": {
+        "en": "The first and the last",
+        "zh-Hans": "首先与末后",
+        "zh-Hant": "首先與末後"
+      },
+      "summary": {
+        "en": "The vineyard-workers parable challenges calculations of deserving and status. The sermon applies the first-and-last principle as a new way of thinking under God’s grace.",
+        "zh-Hans": "葡萄园工人的比喻挑战人对功劳与地位的计算；讲道把首先与末后的原则应用为恩典下新的思想方式。",
+        "zh-Hant": "葡萄園工人的比喻挑戰人對功勞與地位的計算；講道把首先與末後的原則應用為恩典下新的思想方式。"
+      },
+      "sermonIds": [
+        "126"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "126",
+          "locale": "en",
+          "text": "The Principle of First and Last",
+          "sha256": "80f8600303246da5857664d0f14d8cc561b38c1507f80d88e85bf36366515e14"
+        }
+      ]
+    },
+    {
+      "id": "greatness-service",
+      "title": {
+        "en": "Greatness through service",
+        "zh-Hans": "以服事为大",
+        "zh-Hant": "以服事為大"
+      },
+      "summary": {
+        "en": "Seeking the first place creates rivalry. Jesus redirects ambition toward becoming a servant, following his own example of giving his life.",
+        "zh-Hans": "争居首位带来竞争；耶稣引导门徒作仆人，效法他舍命服事的榜样。",
+        "zh-Hant": "爭居首位帶來競爭；耶穌引導門徒作僕人，效法他捨命服事的榜樣。"
+      },
+      "sermonIds": [
+        "127"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "127",
+          "locale": "en",
+          "text": "whenever someone puts themselves first, there is immediate tension",
+          "sha256": "e8df2f1790b32ff3d14d879d10091e981e8eb591bdafb1ded8c78e4e7240e5b4"
+        }
+      ]
+    },
+    {
+      "id": "grace-transformation",
+      "title": {
+        "en": "Forgiveness and a transformed life",
+        "zh-Hans": "赦免与生命转变",
+        "zh-Hant": "赦免與生命轉變"
+      },
+      "summary": {
+        "en": "The sermon distinguishes justification, sanctification and judgment. Received grace is expected to change conduct; forgiveness is not treated as an excuse to stay unchanged.",
+        "zh-Hans": "讲道区分称义、成圣与审判；领受的恩典应改变行为，赦免不是维持旧生活的借口。",
+        "zh-Hant": "講道區分稱義、成聖與審判；領受的恩典應改變行為，赦免不是維持舊生活的藉口。"
+      },
+      "sermonIds": [
+        "128"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "128",
+          "locale": "en",
+          "text": "that forgiveness is not an end in itself",
+          "sha256": "73196b4ad49f3c33ecadfe0171c05441e0126b24abd0ef97792d71237c5c1ba9"
+        }
+      ]
+    },
+    {
+      "id": "fruit-responsibility",
+      "title": {
+        "en": "Fruit and responsibility",
+        "zh-Hans": "结果子与责任",
+        "zh-Hant": "結果子與責任"
+      },
+      "summary": {
+        "en": "The vineyard belongs to God, who looks for fruit. The sermon connects greater maturity and responsibility with a greater expectation of faithfulness.",
+        "zh-Hans": "葡萄园属于神，他寻找果子；讲道联系生命的成熟、责任的增加与更高的忠心要求。",
+        "zh-Hant": "葡萄園屬於神，他尋找果子；講道聯繫生命的成熟、責任的增加與更高的忠心要求。"
+      },
+      "sermonIds": [
+        "133"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "133",
+          "locale": "en",
+          "text": "the standard gets higher and higher",
+          "sha256": "88be682d90cd04257d29238dc761511cdeb9e8436ed0fe839fc92610b0c2cc3c"
+        }
+      ]
+    },
+    {
+      "id": "deny-self",
+      "title": {
+        "en": "Denying ourselves and taking up the cross",
+        "zh-Hans": "舍己、背十字架",
+        "zh-Hant": "捨己、背十字架"
+      },
+      "summary": {
+        "en": "Following Jesus challenges a life organised around self-interest. The sermon applies the call to deny ourselves and take up the cross to daily decisions.",
+        "zh-Hans": "跟随耶稣挑战以自我利益为中心的生活；讲道把舍己、背十字架应用在日常选择中。",
+        "zh-Hant": "跟隨耶穌挑戰以自我利益為中心的生活；講道把捨己、背十字架應用在日常選擇中。"
+      },
+      "sermonIds": [
+        "318"
+      ],
+      "sourceAnchors": [
+        {
+          "sermonId": "318",
+          "locale": "en",
+          "text": "The whole thinking of this society is self",
+          "sha256": "60532b1a2a9d371aa385f45983e5ac7893a41a52dd14a48220d3a202547b1677"
+        }
+      ]
+    }
+  ]
+}
