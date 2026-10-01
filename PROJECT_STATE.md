@@ -45,6 +45,15 @@ an "and" in the wrong place.
 
 ---
 
+## Search mode release preparation — 2026-10-01
+
+- Latest owner requirement: fuzzy OR pinyin OR neither; selecting either clears the other, and selecting the active mode turns both off. Legacy both-on preferences migrate to fuzzy-only. Serialized preference writes preserve the final choice during rapid taps and reset.
+- Functional source merged as `64a974d1b7042d7040c2e7a24b478704cbd1dc4a`. [CI 36801903761](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36801903761) passed: **3866 tests / 40 existing skips / zero failures**, analysis and secret scan green. Independent refuter found no substantive blocker. Widget coverage includes 320/402/1024px with 1.8x text scaling.
+- Canonical wrapper is preparing **1.6.37**. A later immutable tag/package is required; already delivered **1.6.36** does not include this newer requirement. Do not relabel, retag or cancel pending store reviews. See `docs/search-modes.md`.
+- Previous1.6.36 is verified on all six websites and GitHub with seven assets. Signed iOS/Mac1060039 processing/compliance complete, internal group assigned, both external Beta reviews submitted. Microsoft submission3 remains in certification;1.6.36.0 MSIX is prepared. Google phone1.6.35 remains in review,1.6.36/1006036 is a saved draft; Wear1.6.36/20001006 is available to internal testers.
+- Preserve initial public Apple reviews and approved store listings. Ten actual phone screenshots per app are committed; matching store device size is required. Words Watch Now Playing 03 is held, Android companion capture and physical Windows/car/watch validation remain open. Google production qualification still requires actual testers.
+- Regenerable cache cleanup removed 33.49 GiB gross; approximately 15 GiB free after measured cleanup, with sources, signed archives, packages and simulator user data preserved. Measurements and delivery proofs are in the local publication asset folder.
+
 ## Quality follow-up — 2026-10-01
 
 - Functional PR10 merged as `9c8a61352174594ee055afa2b54b515f65b8035a`; genuine ten-image phone gallery PR11 merged as `567cb1efe641d36ba8bf5e17ddab68f39ab16674`. Latest full CI [36795802022](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36795802022) passed: **3,853 tests / 40 existing skips**, static analysis and fail-closed secret scan succeeded.
