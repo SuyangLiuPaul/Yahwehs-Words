@@ -1,3 +1,7 @@
+## Verified platform delivery — 1.7.3, 2026-10-01
+
+GitHub releases, all eight websites, four processed signed Apple builds, Google phone review submissions and Words Wear internal publication are recorded in [the delivery checkpoint](docs/delivery-1.7.3-2026-10-01.md). Mac external beta and Sword iOS external beta are Waiting for Review; Words iOS external beta needs the daily limit to reset. Preserve public Apple reviews and Microsoft submission4 certification. Physical pairing and Google production qualification remain open. Verified1.7.3 Microsoft packages are queued, not certified. Older dated checkpoints below remain historical.
+
 ## Watch, car and localized reference follow-up — 2026-10-01
 
 Words **1.7.3** includes the Mac Google credential repair, a live-verified COOP-safe web reauthentication helper, watch cover/progress presentation and current phone Bible chapter synchronization, CarPlay Browse audio, locale-aware Android Auto folders, localized external citations and the beta support form/copy-email fallback. The earlier candidate web popup wording below is superseded: the production-header experiment failed, and the helper retained the existing user during actual Google reauthentication. 56 targeted regressions passed; watchOS SwiftUI type-check and Wear debug build passed. The temporary development authentication harness was removed from source after its isolated session was signed out. Full updated CI, signed deliveries, actual screenshots and final production fingerprints remain required.
