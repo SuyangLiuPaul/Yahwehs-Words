@@ -11,12 +11,25 @@ This record distinguishes released downloads, submitted store builds and public 
 | GitHub v1.7.3 | Published, seven assets; all five platform workflows passed | Published, six assets; all five platform workflows passed |
 | Websites | Six sites serve 1.7.3; international and China bundles verified separately | Dev and production serve 1.7.3 with matching bundle |
 | Google Play phone | Closed Alpha 1.7.3 / 1007003 submitted for review | Closed Alpha 1.7.3 / 2000010 available to selected testers; released October1 at22:31 |
+| Google Play phone internal | 1.7.3 / 1007003 Available to internal testers; release3, October2 at02:05 | 1.7.3 / 2000010 Available to internal testers; release3, October2 at02:04 |
 | Wear OS | Internal test 1.7.3 / 20001011 published at 22:07 on October 1 | Not an application capability |
 | Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external submission hit Apple's daily beta-review limit | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Apple macOS | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Microsoft Store | Submission4 published1.6.37.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication | Submission4 published1.6.331.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication |
 
 The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/Mac1.6.34, Sword iOS1.6.328/Mac1.6.329). They were preserved. A newer TestFlight build does not replace those public submissions. After the initial versions are approved and released, create 1.7.3 updates using the processed 1070003 builds; do not cancel an existing review. Microsoft follows the separate latest-package guards in `microsoft-followup-1.7.3.md`; preserve submission5, not the now-published submission4. Google production still requires genuine closed-test qualification; internal Wear publication does not satisfy phone production eligibility.
+
+## Google phone internal test follow-up — October2
+
+Both internal phone tracks were corrected from their older1.6.x releases to the existing processed1.7.3 phone bundles. Release3 is Available to internal testers for each app; existing tester lists and all three localized release-note languages were preserved. Internal testers do not automatically receive an Alpha release. Words Alpha is still in review; Sword Alpha is available. Internal publication does not replace genuine closed-test production qualification.
+
+- [Words internal test](https://play.google.com/apps/internaltest/4701597346876713171)
+- [Sword internal test](https://play.google.com/apps/internaltest/4701487655638464702)
+- Local evidence: `google-phone-internal-1.7.3-verification.json`, `google-words-internal-1.7.3-published.jpg`, `google-sword-internal-1.7.3-published.jpg`.
+
+Microsoft submission5 for both apps remains In certification, Step3/4, with automatic publication. Apple initial public review status above is the last successful observation; the current browser check reached the password sign-in page, so no newer Apple status was verified and no review was changed.
+
+The active heartbeat also includes the owner's final disk cleanup after all latest store uploads have been accepted/validated. Keep source, signing material, current installable packages, useful signed archives and dSYMs. Before releasing space, verify that builds/uploads have stopped; verify file counts/hashes for any older archive transfer to T7. This final cleanup is queued, not completed.
 
 ## Source and verification
 
