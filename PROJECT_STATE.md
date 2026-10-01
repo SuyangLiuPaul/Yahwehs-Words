@@ -1,5 +1,14 @@
 # YsWords — project state
 
+## Reference clock follow-up — 2026-10-01
+
+The owner-supplied full reference diagram now has interactive day/night hours, selectable scenes and Scripture citations, plus the untouched zoomable image attachment. Existing hidden-entry policy remains. Canonical release wrapper prepares **1.7.2**; immutable 1.7.0/1.7.1 stay unchanged. Learning/visibility tests:19 passed per app; analysis clean. Independent reviews resolved narrow-screen hit overlap and separated printed references from further reading. A bounded, pubspec-validated merged-tag fallback keeps recent release history from disappearing during regeneration.
+
+Both apps' signed iOS and macOS **1.7.1/1070001** were delivered via Transporter; Words iOS external beta is waiting for review. This proves upload, not public store approval. 1.7.1 GitHub has Words7/Sword6 assets, and its production web deployments are verified. The new clock needs 1.7.2 CI and delivery before it is available in those binaries. Preserve pending public Apple reviews and MS certification. Current follow-up automation waits for verified1.7.2 packages and will not upload older queued1.7.1 packages.
+
+Storage follow-up: verified old compressed backups moved to `/Volumes/T7/Yahweh-Release-Backups-20261001`, with original-path symlinks. Cache-only cleanup retained dSYMs in a verified backup; latest archives/exports and owner simulator data remain. Current free space is approximately19–20GiB before new builds; exact byte records live in the local publication evidence folder.
+
+
 ## Owner visibility correction — 2026-10-01
 
 Words hides all three new learning entries. Sermon resume navigation and the new teaching videos remain visible. Code and existing URLs are retained. This supersedes the visible-feature claims below; v1.7.0 stays immutable and the correction is prepared as 1.7.1. See `docs/release-visibility-1.7.1-2026-10-01.md`.
