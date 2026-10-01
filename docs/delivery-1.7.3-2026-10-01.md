@@ -28,6 +28,8 @@ The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/
 
 Existing genuine phone/macOS galleries retain their measured dimensions, original versions and source/hash manifests. Additional 1.7.3 Mac and Wear captures are kept separately. A disconnected Wear Now Playing capture is QA evidence and is held from Store marketing. Do not relabel older screenshots as 1.7.3 or portray simulated state as verified physical pairing.
 
+**Paired simulator verification completed on October1:** Words1.7.3 sent Matthew1 and then Matthew2 from the phone reader to Apple Watch; received title/cover/progress for Ask祈求; Watch Pause was acknowledged and both devices stopped at1:55 /4:26. [Genuine Watch screenshots and hashes](screenshots/2026-10-01/apple-watch-1.7.3/README.md) preserve that evidence. This is a simulator result, not a physical-device claim.
+
 The source includes Words phone/watch current-chapter and shared audio progress, covers and localized car catalogues. Physical Windows/Play/Mac account flows, paired Apple Watch/Wear playback and Bible refresh, and vehicle dashboard controls require actual device confirmation. Sword has local profiles and no Firebase, watch or car companion. Green CI and successful upload do not close these hardware checks or declare every historical parity item complete.
 
 ## Storage and reproducibility

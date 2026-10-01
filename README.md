@@ -1,3 +1,5 @@
+**Latest Watch verification:** [1.7.3 paired simulator screenshots](docs/screenshots/2026-10-01/apple-watch-1.7.3/README.md). Phone chapter refresh and Watch remote pause were observed; physical pairing remains separately unverified.
+
 <h1 align="center">Yahweh's Words · 雅伟之言</h1>
 
 <p align="center">

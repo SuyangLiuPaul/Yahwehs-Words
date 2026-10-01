@@ -1,0 +1,50 @@
+[
+  {
+    "file": "01-bible-matthew-1.png",
+    "width": 416,
+    "height": 496,
+    "sha256": "de7b8000fb50c4539b4ad6258b3ad0ab3f1c6b59f313ff381ba2856756b0a620",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "paired Apple Watch / iPhone simulators",
+    "capture": "unaltered Simulator Save Screen PNG",
+    "use": "genuine app screenshot; simulator environment disclosed"
+  },
+  {
+    "file": "02-bible-matthew-2.png",
+    "width": 416,
+    "height": 496,
+    "sha256": "f6bd7af4d10dd49b24bdc8b6b2b76df62ddb0bfb72b59c21d275b0c510c8cc71",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "paired Apple Watch / iPhone simulators",
+    "capture": "unaltered Simulator Save Screen PNG",
+    "use": "genuine app screenshot; simulator environment disclosed"
+  },
+  {
+    "file": "03-now-playing.png",
+    "width": 416,
+    "height": 496,
+    "sha256": "5b4d7ed688ea6a5a1a2ff762aaf01a81d2abb857e4a8bd06192eb0a588456bb6",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "paired Apple Watch / iPhone simulators",
+    "capture": "unaltered Simulator Save Screen PNG",
+    "use": "genuine app screenshot; simulator environment disclosed"
+  },
+  {
+    "file": "04-paused-progress.png",
+    "width": 416,
+    "height": 496,
+    "sha256": "c5145fac258ee8482786b4eeec6c7fd4d07049ce1d3a73024b01d78d06ea756c",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "paired Apple Watch / iPhone simulators",
+    "capture": "unaltered Simulator Save Screen PNG",
+    "use": "QA evidence"
+  }
+]
