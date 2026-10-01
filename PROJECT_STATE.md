@@ -45,6 +45,15 @@ an "and" in the wrong place.
 
 ---
 
+## Quality follow-up — 2026-10-01
+
+- Functional PR10 merged as `9c8a61352174594ee055afa2b54b515f65b8035a`; genuine ten-image phone gallery PR11 merged as `567cb1efe641d36ba8bf5e17ddab68f39ab16674`. Latest full CI [36795802022](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36795802022) passed: **3,853 tests / 40 existing skips**, static analysis and fail-closed secret scan succeeded.
+- The Cairo Genizah metadata overflow is fixed and visually confirmed in a newly built native iOS simulator. BIB filename lookup and empty-gloss presentation, language statistics wrapping, and watch/car playback metadata/position guards are included. Original Scripture and note content are preserved.
+- The canonical release wrapper deployed **1.6.36** to all six international/China dev, QAT and production sites. Served-version and compiled-bundle checks passed for every site, preserving the international/China split. The release tag and rebuilt store binaries remain pending at this point.
+- Ten genuine phone screenshots and hashes are in `docs/screenshots/2026-10-01/manifest.json`. Watch Now Playing remains held because the rebuilt simulator still showed cached offline playback; physical paired-device synchronization has not been verified. No claim of transcript-word or cloud progress synchronization is made.
+- Microsoft Words submission3 remains in certification. Existing public Apple and external beta reviews are preserved; do not cancel them for this update. New screenshot sets belong in the next editable listing and must match each required device size.
+
+
 ## Current release — 2026-10-01
 
 Words **1.6.35** is on all six websites and GitHub; seven release assets include the Wear companion. Google Play closed-test update 1006035 is under review. Signed iOS/Mac 1060037 are processed and waiting for external TestFlight review, with internal Words testing assigned. Existing public iOS 1.6.33/Mac 1.6.34 reviews continue; Microsoft submission 3 is in certification and next 1.6.35 MSIX is prepared. See `docs/release-2026-09-30.md` for exact evidence and remaining gates.
