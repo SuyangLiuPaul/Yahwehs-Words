@@ -363,7 +363,7 @@ def released_versions(
                 spec = git('show', f'{tag}:pubspec.yaml', repo=repo)
             except subprocess.CalledProcessError:
                 continue
-            declared = re.search(r'^version:\s*(\d+\.\d+\.\d+)\b', spec, re.MULTILINE)
+            declared = re.search(r'^version:[ \t]*(\d+\.\d+\.\d+)(?:\+[0-9A-Za-z.-]+)?[ \t]*(?:#.*)?$', spec, re.MULTILINE)
             if not declared or declared.group(1) != version:
                 continue
             sha = git('rev-parse', f'{tag}^{{commit}}', repo=repo)

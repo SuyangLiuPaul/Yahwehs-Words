@@ -628,7 +628,7 @@ class RecentTaggedReleases(WithRepo):
         self.repo.commit('release: v0.9.0')
         self.repo.commit('feat: first feature')
         self.repo.commit('release: v1.0.0')
-        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0+1100000\n')
         self.repo.git('add', 'pubspec.yaml')
         tagged = self.repo.commit('feat: tagged feature')
         self.repo.git('tag', '-a', 'v1.1.0', '-m', 'release')
@@ -643,7 +643,7 @@ class RecentTaggedReleases(WithRepo):
         self.repo.commit('release: v0.9.0')
         self.repo.commit('feat: first feature')
         self.repo.commit('release: v1.0.0')
-        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0+1100000\n')
         self.repo.git('add', 'pubspec.yaml')
         self.repo.commit('feat: tagged feature')
         self.repo.git('tag', 'v1.1.0')
@@ -654,6 +654,16 @@ class RecentTaggedReleases(WithRepo):
         self.assertEqual([e['version'] for e in entries], ['1.2.1', '1.2.0', '1.1.0', '1.0.0'])
         self.assertIn('later feature', entries[1]['notes'][0])
         self.assertIn('tagged feature', entries[2]['notes'][0])
+
+    def test_stable_tag_rejects_prerelease_or_extra_version_component(self):
+        self.repo.commit('release: v0.9.0')
+        self.repo.commit('release: v1.0.0')
+        for version, scalar in [('1.1.0', '1.1.0-dev'), ('1.2.0', '1.2.0.5')]:
+            (self.repo.path / 'pubspec.yaml').write_text('version: ' + scalar + '\n')
+            self.repo.git('add', 'pubspec.yaml')
+            self.repo.commit('feat: candidate feature')
+            self.repo.git('tag', 'v' + version)
+        self.assertEqual([e[0] for e in bc.released_versions(30, repo=self.repo.path)], ['1.0.0', '0.9.0'])
 
     def test_tag_without_pubspec_is_skipped(self):
         self.repo.commit('release: v0.9.0')
@@ -666,7 +676,7 @@ class RecentTaggedReleases(WithRepo):
         self.repo.commit('release: v0.9.0')
         self.repo.commit('feat: first feature')
         self.repo.commit('release: v1.0.0')
-        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0+1100000\n')
         self.repo.git('add', 'pubspec.yaml')
         self.repo.commit('feat: tagged feature')
         self.repo.git('tag', 'v1.2.0')
