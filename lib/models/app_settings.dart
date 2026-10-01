@@ -336,6 +336,7 @@ class AppSettings extends ChangeNotifier {
   /// writes there.
   bool _fuzzySearch = false;
   bool _pinyinSearch = false;
+  Future<void> _searchModeWrites = Future<void>.value();
   /// Show the Strong's # badge inside each word chip in the originals
   /// (exegesis) sheet — handy for power users, distracting for some.
   bool _showStrongsInOriginals = true;
@@ -1106,22 +1107,36 @@ class AppSettings extends ChangeNotifier {
   /// the search under the value that is about to be replaced, and the
   /// user would see the old results and have to type a character to get
   /// the new ones. `_load` does the same, in the same order.
-  Future<void> setFuzzySearch(bool enabled) async {
-    if (_fuzzySearch == enabled) return;
-    _fuzzySearch = enabled;
-    setFuzzySearchEnabled(enabled);
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kFuzzySearch, enabled);
-  }
+  Future<void> setFuzzySearch(bool enabled) => _setSearchMode(
+      fuzzyEnabled: enabled, pinyinEnabled: enabled ? false : _pinyinSearch);
 
-  Future<void> setPinyinSearch(bool enabled) async {
-    if (_pinyinSearch == enabled) return;
-    _pinyinSearch = enabled;
-    pinyin.setPinyinSearchEnabled(enabled);
+  Future<void> setPinyinSearch(bool enabled) => _setSearchMode(
+      fuzzyEnabled: enabled ? false : _fuzzySearch, pinyinEnabled: enabled);
+
+  // One expansion mode, or neither. Update both runtime matchers before
+  // notifying, so a live query never observes both modes enabled.
+  Future<void> _setSearchMode({
+    required bool fuzzyEnabled,
+    required bool pinyinEnabled,
+  }) {
+    assert(!fuzzyEnabled || !pinyinEnabled);
+    if (_fuzzySearch == fuzzyEnabled && _pinyinSearch == pinyinEnabled) {
+      return Future<void>.value();
+    }
+    _fuzzySearch = fuzzyEnabled;
+    _pinyinSearch = pinyinEnabled;
+    setFuzzySearchEnabled(_fuzzySearch);
+    pinyin.setPinyinSearchEnabled(_pinyinSearch);
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kPinyinSearch, enabled);
+    // Serialize preference writes. Rapid taps must persist the final mode;
+    // reading current state here also respects a reset during a queued write.
+    _searchModeWrites =
+        _searchModeWrites.catchError((Object _) {}).then((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_kFuzzySearch, _fuzzySearch);
+      await prefs.setBool(_kPinyinSearch, _pinyinSearch);
+    });
+    return _searchModeWrites;
   }
 
   Future<void> setShowStrongsInOriginals(bool enabled) async {
@@ -1585,9 +1600,15 @@ class AppSettings extends ChangeNotifier {
     _booksViewMode = normalizeBooksViewMode(prefs.getString(_kBooksViewMode));
     _boldVerseText = prefs.getBool(_kBoldVerseText) ?? false;
     _fuzzySearch = prefs.getBool(_kFuzzySearch) ?? false;
+    final storedPinyin = prefs.getBool(_kPinyinSearch) ?? false;
+    // Older releases allowed both. Preserve the fuzzy setting and normalize
+    // that legacy combination; pinyin-only choices remain unchanged.
+    _pinyinSearch = storedPinyin && !_fuzzySearch;
     setFuzzySearchEnabled(_fuzzySearch);
-    _pinyinSearch = prefs.getBool(_kPinyinSearch) ?? _fuzzySearch;
     pinyin.setPinyinSearchEnabled(_pinyinSearch);
+    if (storedPinyin && _fuzzySearch) {
+      await prefs.setBool(_kPinyinSearch, false);
+    }
     _showStrongsInOriginals =
         prefs.getBool(_kShowStrongsInOriginals) ?? true;
     _autoExpandFirstRef = prefs.getBool(_kAutoExpandFirstRef) ?? false;
