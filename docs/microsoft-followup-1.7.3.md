@@ -1,6 +1,6 @@
 # Words Microsoft follow-up 1.7.3
 
-Preserve submission 4 certification. Only create a new submission after it publishes and editing is available. Skip if 1.7.3 or newer has already been submitted or published. Preserve approved descriptions, all three languages and genuine screenshots. Validate the package before submission and retain automatic publication after approval.
+**Completed follow-up, checked October2 at01:14 Melbourne:** submission4 published1.6.37.0. The verified1.7.3.0/x64 package below passed upload validation and was submitted as submission5 (`1152921505702022062`). Status: In certification, automatic publication after approval. All three languages received the prepared notes; approved descriptions and screenshot sets were preserved. Do not cancel certification or submit this package again. Skip any same/newer submitted or published version. The portal displays10/01/2026 for this submission. Local proof: `microsoft-words-1.7.3-submission5-certification.jpg` in the publication evidence folder.
 
 - Package: `/Users/pliu0036/Downloads/store-windows/words-1.7.3/Yahwehs-Words-msix/yahwehs_words.msix`
 - SHA-256: `ccea7303cc130d3051c57dbda6ff8216c8c48f5260da7c4ca98d95090f53c1fb`

@@ -1,3 +1,7 @@
+## Microsoft Store latest-package submission — 2026-10-02 Melbourne
+
+Both submission4 updates are now published (Words1.6.37.0 and Sword1.6.331.0). After verifying immutable1.7.3.0/x64 package hashes, identities and publisher, submission5 was created for each app, package validation passed, all three localized release notes were saved, and both updates were submitted for certification with automatic publication. Approved copy and screenshot sets were preserved. New submission IDs: Words1152921505702022062; Sword1152921505702022064. Checked01:14 Melbourne; the portal displays10/01/2026. Preserve submission5 certification and skip duplicate/newer packages. Apple public reviews remain pending; follow-up automation continues the remaining store gates. [Current platform record](docs/delivery-1.7.3-2026-10-01.md).
+
 ## Native media verification follow-up — 2026-10-02 Melbourne
 
 Words1.7.3 CarPlay Next track changed the phone song. Native MPNowPlayingInfoCenter contained real artwork, rate1 and advancing elapsed time; the simulator system screen still showed0:00/play after reconnection. The current delivery record distinguishes verified publication/command routing from the remaining system-display and physical-device checks. No app source or immutable release tag changed.

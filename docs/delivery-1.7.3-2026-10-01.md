@@ -1,5 +1,7 @@
 # Platform delivery checkpoint — 1.7.3, 2026-10-01
 
+Updated October2 at01:14 Melbourne: both Microsoft submission4 updates published; latest1.7.3.0 submission5 is in certification with automatic publication.
+
 This record distinguishes released downloads, submitted store builds and public approval. It supersedes earlier preparation checkpoints; older dated records remain history.
 
 ## Verified delivery
@@ -12,9 +14,9 @@ This record distinguishes released downloads, submitted store builds and public 
 | Wear OS | Internal test 1.7.3 / 20001011 published at 22:07 on October 1 | Not an application capability |
 | Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external submission hit Apple's daily beta-review limit | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Apple macOS | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review |
-| Microsoft Store | Submission 4 remains in certification; verified 1.7.3.0 package queued | Submission 4 remains in certification; verified 1.7.3.0 package queued |
+| Microsoft Store | Submission4 published1.6.37.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication | Submission4 published1.6.331.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication |
 
-The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/Mac1.6.34, Sword iOS1.6.328/Mac1.6.329). They were preserved. A newer TestFlight build does not replace those public submissions. After the initial versions are approved and released, create 1.7.3 updates using the processed 1070003 builds; do not cancel an existing review. Microsoft follows the separate latest-package guards in `microsoft-followup-1.7.3.md`. Google production still requires genuine closed-test qualification; internal Wear publication does not satisfy phone production eligibility.
+The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/Mac1.6.34, Sword iOS1.6.328/Mac1.6.329). They were preserved. A newer TestFlight build does not replace those public submissions. After the initial versions are approved and released, create 1.7.3 updates using the processed 1070003 builds; do not cancel an existing review. Microsoft follows the separate latest-package guards in `microsoft-followup-1.7.3.md`; preserve submission5, not the now-published submission4. Google production still requires genuine closed-test qualification; internal Wear publication does not satisfy phone production eligibility.
 
 ## Source and verification
 
@@ -43,7 +45,7 @@ Recoverable generated caches were removed; full signed archives, dSYMs, exports,
 ## Follow-up rules
 
 1. Recheck Words iOS external TestFlight once its daily submission limit resets; submit processed1070003 to the existing Public beta group with current test notes. Preserve pending older beta reviews.
-2. Preserve pending Apple public reviews and Microsoft certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
+2. Preserve pending Apple public reviews and Microsoft submission5 certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
 3. Use the verified signed packages and hashes; never move immutable tags or rebuild a different source under an existing release tag.
 4. Active thread heartbeat `words-sword` checks the remaining store gates every two hours, skips duplicate/newer submissions and preserves pending reviews. The old Sword-only automation id was no longer present when checked.
 5. Notify the owner only for completion, failure, meaningful review status changes or required owner action. Public approval dates cannot be promised.
