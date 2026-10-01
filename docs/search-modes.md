@@ -10,4 +10,4 @@ These options apply to plain-text queries. Strong numbers and operator queries r
 
 Older releases allowed both options to be stored. On upgrade, that combination becomes fuzzy-only; pinyin-only and both-off preferences are preserved. Runtime matchers update before listeners, and preference writes are serialized for rapid taps and resets.
 
-This requirement was added after Words v1.6.36 and Sword v1.6.331 were tagged and their signed packages uploaded. Those immutable packages do not include this follow-up. A later version must be built and delivered before store installations receive this behavior; do not cancel pending reviews or describe old binaries as containing it.
+This requirement was added after Words v1.6.36 and Sword v1.6.331 were tagged and their signed packages uploaded. Those immutable packages do not include this follow-up. The follow-up release is 1.6.37; its immutable packages must be built and delivered before store installations receive this behavior; do not cancel pending reviews or describe old binaries as containing it.
