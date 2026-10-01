@@ -46,10 +46,12 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
     'en': 'Fuzzy search',
   },
   'fuzzySearchSettingSubtitle': {
-    'zh-Hans': '匹配简繁写法、近义词和英文词形，例如 磯法 / 矶法、loved / love。扩展结果会标示原因；拼音在搜索页独立开启。',
-    'zh-Hant': '匹配簡繁寫法、近義詞和英文詞形，例如 磯法 / 矶法、loved / love。擴展結果會標示原因；拼音在搜尋頁獨立開啟。',
+    'zh-Hans':
+        '匹配简繁写法、近义词和英文词形，例如 磯法 / 矶法、loved / love。扩展结果会标示原因；开启模糊搜索会关闭拼音搜索。',
+    'zh-Hant':
+        '匹配簡繁寫法、近義詞和英文詞形，例如 磯法 / 矶法、loved / love。擴展結果會標示原因；開啟模糊搜尋會關閉拼音搜尋。',
     'en':
-        'Adds script variants, synonyms and English inflections, such as 磯法 / 矶法 and loved / love. Expanded hits are labelled. Pinyin has its own search-page switch.',
+        'Adds script variants, synonyms and English inflections, such as 磯法 / 矶法 and loved / love. Expanded hits are labelled. Enabling fuzzy search turns pinyin search off.',
   },
 
   // ── Row labels, one per rung ────────────────────────────────────────

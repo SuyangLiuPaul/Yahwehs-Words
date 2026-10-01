@@ -14,6 +14,11 @@ const searchOptionsStrings = <String, Map<String, String>>{
     'zh-Hans': '用 yesu、ye su、yē sū 或首字母 ys 搜索中文经文。',
     'zh-Hant': '用 yesu、ye su、yē sū 或首字母 ys 搜尋中文經文。'
   },
+  'modeHelp': {
+    'en': 'Choose fuzzy or pinyin; turn both off for exact search.',
+    'zh-Hans': '模糊与拼音只能选一个；都关闭则精确搜索。',
+    'zh-Hant': '模糊與拼音只能選一個；都關閉則精確搜尋。'
+  },
   'plainOnly': {
     'en':
         'These options apply to plain text. Strong’s numbers and operator queries keep their exact rules.',

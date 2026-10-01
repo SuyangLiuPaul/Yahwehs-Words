@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/search_options_strings.dart';
 
-/// Two independent preferences beside the query, with a wrapping layout
+/// Mutually exclusive expansion modes beside the query, with a wrapping layout
 /// for the workbench's narrow pane and large accessibility text.
 class SearchOptionsBar extends StatelessWidget {
   const SearchOptionsBar(
@@ -32,6 +32,9 @@ class SearchOptionsBar extends StatelessWidget {
                 selected: pinyin,
                 onSelected: plainQuery && !busy ? onPinyinChanged : null),
           ]),
+          if (plainQuery)
+            Text(searchOptionText('modeHelp', locale),
+                style: Theme.of(context).textTheme.bodySmall),
           if (!plainQuery || pinyin || fuzzy)
             Text(
                 searchOptionText(
