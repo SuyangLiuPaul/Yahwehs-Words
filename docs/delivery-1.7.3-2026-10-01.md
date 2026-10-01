@@ -30,6 +30,8 @@ Existing genuine phone/macOS galleries retain their measured dimensions, origina
 
 **Paired simulator verification completed on October1:** Words1.7.3 sent Matthew1 and then Matthew2 from the phone reader to Apple Watch; received title/cover/progress for Ask祈求; Watch Pause was acknowledged and both devices stopped at1:55 /4:26. [Genuine Watch screenshots and hashes](screenshots/2026-10-01/apple-watch-1.7.3/README.md) preserve that evidence. This is a simulator result, not a physical-device claim.
 
+**CarPlay simulator catalogue verification:** the normal Xcode signed build restored CarPlay discovery; category/church/song/sermon navigation and one-step Browse audio return were observed. Song selection reached the phone player. The standard simulator Now Playing transport remained at its initial position while phone playback advanced, so that view is held from marketing and system transport/physical vehicle checks remain open. [Genuine catalogue gallery](screenshots/2026-10-01/carplay-1.7.3/README.md).
+
 The source includes Words phone/watch current-chapter and shared audio progress, covers and localized car catalogues. Physical Windows/Play/Mac account flows, paired Apple Watch/Wear playback and Bible refresh, and vehicle dashboard controls require actual device confirmation. Sword has local profiles and no Firebase, watch or car companion. Green CI and successful upload do not close these hardware checks or declare every historical parity item complete.
 
 ## Storage and reproducibility
@@ -41,6 +43,7 @@ Recoverable generated caches were removed; full signed archives, dSYMs, exports,
 1. Recheck Words iOS external TestFlight once its daily submission limit resets; submit processed1070003 to the existing Public beta group with current test notes. Preserve pending older beta reviews.
 2. Preserve pending Apple public reviews and Microsoft certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
 3. Use the verified signed packages and hashes; never move immutable tags or rebuild a different source under an existing release tag.
-4. Notify the owner only for completion, failure, meaningful review status changes or required owner action. Public approval dates cannot be promised.
+4. Active thread heartbeat `words-sword` checks the remaining store gates every two hours, skips duplicate/newer submissions and preserves pending reviews. The old Sword-only automation id was no longer present when checked.
+5. Notify the owner only for completion, failure, meaningful review status changes or required owner action. Public approval dates cannot be promised.
 
 All local evidence paths above are relative to `/Users/pliu0036/Downloads/Yahweh-Publication-Assets-20261001/`. No credentials or private account data are included in this repository record.
