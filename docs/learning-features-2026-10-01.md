@@ -41,10 +41,10 @@ has its own Material so the highlight does not hide tap feedback.
 The same audited Sword datasets and runtime merge loader are ported into a
 namespace, preserving Words' existing chronology/family-tree models and assets.
 The imported base has 22 streams, 82 nations, 305 powers, 44 ministries and 783
-events; the runtime adds biblical narrative events from the unchanged copied
+events; the current runtime merge contains 887 events, adding biblical narrative events from the unchanged copied
 timeline through Sword's actual merge function. It retains conventional,
 traditional, reconstructed and approximate date distinctions, Scripture and
-dating references. The mobile renderer supports pan/zoom, stream filtering,
+dating references. Narrative passages and dating evidence appear in separately labelled groups. The mobile renderer supports pan/zoom, stream filtering,
 search, dot/list details, nation and ministry lists. Undated nations are not
 assigned invented years. This is a dedicated mobile renderer; Sword's existing
 stacked/flat wheel and strip remain intact. Snapshot hashes are in
@@ -68,3 +68,15 @@ Store/TestFlight review are separate gates; existing pending submissions are
 preserved. Physical car/watch/Windows verification and Google's production-access
 qualification are still open. Signed archives, screenshots and installation
 packages were retained during regenerable build-cache cleanup.
+
+## Verification follow-up
+
+Full local regression suites passed before the visual follow-up: Words 3,888
+tests / 36 existing skips, Sword 5,976 / 10 existing skips, zero failures.
+Both static analyses were clean. Independent immutable-source review found two
+Words world-wheel issues: canvas CJK fallback and an unlabelled mix of narrative
+passages/dating evidence. Both are corrected with focused regression coverage.
+Actual 402×874 browser inspection also found opaque dial marker backgrounds
+overlapping hour labels; transparent markers retain 48px touch targets, and
+each marker now exposes one actionable accessible button. Final CI is required
+for the corrected commits.

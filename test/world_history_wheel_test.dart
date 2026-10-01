@@ -43,6 +43,42 @@ void main() {
     expect((j['powers'] as List).length, 305);
     expect((j['events'] as List).length, 783);
   });
+  test('world canvas labels explicitly carry the bundled CJK fallback', () {
+    final source =
+        File('lib/pages/world_history_wheel_page.dart').readAsStringSync();
+    expect('TextPainter('.allMatches(source).length, 2);
+    expect('fontFamilyFallback: kCjkFontFallback'.allMatches(source).length, 2);
+  });
+  testWidgets('event passages and chronology evidence stay separate',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.runAsync(() => WheelHistoryService.instance.load());
+    final data = WheelHistoryService.instance.cached!;
+    final event = data.events
+        .firstWhere((e) => e.refs.isNotEmpty && e.datingRefs.isNotEmpty);
+    final settings = AppSettings();
+    await settings.setLocale('en');
+    await tester.pumpWidget(ChangeNotifierProvider<AppSettings>.value(
+        value: settings,
+        child: MaterialApp(home: const WorldHistoryWheelPage())));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), event.titleFor('en'));
+    await tester.pumpAndSettle();
+    final eventRow = find.byKey(ValueKey('world.event.${event.id}'));
+    await tester.scrollUntilVisible(eventRow, 200,
+        scrollable: find
+            .descendant(
+                of: find.byType(ListView), matching: find.byType(Scrollable))
+            .first);
+    await tester.ensureVisible(eventRow);
+    await tester.pumpAndSettle();
+    await tester.tap(eventRow);
+    await tester.pumpAndSettle();
+    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.text('Narrative passages'), findsOneWidget);
+    expect(find.text('Dating evidence'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   test('geometry and hit detection share the painted event point', () {
     final a = worldEventPoint(-1000, 2, 22, 2026);
     final b = worldEventPoint(1000, 2, 22, 2026);

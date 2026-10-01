@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/world_history/models/wheel_history.dart';
 import 'package:yahwehs_words/utils/world_wheel_geometry.dart';
+import 'package:yahwehs_words/utils/font_catalog.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/app_scroll_behavior.dart';
 import 'package:yahwehs_words/utils/passage_localizer.dart';
@@ -66,7 +67,8 @@ class _WorldHistoryWheelPageState extends State<WorldHistoryWheelPage> {
   }
 
   Future<void> _detail(
-      String title, String body, List<String> refs, String locale) async {
+      String title, String body, List<String> refs, String locale,
+      {List<String> datingRefs = const []}) async {
     await showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
@@ -88,18 +90,34 @@ class _WorldHistoryWheelPageState extends State<WorldHistoryWheelPage> {
                           SelectableText(body,
                               scrollPhysics: kSelectableTextPhysics),
                           const SizedBox(height: 16),
-                          Wrap(spacing: 8, runSpacing: 8, children: [
-                            for (final r in refs)
-                              if (parseReference(r) != null)
-                                ActionChip(
-                                    label: Text(localizePassage(r, locale)),
-                                    onPressed: () async {
-                                      final ref = parseReference(r);
-                                      if (ref != null) {
-                                        await showVersePopup(ctx, ref);
-                                      }
-                                    })
-                          ]),
+                          for (final group in [
+                            (
+                              refs,
+                              _l(locale, 'Narrative passages', '事件经文', '事件經文')
+                            ),
+                            (
+                              datingRefs,
+                              _l(locale, 'Dating evidence', '年代推算依据', '年代推算依據')
+                            ),
+                          ])
+                            if (group.$1.isNotEmpty) ...[
+                              Text(group.$2,
+                                  style: Theme.of(ctx).textTheme.titleMedium),
+                              const SizedBox(height: 8),
+                              Wrap(spacing: 8, runSpacing: 8, children: [
+                                for (final r in group.$1)
+                                  if (parseReference(r) != null)
+                                    ActionChip(
+                                        label: Text(localizePassage(r, locale)),
+                                        onPressed: () async {
+                                          final ref = parseReference(r);
+                                          if (ref != null) {
+                                            await showVersePopup(ctx, ref);
+                                          }
+                                        })
+                              ]),
+                              const SizedBox(height: 12),
+                            ],
                         ]))))));
   }
 
@@ -107,8 +125,9 @@ class _WorldHistoryWheelPageState extends State<WorldHistoryWheelPage> {
     _detail(
         e.titleFor(l),
         '${worldYearLabel(e.year, l)}${e.approximate ? ' ≈' : ''} · ${worldDateBasis(e.basis, l)}\n\n${e.descFor(l)}',
-        [...e.refs, ...e.datingRefs],
-        l);
+        e.refs,
+        l,
+        datingRefs: e.datingRefs);
   }
 
   @override
@@ -421,7 +440,10 @@ class _WorldPainter extends CustomPainter {
       final tp = TextPainter(
           text: TextSpan(
               text: worldYearLabel(year, locale),
-              style: TextStyle(fontSize: 15, color: colors.onSurface)),
+              style: TextStyle(
+                  fontSize: 15,
+                  fontFamilyFallback: kCjkFontFallback,
+                  color: colors.onSurface)),
           textDirection: TextDirection.ltr)
         ..layout();
       tp.paint(canvas, point - Offset(tp.width / 2, tp.height / 2));
@@ -431,6 +453,7 @@ class _WorldPainter extends CustomPainter {
             text: '${events.length}\n${_l(locale, 'events', '事件', '事件')}',
             style: TextStyle(
                 fontSize: 26,
+                fontFamilyFallback: kCjkFontFallback,
                 fontWeight: FontWeight.w600,
                 color: colors.onSurface)),
         textAlign: TextAlign.center,

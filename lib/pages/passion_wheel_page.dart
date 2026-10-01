@@ -238,6 +238,8 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
         height: 48,
         child: Semantics(
             button: true,
+            onTap: () => _select(e),
+            excludeSemantics: true,
             selected: selected,
             label:
                 '${learningText(e.title, locale)} · ${learningText(e.period, locale)}',
@@ -251,8 +253,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                         size: selected ? 26 : 18,
                         color: colors.primary),
                     style: IconButton.styleFrom(
-                        backgroundColor:
-                            colors.surface.withValues(alpha: .85))))));
+                        backgroundColor: Colors.transparent)))));
   }
 
   Widget _detail(PassionEvent e, String locale, ColorScheme colors) => Card(
