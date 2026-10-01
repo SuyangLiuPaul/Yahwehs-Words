@@ -25,9 +25,9 @@
 
 ---
 
-## Learning guides
+## Current learning visibility
 
-Interactive Gospel Passion hours and a source-linked selection of Pastor Eric H. H. Chang’s biblical principles are documented in [Learning features](docs/learning-features-2026-10-01.md). Scripture dates and approximate modern hours are distinguished; principle explanations are editorial guides with original sermon links.
+The new Passion wheel, Bible principles and world-history wheel are hidden from the Words dashboard at the owner’s request. Sermon resume navigation and the six Mandarin/Cantonese teaching videos remain available. Original page URLs are retained for compatibility. See [visibility and release notes](docs/release-visibility-1.7.1-2026-10-01.md).
 
 ## Try it now
 

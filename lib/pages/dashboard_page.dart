@@ -1,3 +1,4 @@
+import 'package:yahwehs_words/constants/learning_visibility.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
@@ -962,18 +963,47 @@ class _DashboardPageState extends State<DashboardPage> {
                 routeName: '/chronology',
               ),
             ),
-            const SizedBox(height: 8),
-            _FeaturedCard(icon: Icons.schedule, title: kPassionTitle[locale] ?? kPassionTitle['en']!,
-              subtitle: const {'en': 'When, where and what · compare all four Gospels', 'zh-Hans': '时间、地点与事件 · 并列四福音', 'zh-Hant': '時間、地點與事件 · 並列四福音'}[locale]!, scheme: scheme, settings: settings,
-              onTap: () => pushPage(const PassionWheelPage(), routeName: kPassionWheelPath)),
-            const SizedBox(height: 8),
-            _FeaturedCard(icon: Icons.menu_book_outlined, title: kPrinciplesTitle[locale] ?? kPrinciplesTitle['en']!,
-              subtitle: const {'en': 'Pastor Eric’s sermons · explanations and Scripture', 'zh-Hans': '张牧师讲道 · 简释、出处与经文', 'zh-Hant': '張牧師講道 · 簡釋、出處與經文'}[locale]!, scheme: scheme, settings: settings,
-              onTap: () => pushPage(const BiblePrinciplesPage(), routeName: kPrinciplesPath)),
-            const SizedBox(height: 8),
-            _FeaturedCard(icon: Icons.public, title: kWorldWheelTitle[locale] ?? kWorldWheelTitle['en']!,
-              subtitle: const {'en': 'Nations, powers and events · explore the dates', 'zh-Hans': '民族、政权与事件 · 探索历史年代', 'zh-Hant': '民族、政權與事件 · 探索歷史年代'}[locale]!, scheme: scheme, settings: settings,
-              onTap: () => pushPage(const WorldHistoryWheelPage(), routeName: kWorldWheelPath)),
+            if (kShowNewLearningPages) ...[
+              const SizedBox(height: 8),
+              _FeaturedCard(
+                  icon: Icons.schedule,
+                  title: kPassionTitle[locale] ?? kPassionTitle['en']!,
+                  subtitle: const {
+                    'en': 'When, where and what · compare all four Gospels',
+                    'zh-Hans': '时间、地点与事件 · 并列四福音',
+                    'zh-Hant': '時間、地點與事件 · 並列四福音'
+                  }[locale]!,
+                  scheme: scheme,
+                  settings: settings,
+                  onTap: () => pushPage(const PassionWheelPage(),
+                      routeName: kPassionWheelPath)),
+              const SizedBox(height: 8),
+              _FeaturedCard(
+                  icon: Icons.menu_book_outlined,
+                  title: kPrinciplesTitle[locale] ?? kPrinciplesTitle['en']!,
+                  subtitle: const {
+                    'en': 'Pastor Eric’s sermons · explanations and Scripture',
+                    'zh-Hans': '张牧师讲道 · 简释、出处与经文',
+                    'zh-Hant': '張牧師講道 · 簡釋、出處與經文'
+                  }[locale]!,
+                  scheme: scheme,
+                  settings: settings,
+                  onTap: () => pushPage(const BiblePrinciplesPage(),
+                      routeName: kPrinciplesPath)),
+              const SizedBox(height: 8),
+              _FeaturedCard(
+                  icon: Icons.public,
+                  title: kWorldWheelTitle[locale] ?? kWorldWheelTitle['en']!,
+                  subtitle: const {
+                    'en': 'Nations, powers and events · explore the dates',
+                    'zh-Hans': '民族、政权与事件 · 探索历史年代',
+                    'zh-Hant': '民族、政權與事件 · 探索歷史年代'
+                  }[locale]!,
+                  scheme: scheme,
+                  settings: settings,
+                  onTap: () => pushPage(const WorldHistoryWheelPage(),
+                      routeName: kWorldWheelPath)),
+            ],
           ],
         );
 
