@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "schema": 1,
+    "schema": 2,
     "editorial": true,
     "checkedAt": "2026-10-01",
     "sourcePassages": [
@@ -15,7 +15,16 @@
       "https://www.biblegateway.com/passage/?search=Luke%2022-23&version=KJV",
       "https://www.biblegateway.com/passage/?search=John%2018-19&version=KJV"
     ],
-    "method": "Short editorial summaries, parallel Gospel references. Only explicit third/sixth/ninth daytime hours have approximate modern clock markers. Untimed scenes have no invented clock coordinate. Event order is a reading guide; John’s hearing time and differing narrative placement are explicitly retained."
+    "method": "Parallel Gospel references and original summaries retained. Reference-diagram placements are separate diagramHour metadata; clockHour remains limited to explicit third/sixth/ninth daytime hours. No Scripture wording is changed.",
+    "referenceDiagram": {
+      "asset": "assets/images/passion-reference-clock.jpeg",
+      "title": "圣经黑暗时刻时辰圈",
+      "source": "https://www.fydt.org/",
+      "providedBy": "Owner, 2026-10-01",
+      "sha256": "80df6472ead28e4a85fb78b5df860ceecd046f7a6adb801d6ddf0c073c682804",
+      "timing": "Approximate placements transcribed from the attached diagram; separate from clockHour, which records Gospel time statements. The diagram does not settle John 19:14 versus Mark 15:25.",
+      "printedReferences": "diagramRefs transcribes the owner-supplied image separately from the existing study references. Both sets open the local Scripture reader."
+    }
   },
   "events": [
     {
@@ -45,7 +54,14 @@
         "Mark 14:17-26",
         "Luke 22:14-20"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 20,
+      "diagramRefs": [
+        "Matthew 26:17-25",
+        "Mark 14:12-21",
+        "Luke 22:7-12",
+        "John 13:21-30"
+      ]
     },
     {
       "id": "garden",
@@ -74,7 +90,13 @@
         "Mark 14:32-42",
         "Luke 22:39-46"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 0,
+      "diagramRefs": [
+        "Matthew 26:36-46",
+        "Mark 14:32-42",
+        "Luke 22:39-46"
+      ]
     },
     {
       "id": "arrest",
@@ -104,7 +126,14 @@
         "Luke 22:47-53",
         "John 18:1-12"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 1,
+      "diagramRefs": [
+        "Matthew 26:47-56",
+        "Mark 14:43-52",
+        "Luke 22:47-53",
+        "John 18:1-11"
+      ]
     },
     {
       "id": "annas",
@@ -131,7 +160,11 @@
       "refs": [
         "John 18:13-24"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 2,
+      "diagramRefs": [
+        "John 18:13-23"
+      ]
     },
     {
       "id": "caiaphas",
@@ -159,7 +192,12 @@
         "Matthew 26:57-68",
         "Mark 14:53-65"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 3,
+      "diagramRefs": [
+        "Matthew 26:57-68",
+        "John 18:24"
+      ]
     },
     {
       "id": "peter",
@@ -219,7 +257,12 @@
         "Matthew 27:1-2",
         "Mark 15:1"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 5,
+      "diagramRefs": [
+        "Matthew 27:1-2",
+        "Luke 22:66-71"
+      ]
     },
     {
       "id": "pilate",
@@ -249,7 +292,14 @@
         "Luke 23:1-5",
         "John 18:28-38"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 6,
+      "diagramRefs": [
+        "Matthew 27:1-2",
+        "Matthew 27:11-14",
+        "Luke 23:1-7",
+        "John 18:28-38"
+      ]
     },
     {
       "id": "herod",
@@ -276,7 +326,11 @@
       "refs": [
         "Luke 23:6-12"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 7,
+      "diagramRefs": [
+        "Luke 23:6-11"
+      ]
     },
     {
       "id": "sentence",
@@ -306,7 +360,14 @@
         "Luke 23:13-25",
         "John 19:13-16"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 8,
+      "diagramRefs": [
+        "Matthew 27:11-26",
+        "Mark 15:1-15",
+        "Luke 23:13-25",
+        "John 19:1-16"
+      ]
     },
     {
       "id": "mockery",
@@ -335,7 +396,12 @@
         "Mark 15:15-20",
         "John 19:1-5"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 8,
+      "diagramRefs": [
+        "Matthew 27:26-31",
+        "Mark 15:15-20"
+      ]
     },
     {
       "id": "road",
@@ -395,7 +461,14 @@
         "Luke 23:32-34",
         "John 19:18-24"
       ],
-      "clockHour": 9
+      "clockHour": 9,
+      "diagramHour": 9,
+      "diagramRefs": [
+        "Matthew 27:31-44",
+        "Mark 15:20-32",
+        "Luke 23:26-38",
+        "John 19:16-22"
+      ]
     },
     {
       "id": "taunts",
@@ -480,7 +553,13 @@
         "Mark 15:33",
         "Luke 23:44-45"
       ],
-      "clockHour": 12
+      "clockHour": 12,
+      "diagramHour": 12,
+      "diagramRefs": [
+        "Matthew 27:45",
+        "Mark 15:33",
+        "Luke 23:44"
+      ]
     },
     {
       "id": "death",
@@ -510,7 +589,14 @@
         "Luke 23:46",
         "John 19:28-30"
       ],
-      "clockHour": 15
+      "clockHour": 15,
+      "diagramHour": 15,
+      "diagramRefs": [
+        "John 19:30",
+        "Matthew 27:45-50",
+        "Mark 15:33-37",
+        "Luke 23:44-46"
+      ]
     },
     {
       "id": "witness",
@@ -596,7 +682,14 @@
         "Luke 23:50-56",
         "John 19:38-42"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 17,
+      "diagramRefs": [
+        "Matthew 27:57-61",
+        "Mark 15:42-47",
+        "Luke 23:50-56",
+        "John 19:38-42"
+      ]
     }
   ]
 }

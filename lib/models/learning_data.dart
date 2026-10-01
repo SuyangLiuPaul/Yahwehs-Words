@@ -12,7 +12,10 @@ class PassionEvent {
   final String id;
   final Map<String, String> title, place, period, summary;
   final List<String> refs;
+  final List<String> diagramRefs;
   final int? clockHour;
+  // The owner’s reference diagram supplies estimates, never Gospel times.
+  final int? diagramHour;
   const PassionEvent(
       {required this.id,
       required this.title,
@@ -20,7 +23,9 @@ class PassionEvent {
       required this.period,
       required this.summary,
       required this.refs,
-      this.clockHour});
+      this.diagramRefs = const [],
+      this.clockHour,
+      this.diagramHour});
   factory PassionEvent.fromJson(Map<String, dynamic> j) => PassionEvent(
       id: j['id'] as String,
       title: _text(j['title']),
@@ -28,12 +33,15 @@ class PassionEvent {
       period: _text(j['period']),
       summary: _text(j['summary']),
       refs: (j['refs'] as List).cast<String>(),
-      clockHour: j['clockHour'] as int?);
+      diagramRefs: (j['diagramRefs'] as List? ?? const []).cast<String>(),
+      clockHour: j['clockHour'] as int?,
+      diagramHour: j['diagramHour'] as int?);
   bool hasGospel(String? gospel) =>
-      gospel == null || refs.any((r) => r.startsWith('$gospel '));
-  List<String> refsFor(String? gospel) => gospel == null
-      ? refs
-      : refs.where((r) => r.startsWith('$gospel ')).toList();
+      gospel == null ||
+      {...refs, ...diagramRefs}.any((r) => r.startsWith('$gospel '));
+  List<String> refsFor(String? gospel) => {...refs, ...diagramRefs}
+      .where((r) => gospel == null || r.startsWith('$gospel '))
+      .toList();
   // Mark alone names the third hour. Luke and John give no ninth-hour
   // clock for the final cry; John has no darkness interval. A filter must
   // not import another Gospel's clock silently.

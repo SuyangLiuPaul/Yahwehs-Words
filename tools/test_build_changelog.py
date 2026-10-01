@@ -623,5 +623,56 @@ class BumpWiring(unittest.TestCase):
         )
 
 
+class RecentTaggedReleases(WithRepo):
+    def test_recent_valid_tag_fills_gap_without_replacing_old_history(self):
+        self.repo.commit('release: v0.9.0')
+        self.repo.commit('feat: first feature')
+        self.repo.commit('release: v1.0.0')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        self.repo.git('add', 'pubspec.yaml')
+        tagged = self.repo.commit('feat: tagged feature')
+        self.repo.git('tag', '-a', 'v1.1.0', '-m', 'release')
+        self.repo.commit('feat: next feature')
+        entries = bc.build(30, head_version='1.1.1', repo=self.repo.path)['entries']
+        self.assertEqual([e['version'] for e in entries], ['1.1.1', '1.1.0', '1.0.0'])
+        self.assertIn('next feature', entries[0]['notes'][0])
+        self.assertIn('tagged feature', entries[1]['notes'][0])
+        self.assertEqual(bc.released_versions(30, repo=self.repo.path)[0][1], tagged)
+
+    def test_tag_only_release_survives_a_later_conventional_release(self):
+        self.repo.commit('release: v0.9.0')
+        self.repo.commit('feat: first feature')
+        self.repo.commit('release: v1.0.0')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        self.repo.git('add', 'pubspec.yaml')
+        self.repo.commit('feat: tagged feature')
+        self.repo.git('tag', 'v1.1.0')
+        self.repo.commit('feat: later feature')
+        self.repo.commit('release: v1.2.0')
+        self.repo.commit('feat: next feature')
+        entries = bc.build(30, head_version='1.2.1', repo=self.repo.path)['entries']
+        self.assertEqual([e['version'] for e in entries], ['1.2.1', '1.2.0', '1.1.0', '1.0.0'])
+        self.assertIn('later feature', entries[1]['notes'][0])
+        self.assertIn('tagged feature', entries[2]['notes'][0])
+
+    def test_tag_without_pubspec_is_skipped(self):
+        self.repo.commit('release: v0.9.0')
+        self.repo.commit('feat: first feature')
+        self.repo.commit('release: v1.0.0')
+        self.repo.git('tag', 'v1.1.0')
+        self.assertEqual([e[0] for e in bc.released_versions(30, repo=self.repo.path)], ['1.0.0', '0.9.0'])
+
+    def test_mismatched_or_old_tag_is_not_a_new_anchor(self):
+        self.repo.commit('release: v0.9.0')
+        self.repo.commit('feat: first feature')
+        self.repo.commit('release: v1.0.0')
+        (self.repo.path / 'pubspec.yaml').write_text('version: 1.1.0\n')
+        self.repo.git('add', 'pubspec.yaml')
+        self.repo.commit('feat: tagged feature')
+        self.repo.git('tag', 'v1.2.0')
+        self.repo.git('tag', 'v0.8.0')
+        self.assertEqual([e[0] for e in bc.released_versions(30, repo=self.repo.path)], ['1.0.0', '0.9.0'])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -190,6 +190,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/passion_wheel.json
+    - assets/images/passion-reference-clock.jpeg
     - assets/bible_principles.json
     - assets/world_chart/
     # 2026-09-09: the changelog the app shows, generated from the
