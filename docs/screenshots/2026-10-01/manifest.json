@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-01",
+  "app": "Words",
+  "screenshots": [
+    {
+      "path": "iphone/01-home.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "82184f35a796cf67fed1413383d883a4574610d38d3c96db5b70a73c30c05824",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/02-reader.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "dee18a0d9a73e402de3b9304865361a0d90c615b88876673e28bb166040e9aac",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/03-bible-editions.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "401d80f558a37ec6fa6ef59fa3c3ac1b84e68171620039d92fb7646192b9d031",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/04-original-languages.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "7f7a70ced3ec464bf82248985420a8ede202747a119dbc92efffdb42325f49e3",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": "Local rebuilt simulator confirms repaired wrapping; this is not an uploaded new store binary.",
+      "source_commit": "8d08107c4ef3da9aaf2be8ec55e5a66a5113940e"
+    },
+    {
+      "path": "iphone/05-word-study.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "097293c9e37602eee944a2a8963f177914c7aede52248ac81105c4320ba0f114",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/06-search-results.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "937806bef2f9f4bf047033a9846d92c0e4f57ef94d23456a1fe82bd80131a23a",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/07-search-chart.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "d74b9572d86916adeacd03c59612643ec5c11c6d3e7c3541ac06257be48dff99",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/08-hymn-library.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "e40181119c3c49415b1f6ee0639a1210ba375361b09cb90c8cf19e580c0fe787",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/09-chronology.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "6aa97cac8a30a799a5f999fee58a1d059e3c5a1e184df58bb7b6403ca94a180d",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    },
+    {
+      "path": "iphone/10-teachings.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "4069ee98f49aca5665e78dd9e8f0cd6ce4bf46a7a49d7af7ad380241b135c8a9",
+      "capture": "native Simulator File > Save Screen; genuine app UI; no device frame",
+      "app_version": "1.6.35",
+      "build": "1060038",
+      "status": "prepared; platform upload pending",
+      "notes": ""
+    }
+  ]
+}

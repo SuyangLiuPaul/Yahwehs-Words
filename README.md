@@ -111,89 +111,32 @@ any APIs themselves**; everything is at the Firebase project level.
 
 ---
 
-## App Screenshots
+## App screenshots
 
-<p align="center"><sub>Captured on an iPhone 17 Pro (iOS 26.5). Current release <b>v1.4.190</b>. Download builds for every platform from <a href="https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest">Releases</a>; full release log in <a href="HANDOFF.md">HANDOFF.md</a>.</sub></p>
+Ten distinct, unedited captures from the actual iOS simulator app, prepared on 1 October 2026. These are product previews; they do not indicate that a pending store review has approved the new build. Capture metadata and hashes are in [the screenshot manifest](docs/screenshots/2026-10-01/manifest.json).
 
-<h3 align="center">Read &amp; study the Word</h3>
-
-<p align="center"><img height="300" src="assets/screenshots/screenshot_ipad_split_landscape.png" alt="Split View"/><br/><sub><b>Split View — two fully independent panes, bilingual side-by-side (here NASB &amp; 和合本雅伟版)</b></sub></p>
-
-<table align="center">
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_dashboard_home.png" alt="Dashboard"/><br/><sub><b>Dashboard</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_reading_paragraph.png" alt="Paragraph reader"/><br/><sub><b>Paragraph reader</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_reading_immersive.png" alt="Immersive reading"/><br/><sub><b>Immersive reading</b></sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_multi_select.png" alt="Verse actions"/><br/><sub><b>Verse actions</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_word_study.png" alt="Word-by-word exegesis"/><br/><sub><b>Word-by-word exegesis</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_ai_panel.png" alt="AI study panel"/><br/><sub><b>AI study panel</b></sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_ai_explanation.png" alt="AI study chat"/><br/><sub><b>AI study chat</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_version_switch.png" alt="14 translations"/><br/><sub><b>14 translations</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_book_chapter_picker.png" alt="Book &amp; chapter"/><br/><sub><b>Book &amp; chapter</b></sub></td>
-  </tr>
+<table>
+<tr>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/01-home.png"><img src="docs/screenshots/2026-10-01/iphone/01-home.png" width="210" alt="Home and daily verse"/></a><br/>Home and daily verse</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/02-reader.png"><img src="docs/screenshots/2026-10-01/iphone/02-reader.png" width="210" alt="Bible reader"/></a><br/>Bible reader</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/03-bible-editions.png"><img src="docs/screenshots/2026-10-01/iphone/03-bible-editions.png" width="210" alt="Bible editions"/></a><br/>Bible editions</td>
+</tr>
+<tr>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/04-original-languages.png"><img src="docs/screenshots/2026-10-01/iphone/04-original-languages.png" width="210" alt="Original languages"/></a><br/>Original languages</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/05-word-study.png"><img src="docs/screenshots/2026-10-01/iphone/05-word-study.png" width="210" alt="Word study"/></a><br/>Word study</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/06-search-results.png"><img src="docs/screenshots/2026-10-01/iphone/06-search-results.png" width="210" alt="Search results"/></a><br/>Search results</td>
+</tr>
+<tr>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/07-search-chart.png"><img src="docs/screenshots/2026-10-01/iphone/07-search-chart.png" width="210" alt="Search chart"/></a><br/>Search chart</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/08-hymn-library.png"><img src="docs/screenshots/2026-10-01/iphone/08-hymn-library.png" width="210" alt="Hymn library"/></a><br/>Hymn library</td>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/09-chronology.png"><img src="docs/screenshots/2026-10-01/iphone/09-chronology.png" width="210" alt="Bible chronology"/></a><br/>Bible chronology</td>
+</tr>
+<tr>
+<td align="center"><a href="docs/screenshots/2026-10-01/iphone/10-teachings.png"><img src="docs/screenshots/2026-10-01/iphone/10-teachings.png" width="210" alt="Teachings of Jesus"/></a><br/>Teachings of Jesus</td>
+</tr>
 </table>
 
-<h3 align="center">On iPad &amp; large screens</h3>
-
-<p align="center"><img height="320" src="assets/screenshots/screenshot_ipad_split_landscape.png" alt="iPad Split View (landscape)"/><br/><sub><b>Landscape Split View — two full columns side by side (NASB ‖ 和合本雅伟版)</b></sub></p>
-
-<table align="center">
-  <tr>
-    <td align="center" valign="top"><img height="360" src="assets/screenshots/screenshot_ipad_split_view.png" alt="iPad Split View (portrait)"/><br/><sub><b>Portrait Split View</b></sub></td>
-    <td align="center" valign="top"><img height="360" src="assets/screenshots/screenshot_ipad_reading.png" alt="iPad reading"/><br/><sub><b>Wide reading column</b></sub></td>
-  </tr>
-</table>
-
-<h3 align="center">Discover &amp; explore</h3>
-
-<table align="center">
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_search.png" alt="Search"/><br/><sub><b>Search</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_dashboard_quicklinks.png" alt="Quick-links"/><br/><sub><b>Quick-links</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_bible_evidence.png" alt="Bible Evidence"/><br/><sub><b>Bible Evidence</b></sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_evidence_detail.png" alt="Evidence detail"/><br/><sub><b>Evidence detail</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_bible_tools.png" alt="Original languages"/><br/><sub><b>Original languages</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_bible_timeline.png" alt="Bible Timeline"/><br/><sub><b>Bible Timeline</b></sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_family_tree.png" alt="Family Tree"/><br/><sub><b>Family Tree</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_bible_trivia.png" alt="Bible Trivia"/><br/><sub><b>Bible Trivia</b></sub></td>
-  </tr>
-</table>
-
-<h3 align="center">Sermons &amp; personalize</h3>
-
-<table align="center">
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_sermons.png" alt="Sermons"/><br/><sub><b>Sermons</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_settings_page.png" alt="Settings"/><br/><sub><b>Settings</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_settings_theme.png" alt="Theme &amp; colour"/><br/><sub><b>Theme &amp; colour</b></sub></td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_dark_mode.png" alt="Dark mode"/><br/><sub><b>Dark mode</b></sub></td>
-    <td align="center" valign="top" width="33%"><img height="340" src="assets/screenshots/screenshot_dark_dashboard.png" alt="Dark dashboard"/><br/><sub><b>Dark dashboard</b></sub></td>
-  </tr>
-</table>
-
-<h3 align="center">Your theme, your icon</h3>
-
-<p align="center"><sub>Pick a primary colour in Settings and the app icon recolours to match — the iOS home screen, Android launcher, macOS Dock, and the browser favicon all follow.</sub></p>
-
-<p align="center">
-  <img width="76" src="assets/screenshots/screenshot_icon_blue.png" alt="Blue"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_red.png" alt="Red"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_orange.png" alt="Orange"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_green.png" alt="Green"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_purple.png" alt="Purple"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_pink.png" alt="Pink"/>&nbsp;
-  <img width="76" src="assets/screenshots/screenshot_icon_dark.png" alt="Dark"/>
-</p>
+Words has phone-controlled car and watch companions. Companion screenshots and physical-device validation are tracked separately in [car and watch delivery notes](docs/car-and-watch.md).
 
 ---
 
