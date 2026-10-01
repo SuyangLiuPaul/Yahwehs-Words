@@ -1,0 +1,46 @@
+[
+  {
+    "file": "01-audio-categories.jpg",
+    "width": 908,
+    "height": 636,
+    "sha256": "578e484b50bbf2dec5d51a48895e9d8efa821f55e443a34f878832f3cc1a2191",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "Xcode-signed iOS26.5 CarPlay simulator",
+    "capture": "unaltered native Simulator window JPEG; includes simulator frame"
+  },
+  {
+    "file": "02-hymn-library.jpg",
+    "width": 908,
+    "height": 636,
+    "sha256": "0fad63d8a7678de39c1d7a974341dbc3090995e30fd138061303f4e4e2565f84",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "Xcode-signed iOS26.5 CarPlay simulator",
+    "capture": "unaltered native Simulator window JPEG; includes simulator frame"
+  },
+  {
+    "file": "04-sermon-topics.jpg",
+    "width": 908,
+    "height": 636,
+    "sha256": "37ce50f1506106cc12182aa2043412dfffbcb2ceff932c9f1ab2b9910f6bfd00",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "Xcode-signed iOS26.5 CarPlay simulator",
+    "capture": "unaltered native Simulator window JPEG; includes simulator frame"
+  },
+  {
+    "file": "05-sermon-library.jpg",
+    "width": 908,
+    "height": 636,
+    "sha256": "d177863f83160ab400030acc3c83172c21f053f4adf2172a4f9aa5e2c082a4ce",
+    "version": "1.7.3",
+    "build": 1070003,
+    "source": "201bacb96771770758805d07a0a0cf2f230f7655",
+    "environment": "Xcode-signed iOS26.5 CarPlay simulator",
+    "capture": "unaltered native Simulator window JPEG; includes simulator frame"
+  }
+]
