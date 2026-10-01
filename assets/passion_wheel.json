@@ -637,33 +637,6 @@
       "clockHour": null
     },
     {
-      "id": "thirst",
-      "title": {
-        "en": "“I thirst”",
-        "zh-Hans": "“我渴了”",
-        "zh-Hant": "「我渴了」"
-      },
-      "place": {
-        "en": "Golgotha · on the cross",
-        "zh-Hans": "各各他 · 十字架上",
-        "zh-Hant": "各各他 · 十字架上"
-      },
-      "period": {
-        "en": "Before Jesus’ death · hour unspecified",
-        "zh-Hans": "耶稣死亡前 · 未记确切时辰",
-        "zh-Hant": "耶穌死亡前 · 未記確切時辰"
-      },
-      "summary": {
-        "en": "John records Jesus saying “I thirst.” Sour wine is raised to him on hyssop; after receiving it he says “It is finished” and gives up his spirit. John gives the sequence but no clock time for the thirst.",
-        "zh-Hans": "约翰记载耶稣说：“我渴了。”有人用牛膝草把醋送到祂口边；耶稣尝了以后说“成了”，便交付了灵。约翰记下事件先后，没有为口渴这句话指定钟点。",
-        "zh-Hant": "約翰記載耶穌說：「我渴了。」有人用牛膝草把醋送到祂口邊；耶穌嚐了以後說「成了」，便交付了靈。約翰記下事件先後，沒有為口渴這句話指定鐘點。"
-      },
-      "refs": [
-        "John 19:28-30"
-      ],
-      "clockHour": null
-    },
-    {
       "id": "darkness",
       "title": {
         "en": "Darkness over the land",
@@ -702,6 +675,33 @@
         "zh-Hans": "从第六时直到第九时，遍地黑暗，通常对应约正午十二点至下午三点。马太、马可、路加记载此事，约翰未提这段黑暗。",
         "zh-Hant": "從第六時直到第九時，遍地黑暗，通常對應約正午十二點至下午三點。馬太、馬可、路加記載此事，約翰未提這段黑暗。"
       }
+    },
+    {
+      "id": "thirst",
+      "title": {
+        "en": "“I thirst”",
+        "zh-Hans": "“我渴了”",
+        "zh-Hant": "「我渴了」"
+      },
+      "place": {
+        "en": "Golgotha · on the cross",
+        "zh-Hans": "各各他 · 十字架上",
+        "zh-Hant": "各各他 · 十字架上"
+      },
+      "period": {
+        "en": "Before Jesus’ death · hour unspecified",
+        "zh-Hans": "耶稣死亡前 · 未记确切时辰",
+        "zh-Hant": "耶穌死亡前 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "John records Jesus saying “I thirst.” Sour wine is raised to him on hyssop; after receiving it he says “It is finished” and gives up his spirit. John gives the sequence but no clock time for the thirst.",
+        "zh-Hans": "约翰记载耶稣说：“我渴了。”有人用牛膝草把醋送到祂口边；耶稣尝了以后说“成了”，便交付了灵。约翰记下事件先后，没有为口渴这句话指定钟点。",
+        "zh-Hant": "約翰記載耶穌說：「我渴了。」有人用牛膝草把醋送到祂口邊；耶穌嚐了以後說「成了」，便交付了靈。約翰記下事件先後，沒有為口渴這句話指定鐘點。"
+      },
+      "refs": [
+        "John 19:28-30"
+      ],
+      "clockHour": null
     },
     {
       "id": "death",

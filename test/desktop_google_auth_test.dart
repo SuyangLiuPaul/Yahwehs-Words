@@ -212,6 +212,9 @@ void main() {
     expect(config['apiKey'], DefaultFirebaseOptions.web.apiKey);
     expect(config['appId'], DefaultFirebaseOptions.web.appId);
     expect(config['projectId'], DefaultFirebaseOptions.web.projectId);
+    expect(config['storageBucket'], DefaultFirebaseOptions.web.storageBucket);
+    expect(config['messagingSenderId'],
+        DefaultFirebaseOptions.web.messagingSenderId);
     final flow = File('web/desktop-google-sign-in.js').readAsStringSync();
     expect(flow, contains('browserSessionPersistence'));
     expect(flow, contains("'yswords-desktop-google'"));

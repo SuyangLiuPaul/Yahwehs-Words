@@ -73,6 +73,10 @@ void main() {
         ['cross', 'darkness', 'death']);
     expect(events.firstWhere((e) => e.id == 'sentence').clockHour, isNull);
     expect(events.firstWhere((e) => e.id == 'peter').clockHour, isNull);
+    expect(events.indexWhere((e) => e.id == 'thirst'),
+        greaterThan(events.indexWhere((e) => e.id == 'darkness')));
+    expect(events.indexWhere((e) => e.id == 'thirst'),
+        lessThan(events.indexWhere((e) => e.id == 'death')));
     for (final id in ['footwashing', 'judas-remorse', 'thirst']) {
       final event = events.firstWhere((e) => e.id == id);
       expect(event.clockHour, isNull);
