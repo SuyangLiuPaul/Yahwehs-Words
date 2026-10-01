@@ -1,3 +1,7 @@
+## Microsoft Store latest-package submission — 2026-10-02 Melbourne
+
+Both submission4 updates are now published (Words1.6.37.0 and Sword1.6.331.0). After verifying immutable1.7.3.0/x64 package hashes, identities and publisher, submission5 was created for each app, package validation passed, all three localized release notes were saved, and both updates were submitted for certification with automatic publication. Approved copy and screenshot sets were preserved. New submission IDs: Words1152921505702022062; Sword1152921505702022064. Checked01:14 Melbourne; the portal displays10/01/2026. Preserve submission5 certification and skip duplicate/newer packages. Apple public reviews remain pending; follow-up automation continues the remaining store gates. [Current platform record](docs/delivery-1.7.3-2026-10-01.md).
+
 ## Verified platform delivery — 1.7.3, 2026-10-01
 
 GitHub releases, all eight websites, four processed signed Apple builds, Google phone review submissions and Words Wear internal publication are recorded in [the delivery checkpoint](docs/delivery-1.7.3-2026-10-01.md). Mac external beta and Sword iOS external beta are Waiting for Review; Words iOS external beta needs the daily limit to reset. Preserve public Apple reviews and Microsoft submission4 certification. Physical pairing and Google production qualification remain open. Verified1.7.3 Microsoft packages are queued, not certified. Older dated checkpoints below remain historical.

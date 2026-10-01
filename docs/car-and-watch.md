@@ -3,7 +3,7 @@
 [Current platform delivery and gates](delivery-1.7.3-2026-10-01.md) supersedes the historical build numbers below. The signed iOS1070003 package includes the matching Watch app and granted CarPlay profile; Wear internal20001011 is published.
 
 - [Apple Watch paired simulator gallery](screenshots/2026-10-01/apple-watch-1.7.3/README.md): current phone chapter refreshed from Matthew1 to Matthew2; actual song title/cover/progress arrived; Watch Pause stopped both at1:55 /4:26. Physical pairing remains separate.
-- [CarPlay catalogue simulator gallery](screenshots/2026-10-01/carplay-1.7.3/README.md): root/categories, hymn and sermon libraries, song selection on the phone, and Browse audio return verified. The system simulator Now Playing progress did not refresh; that view is held from marketing and transport/physical checks remain open.
+- [CarPlay catalogue simulator gallery](screenshots/2026-10-01/carplay-1.7.3/README.md): root/categories, hymn and sermon libraries, song selection on the phone, and Browse audio return verified. Next track switched the phone song; native MPNowPlayingInfoCenter contained actual artwork, rate1 and elapsed49.974seconds. The system simulator Now Playing progress did not refresh after reconnection; that view is held from marketing and display/physical checks remain open. This does not establish a source defect.
 - The Google Play capture emulator contains Android Auto's official stub; opening it requires Google Play account sign-in to install the full official app. Android Auto DHU and paired Wear captures remain blocked on that setup. Do not use unrecognized APK mirrors or fabricate state.
 
 # Words audio companions

@@ -1,5 +1,7 @@
 # Platform delivery checkpoint — 1.7.3, 2026-10-01
 
+Updated October2 at01:14 Melbourne: both Microsoft submission4 updates published; latest1.7.3.0 submission5 is in certification with automatic publication.
+
 This record distinguishes released downloads, submitted store builds and public approval. It supersedes earlier preparation checkpoints; older dated records remain history.
 
 ## Verified delivery
@@ -12,9 +14,9 @@ This record distinguishes released downloads, submitted store builds and public 
 | Wear OS | Internal test 1.7.3 / 20001011 published at 22:07 on October 1 | Not an application capability |
 | Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external submission hit Apple's daily beta-review limit | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Apple macOS | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review |
-| Microsoft Store | Submission 4 remains in certification; verified 1.7.3.0 package queued | Submission 4 remains in certification; verified 1.7.3.0 package queued |
+| Microsoft Store | Submission4 published1.6.37.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication | Submission4 published1.6.331.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication |
 
-The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/Mac1.6.34, Sword iOS1.6.328/Mac1.6.329). They were preserved. A newer TestFlight build does not replace those public submissions. After the initial versions are approved and released, create 1.7.3 updates using the processed 1070003 builds; do not cancel an existing review. Microsoft follows the separate latest-package guards in `microsoft-followup-1.7.3.md`. Google production still requires genuine closed-test qualification; internal Wear publication does not satisfy phone production eligibility.
+The initial public Apple submissions remain Waiting for Review (Words iOS1.6.33/Mac1.6.34, Sword iOS1.6.328/Mac1.6.329). They were preserved. A newer TestFlight build does not replace those public submissions. After the initial versions are approved and released, create 1.7.3 updates using the processed 1070003 builds; do not cancel an existing review. Microsoft follows the separate latest-package guards in `microsoft-followup-1.7.3.md`; preserve submission5, not the now-published submission4. Google production still requires genuine closed-test qualification; internal Wear publication does not satisfy phone production eligibility.
 
 ## Source and verification
 
@@ -30,7 +32,7 @@ Existing genuine phone/macOS galleries retain their measured dimensions, origina
 
 **Paired simulator verification completed on October1:** Words1.7.3 sent Matthew1 and then Matthew2 from the phone reader to Apple Watch; received title/cover/progress for Ask祈求; Watch Pause was acknowledged and both devices stopped at1:55 /4:26. [Genuine Watch screenshots and hashes](screenshots/2026-10-01/apple-watch-1.7.3/README.md) preserve that evidence. This is a simulator result, not a physical-device claim.
 
-**CarPlay simulator catalogue verification:** the normal Xcode signed build restored CarPlay discovery; category/church/song/sermon navigation and one-step Browse audio return were observed. Song selection reached the phone player. The standard simulator Now Playing transport remained at its initial position while phone playback advanced, so that view is held from marketing and system transport/physical vehicle checks remain open. [Genuine catalogue gallery](screenshots/2026-10-01/carplay-1.7.3/README.md).
+**CarPlay simulator catalogue verification:** the normal Xcode signed build restored CarPlay discovery; category/church/song/sermon navigation and one-step Browse audio return were observed. Song selection reached the phone player, and its native Next track command switched the phone from Increase 开展 to Learn 谦卑效法(draft1). Read-only Xcode inspection of the app’s MPNowPlayingInfoCenter confirmed actual artwork, playback rate1 and elapsed time49.974seconds for the new track (duration152.04seconds); an earlier Ask祈求 sample had elapsed16.867seconds. The system simulator still displayed0:00/play after reconnecting its external display. Native metadata publication and the Next track command are verified; system display/progress and physical vehicle checks remain open. The static playback view is held from marketing. This observation does not establish an application source defect. Local evidence: `carplay-native-media-1.7.3-verification.json`. [Genuine catalogue gallery](screenshots/2026-10-01/carplay-1.7.3/README.md).
 
 The source includes Words phone/watch current-chapter and shared audio progress, covers and localized car catalogues. Physical Windows/Play/Mac account flows, paired Apple Watch/Wear playback and Bible refresh, and vehicle dashboard controls require actual device confirmation. Sword has local profiles and no Firebase, watch or car companion. Green CI and successful upload do not close these hardware checks or declare every historical parity item complete.
 
@@ -40,10 +42,12 @@ The source includes Words phone/watch current-chapter and shared audio progress,
 
 Recoverable generated caches were removed; full signed archives, dSYMs, exports, source, private keys and existing simulator data were retained. Verified older archives and current iOS archives are on T7 with recorded file hashes. New signed Mac archives are retained in the APFS sparse image `/Volumes/T7/Yahweh-Release-Backups-20261001/YahwehSignedMac173.sparseimage`, mounted at `/Volumes/YahwehSignedMac173`. Original archive paths are symlinks; mount the image before reopening them. Keep the external disk and image intact. After completed simulator-build cache cleanup and stopping only dedicated capture processes, measured free space at23:37 Melbourne was7,884,750,848 bytes (about7.34GiB). Signed archives/dSYMs, source and installed simulator data remained intact. Local record: `storage-final-173.json`. This is a dated measurement, not guaranteed remaining capacity.
 
+**Additional cache cleanup, October2 at01:23 Melbourne:** after confirming no local Dart/Xcode/Gradle build was running, removed only the two worktrees’ regenerable `.dart_tool/flutter_build` directories. Net measured recovery was6,597,242,880bytes; free space then18,923,130,880bytes (about17.62GiB). Package configuration, signed archives, dSYMs, exports, source, signing keys, screenshots and original simulator data remained intact. Local record: `storage-flutter-build-cache-173.json`.
+
 ## Follow-up rules
 
 1. Recheck Words iOS external TestFlight once its daily submission limit resets; submit processed1070003 to the existing Public beta group with current test notes. Preserve pending older beta reviews.
-2. Preserve pending Apple public reviews and Microsoft certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
+2. Preserve pending Apple public reviews and Microsoft submission5 certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
 3. Use the verified signed packages and hashes; never move immutable tags or rebuild a different source under an existing release tag.
 4. Active thread heartbeat `words-sword` checks the remaining store gates every two hours, skips duplicate/newer submissions and preserves pending reviews. The old Sword-only automation id was no longer present when checked.
 5. Notify the owner only for completion, failure, meaningful review status changes or required owner action. Public approval dates cannot be promised.
