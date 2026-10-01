@@ -1,4 +1,4 @@
-/// The owner hid these new learning entries on 2026-10-01.
-/// Keep their pages and stable links for existing references; expose no
-/// dashboard entries until the design is approved again.
+/// Owner correction on 2026-10-01: show the Passion timetable in both apps.
+/// Principles remain hidden; Words history stays hidden and Sword keeps its existing history tools.
+const bool kShowPassionTimeline = true;
 const bool kShowNewLearningPages = false;

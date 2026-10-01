@@ -1,6 +1,6 @@
 # Reference clock update 1.7.2 — 2026-10-01
 
-The owner requested replacing the existing hidden Passion clock with the supplied complete diagram. See [content provenance and interaction checks](passion-reference-clock.md). Visibility and existing routes remain unchanged; no Scripture or saved-data migration.
+The owner requested replacing the existing Passion clock with the supplied complete diagram. See [content provenance and interaction checks](passion-reference-clock.md). The Passion timetable is now visible in both apps under its dignified localized name; principles stay hidden, Words history stays hidden and Sword’s established history remains visible. Existing routes remain unchanged; no Scripture or saved-data migration.
 
 ## Delivery gates
 
@@ -17,3 +17,7 @@ The owner requested replacing the existing hidden Passion clock with the supplie
 ## Storage
 
 Additional cleanup reclaimed cache space and moved older compressed backups, byte-verified, to T7. Original path links preserve access while T7 is connected. Latest signed archives, exports, source and original simulator data remain local. Current free space is a measurement, not the sum of gross cache deletion figures.
+
+The first PR CI attempts failed the image audit (both apps) and Sword font-size ratchet. These were repaired with image failure handling, original-size decode bounds and scaled Sword badge/clock labels. Focused regression checks cover translations, language switching at 320px, both 08:00 descriptions, source image checksum, unchanged Gospel time semantics and owner visibility policy. Full CI must pass the updated source before public delivery.
+
+Words also fixes Windows Google sign-in through the external browser and restores the Android Firebase key’s login/refresh API allowlist. See [authentication implementation and verification gates](windows-browser-google-sign-in.md). Sword has no Firebase login and does not claim this fix.

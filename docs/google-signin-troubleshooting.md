@@ -1,3 +1,5 @@
+> 2026-10-01 follow-up: Windows now uses a dedicated browser credential bridge; Android’s Pollen-only API restriction was repaired after owner confirmation. See [Windows browser Google sign-in](windows-browser-google-sign-in.md). The web redirect and Apple/mobile paths remain as described below.
+
 # Google Sign-In Troubleshooting
 
 > Last updated: 2026-08-02 (added §10 — web moved to redirect + `/__/auth/*`

@@ -1,3 +1,11 @@
+## Authentication follow-up — 2026-10-01
+
+Words Windows Google login now uses an external-browser credential bridge, with loopback state/Origin validation, bounded lifecycle, session-only named Firebase browser auth and existing Firebase credential/profile adoption. Android’s client key was Pollen-only; owner approved restoring Identity Toolkit + Token Service and the console now shows3APIs. Actual APK/Play, Apple and web/Windows public Google authorization probes return HTTP200. Focused authentication/PWA tests:92passed before the two additional disconnect/deadline cases; updated bridge tests:14passed. Full CI, live browser round-trip, physical device confirmation and latest store delivery remain pending. No claim of all-platform login verification yet. See `docs/windows-browser-google-sign-in.md`.
+
+## Owner timetable correction and login follow-up — 2026-10-01
+
+The Passion entry is now visible in both apps as **The Passion of Jesus / 主耶稣受难日时间表 / 主耶穌受難日時間表**. The 14 source diagram placements include fully translated event descriptions, with both events at 08:00; the unchanged original image remains attached. Passion and principles have visible language controls and localized Gospel names. Principles stay hidden; Words history stays hidden and Sword retains its existing history tools. This supersedes the earlier hidden Passion policy below. First 1.7.2 PR CI attempts were red; image decode/failure handling and Sword type scaling have been corrected. Full updated CI and native store delivery are still pending at this checkpoint.
+
 # YsWords — project state
 
 ## Reference clock follow-up — 2026-10-01

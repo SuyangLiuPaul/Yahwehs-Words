@@ -1,5 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/utils/version_mapper.dart'
+    show localeAwareBookName;
+import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:provider/provider.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/learning_data.dart';
@@ -10,9 +13,9 @@ import 'package:yahwehs_words/widgets/verse_popup_sheet.dart';
 
 const kPassionWheelPath = '/passion-wheel';
 const kPassionTitle = {
-  'en': 'The Passion clock',
-  'zh-Hans': '圣经黑暗时刻时辰圈',
-  'zh-Hant': '聖經黑暗時刻時辰圈'
+  'en': 'The Passion of Jesus',
+  'zh-Hans': '主耶稣受难日时间表',
+  'zh-Hant': '主耶穌受難日時間表'
 };
 String _l(String locale, String en, String hs, String ht) => locale == 'zh-Hans'
     ? hs
@@ -82,6 +85,16 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                         child: Center(
                             child: Image.asset(kPassionReferenceImage,
                                 fit: BoxFit.contain,
+                                // Keep original detail for zoom while bounding decoded memory to ~4.2 MiB.
+                                cacheWidth: 1382,
+                                cacheHeight: 782,
+                                errorBuilder: (context, error, stack) => Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: Text(_l(
+                                        locale,
+                                        'The reference image could not be loaded. Close and reopen to retry.',
+                                        '参考图片暂时无法加载，请关闭后重新打开。',
+                                        '參考圖片暫時無法載入，請關閉後重新打開。'))),
                                 semanticLabel: _l(
                                     locale,
                                     'Original Chinese Passion clock and Gospel references',
@@ -108,6 +121,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
     return Scaffold(
       appBar: AppBar(
           leading: const LocalizedBackButton(),
+          actions: const [LanguageSwitcherButton(alwaysVisible: true)],
           title: Text(learningText(kPassionTitle, locale),
               maxLines: 2, overflow: TextOverflow.ellipsis)),
       body: FutureBuilder<List<PassionEvent>>(
@@ -207,7 +221,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                         ChoiceChip(
                             label: Text(g == null
                                 ? _l(locale, 'All four', '四福音', '四福音')
-                                : localizePassage(g, locale)),
+                                : localeAwareBookName(g, locale, '')),
                             selected: _gospel == g,
                             onSelected: (_) => setState(() {
                                   _gospel = g;
@@ -289,8 +303,8 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                                   child: SizedBox(
                                       width: side * .30,
                                       child: Text(
-                                          _l(locale, 'Passion\nclock',
-                                              '圣经黑暗\n时刻时辰圈', '聖經黑暗\n時刻時辰圈'),
+                                          _l(locale, 'Jesus’\nPassion',
+                                              '主耶稣\n受难日', '主耶穌\n受難日'),
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: Colors.white,
@@ -440,6 +454,16 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                     const SizedBox(height: 8),
                     Text(learningText(e.place, locale)),
                     const Divider(height: 28),
+                    if (_referenceTiming && e.diagramSummary.isNotEmpty) ...[
+                      Text(
+                          _l(locale, 'Event described in the reference diagram',
+                              '原图所述事件', '原圖所述事件'),
+                          style: const TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      Text(learningText(e.diagramSummary, locale),
+                          key: ValueKey('passion.diagram-summary.${e.id}')),
+                      const SizedBox(height: 12),
+                    ],
                     Text(learningText(e.summary, locale)),
                     const SizedBox(height: 16),
                     if (_referenceTiming && e.diagramRefs.isNotEmpty) ...[

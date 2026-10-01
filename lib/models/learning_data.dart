@@ -10,7 +10,7 @@ Map<String, String> _text(Object? value) =>
 
 class PassionEvent {
   final String id;
-  final Map<String, String> title, place, period, summary;
+  final Map<String, String> title, place, period, summary, diagramSummary;
   final List<String> refs;
   final List<String> diagramRefs;
   final int? clockHour;
@@ -24,6 +24,7 @@ class PassionEvent {
       required this.summary,
       required this.refs,
       this.diagramRefs = const [],
+      this.diagramSummary = const {},
       this.clockHour,
       this.diagramHour});
   factory PassionEvent.fromJson(Map<String, dynamic> j) => PassionEvent(
@@ -32,6 +33,7 @@ class PassionEvent {
       place: _text(j['place']),
       period: _text(j['period']),
       summary: _text(j['summary']),
+      diagramSummary: _text(j['diagramSummary']),
       refs: (j['refs'] as List).cast<String>(),
       diagramRefs: (j['diagramRefs'] as List? ?? const []).cast<String>(),
       clockHour: j['clockHour'] as int?,

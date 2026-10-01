@@ -409,3 +409,11 @@
     # since COEP has its own cross-origin-resource risk this repo
     # hasn't audited for prod yet).
     Cross-Origin-Opener-Policy = "same-origin"
+
+# Browser-to-Windows sign-in uses session-only Firebase storage and a loopback POST.
+[[headers]]
+  for = "/desktop-google-*"
+  [headers.values]
+    Cache-Control = "no-store"
+    Referrer-Policy = "no-referrer"
+    Content-Security-Policy = "default-src 'none'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self'; connect-src https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self'; form-action http://127.0.0.1:*; base-uri 'none'; frame-ancestors 'none'; object-src 'none'"

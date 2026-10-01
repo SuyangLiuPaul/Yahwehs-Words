@@ -119,6 +119,29 @@ void main() {
     expect(events.firstWhere((e) => e.id == 'supper').refsFor('John'),
         contains('John 13:21-30'));
   });
+  test(
+      'every printed diagram event and every principle is translated in all three locales',
+      () {
+    for (final e in events.where((e) => e.diagramHour != null)) {
+      for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+        expect(e.diagramSummary[locale], isNotEmpty,
+            reason: '${e.id} / $locale');
+      }
+    }
+    expect(
+        events.firstWhere((e) => e.id == 'sentence').diagramSummary['zh-Hans'],
+        contains('最终审判'));
+    expect(
+        events.firstWhere((e) => e.id == 'mockery').diagramSummary['zh-Hans'],
+        contains('巡抚府'));
+    for (final raw in principlesJson['principles'] as List) {
+      final p = BiblePrinciple.fromJson(raw as Map<String, dynamic>);
+      for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+        expect(p.title[locale], isNotEmpty);
+        expect(p.summary[locale], isNotEmpty);
+      }
+    }
+  });
   test('attached diagram bytes match the original source checksum', () {
     final meta = passionJson['_meta']['referenceDiagram'];
     expect(meta['asset'], kPassionReferenceImage);
@@ -305,9 +328,46 @@ void main() {
     expect(
         find.byWidgetPredicate((w) =>
             w is Image &&
-            w.image is AssetImage &&
-            (w.image as AssetImage).assetName == kPassionReferenceImage),
+            w.image is ResizeImage &&
+            ((w.image as ResizeImage).imageProvider as AssetImage).assetName ==
+                kPassionReferenceImage),
         findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'Chinese Gospel labels are translated and the language switcher works at 320px',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(),
+        width: 320, locale: 'zh-Hans');
+    expect(find.text('主耶稣受难日时间表'), findsOneWidget);
+    expect(find.text('Matthew'), findsNothing);
+    await tester.scrollUntilVisible(
+        find.widgetWithText(ChoiceChip, '马太福音').hitTestable(), 100);
+    expect(find.widgetWithText(ChoiceChip, '马太福音'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.language_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+    expect(find.text('The Passion of Jesus'), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, 'Matthew'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'eight oclock includes both translated descriptions from the image',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), locale: 'zh-Hant');
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.marker.sentence')).hitTestable(),
+        100);
+    await tester.tap(find.byKey(const ValueKey('passion.marker.sentence')));
+    await tester.pumpAndSettle();
+    for (final id in ['sentence', 'mockery']) {
+      final target = find.byKey(ValueKey('passion.diagram-summary.$id'));
+      await tester.scrollUntilVisible(target, 100);
+      expect(target, findsOneWidget);
+      expect((tester.widget(target) as Text).data,
+          events.firstWhere((e) => e.id == id).diagramSummary['zh-Hant']);
+    }
     expect(tester.takeException(), isNull);
   });
   testWidgets('John filter offers no borrowed hour markers', (tester) async {
