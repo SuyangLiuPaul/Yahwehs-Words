@@ -13,7 +13,7 @@ This record distinguishes released downloads, submitted store builds and public 
 | Google Play phone | Closed Alpha 1.7.3 / 1007003 submitted for review | Closed Alpha 1.7.3 / 2000010 available to selected testers; released October1 at22:31 |
 | Google Play phone internal | 1.7.3 / 1007003 Available to internal testers; release3, October2 at02:05 | 1.7.3 / 2000010 Available to internal testers; release3, October2 at02:04 |
 | Wear OS | Internal test 1.7.3 / 20001011 published at 22:07 on October 1 | Not an application capability |
-| Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external submission hit Apple's daily beta-review limit | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
+| Apple iOS | Signed 1.7.3 / 1070003 processed, internal testing available; external beta submitted October2, Waiting for Review | Signed 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Apple macOS | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review | Signed universal 1.7.3 / 1070003 processed; external beta Waiting for Review |
 | Microsoft Store | Submission4 published1.6.37.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication | Submission4 published1.6.331.0; validated1.7.3.0 submitted as submission5, in certification / automatic publication |
 
@@ -59,10 +59,24 @@ Recoverable generated caches were removed; full signed archives, dSYMs, exports,
 
 ## Follow-up rules
 
-1. Recheck Words iOS external TestFlight once its daily submission limit resets; submit processed1070003 to the existing Public beta group with current test notes. Preserve pending older beta reviews.
+1. Words iOS external1070003 was submitted October2 to the existing Public beta group with current test notes and automatic tester notification; Waiting for Review. Preserve pending reviews and skip duplicate submission.
 2. Preserve pending Apple public reviews and Microsoft submission5 certification. Submit only when the platform permits a new update, preserve approved descriptions and genuine screenshot sets, and skip when1.7.3 or newer is already submitted.
 3. Use the verified signed packages and hashes; never move immutable tags or rebuild a different source under an existing release tag.
 4. Active thread heartbeat `words-sword` checks the remaining store gates every two hours, skips duplicate/newer submissions and preserves pending reviews. The old Sword-only automation id was no longer present when checked.
 5. Notify the owner only for completion, failure, meaningful review status changes or required owner action. Public approval dates cannot be promised.
 
 All local evidence paths above are relative to `/Users/pliu0036/Downloads/Yahweh-Publication-Assets-20261001/`. No credentials or private account data are included in this repository record.
+
+## Owner-requested cache cleanup — October2
+
+After confirming no build or upload was active, removed only regenerable Gradle transforms, Xcode module/intermediate caches and project test caches. Net measured recovery was 16354545664 bytes (about 15.23GiB); free space after cleanup was 16639062016 bytes (about 15.50GiB). Source, installable releases, signing material, signed archives/exports, dSYMs (including those in flutter_build), simulator/VM data and existing T7 backups were preserved. No archive transfer was needed. Inventory and before/after measurements: `storage-owner-cleanup-20261002.json` in the local publication evidence folder. The deferred release follow-up and its final archive cleanup gate remain active.
+
+Fresh App Store Connect check after login restoration: initial public submissions are still Waiting for Review, Words iOS1.6.33/Mac1.6.34 and Sword iOS1.6.328/Mac1.6.329. Words iOS automatic release after approval remains selected. Latest1.7.3/1070003 TestFlight builds are separate from those initial public versions.
+
+## Words external beta submission — October2
+
+Apple login was restored. One normal submission of Words iOS1.7.3/1070003 succeeded, using the existing Public beta — iPhone, iPad & Mac group and prepared test notes, with Automatically notify testers checked. The build visibly changed from Ready to Submit to Waiting for Review. The daily-limit task is now complete; skip duplicate submission. Initial public reviews were preserved. Local proof: `apple-words-ios-1.7.3-external-submitted-20261002.json` and matching JPEG in the publication evidence folder.
+
+## Android Google certificate registration — October2
+
+A real Android1.7.3 report showed "There was an error while trying to get your package certificate hash." Firebase's Play app registration had only SHA256. Added the official Play App Signing SHA1 for `com.yahwehword.words` and confirmed the existing SHA256 remains. The downloaded Firebase JSON adds exactly one corresponding Android OAuth client; project, API keys, app IDs and existing clients are unchanged. Both release and primary Words workspaces use the updated file, with original-file backups. SDK-matching read-only getProjectConfig returned200 for the actual Play signature and the existing direct-APK release signature; an invalid-certificate control returned400 INVALID_CERT_HASH. The current1.7.3 installation can retry without reinstalling or waiting for a new binary. Physical tablet sign-in is not yet confirmed. Local evidence: `firebase-words-play-sha1-fixed-20261002.json`, matching JPEG and `firebase-android-certificate-probes-20261002.json`. Immutable release tags remain unchanged.

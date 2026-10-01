@@ -1,3 +1,5 @@
+> 2026-10-02 Android certificate fix: register the Google Play **app signing SHA-1** in the Firebase Play app as well as SHA-256. The upload key and GitHub APK release key are different from Play App Signing. Adding an Identity Toolkit API restriction alone does not register the certificate. See the current delivery record for SDK-matching certificate verification.
+
 > 2026-10-01 follow-up: Windows now uses a dedicated browser credential bridge; Android’s Pollen-only API restriction was repaired after owner confirmation. See [Windows browser Google sign-in](windows-browser-google-sign-in.md). The web redirect and Apple/mobile paths remain as described below.
 
 # Google Sign-In Troubleshooting
