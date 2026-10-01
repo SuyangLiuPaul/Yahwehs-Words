@@ -1,5 +1,10 @@
 # Learning release 1.7.0
 
+## Owner visibility correction — 2026-10-01
+
+Words hides all three new learning entries. Sermon resume navigation and the new teaching videos remain visible. Code and existing URLs are retained. This supersedes the visible-feature claims below; v1.7.0 stays immutable and the correction is prepared as 1.7.1. See `docs/release-visibility-1.7.1-2026-10-01.md`.
+
+
 ## Learning release 1.7.0 — 2026-10-01
 
 - Both apps include the source-linked Passion wheel and 18 selected Bible principles. Words additionally includes the world-history wheel, saved-sermon return flow and all six paired Mandarin/Cantonese Jesus’s Disciples videos. Scripture assets are unchanged.

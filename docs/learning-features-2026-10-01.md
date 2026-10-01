@@ -1,5 +1,10 @@
 # Learning features — 1 October 2026
 
+## Owner visibility correction — 2026-10-01
+
+Words hides all three new learning entries. Sermon resume navigation and the new teaching videos remain visible. Code and existing URLs are retained. This supersedes the visible-feature claims below; v1.7.0 stays immutable and the correction is prepared as 1.7.1. See `docs/release-visibility-1.7.1-2026-10-01.md`.
+
+
 ## Passion wheel (Words and Sword)
 
 Twenty source-linked scenes from the meal to burial, with where/when/what,

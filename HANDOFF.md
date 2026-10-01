@@ -1,5 +1,10 @@
 ## Learning release 1.7.0 — 2026-10-01
 
+## Owner visibility correction — 2026-10-01
+
+Words hides all three new learning entries. Sermon resume navigation and the new teaching videos remain visible. Code and existing URLs are retained. This supersedes the visible-feature claims below; v1.7.0 stays immutable and the correction is prepared as 1.7.1. See `docs/release-visibility-1.7.1-2026-10-01.md`.
+
+
 - Both apps include the source-linked Passion wheel and 18 selected Bible principles. Words additionally includes the world-history wheel, saved-sermon return flow and all six paired Mandarin/Cantonese Jesus’s Disciples videos. Scripture assets are unchanged.
 - Corrected functional source `2041a176693e00a149e24e7f9b19731322d9a0c6` passed [CI 36813965746](https://github.com/SuyangLiuPaul/Yahwehs-Words/actions/runs/36813965746): **3886 passed / 40 platform skips**, zero failures; analysis and secret scan succeeded. Two independent source-review rounds found no remaining blocker.
 - Canonical web release deployed **1.7.0** and verified served versions/bundles on all six international/China sites. GitHub release, newly signed Apple deliveries and latest store packages are being prepared; this checkpoint does not claim their completion.
