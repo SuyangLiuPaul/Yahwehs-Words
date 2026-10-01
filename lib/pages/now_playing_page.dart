@@ -1,3 +1,4 @@
+import '../widgets/song_mix_picker.dart';
 import 'dart:async';
 
 // Flutter's material library exports its own RepeatMode (for
@@ -182,7 +183,9 @@ class NowPlayingPage extends StatelessWidget {
                     // could only be set before pressing play — so
                     // "drop the vocals, I'm driving" meant going back
                     // and rebuilding the queue.
-                    _MixPicker(player: player, scheme: scheme, locale: locale),
+                    SongMixPicker(queue: player.queue, locale: locale,
+                      loading: player.isLoading, onSelected: (pref) =>
+                        player.setTrackPreference(pref, fallback: TrackFallback.skip)),
                     const SizedBox(height: 12),
                     _SecondaryRow(
                         player: player, scheme: scheme, locale: locale),
@@ -736,75 +739,6 @@ class _Transport extends StatelessWidget {
             RepeatMode.one => RepeatMode.off,
           }),
         ),
-      ],
-    );
-  }
-}
-
-/// Which mix the queue plays: sung take, instrumental, accompaniment.
-///
-/// Large targets and a single row, because the realistic moment for
-/// using it is at a red light. Choosing a non-vocal mix pairs it with
-/// [TrackFallback.skip]: the whole point of an accompaniment queue in
-/// a car is that it never surprises you with singing — so a song that
-/// has no accompaniment drops out rather than reverting to vocals.
-class _MixPicker extends StatelessWidget {
-  final SongPlayerService player;
-  final ColorScheme scheme;
-  final String locale;
-  const _MixPicker({
-    required this.player,
-    required this.scheme,
-    required this.locale,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final current = player.trackPreference;
-    final options = <(TrackPreference, IconData, String)>[
-      (
-        TrackPreference.vocal,
-        Icons.mic_rounded,
-        uiStrings['songsTrackVocal']?[locale] ?? 'Song',
-      ),
-      (
-        TrackPreference.accompaniment,
-        Icons.queue_music_rounded,
-        uiStrings['songsTrackAccompaniment']?[locale] ?? 'Accompaniment',
-      ),
-      (
-        TrackPreference.instrumental,
-        Icons.piano_rounded,
-        uiStrings['songsTrackInstrumental']?[locale] ?? 'Instrumental',
-      ),
-    ];
-
-    final queue = player.queue;
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 8,
-      runSpacing: 6,
-      children: [
-        for (final (pref, icon, label) in options)
-          ChoiceChip(
-            avatar: Icon(icon, size: 16),
-            label: Text(label, style: const TextStyle(fontSize: 12)),
-            selected: current == pref,
-            // Greyed out when no song in the queue publishes that mix,
-            // rather than accepting the tap and doing nothing: only two
-            // of the four sources record accompaniments at all, so a
-            // queue filtered to the other two had a chip that could
-            // never work. Reported from the phone as pressing
-            // Accompaniment and still hearing singing.
-            onSelected: queue.hasMix(pref)
-                ? (_) => player.setTrackPreference(
-                      pref,
-                      fallback: pref == TrackPreference.vocal
-                          ? TrackFallback.useVocal
-                          : TrackFallback.skip,
-                    )
-                : null,
-          ),
       ],
     );
   }

@@ -62,6 +62,8 @@ class MediaCompanionService {
           'duration',
           'loading',
           'canSkip',
+          'canNext',
+          'canPrevious',
           'playing',
           'error',
           'sermon'
@@ -79,6 +81,7 @@ class MediaCompanionService {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'snapshot':
+          await _loadLocale();
           await _loadDaily();
           return _snapshot();
         case 'children':
@@ -96,6 +99,7 @@ class MediaCompanionService {
               }
           ];
         case 'command':
+          await _loadLocale();
           final args = Map<String, dynamic>.from(call.arguments as Map);
           await _command(args['action'] as String, args['id'] as String?);
           unawaited(_publish());
@@ -146,7 +150,7 @@ class MediaCompanionService {
     final state = h.playbackState.value;
     return {
       'title': item?.title ?? '',
-      'subtitle': item?.artist ?? item?.album ?? '',
+      'subtitle': item?.album ?? item?.artist ?? '',
       'artwork': item?.artUri?.toString() ?? '',
       'locale': locale,
       'id': item?.id ?? '',
@@ -158,6 +162,10 @@ class MediaCompanionService {
       'syncedAt': DateTime.now().millisecondsSinceEpoch,
       'sermon': item?.id.startsWith('car:sermon/') ?? false,
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
+      'canNext':
+          item?.id.startsWith('car:sermon/') == true || h.songQueue.hasNext,
+      'canPrevious':
+          item?.id.startsWith('car:sermon/') == true || h.songQueue.hasPrevious,
       'error': state.errorMessage ?? '',
       'reading': _reading,
       'daily': _daily
@@ -166,8 +174,7 @@ class MediaCompanionService {
 
   static Future<void> _publish() async {
     try {
-      _locale =
-          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+      await _loadLocale();
       await _loadDaily();
       await _channel.invokeMethod<void>('state', _snapshot());
     } on MissingPluginException {
@@ -176,6 +183,11 @@ class MediaCompanionService {
     } catch (e) {
       debugPrint('[MediaCompanion] state unavailable: $e');
     }
+  }
+
+  static Future<void> _loadLocale() async {
+    _locale = (await SharedPreferences.getInstance()).getString('locale') ??
+        'zh-Hans';
   }
 
   static Future<void> _loadDaily() async {

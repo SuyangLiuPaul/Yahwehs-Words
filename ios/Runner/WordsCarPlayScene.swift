@@ -93,7 +93,7 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
   }
   private func showError(_ message: String) {
     guard let controller = controller else { return }
-    let close = CPAlertAction(title: "OK", style: .default) { [weak self] _ in
+    let close = CPAlertAction(title: text("OK", "确定", "確定"), style: .default) { [weak self] _ in
       guard let self = self else { return }
       self.controller?.dismissTemplate(animated: true, completion: self.presentationFinished)
     }

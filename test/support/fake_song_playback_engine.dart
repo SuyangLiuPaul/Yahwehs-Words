@@ -143,11 +143,13 @@ class FakeSongPlaybackEngine implements SongPlaybackEngine {
   /// so a test can hold two overlapping seeks at once — needed to drive
   /// the case where an earlier seek resolves after a later one has
   /// already started.
+  final List<Duration> seekCalls = [];
   bool holdSeek = false;
   final List<Completer<void>> _heldSeeks = [];
 
   @override
   Future<void> seek(Duration to) {
+    seekCalls.add(to);
     if (holdSeek) {
       final c = Completer<void>();
       _heldSeeks.add(c);

@@ -62,6 +62,54 @@ void main() {
     await handler.dispose();
   }
 
+  testWidgets('unsupported current mix never jumps or restarts the queue',
+      (tester) async {
+    final engine = FakeSongPlaybackEngine();
+    final handler = SongAudioHandler(engine: engine);
+    await handler
+        .setQueue(SongQueue.fromSongs([song('ask'), song('free-man')]));
+    engine.emitDuration(const Duration(seconds: 266));
+    engine.emitPosition(const Duration(seconds: 33));
+    engine.emitPlaying(true);
+    await tester.pump();
+    final before = handler.songQueue;
+    await handler.setTrackPreference(
+        TrackPreference.accompaniment, TrackFallback.skip);
+    expect(identical(handler.songQueue, before), true);
+    expect(handler.currentSong!.id, 'ask');
+    expect(handler.position.inSeconds, 33);
+    expect(handler.isPlaying, true);
+    expect(engine.playCalls.length, 1);
+    await close(handler, tester);
+  });
+
+  testWidgets('supported mix preserves paused state and surrounding songs',
+      (tester) async {
+    final engine = FakeSongPlaybackEngine();
+    final handler = SongAudioHandler(engine: engine);
+    await handler
+        .setQueue(SongQueue.fromSongs([song('current'), song('next')]));
+    engine.emitDuration(const Duration(seconds: 200));
+    engine.emitPosition(const Duration(seconds: 33));
+    engine.emitPlaying(false);
+    await tester.pump();
+    await handler.setTrackPreference(
+        TrackPreference.instrumental, TrackFallback.skip);
+    engine.emitDuration(const Duration(seconds: 180));
+    await tester.pump();
+    expect(handler.currentSong!.id, 'current');
+    expect(handler.songQueue.length, 2);
+    expect(engine.seekCalls.last, const Duration(seconds: 33));
+    // The real engine reports the acknowledged seek through this stream.
+    engine.emitPosition(const Duration(seconds: 33));
+    await tester.pump();
+    expect(handler.position.inSeconds, 33);
+    expect(handler.isPlaying, false);
+    expect(handler.preference, TrackPreference.instrumental);
+    expect(handler.mediaItem.value!.id, contains('instrumental'));
+    await close(handler, tester);
+  });
+
   testWidgets(
       'decoded active duration reaches OS queue and watch snapshot without leaking to siblings',
       (tester) async {
