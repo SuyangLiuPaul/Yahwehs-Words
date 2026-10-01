@@ -1,3 +1,9 @@
+## Google phone internal testing corrected — 2026-10-02 Melbourne
+
+Both existing internal phone tracks now serve **1.7.3**: Words1007003, released02:05, and Sword2000010, released02:04. Each release3 visibly reports Available to internal testers. Reused the processed phone bundle and existing three-language Alpha notes; preserved selected tester lists. The prior internal tracks still served Words1.6.32 and Sword1.6.328, so testers enrolled internally did not receive newer Alpha builds. Words Alpha remains in review; Sword Alpha is available. These internal releases do not meet public production qualification. [Current delivery record](docs/delivery-1.7.3-2026-10-01.md).
+
+The owner authorized final disk cleanup after all latest store packages have uploaded and validated. Preserve source, signing keys, latest packages and useful archives/dSYMs; verify any older archive transfer to T7 before freeing its local duplicate. Cleanup remains queued. The current Apple browser session requires password sign-in, so newer review/beta status cannot be verified in this check; pending reviews were not altered.
+
 ## Microsoft Store latest-package submission — 2026-10-02 Melbourne
 
 Both submission4 updates are now published (Words1.6.37.0 and Sword1.6.331.0). After verifying immutable1.7.3.0/x64 package hashes, identities and publisher, submission5 was created for each app, package validation passed, all three localized release notes were saved, and both updates were submitted for certification with automatic publication. Approved copy and screenshot sets were preserved. New submission IDs: Words1152921505702022062; Sword1152921505702022064. Checked01:14 Melbourne; the portal displays10/01/2026. Preserve submission5 certification and skip duplicate/newer packages. Apple public reviews remain pending; follow-up automation continues the remaining store gates. [Current platform record](docs/delivery-1.7.3-2026-10-01.md).
