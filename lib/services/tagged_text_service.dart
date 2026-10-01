@@ -191,7 +191,7 @@ class TaggedTextService {
 
   static Future<Map<String, List<TaggedRun>>?> _book(
       String version, String englishBook) async {
-    final key = '${version.toLowerCase()}/${_fileName(englishBook)}';
+    final key = _bookKey(version, englishBook);
     final hit = _cache[key];
     if (hit != null) return hit;
     final loaded = await (_inflight[key] ??= _load(key));
@@ -205,9 +205,11 @@ class TaggedTextService {
       final out = <String, List<TaggedRun>>{
         for (final e in decoded.entries)
           if (!carriesImporterMarkup(e.value as List))
-            e.key: reuniteGlossRuns((e.value as List)
-                .map((r) => TaggedRun.fromJson(r as Map<String, dynamic>))
-                .toList(growable: false)),
+            e.key: _formatRuns(
+                key,
+                (e.value as List)
+                    .map((r) => TaggedRun.fromJson(r as Map<String, dynamic>))
+                    .toList(growable: false)),
       };
       _cache[key] = out;
       return out;
@@ -302,6 +304,92 @@ class TaggedTextService {
       if (unit >= 0x3400 && unit <= 0x9fff) out.add(unit);
     }
     return out;
+  }
+
+  static List<TaggedRun> _formatRuns(String key, List<TaggedRun> runs) =>
+      key.startsWith('bib/') ? formatBereanRuns(runs) : reuniteGlossRuns(runs);
+
+  /// Keep an untranslated Greek word tappable without printing `()`.
+  ///
+  /// BIB attaches Strong's/morphology to its English hyperlink, including
+  /// 5,566 empty glosses. Every one has an exact Greek form in the preceding
+  /// untagged source span. Move that EXISTING metadata onto those characters
+  /// for display, keeping surrounding variant brackets and punctuation.
+  /// The bundled source and other editions are unchanged. If a future source
+  /// pair does not match, keep it rather than guessing a Greek identity.
+  @visibleForTesting
+  static List<TaggedRun> formatBereanRuns(List<TaggedRun> runs) {
+    final out = <TaggedRun>[];
+    for (final run in runs) {
+      final original = run.originalText;
+      if (!RegExp(r'^\(\s*\)$').hasMatch(run.text) ||
+          original == null ||
+          original.isEmpty) {
+        out.add(run);
+        continue;
+      }
+      var start = out.length;
+      while (start > 0) {
+        final prior = out[start - 1];
+        if (prior.isTagged ||
+            prior.transliteration != null ||
+            prior.originalText != null ||
+            prior.implied.isNotEmpty ||
+            prior.grammar.isNotEmpty ||
+            prior.text.contains('<note:')) {
+          break;
+        }
+        start--;
+      }
+      final source = out
+          .skip(start)
+          .map((r) => r.text)
+          .join()
+          .replaceFirst(RegExp(r'[ \t]+$'), '');
+      final offset = source.lastIndexOf(original);
+      final end = offset + original.length;
+      final greek = RegExp(r'[\u0370-\u03ff\u1f00-\u1fff\u0300-\u036f]');
+      if (offset < 0 ||
+          source.indexOf(original) != offset ||
+          (offset > 0 && greek.hasMatch(source[offset - 1])) ||
+          (end < source.length && end >= 0 && greek.hasMatch(source[end]))) {
+        out.add(run);
+        continue;
+      }
+      out.removeRange(start, out.length);
+      final before = source.substring(0, offset);
+      final after = source.substring(offset + original.length);
+      if (before.isNotEmpty) {
+        out.add(TaggedRun(text: before, strongs: ''));
+      }
+      out.add(TaggedRun(
+        text: original,
+        strongs: run.strongs,
+        implied: run.implied,
+        grammar: run.grammar,
+        transliteration: run.transliteration,
+        originalText: run.originalText,
+      ));
+      if (after.isNotEmpty) {
+        out.add(TaggedRun(text: after, strongs: ''));
+      }
+    }
+    return List.unmodifiable(out);
+  }
+
+  static String _bookKey(String version, String englishBook) {
+    final code = version.toLowerCase();
+    // BIB's official importer writes Matthew.json and 1_John.json;
+    // existing tagged editions use lowercase. Bundle keys are case-sensitive.
+    final name = code == 'bib'
+        ? englishBook
+            .split(' ')
+            .map((part) => part.isEmpty
+                ? part
+                : '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}')
+            .join('_')
+        : _fileName(englishBook);
+    return '$code/$name';
   }
 
   /// Put a referent gloss back together.

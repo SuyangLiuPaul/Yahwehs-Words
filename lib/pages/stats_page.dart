@@ -1328,22 +1328,25 @@ class _OverviewFilterBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        // Each control keeps a readable width; phones flow to another
+        // line instead of squeezing the scope down to single letters.
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Expanded(
-              child: Text(
-                bookFilter == 'all'
-                    ? (uiStrings['statsOriginalsScopeAll']?[locale] ??
-                        'Whole Bible')
-                    : (uiStrings['statsOriginalsScopeBook']?[locale] ??
-                            'Showing: {book}')
-                        .replaceAll('{book}',
-                            localeAwareBookName(bookFilter, locale)),
-                style: TextStyle(
-                  fontSize: 13,
-                  color: scheme.onSurface.withValues(alpha: 0.65),
-                  fontWeight: FontWeight.w600,
-                ),
+            Text(
+              bookFilter == 'all'
+                  ? (uiStrings['statsOriginalsScopeAll']?[locale] ??
+                      'Whole Bible')
+                  : (uiStrings['statsOriginalsScopeBook']?[locale] ??
+                          'Showing: {book}')
+                      .replaceAll('{book}',
+                          localeAwareBookName(bookFilter, locale)),
+              style: TextStyle(
+                fontSize: 13,
+                color: scheme.onSurface.withValues(alpha: 0.65),
+                fontWeight: FontWeight.w600,
               ),
             ),
             // Hide-stopwords toggle moved inline as a compact chip
@@ -1364,7 +1367,6 @@ class _OverviewFilterBar extends StatelessWidget {
               selected: hideStopwords,
               onSelected: onStopwordChanged,
             ),
-            const SizedBox(width: 6),
             OutlinedButton.icon(
               onPressed: () => _openBookSheet(context),
               icon: Icon(
@@ -1497,13 +1499,14 @@ class _OverviewBookFilterSheetState
                   Icon(Icons.bookmark,
                       size: 18, color: scheme.primary),
                   const SizedBox(width: 8),
-                  Text(
-                    uiStrings['sermonFilterByPassage']?[locale] ??
-                        'Filter by passage',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
+                  Expanded(
+                    child: Text(
+                      uiStrings['sermonFilterByPassage']?[locale] ??
+                          'Filter by passage',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                  const Spacer(),
                   if (widget.initialBook != null)
                     TextButton(
                       onPressed: widget.onClear,

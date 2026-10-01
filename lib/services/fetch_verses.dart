@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:yahwehs_words/utils/berean_interlinear_display.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:yahwehs_words/models/verse.dart';
@@ -230,7 +232,8 @@ class FetchVerses {
         // healed.
         if (attempt == maxAttempts) {
           ErrorReporter.report(e, st,
-              source: 'FetchVerses', extra: 'path=$path attempt=$attempt/$maxAttempts');
+              source: 'FetchVerses',
+              extra: 'path=$path attempt=$attempt/$maxAttempts');
           // Round 56: rethrow instead of swallowing. The previous
           // "log + return" pattern made the Retry button on the
           // loading page useless — it would call execute(),
@@ -303,14 +306,15 @@ class FetchVerses {
   /// the same wall-clock wait the user already tolerates.
   static Future<List<Verse>> _fetchAndDecodeVerses(String path) async {
     final jsonString = await rootBundle.loadString(path);
-    return decodeVerses(json.decode(jsonString));
+    return decodeVerses(json.decode(jsonString),
+        version: path == 'assets/bib.json' ? 'bib' : '');
   }
 
   /// The pure half of [_fetchAndDecodeVerses] — decoded JSON in, verses
   /// out, no I/O. Split out so a test can run the real asset through the
   /// real parser instead of restating what the parser is supposed to do.
   @visibleForTesting
-  static List<Verse> decodeVerses(dynamic decoded) {
+  static List<Verse> decodeVerses(dynamic decoded, {String version = ''}) {
     List<Map<String, dynamic>> rawList;
     if (decoded is List) {
       rawList = List<Map<String, dynamic>>.from(decoded);
@@ -357,7 +361,11 @@ class FetchVerses {
     final verses = <Verse>[];
     for (final m in rawList) {
       try {
-        verses.add(Verse.fromJson(m));
+        final verse = Verse.fromJson(m);
+        verses.add(version.toLowerCase() == 'bib'
+            ? verse.copyWith(
+                text: formatBereanInterlinearText(verse.text, version: version))
+            : verse);
       } catch (_) {}
     }
 

@@ -49,6 +49,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       if (d > Duration.zero) _cancelStallWatchdog();
       _broadcast();
       _publishMediaItem();
+      unawaited(_publishQueue());
     });
     _player.onPosition.listen((p) {
       if (p > Duration.zero) _cancelStallWatchdog();
@@ -246,6 +247,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   String? _error;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  String? _durationUrl;
 
   /// The URL the engine has been asked to warm for the upcoming track,
   /// so the ask is made once per track and not on every `timeupdate`.
@@ -325,9 +327,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   bool get sleepAtEndOfTrack => _sleepAtEndOfTrack;
 
   Duration get duration {
-    if (_duration > Duration.zero) return _duration;
-    final published = _queue.current?.song.durationSec;
-    return published == null ? Duration.zero : Duration(seconds: published);
+    final item = _queue.current;
+    return item == null
+        ? Duration.zero
+        : _itemDuration(item, active: true) ?? Duration.zero;
   }
 
   // ── Queue control ───────────────────────────────────────────────
@@ -489,6 +492,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // Same file still playing → nothing to reload, just republish.
     if (_queue.current?.url == currentUrl) {
       await _publishQueue();
+      _publishMediaItem();
       _broadcast();
       return;
     }
@@ -585,6 +589,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _playing = false;
     _position = Duration.zero;
     _duration = Duration.zero;
+    _durationUrl = null;
+    _publishMediaItem();
+    unawaited(_publishQueue());
     _broadcast();
     await super.stop();
   }
@@ -700,6 +707,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // afterwards. Everything below this line used to happen before it.
     final resolved = _resolvedUrl(item);
     _preloadedUrl = null;
+    // Reset before asking the engine to play: a new file must not
+    // inherit the previous song/mix's decoded length in OS metadata.
+    _position = Duration.zero;
+    _duration = Duration.zero;
+    _durationUrl = item.url;
     final playing = _player.play(resolved);
     _currentAttempt = _player.attempt;
     // Applied per track, not once: the web element keeps `loop` across
@@ -709,10 +721,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
     _loading = true;
     _error = null;
-    _position = Duration.zero;
-    _duration = Duration.zero;
     _armStallWatchdog(item);
     _publishMediaItem();
+    unawaited(_publishQueue());
     _broadcast();
 
     try {
@@ -860,7 +871,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   /// and jump around the track list, not just play/pause.
   Future<void> _publishQueue() async {
     if (_remote != null) return;
-    queue.add([for (final item in _queue.items) _toMediaItem(item)]);
+    queue.add([
+      for (final entry in _queue.items.indexed)
+        _toMediaItem(entry.$2, active: entry.$1 == _queue.index),
+    ]);
   }
 
   void _publishMediaItem() {
@@ -879,11 +893,19 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       mediaItem.add(null);
       return;
     }
-    mediaItem.add(_toMediaItem(item));
+    mediaItem.add(_toMediaItem(item, active: true));
+  }
+
+  Duration? _itemDuration(QueueItem item, {required bool active}) {
+    if (active && item.url == _durationUrl && _duration > Duration.zero) {
+      return _duration;
+    }
+    final seconds = item.song.durationSec;
+    return seconds != null && seconds > 0 ? Duration(seconds: seconds) : null;
   }
 
   /// What the lock screen / CarPlay actually displays.
-  MediaItem _toMediaItem(QueueItem item) {
+  MediaItem _toMediaItem(QueueItem item, {required bool active}) {
     final s = item.song;
     // Name the mix in the title when it is not the sung take, so a
     // glance at the lock screen says whether this is the instrumental.
@@ -897,8 +919,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       title: '${s.title}$suffix',
       artist: s.creditLine ?? s.sourceLabel,
       album: s.album ?? _queue.sourceLabel,
-      duration:
-          s.durationSec == null ? null : Duration(seconds: s.durationSec!),
+      duration: _itemDuration(item, active: active),
       artUri: s.artworkUrl == null ? null : Uri.tryParse(s.artworkUrl!),
       extras: {'songId': s.id, 'kind': item.kind},
     );

@@ -137,7 +137,9 @@ void main() {
     test('the native engine buffers into a second AudioPlayer', () {
       final src = File('lib/services/playback/song_playback_engine_native.dart')
           .readAsStringSync();
-      expect(src.contains('await _standby.setSource('), isTrue,
+      expect(src.contains('final standby = _standby;'), isTrue,
+          reason: 'capture the other player before tracking its source revision');
+      expect(src.contains('await standby.setSource(_sourceFor(url));'), isTrue,
           reason: 'setSource buffers without sounding');
       expect(RegExp(r'Future<void> preload\(String url\) async \{\s*\}')
               .hasMatch(src),

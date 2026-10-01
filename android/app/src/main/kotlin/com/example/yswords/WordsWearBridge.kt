@@ -19,13 +19,19 @@ object WordsWearBridge {
         channel!!.setMethodCallHandler { call, result ->
             if (call.method != "state") { result.notImplemented(); return@setMethodCallHandler }
             val data = call.arguments as? Map<*, *> ?: emptyMap<String, Any>()
-            val next = "${data["id"]}/${data["playing"]}/${data["error"]}"
+            val metadata = linkedMapOf<String, Any?>()
+            for (key in listOf("id", "title", "subtitle", "duration", "loading", "canSkip", "playing", "error", "sermon")) metadata[key] = data[key]
+            val next = JSONObject(metadata).toString()
             val now = System.currentTimeMillis()
             if (identity != next || now - sentAt >= 15000) {
                 val request = PutDataMapRequest.create("/words/state")
                 request.dataMap.putString("json", JSONObject(data).toString())
-                Wearable.getDataClient(context).putDataItem(request.asPutDataRequest().setUrgent())
                 identity = next; sentAt = now
+                Wearable.getDataClient(context).putDataItem(request.asPutDataRequest().setUrgent())
+                    .addOnFailureListener {
+                        // Retry the current state on the next Flutter tick.
+                        if (identity == next && sentAt == now) { identity = ""; sentAt = 0 }
+                    }
             }
             result.success(null)
         }
