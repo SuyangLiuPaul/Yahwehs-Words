@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'song_audio_handler.dart';
 import 'car_audio_catalogue.dart';
 import 'daily_verse_service.dart';
@@ -19,6 +20,23 @@ class MediaCompanionService {
   static Future<void>? _dailyLoading;
   static final _subscriptions = <StreamSubscription<dynamic>>[];
   static String? _publishedIdentity;
+  static String _locale = 'en';
+  static Map<String, dynamic> _reading = {};
+  static String _readingIdentity = '';
+
+  static void updateReading(Map<String, dynamic> reading, String locale) {
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.iOS &&
+            defaultTargetPlatform != TargetPlatform.android)) {
+      return;
+    }
+    final identity = jsonEncode({'reading': reading, 'locale': locale});
+    if (identity == _readingIdentity) return;
+    _readingIdentity = identity;
+    _reading = reading;
+    _locale = locale;
+    if (_handler != null) unawaited(_publish());
+  }
 
   static void start(SongAudioHandler handler) {
     if (kIsWeb ||
@@ -39,6 +57,8 @@ class MediaCompanionService {
           'id',
           'title',
           'subtitle',
+          'artwork',
+          'locale',
           'duration',
           'loading',
           'canSkip',
@@ -71,6 +91,7 @@ class MediaCompanionService {
                 'id': item.id,
                 'title': item.title,
                 'subtitle': item.artist ?? item.album ?? '',
+                'artwork': item.artUri?.toString() ?? '',
                 'playable': item.playable,
               }
           ];
@@ -115,15 +136,19 @@ class MediaCompanionService {
     }
   }
 
-  static Map<String, dynamic> _snapshot() => snapshotFor(_handler!);
+  static Map<String, dynamic> _snapshot() =>
+      snapshotFor(_handler!, locale: _locale);
 
   @visibleForTesting
-  static Map<String, dynamic> snapshotFor(SongAudioHandler h) {
+  static Map<String, dynamic> snapshotFor(SongAudioHandler h,
+      {String locale = 'en'}) {
     final item = h.mediaItem.valueOrNull;
     final state = h.playbackState.value;
     return {
       'title': item?.title ?? '',
-      'subtitle': item?.artist ?? '',
+      'subtitle': item?.artist ?? item?.album ?? '',
+      'artwork': item?.artUri?.toString() ?? '',
+      'locale': locale,
       'id': item?.id ?? '',
       'playing': state.playing,
       'loading': state.processingState.name == 'loading',
@@ -134,12 +159,15 @@ class MediaCompanionService {
       'sermon': item?.id.startsWith('car:sermon/') ?? false,
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
       'error': state.errorMessage ?? '',
+      'reading': _reading,
       'daily': _daily
     };
   }
 
   static Future<void> _publish() async {
     try {
+      _locale =
+          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
       await _loadDaily();
       await _channel.invokeMethod<void>('state', _snapshot());
     } on MissingPluginException {

@@ -1,8 +1,11 @@
+import 'package:yahwehs_words/services/media_companion_service.dart';
+import 'package:yahwehs_words/services/watch_reading_snapshot.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, kReleaseMode, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:yahwehs_words/constants/build_flags.dart';
@@ -529,6 +532,9 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   /// a fast unmount in prod would still tick and try to call
   /// setState on a disposed State.
   Timer? _splashWatchdog;
+  MainProvider? _watchReadingProvider;
+  AppSettings? _watchReadingSettings;
+  VoidCallback? _watchReadingListener;
 
   @override
   void initState() {
@@ -551,6 +557,11 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _splashWatchdog?.cancel();
+    final listener = _watchReadingListener;
+    if (listener != null) {
+      _watchReadingProvider?.removeListener(listener);
+      _watchReadingSettings?.removeListener(listener);
+    }
     super.dispose();
   }
 
@@ -596,6 +607,48 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     if (!mounted) return;
     final mainProvider = context.read<MainProvider>();
     final appSettings = context.read<AppSettings>();
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.android) &&
+        _watchReadingListener == null) {
+      String lastSelection = '';
+      Object? lastRows;
+      void publishReading() {
+        final book = mainProvider.currentBook;
+        final chapter = mainProvider.currentChapter;
+        if (book == null ||
+            chapter == null ||
+            mainProvider.currentVersion != mainProvider.renderedVersion) {
+          lastSelection = '';
+          lastRows = null;
+          MediaCompanionService.updateReading({}, appSettings.locale);
+          return;
+        }
+        final rows = mainProvider.versesInChapter(book, chapter);
+        final selection =
+            '${mainProvider.renderedVersion}|$book|$chapter|${appSettings.locale}';
+        // Verse-scroll notifications reuse the indexed chapter. Serialize only
+        // when the actual chapter, edition, text list or UI locale changes.
+        if (selection == lastSelection && identical(rows, lastRows)) return;
+        lastSelection = selection;
+        lastRows = rows;
+        MediaCompanionService.updateReading(
+            watchReadingSnapshot(
+                book: book,
+                chapter: chapter,
+                version: mainProvider.renderedVersion,
+                locale: appSettings.locale,
+                verses: rows),
+            appSettings.locale);
+      }
+
+      _watchReadingProvider = mainProvider;
+      _watchReadingSettings = appSettings;
+      _watchReadingListener = publishReading;
+      mainProvider.addListener(publishReading);
+      appSettings.addListener(publishReading);
+      publishReading();
+    }
 
     // 2026-08-31: named checkpoint for whichever awaited stage below is
     // in flight when/if the catch block fires. A mailed-in "boot

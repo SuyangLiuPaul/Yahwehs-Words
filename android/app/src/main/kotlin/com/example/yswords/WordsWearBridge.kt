@@ -20,7 +20,7 @@ object WordsWearBridge {
             if (call.method != "state") { result.notImplemented(); return@setMethodCallHandler }
             val data = call.arguments as? Map<*, *> ?: emptyMap<String, Any>()
             val metadata = linkedMapOf<String, Any?>()
-            for (key in listOf("id", "title", "subtitle", "duration", "loading", "canSkip", "playing", "error", "sermon")) metadata[key] = data[key]
+            for (key in listOf("id", "title", "subtitle", "artwork", "locale", "reading", "duration", "loading", "canSkip", "playing", "error", "sermon")) metadata[key] = data[key]
             val next = JSONObject(metadata).toString()
             val now = System.currentTimeMillis()
             if (identity != next || now - sentAt >= 15000) {

@@ -5,20 +5,31 @@ import UIKit
 
 /// The granted phone and dashboard scenes share one playback engine.
 @available(iOS 14.0, *)
-class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
+class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver {
   private var controller: CPInterfaceController?
   private var connection: UUID?
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                 didConnect interfaceController: CPInterfaceController) {
     controller = interfaceController
     connection = UUID()
+    CPNowPlayingTemplate.shared.add(self)
+    CPNowPlayingTemplate.shared.isUpNextButtonEnabled = true
+    CPNowPlayingTemplate.shared.upNextTitle = text("Browse audio", "音频目录", "音訊目錄")
     (UIApplication.shared.delegate as? AppDelegate)?.ensureMediaEngine()
     showFolder("car:root", title: "Yahweh’s Words", root: true)
   }
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                 didDisconnect interfaceController: CPInterfaceController) {
+    CPNowPlayingTemplate.shared.remove(self)
     connection = nil
     controller = nil // The phone's existing audio session keeps playing.
+  }
+  private func text(_ en: String, _ hans: String, _ hant: String) -> String {
+    let locale = WordsMediaCompanion.shared.locale
+    return locale == "zh-Hant" ? hant : locale.hasPrefix("zh") ? hans : en
+  }
+  func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
+    controller?.popToRootTemplate(animated: true, completion: presentationFinished)
   }
   private func presentationFinished(_ success: Bool, _ error: Error?) {
     // CarPlay raises a native exception on failed presentation when its
@@ -28,8 +39,8 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
   private func showFolder(_ id: String, title: String, root: Bool = false) {
     guard let controller = controller, let connection = connection else { return }
     let template = CPListTemplate(title: title, sections: [])
-    template.emptyViewTitleVariants = ["Loading audio…"]
-    template.emptyViewSubtitleVariants = ["Connecting to your library"]
+    template.emptyViewTitleVariants = [text("Loading audio…", "正在加载音频…", "正在載入音訊…")]
+    template.emptyViewSubtitleVariants = [text("Connecting to your library", "正在连接音频目录", "正在連接音訊目錄")]
     if root { controller.setRootTemplate(template, animated: false, completion: presentationFinished) }
     else { controller.pushTemplate(template, animated: true, completion: presentationFinished) }
     loadFolder(id, title: title, template: template, connection: connection)
@@ -39,7 +50,7 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
       guard let self = self, let template = template,
             self.connection == connection, self.controller != nil else { return }
       if let failure = value as? [String: Any], let error = failure["error"] as? String {
-        let retry = CPListItem(text: "Retry · 重试", detailText: error)
+        let retry = CPListItem(text: self.text("Retry", "重试", "重試"), detailText: error, image: UIImage(systemName: "arrow.clockwise"))
         retry.handler = { [weak self, weak template] _, complete in
           complete()
           guard let template = template, self?.connection == connection else { return }
@@ -51,10 +62,12 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
       }
       let records = value as? [[String: Any]] ?? []
       let rows = records.prefix(CPListTemplate.maximumItemCount).map { row -> CPListItem in
-        let item = CPListItem(text: row["title"] as? String ?? "Audio",
-                              detailText: row["subtitle"] as? String)
         let key = row["id"] as? String ?? ""
         let playable = row["playable"] as? Bool ?? false
+        let symbol = key.contains("sermon") || key.contains("topic") ? "waveform" : key.contains("instrumental") ? "pianokeys" : "music.note"
+        let image = UIImage(systemName: symbol)?.withTintColor(UIColor(red: 0.33, green: 0.78, blue: 0.96, alpha: 1), renderingMode: .alwaysOriginal)
+        let item = CPListItem(text: row["title"] as? String ?? self.text("Audio", "音频", "音訊"),
+                              detailText: row["subtitle"] as? String, image: image)
         item.accessoryType = playable ? .none : .disclosureIndicator
         item.handler = { [weak self] _, complete in
           guard self?.connection == connection else { complete(); return }
@@ -65,6 +78,7 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
               if let error = (result as? [String: Any])?["error"] as? String, !error.isEmpty {
                 self.showError(error)
               } else if controller.topTemplate !== CPNowPlayingTemplate.shared {
+                CPNowPlayingTemplate.shared.upNextTitle = self.text("Browse audio", "音频目录", "音訊目錄")
                 controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
               }
             }
@@ -72,8 +86,8 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate {
         }
         return item
       }
-      template.emptyViewTitleVariants = ["No audio available"]
-      template.emptyViewSubtitleVariants = ["Choose another category."]
+      template.emptyViewTitleVariants = [self.text("No audio available", "暂无音频", "暫無音訊")]
+      template.emptyViewSubtitleVariants = [self.text("Choose another category.", "请选择其他分类。", "請選擇其他分類。")]
       template.updateSections([CPListSection(items: rows)])
     }
   }

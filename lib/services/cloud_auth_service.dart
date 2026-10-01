@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart' as gsi;
 import 'package:yahwehs_words/services/desktop_google_auth.dart';
+import 'package:yahwehs_words/services/google_auth_platform.dart';
 
 import 'package:yahwehs_words/firebase_options.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
@@ -558,16 +558,8 @@ class CloudAuthService extends ChangeNotifier {
         appleAuthorizationCode =
             credential.additionalUserInfo?.authorizationCode;
       } else if (providers.contains('google.com')) {
-        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-          final credential = await desktopGoogleCredential();
-          await user
-              .reauthenticateWithCredential(credential)
-              .timeout(kAuthOpTimeout);
-        } else {
-          await user
-              .reauthenticateWithProvider(GoogleAuthProvider())
-              .timeout(kAuthOpTimeout);
-        }
+        await reauthenticateGoogleUser(user)
+            .timeout(const Duration(minutes: 5));
       } else if (providers.contains('password') &&
           user.email != null &&
           password != null &&
@@ -726,23 +718,7 @@ class CloudAuthService extends ChangeNotifier {
       return FirebaseAuth.instance.signInWithCredential(credential);
     }
     if (defaultTargetPlatform == TargetPlatform.macOS) {
-      final signIn = gsi.GoogleSignIn(
-        scopes: provider.scopes.isEmpty
-            ? const ['email', 'profile']
-            : provider.scopes,
-      );
-      final account = await signIn.signIn();
-      if (account == null) {
-        throw FirebaseAuthException(
-          code: 'cancelled',
-          message: 'Google sign-in cancelled by user.',
-        );
-      }
-      final auth = await account.authentication;
-      final credential = GoogleAuthProvider.credential(
-        idToken: auth.idToken,
-        accessToken: auth.accessToken,
-      );
+      final credential = await macGoogleCredential(provider);
       return FirebaseAuth.instance.signInWithCredential(credential);
     }
     // iOS / Android: ASWebAuthenticationSession-based provider flow.

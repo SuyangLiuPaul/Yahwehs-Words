@@ -242,6 +242,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           title: _remoteTitle ?? 'Sermon $_sermonId',
           artist: 'Eric H. H. Chang',
           album: 'Sermons · 讲道',
+          artUri: Uri.parse('https://yahwehword.com/icons/Icon-512.png'),
           duration: overallDuration,
         );
 

@@ -5,6 +5,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.GradientDrawable
+import android.content.res.ColorStateList
+import java.net.URL
+import javax.net.ssl.HttpsURLConnection
+import java.util.concurrent.Executors
+import java.io.ByteArrayOutputStream
 import android.view.Gravity
 import android.widget.*
 import com.google.android.gms.wearable.*
@@ -28,6 +36,14 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private val callbacks = Handler(Looper.getMainLooper())
     private val pending = mutableMapOf<String, Runnable>()
     private val requestProofs = mutableMapOf<String, Long>()
+    private val accent = Color.rgb(84, 199, 245)
+    private val surface = Color.rgb(15, 31, 44)
+    private val artworkWorker = Executors.newSingleThreadExecutor()
+    private var artworkUrl = ""
+    private var artworkBitmap: Bitmap? = null
+    private var artworkView: ImageView? = null
+    private fun tr(en: String, hans: String, hant: String = hans): String = when(state.optString("locale")) { "zh-Hant" -> hant; "zh-Hans" -> hans; else -> en }
+    private fun background(color: Int, radius: Int = 18) = GradientDrawable().apply { setColor(color); cornerRadius=dp(radius).toFloat() }
     private var progressText: TextView? = null
     private var progressBar: ProgressBar? = null
     private var playbackStatus: TextView? = null
@@ -42,8 +58,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         state = try { JSONObject(getPreferences(0).getString("state", "{}")!!) } catch (_:Exception) { JSONObject() }
-        val scroll = ScrollView(this)
-        content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(dp(20),dp(20),dp(20),dp(32)) }
+        val scroll = ScrollView(this).apply { setBackgroundColor(Color.BLACK); isVerticalScrollBarEnabled=false }
+        content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(dp(12),dp(24),dp(12),dp(32)) }
         scroll.addView(content); setContentView(scroll); render()
     }
     override fun onResume() {
@@ -149,15 +165,58 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         }.addOnFailureListener { fail("Could not connect to phone.") }
     }
     private fun text(value: String, headline: Boolean = false): TextView {
-        val view = TextView(this).apply { text=value; textSize=if(headline) 18f else 14f; gravity=Gravity.CENTER; setTextColor(if(headline) Color.rgb(239,167,119) else Color.WHITE); setPadding(0,dp(6),0,dp(6)) }
+        val view = TextView(this).apply { text=value; textSize=if(headline) 18f else 14f; gravity=Gravity.CENTER; setTextColor(if(headline) accent else Color.WHITE); setPadding(0,dp(6),0,dp(6)) }
         content.addView(view)
         return view
     }
     private fun button(label: String, enabled: Boolean = true, action: () -> Unit): Button {
-        val view = Button(this).apply { text=label; textSize=13f; minHeight=dp(48); isEnabled=enabled; setOnClickListener { action() } }
-        content.addView(view, LinearLayout.LayoutParams(-1,-2))
+        val view = Button(this).apply { text=label; textSize=13f; minHeight=dp(48); isAllCaps=false; setTextColor(Color.WHITE); background=background(surface); setPadding(dp(8),dp(6),dp(8),dp(6)); isEnabled=enabled; setOnClickListener { action() } }
+        content.addView(view, LinearLayout.LayoutParams(-1,-2).apply { bottomMargin=dp(8) })
         return view
     }
+    private fun artwork(size: Int = 68) {
+        val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(surface,14); contentDescription=null }
+        artworkView=image
+        content.addView(image,LinearLayout.LayoutParams(dp(size),dp(size)).apply { bottomMargin=dp(8) })
+        val raw=state.optString("artwork")
+        if(raw==artworkUrl && artworkBitmap!=null) { image.setImageBitmap(artworkBitmap); return }
+        image.setImageResource(android.R.drawable.ic_media_play)
+        image.imageTintList=ColorStateList.valueOf(accent)
+        if(raw.isEmpty() || raw==artworkUrl) return
+        val url=try { URL(raw).takeIf { it.protocol=="https" && it.host.isNotEmpty() && it.userInfo==null } } catch(_:Exception){null} ?: return
+        artworkUrl=raw;artworkBitmap=null
+        artworkWorker.execute {
+            var connection: HttpsURLConnection?=null
+            val bitmap=try {
+                connection=url.openConnection() as HttpsURLConnection
+                connection!!.connectTimeout=5000;connection!!.readTimeout=5000;connection!!.instanceFollowRedirects=false
+                if(connection!!.responseCode!=200) throw IllegalStateException()
+                val bytes=connection!!.inputStream.use { input ->
+                    val output=ByteArrayOutputStream();val buffer=ByteArray(8192)
+                    while(true) { val count=input.read(buffer);if(count<0)break;if(output.size()+count>512*1024)throw IllegalStateException();output.write(buffer,0,count) }
+                    output.toByteArray()
+                }
+                val bounds=BitmapFactory.Options().apply { inJustDecodeBounds=true };BitmapFactory.decodeByteArray(bytes,0,bytes.size,bounds)
+                if(bounds.outWidth !in 1..4096 || bounds.outHeight !in 1..4096) throw IllegalStateException()
+                val options=BitmapFactory.Options().apply { inSampleSize=1 };while(maxOf(bounds.outWidth,bounds.outHeight)/options.inSampleSize>256) options.inSampleSize*=2
+                BitmapFactory.decodeByteArray(bytes,0,bytes.size,options)
+            }catch(_:Exception){null}finally{connection?.disconnect()}
+            runOnUiThread { if(!isFinishing && artworkUrl==raw && bitmap!=null) { artworkBitmap=bitmap;artworkView?.imageTintList=null;artworkView?.setImageBitmap(bitmap) } }
+        }
+    }
+    private fun transportRow(sermon: Boolean) {
+        val row=LinearLayout(this).apply { orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER }
+        fun control(symbol:String,label:String,primary:Boolean,action:()->Unit):Button = Button(this).apply {
+            text=symbol;contentDescription=label;textSize=if(primary)22f else 18f;isAllCaps=false;minWidth=0;minimumWidth=0;minHeight=0;minimumHeight=0;setPadding(0,0,0,0)
+            setTextColor(if(primary)Color.BLACK else Color.WHITE);background=background(if(primary)accent else surface,30);isEnabled=false;setOnClickListener{action()}
+        }
+        val back=control(if(sermon)"↶15" else "⏮",if(sermon)tr("Back 15 seconds","快退 15 秒") else tr("Previous hymn","上一首"),false){send(if(sermon)"backward" else "previous")}
+        val play=control(if(state.optBoolean("playing"))"Ⅱ" else "▶",if(state.optBoolean("playing"))tr("Pause","暂停","暫停") else tr("Play","播放"),true){send(if(state.optBoolean("playing"))"pause" else "play")}
+        val next=control(if(sermon)"30↷" else "⏭",if(sermon)tr("Forward 30 seconds","快进 30 秒","快進 30 秒") else tr("Next hymn","下一首"),false){send(if(sermon)"forward" else "next")}
+        for((view,size) in listOf(back to 44,play to 52,next to 44)) row.addView(view,LinearLayout.LayoutParams(0,dp(size),if(view===play)1.18f else 1f).apply { leftMargin=dp(2);rightMargin=dp(2);gravity=Gravity.CENTER_VERTICAL })
+        playbackControls.addAll(listOf(play,back,next));content.addView(row,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(8);bottomMargin=dp(8) })
+    }
+    override fun onDestroy() { artworkWorker.shutdownNow();artworkView=null;artworkBitmap=null;super.onDestroy() }
     private fun isFresh(): Boolean {
         val syncedAt = state.optLong("syncedAt", 0)
         return syncedAt > 0 && System.currentTimeMillis() - syncedAt in -5000L..45000L
@@ -187,14 +246,15 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             contentDescription = progressText?.text
         }
         playbackStatus?.text = when {
-            !live -> "Saved playback · Refresh to connect"
+            !live -> tr("Saved playback · reconnect phone","已保存 · 重新连接手机","已儲存 · 重新連接手機")
             state.optString("error").isNotEmpty() -> state.optString("error")
-            busy -> "Loading on phone…"
-            else -> "Audio plays on phone"
+            busy -> tr("Loading on phone…","手机正在加载…","手機正在載入…")
+            else -> tr("Audio plays on phone","音频在手机播放","音訊在手機播放")
         }
     }
     private fun render() {
         content.removeAllViews()
+        artworkView=null
         progressText = null
         progressBar = null
         playbackStatus = null
@@ -202,9 +262,11 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         when(screen) {
             "home" -> {
                 text("Yahweh’s Words",true)
-                button("Daily verse · 每日经文") { screen="daily";render() }
-                button("Now playing · 播放") { screen="playing";render() }
-                button("Hymns & sermons") { screen="library";folder="car:root";history.clear();items=emptyList();send("children",folder);render() }
+                if(state.optString("id").isNotEmpty()) { artwork();text(state.optString("title"),true) }
+                button(tr("Bible · phone chapter","圣经 · 手机当前章节","聖經 · 手機目前章節")) { screen="bible";render() }
+                button(tr("Daily verse","每日经文","每日經文")) { screen="daily";render() }
+                button(tr("Now playing","正在播放")) { screen="playing";render() }
+                button(tr("Hymns & sermons","诗歌与讲道","詩歌與講道")) { screen="library";folder="car:root";history.clear();items=emptyList();send("children",folder);render() }
             }
             "daily" -> {
                 val daily=state.optJSONObject("daily") ?: JSONObject()
@@ -213,23 +275,36 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 text(daily.optString("chinese"))
                 text(daily.optString("date")+" · BSB-Y / CUVS-Y")
             }
+            "bible" -> {
+                val reading=state.optJSONObject("reading") ?: JSONObject()
+                text(reading.optString("reference",tr("Bible","圣经","聖經")),true)
+                text(reading.optString("versionLabel",reading.optString("version")))
+                text(if(connected && isFresh())tr("Follows your phone chapter","跟随手机所选章节","跟隨手機所選章節") else tr("Saved chapter · reconnect to update","已保存章节 · 连接后更新","已儲存章節 · 連接後更新"))
+                val verses=reading.optJSONArray("verses")
+                if(verses==null || verses.length()==0) text(tr("Open a Bible chapter in Words on phone, then refresh.","在手机 Words 打开圣经章节，然后刷新。","在手機 Words 開啟聖經章節，然後重新整理。"))
+                if(verses!=null) for(index in 0 until verses.length()) {
+                    val verse=verses.getJSONObject(index)
+                    if(verse.optString("heading").isNotEmpty())text(verse.optString("heading"))
+                    text(verse.optString("number")+"  "+verse.optString("text")).gravity=Gravity.START
+                }
+                if(reading.optBoolean("truncated")) text(tr("Transfer limit reached. Read the remaining verses on phone.","已达到传输上限；其余经文请在手机阅读。","已達到傳輸上限；其餘經文請在手機閱讀。"))
+            }
             "playing" -> {
                 val sermon=state.optBoolean("sermon")
-                text(state.optString("title").ifEmpty { "Choose audio from Listen" },true)
+                artwork(64)
+                text(state.optString("title").ifEmpty { tr("Choose audio from Listen","从聆听选择音频","從聆聽選擇音訊") },true)
                 text(state.optString("subtitle"))
                 progressText = text("")
-                progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { max = 1000 }
+                progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { max = 1000;progressTintList=ColorStateList.valueOf(accent);progressBackgroundTintList=ColorStateList.valueOf(surface) }
                 content.addView(progressBar, LinearLayout.LayoutParams(-1, dp(6)))
-                playbackControls.add(button(if(state.optBoolean("playing")) "Pause · 暂停" else "Play · 播放",false) { send(if(state.optBoolean("playing")) "pause" else "play") })
-                playbackControls.add(button(if(sermon) "−15 seconds" else "Previous hymn",false) { send(if(sermon) "backward" else "previous") })
-                playbackControls.add(button(if(sermon) "+30 seconds" else "Next hymn",false) { send(if(sermon) "forward" else "next") })
+                transportRow(sermon)
                 playbackStatus = text("")
                 updatePlaybackProgress()
             }
             "library" -> {
                 text(title,true)
-                if(loading && error.isEmpty()) text("Loading from phone…")
-                else if(items.isEmpty() && error.isEmpty()) text("No audio in this category.")
+                if(loading && error.isEmpty()) text(tr("Loading from phone…","正在从手机加载…","正在從手機載入…"))
+                else if(items.isEmpty() && error.isEmpty()) text(tr("No audio in this category.","此分类暂无音频。","此分類暫無音訊。"))
                 for(item in items) button(item.optString("title")) {
                     if(item.optBoolean("playable")) { send("select",item.optString("id"));screen="playing";render() }
                     else { history.add(folder to title);folder=item.optString("id");title=item.optString("title");items=emptyList();send("children",folder);render() }
@@ -237,8 +312,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             }
         }
         if(error.isNotEmpty()) text(error)
-        button("Refresh · 刷新") { error=""; if(screen=="library") send("children",folder) else send("snapshot");render() }
-        if(screen!="home") button("Back · 返回") { goBack() }
+        button(tr("Refresh","刷新","重新整理")) { error="";if(artworkBitmap==null)artworkUrl=""; if(screen=="library") send("children",folder) else send("snapshot");render() }
+        if(screen!="home") button(tr("Back","返回")) { goBack() }
     }
     private fun goBack() {
         if(screen=="library" && history.isNotEmpty()) { val previous=history.removeAt(history.lastIndex);folder=previous.first;title=previous.second;items=emptyList();send("children",folder) }

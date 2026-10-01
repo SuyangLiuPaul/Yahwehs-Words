@@ -2,6 +2,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yahwehs_words/services/remote_audio_source.dart';
+import 'package:yahwehs_words/services/media_companion_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahwehs_words/services/song_audio_handler.dart';
 import 'package:yahwehs_words/services/car_audio_catalogue.dart';
 import 'support/fake_song_playback_engine.dart';
@@ -52,6 +54,39 @@ class FakeRemoteAudio extends ChangeNotifier implements RemoteAudioSource {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  test(
+      'the same player snapshot supplies watch cover, locale and sermon controls',
+      () async {
+    final h = SongAudioHandler(engine: FakeSongPlaybackEngine());
+    final remote = FakeRemoteAudio();
+    h.attachRemote(remote);
+    final snapshot = MediaCompanionService.snapshotFor(h, locale: 'zh-Hant');
+    expect(snapshot['id'], 'car:sermon/001');
+    expect(snapshot['sermon'], true);
+    expect(snapshot['locale'], 'zh-Hant');
+    expect(snapshot['title'], 'Sermon');
+    expect(snapshot['syncedAt'], isA<int>());
+    expect(snapshot.keys, isNot(contains('credentials')));
+    await h.dispose();
+    remote.dispose();
+  });
+  test('car root labels follow the phone UI and retain bounded audio folders',
+      () async {
+    for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+      SharedPreferences.setMockInitialValues({'locale': locale});
+      final children = await CarAudioCatalogue.children(CarAudioCatalogue.root);
+      expect(children.length, 3);
+      expect(children.every((item) => item.playable == false), true);
+      expect(children.every((item) => item.artUri?.scheme == 'https'), true);
+      expect(
+          children.last.title,
+          locale == 'en'
+              ? 'Sermons'
+              : locale == 'zh-Hant'
+                  ? '講道'
+                  : '讲道');
+    }
+  });
   test('the active sermon owns system controls, including skip and seek',
       () async {
     final h = SongAudioHandler(engine: FakeSongPlaybackEngine());

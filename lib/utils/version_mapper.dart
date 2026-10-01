@@ -1,5 +1,7 @@
-import 'package:yahwehs_words/constants/book_name_mapping.dart' show zhToEn, toLocale;
-import 'package:yahwehs_words/utils/reference_parser.dart' show BibleReference, parseReference;
+import 'package:yahwehs_words/constants/book_name_mapping.dart'
+    show zhToEn, toLocale;
+import 'package:yahwehs_words/utils/reference_parser.dart'
+    show BibleReference, parseReference;
 
 String translateBookName(String? book, String version) {
   if (book == null) return '';
@@ -19,8 +21,8 @@ String translateBookName(String? book, String version) {
 /// that list will be misclassified as Chinese — add new ones there.
 ///
 /// Falls back to locale-driven naming when no version is provided.
-String localeAwareBookName(
-    String englishBook, String locale, [String? currentVersion]) {
+String localeAwareBookName(String englishBook, String locale,
+    [String? currentVersion]) {
   if (currentVersion != null && currentVersion.isNotEmpty) {
     return translateBookName(englishBook, currentVersion);
   }
@@ -90,11 +92,26 @@ String _localizedRefPart(
 /// 「犹大书 1:14」. Narrowing where to JUMP is right; narrowing what the
 /// card SAYS is a misstated reference, and a reference is the one thing
 /// on that card a reader will copy out.
-String localizedReferenceLabel(
-    String raw, String locale, [String? currentVersion]) {
+String localizedReferenceLabel(String raw, String locale,
+    [String? currentVersion]) {
   final segments = raw.contains(';') ? raw.split(';') : [raw];
   return segments.map((segment) {
     final trimmed = segment.trim();
+    final external = RegExp(
+            r'^(?:Ecclesiasticus\s*\(Sirach\)|Ecclesiasticus|Sirach)\s*',
+            caseSensitive: false)
+        .firstMatch(trimmed);
+    if (external != null && locale.startsWith('zh')) {
+      final name = locale == 'zh-Hant' ? '德訓篇（便西拉智訓）' : '德训篇（便西拉智训）';
+      return '$name ${trimmed.substring(external.end)}';
+    }
+    if (trimmed == 'Various NT references') {
+      return locale == 'zh-Hant'
+          ? '多處新約經文'
+          : locale.startsWith('zh')
+              ? '多处新约经文'
+              : trimmed;
+    }
     final inPlace = _localizeBookInPlace(trimmed, locale, currentVersion);
     if (inPlace != null) return inPlace;
     final ref = parseReference(trimmed);
