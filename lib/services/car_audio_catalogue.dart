@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/song.dart';
 import '../models/song_queue.dart';
 import 'song_service.dart';
@@ -11,8 +12,15 @@ import 'sermon_audio_service.dart';
 /// hundreds of rows on a driving screen.
 class CarAudioCatalogue {
   static const root = 'car:root';
+  static final artwork = Uri.parse('https://yahwehword.com/icons/Icon-512.png');
+  static String _title(String locale, String en, String hans, String hant) =>
+      locale == 'zh-Hant'
+          ? hant
+          : locale.startsWith('zh')
+              ? hans
+              : en;
   static MediaItem folder(String id, String title) =>
-      MediaItem(id: id, title: title, playable: false);
+      MediaItem(id: id, title: title, playable: false, artUri: artwork);
 
   static Future<List<Song>> _songs() async => (await SongService.load())
       .where((s) =>
@@ -23,10 +31,12 @@ class CarAudioCatalogue {
 
   static Future<List<MediaItem>> children(String id) async {
     if (id == root || id == AudioService.browsableRootId) {
+      final locale =
+          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
       return [
-        folder('car:songs', 'Hymns · 诗歌'),
-        folder('car:instrumental', 'Instrumental · 伴奏'),
-        folder('car:sermons', 'Sermons · 讲道')
+        folder('car:songs', _title(locale, 'Hymns', '诗歌', '詩歌')),
+        folder('car:instrumental', _title(locale, 'Instrumental', '伴奏', '伴奏')),
+        folder('car:sermons', _title(locale, 'Sermons', '讲道', '講道'))
       ];
     }
     if (id == 'car:songs' || id == 'car:instrumental') {
@@ -85,7 +95,8 @@ class CarAudioCatalogue {
               id: 'car:sermon/${s.id}',
               title: s.title,
               artist: 'Eric H. H. Chang',
-              album: s.topic)
+              album: s.topic,
+              artUri: artwork)
       ];
     }
     return const [];
@@ -103,8 +114,9 @@ class CarAudioCatalogue {
                 title: s.title,
                 artist: s.creditLine ?? s.sourceLabel,
                 album: s.album ?? s.sourceLabel,
-                artUri:
-                    s.artworkUrl == null ? null : Uri.tryParse(s.artworkUrl!))
+                artUri: s.artworkUrl == null
+                    ? artwork
+                    : Uri.tryParse(s.artworkUrl!) ?? artwork)
       ];
 
   static List<MediaItem> _songPages(
@@ -138,7 +150,8 @@ class CarAudioCatalogue {
             id: 'car:sermon/${s.id}',
             title: s.title,
             artist: 'Eric H. H. Chang',
-            album: s.topic)
+            album: s.topic,
+            artUri: artwork)
     ].take(30).toList();
   }
 
@@ -155,7 +168,11 @@ class CarAudioCatalogue {
           .where((s) => 'car:sermon/${s.id}' == id);
       if (matches.isNotEmpty) {
         return MediaItem(
-            id: id, title: matches.first.title, artist: 'Eric H. H. Chang');
+            id: id,
+            title: matches.first.title,
+            artist: 'Eric H. H. Chang',
+            album: matches.first.topic,
+            artUri: artwork);
       }
     }
     return null;

@@ -558,7 +558,8 @@ class CloudAuthService extends ChangeNotifier {
         appleAuthorizationCode =
             credential.additionalUserInfo?.authorizationCode;
       } else if (providers.contains('google.com')) {
-        await reauthenticateGoogleUser(user).timeout(kAuthOpTimeout);
+        await reauthenticateGoogleUser(user)
+            .timeout(const Duration(minutes: 5));
       } else if (providers.contains('password') &&
           user.email != null &&
           password != null &&

@@ -920,7 +920,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       artist: s.creditLine ?? s.sourceLabel,
       album: s.album ?? _queue.sourceLabel,
       duration: _itemDuration(item, active: active),
-      artUri: s.artworkUrl == null ? null : Uri.tryParse(s.artworkUrl!),
+      artUri: s.artworkUrl == null ? Uri.parse('https://yahwehword.com/icons/Icon-512.png') : Uri.tryParse(s.artworkUrl!),
       extras: {'songId': s.id, 'kind': item.kind},
     );
   }

@@ -19,12 +19,21 @@ const status = key => { statusKey = key; text(); };
 const language = document.getElementById('language'); language.value = lang;
 language.addEventListener('change',()=>{lang=language.value;text();}); text();
 
+const webMode = params.get('mode') === 'web';
 const port = Number(params.get('port'));
+if (webMode) {
+  for (const [key,intro,returnText] of [
+    ['en','Verify your Google account, then return to the Words website.','Response sent. Return to the Words website.'],
+    ['zh-Hans','验证 Google 账号，然后返回 Words 网页。','已发送验证结果，请返回 Words 网页。'],
+    ['zh-Hant','驗證 Google 帳號，然後返回 Words 網頁。','已傳送驗證結果，請返回 Words 網頁。']]) { translations[key].intro=intro; translations[key].return=returnText; }
+  text();
+}
 const state = params.get('state') || '';
 const allowedHosts = new Set(['yahwehword.com','yswords.netlify.app','yswords-dev.netlify.app','yswords-qat.netlify.app']);
+const desktopValid = !params.has('mode') && /^\d{4,5}$/.test(params.get('port') || '') && Number.isInteger(port) && port >= 1024 && port <= 65535;
 const valid = location.protocol === 'https:' && allowedHosts.has(location.hostname) &&
-  /^\d{4,5}$/.test(params.get('port') || '') && Number.isInteger(port) && port >= 1024 && port <= 65535 && /^[A-Za-z0-9_-]{43}$/.test(state);
-const storageKey = 'yswords.desktopGoogle.started';
+  (desktopValid || (webMode && !params.has('port'))) && /^[A-Za-z0-9_-]{43}$/.test(state);
+const storageKey = webMode ? 'yswords.webGoogle.started' : 'yswords.desktopGoogle.started';
 let auth;
 
 // A top-level form submits only to the fixed loopback address. No tokens in
@@ -35,6 +44,14 @@ async function returnToApp(fields) {
   status('return');
   if (auth) await signOut(auth);
   sessionStorage.removeItem(storageKey);
+  if (webMode) {
+    const channel = new BroadcastChannel(`yswords.google.${state}`);
+    channel.postMessage(JSON.stringify({state,...fields}));
+    // Retain no credentials after posting. Close after the one-use acknowledgement.
+    channel.onmessage = event => { try { const reply=JSON.parse(event.data); if(reply.state===state && reply.received) channel.close(); } catch (_) {} };
+    setTimeout(()=>channel.close(),5000);
+    return;
+  }
   const form = document.createElement('form');
   form.method = 'POST'; form.action = `http://127.0.0.1:${port}/google-sign-in`;
   for (const [name,value] of Object.entries({state,...fields})) {
@@ -53,12 +70,12 @@ if (!valid) {
   try {
     // A named app and session-only persistence leave the main website account
     // untouched. Use same-origin /__/auth proxy to avoid third-party storage.
-    auth = getAuth(initializeApp({...firebaseConfig,authDomain:location.hostname}, 'yswords-desktop-google'));
+    auth = getAuth(initializeApp({...firebaseConfig,authDomain:location.hostname}, webMode ? 'yswords-web-google' : 'yswords-desktop-google'));
     await setPersistence(auth, browserSessionPersistence);
     const result = await getRedirectResult(auth);
     if (result) {
       const started = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
-      if (!started || started.state !== state || started.port !== port || Date.now()-started.time > 300000) throw new Error('Expired request');
+      if (!started || started.state !== state || started.port !== port || started.webMode !== webMode || Date.now()-started.time > 300000) throw new Error('Expired request');
       const credential = GoogleAuthProvider.credentialFromResult(result);
       if (!credential?.idToken && !credential?.accessToken) throw new Error('Missing credential');
       await returnToApp({...(credential.idToken ? {idToken:credential.idToken} : {}),...(credential.accessToken ? {accessToken:credential.accessToken} : {})});
@@ -70,7 +87,7 @@ if (!valid) {
     document.getElementById('continue').addEventListener('click',async()=>{
       document.getElementById('continue').disabled = true;
       try {
-        sessionStorage.setItem(storageKey,JSON.stringify({state,port,time:Date.now()}));
+        sessionStorage.setItem(storageKey,JSON.stringify({state,port,webMode,time:Date.now()}));
         const provider = new GoogleAuthProvider(); provider.addScope('email'); provider.addScope('profile');
         provider.setCustomParameters({prompt:'select_account'});
         await signInWithRedirect(auth, provider);

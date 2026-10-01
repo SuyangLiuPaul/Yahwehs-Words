@@ -43,14 +43,17 @@ class _User extends Fake implements User {
 
 void main() {
   final credential = GoogleAuthProvider.credential(idToken: 'test-only-id');
-  test('web uses the web reauthentication API, even on a Mac browser',
+  test(
+      'web reauthenticates the existing user through the isolated COOP-safe helper',
       () async {
     final user = _User();
     final result = await reauthenticateGoogleUser(user,
-        isWeb: true, platform: TargetPlatform.macOS);
+        isWeb: true,
+        platform: TargetPlatform.macOS,
+        webCredential: () async => credential);
     expect(result, same(user.result));
-    expect(user.method, 'popup');
-    expect(user.provider, isA<GoogleAuthProvider>());
+    expect(user.method, 'credential');
+    expect(user.credential, same(credential));
   });
   for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
     test('$platform reauthenticates the existing user using a credential',

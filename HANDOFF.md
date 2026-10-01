@@ -1,3 +1,9 @@
+## Watch, car and localized reference follow-up — 2026-10-01
+
+Words **1.7.3** includes the Mac Google credential repair, a live-verified COOP-safe web reauthentication helper, watch cover/progress presentation and current phone Bible chapter synchronization, CarPlay Browse audio, locale-aware Android Auto folders, localized external citations and the beta support form/copy-email fallback. The earlier candidate web popup wording below is superseded: the production-header experiment failed, and the helper retained the existing user during actual Google reauthentication. 56 targeted regressions passed; watchOS SwiftUI type-check and Wear debug build passed. The temporary development authentication harness was removed from source after its isolated session was signed out. Full updated CI, signed deliveries, actual screenshots and final production fingerprints remain required.
+
+Sword has a separate **1.7.3** reference usability repair, retaining its existing study/workbench design and no Firebase/car/watch claim. Both 1.7.2 release tags remain immutable. Current public Apple reviews and Microsoft certification remain preserved; a submitted build is not public approval. Details: `docs/release-authentication-1.7.3-2026-10-01.md`.
+
 ## Complete authentication follow-up — 2026-10-01
 
 Words 1.7.2 delivered: source/main CI and five GitHub platform builds succeeded, seven assets uploaded, six websites verified, signed iOS/Mac 1070002 delivered and submitted for external beta, phone Play 1007002 submitted. The real browser-to-native Google handoff and Firebase backend credential exchange succeeded. Initial public Apple reviews and Microsoft certification are preserved.

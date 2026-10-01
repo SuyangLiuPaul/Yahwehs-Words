@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
 
 import 'desktop_google_auth.dart';
+import 'web_google_auth.dart';
 
 /// Mac Firebase supports credentials, but not the generic Google provider UI.
 /// Reauthentication must obtain a credential without replacing currentUser.
@@ -33,10 +34,14 @@ Future<UserCredential> reauthenticateGoogleUser(
   bool isWeb = kIsWeb,
   TargetPlatform? platform,
   Future<AuthCredential> Function()? windowsCredential,
+  Future<AuthCredential> Function()? webCredential,
   Future<AuthCredential> Function(GoogleAuthProvider)? macCredential,
 }) async {
   final provider = GoogleAuthProvider();
-  if (isWeb) return user.reauthenticateWithPopup(provider);
+  if (isWeb) {
+    final credential = await (webCredential ?? webGoogleCredential)();
+    return user.reauthenticateWithCredential(credential);
+  }
   switch (platform ?? defaultTargetPlatform) {
     case TargetPlatform.windows:
       final credential = await (windowsCredential ?? desktopGoogleCredential)();

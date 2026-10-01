@@ -12,7 +12,8 @@ import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/clipboard_helper.dart';
 import 'package:yahwehs_words/utils/jump_to_reference.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart' show localizedReferenceLabel;
+import 'package:yahwehs_words/utils/version_mapper.dart'
+    show localizedReferenceLabel;
 import 'package:yahwehs_words/widgets/confidence_badge.dart';
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
@@ -206,8 +207,7 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                                     WebHtmlElementStrategy.prefer,
                                 cacheWidth: 1200,
                                 cacheHeight: 480,
-                                errorBuilder: (_, __, ___) =>
-                                    _HeroShimmer(
+                                errorBuilder: (_, __, ___) => _HeroShimmer(
                                   category: evidence.category,
                                   showCategoryIcon: true,
                                 ),
@@ -232,8 +232,7 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                                     horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
                                   color: Colors.black.withValues(alpha: 0.55),
-                                  borderRadius:
-                                      BorderRadius.circular(99),
+                                  borderRadius: BorderRadius.circular(99),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -265,8 +264,8 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                               child: Center(
                                 child: _ArrowChip(
                                   icon: Icons.chevron_left_rounded,
-                                  onTap: () => _imagePageController
-                                      .previousPage(
+                                  onTap: () =>
+                                      _imagePageController.previousPage(
                                     duration: AppMotion.standard,
                                     curve: AppMotion.enter,
                                   ),
@@ -302,8 +301,7 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: images.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 8),
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
                           itemBuilder: (_, i) {
                             final active = i == _imageIndex;
                             return InkWell(
@@ -333,8 +331,7 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                                       WebHtmlElementStrategy.prefer,
                                   cacheWidth: 200,
                                   cacheHeight: 144,
-                                  errorBuilder: (_, __, ___) =>
-                                      _HeroShimmer(
+                                  errorBuilder: (_, __, ___) => _HeroShimmer(
                                     category: evidence.category,
                                     showCategoryIcon: true,
                                   ),
@@ -418,7 +415,8 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                 Text(
                   evidence.localizedSummary(locale),
                   style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
                     fontSize: fs,
                     fontStyle: FontStyle.italic,
                     color: scheme.onSurface,
@@ -436,7 +434,8 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                   child: Text(
                     evidence.localizedDescription(locale),
                     style: TextStyle(
-                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
                       fontSize: fs,
                       color: scheme.onSurface,
                       height: 1.55,
@@ -453,13 +452,12 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (evidence
-                        .localizedCorrelation(locale)
-                        .isNotEmpty) ...[
+                    if (evidence.localizedCorrelation(locale).isNotEmpty) ...[
                       Text(
                         evidence.localizedCorrelation(locale),
                         style: TextStyle(
-                          fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
                           fontSize: fs,
                           color: scheme.onSurface,
                           height: 1.55,
@@ -471,8 +469,7 @@ class _EvidenceDetailPageState extends State<EvidenceDetailPage> {
                       _ReferenceChip(
                         reference: evidence.scriptureReference,
                         locale: locale,
-                        onOpen: (segment) =>
-                            _openSegment(context, segment),
+                        onOpen: (segment) => _openSegment(context, segment),
                       ),
                   ],
                 ),
@@ -605,9 +602,9 @@ class _HeroShimmer extends StatelessWidget {
     final (accent, icon) = switch (category) {
       'Manuscripts' => (scheme.tertiary, Icons.menu_book_outlined),
       'Archaeology' => (scheme.primary, Icons.terrain_outlined),
-      'History'     => (scheme.secondary, Icons.account_balance_outlined),
-      'Science'     => (scheme.tertiary, Icons.science_outlined),
-      _             => (scheme.primary, Icons.image_outlined),
+      'History' => (scheme.secondary, Icons.account_balance_outlined),
+      'Science' => (scheme.tertiary, Icons.science_outlined),
+      _ => (scheme.primary, Icons.image_outlined),
     };
     return Container(
       decoration: BoxDecoration(
@@ -667,8 +664,7 @@ class _Meta extends StatelessWidget {
               style: TextStyle(
                 fontFamily: settings.fontFamily,
                 fontFamilyFallback: kCjkFontFallback,
-                fontSize:
-                    (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
+                fontSize: (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
                 color: scheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
@@ -704,9 +700,9 @@ class _Section extends StatelessWidget {
           Text(
             label.toUpperCase(),
             style: TextStyle(
-              fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-              fontSize:
-                  (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
+              fontFamily: settings.fontFamily,
+              fontFamilyFallback: kCjkFontFallback,
+              fontSize: (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
               fontWeight: FontWeight.w700,
               color: scheme.primary,
               letterSpacing: 0.6,
@@ -817,8 +813,8 @@ class _ReferenceChip extends StatelessWidget {
               alignment: PlaceholderAlignment.middle,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Icon(Icons.arrow_forward,
-                    size: 14, color: scheme.primary),
+                child:
+                    Icon(Icons.arrow_forward, size: 14, color: scheme.primary),
               ),
             ),
             TextSpan(
@@ -826,8 +822,7 @@ class _ReferenceChip extends StatelessWidget {
               style: TextStyle(
                 fontFamily: settings.fontFamily,
                 fontFamilyFallback: kCjkFontFallback,
-                fontSize:
-                    (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
+                fontSize: (settings.fontSize - 3).clamp(11.0, 15.0).toDouble(),
                 fontWeight: FontWeight.w600,
                 color: scheme.primary,
               ),
@@ -838,7 +833,7 @@ class _ReferenceChip extends StatelessWidget {
     );
     const padding = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
     if (whole.target == null) {
-      return Padding(padding: padding, child: label);
+      return _UnavailableReference(label: label, locale: locale);
     }
     return Material(
       color: scheme.primary.withValues(alpha: 0.10),
@@ -885,8 +880,7 @@ class _SegmentChip extends StatelessWidget {
             ),
           ),
           TextSpan(
-            text:
-                localizedReferenceLabel(segment.text, locale, currentVersion),
+            text: localizedReferenceLabel(segment.text, locale, currentVersion),
             style: TextStyle(
               fontFamily: settings.fontFamily,
               fontFamilyFallback: kCjkFontFallback,
@@ -900,8 +894,8 @@ class _SegmentChip extends StatelessWidget {
               alignment: PlaceholderAlignment.middle,
               child: Padding(
                 padding: const EdgeInsets.only(left: 6),
-                child: Icon(Icons.arrow_forward,
-                    size: 14, color: scheme.primary),
+                child:
+                    Icon(Icons.arrow_forward, size: 14, color: scheme.primary),
               ),
             ),
         ],
@@ -909,7 +903,7 @@ class _SegmentChip extends StatelessWidget {
     );
     const padding = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
     if (onTap == null) {
-      return Padding(padding: padding, child: label);
+      return _UnavailableReference(label: label, locale: locale);
     }
     return Material(
       color: scheme.primary.withValues(alpha: 0.10),
@@ -956,10 +950,10 @@ class _SourceTile extends StatelessWidget {
                 child: Text(
                   text,
                   style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: (settings.fontSize - 2)
-                        .clamp(12.0, 17.0)
-                        .toDouble(),
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
+                    fontSize:
+                        (settings.fontSize - 2).clamp(12.0, 17.0).toDouble(),
                     color: scheme.onSurface,
                     height: 1.4,
                   ),
@@ -971,4 +965,44 @@ class _SourceTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// External sources remain citations; they must never open a different Bible book.
+class _UnavailableReference extends StatelessWidget {
+  final Widget label;
+  final String locale;
+  const _UnavailableReference({required this.label, required this.locale});
+  String choose(String en, String hans, String hant) => locale == 'zh-Hant'
+      ? hant
+      : locale.startsWith('zh')
+          ? hans
+          : en;
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: label),
+          TextButton.icon(
+            icon: const Icon(Icons.info_outline),
+            label: Text(choose('About this citation', '关于这项引用', '關於這項引用')),
+            onPressed: () => showDialog<void>(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text(choose('Reference outside the reader',
+                          '阅读器未收录此文献', '閱讀器未收錄此文獻')),
+                      content: Text(choose(
+                          'This entry cites an external source or a general group of passages. It is not a passage available in the installed Bible editions. The quotation and academic sources remain on this page; no unrelated Bible book will be opened.',
+                          '这项引用属于外部文献，或概括多处经文；当前圣经译本未收录可直接打开的段落。请阅读本页的引文和学术来源。应用不会跳到名称相近但内容不同的书卷。',
+                          '這項引用屬於外部文獻，或概括多處經文；目前聖經譯本未收錄可直接開啟的段落。請閱讀本頁的引文和學術來源。應用不會跳到名稱相近但內容不同的書卷。')),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(choose('Close', '关闭', '關閉')))
+                      ],
+                    )),
+          ),
+        ],
+      );
 }

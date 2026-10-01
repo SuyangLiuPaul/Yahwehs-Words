@@ -27,7 +27,7 @@
 
 ## Current learning visibility
 
-The new Passion wheel, Bible principles and world-history wheel are hidden from the Words dashboard at the owner’s request. Sermon resume navigation and the six Mandarin/Cantonese teaching videos remain available. Original page URLs are retained for compatibility. See [visibility and release notes](docs/release-visibility-1.7.1-2026-10-01.md).
+The Passion timetable is visible, with English, 简体中文 and 繁體中文 language switching, all 14 source-diagram placements and the attached original illustration. Bible principles and the new world-history wheel remain hidden from the Words dashboard at the owner’s request. Sermon resume navigation and the six Mandarin/Cantonese teaching videos remain available. Original page URLs are retained for compatibility. See [visibility and release notes](docs/release-visibility-1.7.1-2026-10-01.md).
 
 ## Try it now
 
@@ -82,7 +82,7 @@ any APIs themselves**; everything is at the Firebase project level.
 
 - Berean Interlinear NT word study with source Greek forms, English glosses, transliteration, Strong’s numbers and grammar. Greek-only reading editions stay hidden in Words at the owner’s request.
 - Scoped search charts and mutually exclusive fuzzy / pinyin text search controls.
-- Phone audio companions for Apple Watch and Wear OS, plus Android Auto media browsing. Apple approved CarPlay Audio; a newly signed CarPlay build is undergoing activation and validation. [Build and distribution status](docs/car-and-watch.md).
+- Phone audio companions for Apple Watch and Wear OS, plus Android Auto media browsing. Apple approved CarPlay Audio; signed 1.7.2 beta builds are delivered, while public review and physical dashboard validation remain separate gates. [Build and distribution status](docs/car-and-watch.md).
 - [Store and beta installation guide](https://yahwehword.com/beta#words), [release report](docs/release-2026-09-30.md), and [Eagle’s View review](docs/eaglesview-theology-review.md).
 - Validation on 2026-09-30: analysis has no issues; **3,820 tests passed**, with 36 pre-existing skips.
 
@@ -114,6 +114,10 @@ any APIs themselves**; everything is at the Firebase project level.
 | Platforms    | Android, iOS, Web, macOS, Windows, Linux                                                                                |
 
 ---
+
+## Companion follow-up
+
+The 1.7.3 source update adds watch cover/title/progress presentation and the phone's currently selected Bible chapter, locale-aware car folders and a CarPlay return-to-library action. Google web reauthentication is verified through a separate same-origin helper without replacing the current user. Store deliveries and physical pairing checks are recorded separately in [the follow-up report](docs/release-authentication-1.7.3-2026-10-01.md).
 
 ## App screenshots
 
@@ -506,6 +510,6 @@ email to that address is sufficient. I will acknowledge within
 
 ### Reference clock maintenance
 
-The existing hidden Passion page now follows the supplied reference image, with selectable day/night hours, Gospel citations and the original zoomable attachment. See [implementation and verification](docs/passion-reference-clock.md). Store approval and real paired-device checks remain separate release gates.
+The visible Passion timetable follows the supplied reference image, with selectable day/night hours, Gospel citations and the original zoomable attachment. See [implementation and verification](docs/passion-reference-clock.md). Store approval and real paired-device checks remain separate release gates.
 
 The Passion timetable is visible in both apps, with English, 简体中文 and 繁體中文 content and language switching. It includes all 14 source-diagram placements (both 08:00 events) and the original zoomable attachment. Exact Gospel markers and estimated diagram times are identified separately.

@@ -48,6 +48,11 @@ BibleEvidence _evidence(String reference) => BibleEvidence(
       scripturalCorrelation: const {'en': 'Correlation.'},
     );
 
+class _Settings extends AppSettings {
+  @override
+  String get locale => 'en';
+}
+
 Future<void> _pump(WidgetTester tester, String reference) async {
   tester.view.devicePixelRatio = 1.0;
   tester.view.physicalSize = const Size(402, 874);
@@ -61,7 +66,7 @@ Future<void> _pump(WidgetTester tester, String reference) async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: mp),
-        ChangeNotifierProvider(create: (_) => AppSettings()),
+        ChangeNotifierProvider<AppSettings>(create: (_) => _Settings()),
       ],
       child: MaterialApp(
         home: EvidenceDetailPage(evidence: _evidence(reference)),
@@ -98,8 +103,7 @@ void main() {
       final unresolvable = <String>[];
       for (final e in entries.cast<Map<String, dynamic>>()) {
         final ref = e['scriptureReference'] as String? ?? '';
-        expect(ref.trim(), isNotEmpty,
-            reason: 'every entry cites something');
+        expect(ref.trim(), isNotEmpty, reason: 'every entry cites something');
         final segments = splitCitation(ref);
         final navigable = segments.any((s) => s.target != null);
         if (!navigable) unresolvable.add('${e['id']}: $ref');
@@ -182,8 +186,21 @@ void main() {
         reason: 'the arrow promises a destination there is none of');
   });
 
-  testWidgets('prose in the reference field is plain text too',
+  testWidgets('an external citation explains why it cannot open in the reader',
       (tester) async {
+    addTearDown(tester.view.reset);
+    await _pump(tester, 'Ecclesiasticus (Sirach) 39:1');
+    await tester.ensureVisible(find.text('About this citation'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('About this citation'));
+    await tester.pumpAndSettle();
+    expect(find.text('Reference outside the reader'), findsOneWidget);
+    expect(find.textContaining('installed Bible editions'), findsOneWidget);
+    expect(_chipTapTargets(), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('prose in the reference field is plain text too', (tester) async {
     addTearDown(tester.view.reset);
     await _pump(tester, 'Various NT references');
 
