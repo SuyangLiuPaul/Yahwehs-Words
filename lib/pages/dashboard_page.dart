@@ -963,7 +963,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 routeName: '/chronology',
               ),
             ),
-            if (kShowNewLearningPages) ...[
+            if (kShowPassionTimeline) ...[
               const SizedBox(height: 8),
               _FeaturedCard(
                   icon: Icons.schedule,
@@ -977,6 +977,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   settings: settings,
                   onTap: () => pushPage(const PassionWheelPage(),
                       routeName: kPassionWheelPath)),
+            ],
+            if (kShowNewLearningPages) ...[
               const SizedBox(height: 8),
               _FeaturedCard(
                   icon: Icons.menu_book_outlined,

@@ -326,7 +326,7 @@ def released_versions(
         # commit on an unmerged branch or a stray worktree is not this
         # build's history. With --all such an anchor became a shipped
         # row — reproduced by review with a throwaway branch.
-        'log', '--format=%H\x1f%cs\x1f%s', '--no-merges', 'HEAD',
+        'log', '--format=%H\x1f%cs\x1f%s', 'HEAD',
         repo=repo,
     ).splitlines()
     found: list[tuple[str, str, str]] = []
@@ -346,7 +346,32 @@ def released_versions(
         found.append((version, sha, date))
         if len(found) > limit:
             break
-    return found
+    # Recent releases also used merge-reviewed source tags without a release:
+    # subject. Fill those gaps only inside the bounded historical anchor window, so a
+    # sparse old tag can never absorb the entire pre-tag history.
+    if found:
+        floor = min(tuple(map(int, item[0].split('.'))) for item in found)
+        order = {line.split('\x1f', 1)[0]: i for i, line in enumerate(out)}
+        for tag in git('tag', '--merged', 'HEAD', '--list', 'v*', repo=repo).splitlines():
+            match = re.fullmatch(r'v(\d+\.\d+\.\d+)', tag)
+            if not match:
+                continue
+            version = match.group(1)
+            if version in seen or tuple(map(int, version.split('.'))) <= floor:
+                continue
+            try:
+                spec = git('show', f'{tag}:pubspec.yaml', repo=repo)
+            except subprocess.CalledProcessError:
+                continue
+            declared = re.search(r'^version:[ \t]*(\d+\.\d+\.\d+)(?:\+[0-9A-Za-z.-]+)?[ \t]*(?:#.*)?$', spec, re.MULTILINE)
+            if not declared or declared.group(1) != version:
+                continue
+            sha = git('rev-parse', f'{tag}^{{commit}}', repo=repo)
+            date = git('show', '-s', '--format=%cs', sha, repo=repo)
+            found.append((version, sha, date))
+            seen.add(version)
+        found.sort(key=lambda item: order[item[1]])
+    return found[:limit + 1]
 
 
 def notes_between(

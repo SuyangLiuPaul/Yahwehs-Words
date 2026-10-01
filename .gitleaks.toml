@@ -40,6 +40,9 @@ paths = [
 	# publish" Web API keys (real security = Firebase Rules).
 	'''^android/app/google-services\.json$''',
 	'''^lib/firebase_options\.dart$''',
+	# Dedicated browser helper repeats only the same public Firebase client
+	# config, checked against firebase_options.dart by the bridge tests.
+	'''^web/desktop-google-config\.js$''',
 
 	# Bible trivia content table — `captionKey: '<lookup-id>'`
 	# is a localization key, not a credential.

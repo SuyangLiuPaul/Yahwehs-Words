@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:provider/provider.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/learning_data.dart';
@@ -68,7 +69,9 @@ class _BiblePrinciplesPageState extends State<BiblePrinciplesPage> {
     return Scaffold(
         appBar: AppBar(
             leading: const LocalizedBackButton(),
-            title: Text(learningText(kPrinciplesTitle, locale))),
+            actions: const [LanguageSwitcherButton(alwaysVisible: true)],
+            title: Text(learningText(kPrinciplesTitle, locale),
+                maxLines: 2, overflow: TextOverflow.ellipsis)),
         body: FutureBuilder<_PrinciplesData>(
             future: _future,
             builder: (context, snap) {

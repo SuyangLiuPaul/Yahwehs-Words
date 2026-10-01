@@ -23,6 +23,9 @@ void main() {
         .setMockMessageHandler('flutter/assets', (message) async {
       final name = utf8.decode(message!.buffer
           .asUint8List(message.offsetInBytes, message.lengthInBytes));
+      if (name == 'AssetManifest.bin') {
+        return const StandardMessageCodec().encodeMessage(<String, Object?>{});
+      }
       final file = File(name);
       if (!file.existsSync()) return null;
       final bytes = file.readAsBytesSync();
@@ -45,7 +48,7 @@ void main() {
     final keys = {
       for (final v in verses) '${v['book']} ${v['chapter']}:${v['verse']}'
     };
-    expect(events.length, 20);
+    expect(events.length, 23);
     expect(events.map((e) => e.id).toSet().length, events.length);
     for (final e in events) {
       expect(e.refs, isNotEmpty);
@@ -55,7 +58,7 @@ void main() {
         expect(e.period[locale], isNotEmpty);
         expect(e.summary[locale], isNotEmpty);
       }
-      for (final r in e.refs) {
+      for (final r in {...e.refs, ...e.diagramRefs}) {
         final ref = parseReference(r);
         expect(ref, isNotNull, reason: r);
         for (var v = ref!.verseStart!; v <= ref.verseEnd!; v++) {
@@ -70,6 +73,15 @@ void main() {
         ['cross', 'darkness', 'death']);
     expect(events.firstWhere((e) => e.id == 'sentence').clockHour, isNull);
     expect(events.firstWhere((e) => e.id == 'peter').clockHour, isNull);
+    expect(events.indexWhere((e) => e.id == 'thirst'),
+        greaterThan(events.indexWhere((e) => e.id == 'darkness')));
+    expect(events.indexWhere((e) => e.id == 'thirst'),
+        lessThan(events.indexWhere((e) => e.id == 'death')));
+    for (final id in ['footwashing', 'judas-remorse', 'thirst']) {
+      final event = events.firstWhere((e) => e.id == id);
+      expect(event.clockHour, isNull);
+      expect(event.diagramHour, isNull);
+    }
   });
   test('Gospel filters do not borrow another Gospel’s clock', () {
     expect(events.firstWhere((e) => e.id == 'cross').hourFor('John'), isNull);
@@ -89,6 +101,66 @@ void main() {
     expect(passionClockAngle(9), closeTo(math.pi, 1e-12));
     expect(passionClockDay(6), isTrue);
     expect(passionClockDay(18), isFalse);
+  });
+  test('reference diagram estimates are separate from Scripture hours', () {
+    final expected = {
+      'supper': 20,
+      'garden': 0,
+      'arrest': 1,
+      'annas': 2,
+      'caiaphas': 3,
+      'council': 5,
+      'pilate': 6,
+      'herod': 7,
+      'sentence': 8,
+      'mockery': 8,
+      'cross': 9,
+      'darkness': 12,
+      'death': 15,
+      'burial': 17
+    };
+    expect({
+      for (final e in events.where((e) => e.diagramHour != null))
+        e.id: e.diagramHour
+    }, expected);
+    expect(events.firstWhere((e) => e.id == 'garden').clockHour, isNull);
+    expect(events.firstWhere((e) => e.id == 'burial').clockHour, isNull);
+    expect(events.firstWhere((e) => e.id == 'supper').refsFor('John'),
+        contains('John 13:21-30'));
+  });
+  test(
+      'every printed diagram event and every principle is translated in all three locales',
+      () {
+    for (final e in events.where((e) => e.diagramHour != null)) {
+      for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+        expect(e.diagramSummary[locale], isNotEmpty,
+            reason: '${e.id} / $locale');
+      }
+    }
+    expect(
+        events.firstWhere((e) => e.id == 'sentence').diagramSummary['zh-Hans'],
+        contains('最终审判'));
+    expect(
+        events.firstWhere((e) => e.id == 'mockery').diagramSummary['zh-Hans'],
+        contains('巡抚府'));
+    for (final raw in principlesJson['principles'] as List) {
+      final p = BiblePrinciple.fromJson(raw as Map<String, dynamic>);
+      for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+        expect(p.title[locale], isNotEmpty);
+        expect(p.summary[locale], isNotEmpty);
+      }
+    }
+  });
+  test('attached diagram bytes match the original source checksum', () {
+    final meta = passionJson['_meta']['referenceDiagram'];
+    expect(meta['asset'], kPassionReferenceImage);
+    expect(
+        sha256
+            .convert(File(kPassionReferenceImage).readAsBytesSync())
+            .toString(),
+        meta['sha256']);
+    expect(meta['sha256'],
+        '80df6472ead28e4a85fb78b5df860ceecd046f7a6adb801d6ddf0c073c682804');
   });
   test(
       'every editorial principle has a literal source anchor and unchanged source hash',
@@ -171,8 +243,170 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+  testWidgets('midnight, estimates and overlapping scenes remain interactive',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), width: 320, scale: 1.8);
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.marker.garden')).hitTestable(), 100);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('passion.marker.garden')));
+    await tester.pump();
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.selected.diagram-time')), 100);
+    expect(
+        tester
+            .widget<Text>(
+                find.byKey(const ValueKey('passion.selected.diagram-time')))
+            .data,
+        'Reference diagram: ≈ 00:00');
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('passion.marker.sentence')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('passion.marker.sentence')));
+    await tester.pump();
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.detail.mockery.title')), 100);
+    expect(find.byKey(const ValueKey('passion.detail.mockery.title')),
+        findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('hour selector covers empty hours and follows wheel selection',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), width: 320);
+    final selector = find.byType(DropdownButtonFormField<int>);
+    await tester.scrollUntilVisible(selector.hitTestable(), 100);
+    await tester.pumpAndSettle();
+    await tester.tap(selector);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('10:00').last);
+    await tester.pumpAndSettle();
+    expect(tester.state<FormFieldState<int>>(selector).value, 10);
+    final darkness = find.byKey(const ValueKey('passion.marker.darkness'));
+    await tester.ensureVisible(darkness);
+    await tester.pumpAndSettle();
+    await tester.tap(darkness);
+    await tester.pumpAndSettle();
+    expect(tester.state<FormFieldState<int>>(selector).value, 12);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('former adjacent rectangular corners do not select wrong hours',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), width: 320);
+    final one = find.byKey(const ValueKey('passion.marker.arrest'));
+    final two = find.byKey(const ValueKey('passion.marker.annas'));
+    await tester.scrollUntilVisible(one.hitTestable(), 100);
+    await tester.pumpAndSettle();
+    final midpoint = (tester.getCenter(one) + tester.getCenter(two)) / 2;
+    expect(tester.getRect(one).contains(midpoint), isTrue);
+    expect(tester.getRect(two).contains(midpoint), isTrue);
+    await tester.tapAt(midpoint);
+    await tester.pumpAndSettle();
+    expect(
+        tester
+            .state<FormFieldState<int>>(
+                find.byType(DropdownButtonFormField<int>))
+            .value,
+        9);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('unassigned clock hours do not invent an event', (tester) async {
+    await mount(tester, const PassionWheelPage());
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.hour.4')).hitTestable(), 100);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('passion.hour.4')));
+    await tester.pump();
+    await tester.scrollUntilVisible(
+        find.text(
+            '04:00 · No scene is assigned to this hour in the selected view.'),
+        100);
+    expect(find.byKey(const ValueKey('passion.selected.title')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+  for (final hour in events
+      .where((e) => e.diagramHour != null)
+      .map((e) => e.diagramHour!)
+      .toSet()) {
+    testWidgets('every diagram point opens its complete descriptions: $hour',
+        (tester) async {
+      await mount(tester, PassionWheelPage(key: ValueKey('hour.$hour')),
+          width: 402, locale: 'zh-Hans');
+      final atHour = events.where((e) => e.diagramHour == hour).toList();
+      final marker = find.byKey(ValueKey('passion.marker.${atHour.first.id}'));
+      await tester.scrollUntilVisible(marker.hitTestable(), 100);
+      await tester.tap(marker);
+      await tester.pumpAndSettle();
+      for (final event in atHour) {
+        final description =
+            find.byKey(ValueKey('passion.diagram-summary.${event.id}'));
+        await tester.scrollUntilVisible(description, 100);
+        expect((tester.widget(description) as Text).data,
+            event.diagramSummary['zh-Hans']);
+        expect(event.diagramRefs, isNotEmpty);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  }
+  testWidgets('original diagram opens in a zoomable attachment viewer',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), width: 320, scale: 1.8);
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.attachment.open')).hitTestable(),
+        100);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('passion.attachment.open')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('passion.attachment.viewer')),
+        findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is Image &&
+            w.image is ResizeImage &&
+            ((w.image as ResizeImage).imageProvider as AssetImage).assetName ==
+                kPassionReferenceImage),
+        findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'Chinese Gospel labels are translated and the language switcher works at 320px',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(),
+        width: 320, locale: 'zh-Hans');
+    expect(find.text('主耶稣受难日时间表'), findsOneWidget);
+    expect(find.text('Matthew'), findsNothing);
+    await tester.scrollUntilVisible(
+        find.widgetWithText(ChoiceChip, '马太福音').hitTestable(), 100);
+    expect(find.widgetWithText(ChoiceChip, '马太福音'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.language_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+    expect(find.text('The Passion of Jesus'), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, 'Matthew'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'eight oclock includes both translated descriptions from the image',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), locale: 'zh-Hant');
+    await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('passion.marker.sentence')).hitTestable(),
+        100);
+    await tester.tap(find.byKey(const ValueKey('passion.marker.sentence')));
+    await tester.pumpAndSettle();
+    for (final id in ['sentence', 'mockery']) {
+      final target = find.byKey(ValueKey('passion.diagram-summary.$id'));
+      await tester.scrollUntilVisible(target, 100);
+      expect(target, findsOneWidget);
+      expect((tester.widget(target) as Text).data,
+          events.firstWhere((e) => e.id == id).diagramSummary['zh-Hant']);
+    }
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('John filter offers no borrowed hour markers', (tester) async {
     await mount(tester, const PassionWheelPage());
+    await tester.tap(find.byKey(const ValueKey('passion.mode.gospel')));
+    await tester.pump();
     await tester.tap(find.widgetWithText(ChoiceChip, 'John'));
     await tester.pump();
     expect(find.byKey(const ValueKey('passion.marker.cross')), findsNothing);

@@ -18,7 +18,10 @@ import 'package:yahwehs_words/utils/app_bar_room.dart';
 /// switcher already used, so all three stay in sync — none of them
 /// is "the real one".
 class LanguageSwitcherButton extends StatelessWidget {
-  const LanguageSwitcherButton({super.key});
+  const LanguageSwitcherButton({super.key, this.alwaysVisible = false});
+
+  /// Dedicated learning pages reserve room for the language control.
+  final bool alwaysVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +31,13 @@ class LanguageSwitcherButton extends StatelessWidget {
     // title or field: the language is in Settings, and the home page's
     // bar — which is never crowded — keeps this button at every width.
     // See `kRoomyAppBarWidth`.
-    if (appBarIsCramped(context) && Navigator.of(context).canPop()) {
+    if (!alwaysVisible &&
+        appBarIsCramped(context) &&
+        Navigator.of(context).canPop()) {
       return const SizedBox.shrink();
     }
     return PopupMenuButton<String>(
-      tooltip:
-          uiStrings['interfaceLanguage']?[locale] ?? 'Interface Language',
+      tooltip: uiStrings['interfaceLanguage']?[locale] ?? 'Interface Language',
       icon: const Icon(Icons.language_rounded),
       initialValue: locale,
       onSelected: (val) => settings.setLocale(val),

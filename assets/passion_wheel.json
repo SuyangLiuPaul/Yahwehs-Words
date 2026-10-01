@@ -1,21 +1,31 @@
 {
   "_meta": {
-    "schema": 1,
+    "schema": 2,
     "editorial": true,
     "checkedAt": "2026-10-01",
     "sourcePassages": [
       "Matthew 26-27",
       "Mark 14-15",
       "Luke 22-23",
-      "John 18-19"
+      "John 13, 18-19"
     ],
     "sources": [
       "https://www.biblegateway.com/passage/?search=Matthew%2026-27&version=KJV",
       "https://www.biblegateway.com/passage/?search=Mark%2014-15&version=KJV",
       "https://www.biblegateway.com/passage/?search=Luke%2022-23&version=KJV",
-      "https://www.biblegateway.com/passage/?search=John%2018-19&version=KJV"
+      "https://www.biblegateway.com/passage/?search=John%2018-19&version=KJV",
+      "https://www.biblegateway.com/passage/?search=John%2013&version=KJV"
     ],
-    "method": "Short editorial summaries, parallel Gospel references. Only explicit third/sixth/ninth daytime hours have approximate modern clock markers. Untimed scenes have no invented clock coordinate. Event order is a reading guide; John’s hearing time and differing narrative placement are explicitly retained."
+    "method": "Parallel Gospel references and original summaries retained. Reference-diagram placements are separate diagramHour metadata; clockHour remains limited to explicit third/sixth/ninth daytime hours. No Scripture wording is changed.",
+    "referenceDiagram": {
+      "asset": "assets/images/passion-reference-clock.jpeg",
+      "title": "圣经黑暗时刻时辰圈",
+      "source": "https://www.fydt.org/",
+      "providedBy": "Owner, 2026-10-01",
+      "sha256": "80df6472ead28e4a85fb78b5df860ceecd046f7a6adb801d6ddf0c073c682804",
+      "timing": "Approximate placements transcribed from the attached diagram; separate from clockHour, which records Gospel time statements. The diagram does not settle John 19:14 versus Mark 15:25.",
+      "printedReferences": "diagramRefs transcribes the owner-supplied image separately from the existing study references. Both sets open the local Scripture reader."
+    }
   },
   "events": [
     {
@@ -44,6 +54,45 @@
         "Matthew 26:20-30",
         "Mark 14:17-26",
         "Luke 22:14-20"
+      ],
+      "clockHour": null,
+      "diagramHour": 20,
+      "diagramRefs": [
+        "Matthew 26:17-25",
+        "Mark 14:12-21",
+        "Luke 22:7-12",
+        "John 13:21-30"
+      ],
+      "diagramSummary": {
+        "en": "The Passover evening meal begins. Jesus shares his final supper with the disciples and institutes the bread and cup. The diagram places this at about 20:00; the Gospels do not state that clock time. The source caption identifies this as the evening of 14 Abib (Nisan); this is the diagram’s proposed dating, not a resolution of the different Gospel Passover chronologies.",
+        "zh-Hans": "逾越节晚餐开始，耶稣与门徒吃最后的晚餐，并设立饼和杯的纪念。原图将此安排在约晚上八点；福音书未给出这个钟点。 原图注明亚笔月（尼散月）十四日；这是原图提出的日期安排，并非裁定各福音书之间的逾越节时序问题。",
+        "zh-Hant": "逾越節晚餐開始，耶穌與門徒吃最後的晚餐，並設立餅和杯的紀念。原圖將此安排在約晚上八點；福音書未給出這個鐘點。 原圖註明亞筆月（尼散月）十四日；這是原圖提出的日期安排，並非裁定各福音書之間的逾越節時序問題。"
+      }
+    },
+    {
+      "id": "footwashing",
+      "title": {
+        "en": "Jesus washes the disciples’ feet",
+        "zh-Hans": "耶稣为门徒洗脚",
+        "zh-Hant": "耶穌為門徒洗腳"
+      },
+      "place": {
+        "en": "Supper room · exact location unspecified",
+        "zh-Hans": "晚餐房间 · 未记具体地点",
+        "zh-Hant": "晚餐房間 · 未記具體地點"
+      },
+      "period": {
+        "en": "During supper · hour unspecified",
+        "zh-Hans": "晚餐期间 · 未记确切时辰",
+        "zh-Hant": "晚餐期間 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "During supper, Jesus washes the disciples’ feet and gives them an example of serving one another. John does not assign this scene a clock time.",
+        "zh-Hans": "晚餐期间，耶稣为门徒洗脚，以身作则教导他们彼此服事。约翰没有记载这一幕的具体钟点。",
+        "zh-Hant": "晚餐期間，耶穌為門徒洗腳，以身作則教導他們彼此服事。約翰沒有記載這一幕的具體鐘點。"
+      },
+      "refs": [
+        "John 13:1-17"
       ],
       "clockHour": null
     },
@@ -74,7 +123,18 @@
         "Mark 14:32-42",
         "Luke 22:39-46"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 0,
+      "diagramRefs": [
+        "Matthew 26:36-46",
+        "Mark 14:32-42",
+        "Luke 22:39-46"
+      ],
+      "diagramSummary": {
+        "en": "In Gethsemane, Jesus prays in sorrow and anguish, submitting to the Father’s will while his disciples struggle to stay awake. Midnight is the diagram’s estimate.",
+        "zh-Hans": "在客西马尼园，耶稣忧伤痛苦地祷告，顺服父的旨意；门徒却困倦睡着。午夜十二点是原图的估计。",
+        "zh-Hant": "在客西馬尼園，耶穌憂傷痛苦地禱告，順服父的旨意；門徒卻困倦睡著。午夜十二點是原圖的估計。"
+      }
     },
     {
       "id": "arrest",
@@ -104,7 +164,19 @@
         "Luke 22:47-53",
         "John 18:1-12"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 1,
+      "diagramRefs": [
+        "Matthew 26:47-56",
+        "Mark 14:43-52",
+        "Luke 22:47-53",
+        "John 18:1-11"
+      ],
+      "diagramSummary": {
+        "en": "Judas betrays Jesus. The armed party arrests and binds him in the garden; his disciples flee. About 01:00 is an estimated placement in the diagram.",
+        "zh-Hans": "犹大出卖耶稣，带人来到园中；耶稣被捕、被捆绑，门徒离散。凌晨一点是原图安排的估计时刻。",
+        "zh-Hant": "猶大出賣耶穌，帶人來到園中；耶穌被捕、被捆綁，門徒離散。凌晨一點是原圖安排的估計時刻。"
+      }
     },
     {
       "id": "annas",
@@ -131,7 +203,16 @@
       "refs": [
         "John 18:13-24"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 2,
+      "diagramRefs": [
+        "John 18:13-23"
+      ],
+      "diagramSummary": {
+        "en": "Jesus is taken first to Annas and questioned about his disciples and teaching; an officer strikes him. The diagram estimates about 02:00.",
+        "zh-Hans": "耶稣先被押到亚那住处，接受关于门徒和教训的盘问，并被差役掌掴。原图估计为凌晨两点。",
+        "zh-Hant": "耶穌先被押到亞那住處，接受關於門徒和教訓的盤問，並被差役掌摑。原圖估計為凌晨兩點。"
+      }
     },
     {
       "id": "caiaphas",
@@ -159,7 +240,17 @@
         "Matthew 26:57-68",
         "Mark 14:53-65"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 3,
+      "diagramRefs": [
+        "Matthew 26:57-68",
+        "John 18:24"
+      ],
+      "diagramSummary": {
+        "en": "Jesus is taken to Caiaphas. Witnesses accuse him, he is questioned about being the Messiah, and he is condemned and mistreated. The diagram calls this a preliminary hearing at about 03:00.",
+        "zh-Hans": "耶稣被押到该亚法住处；见证人控告他，他被问是否为基督，随后被定罪并受侮辱。原图称此为非正式审讯，估计在凌晨三点。",
+        "zh-Hant": "耶穌被押到該亞法住處；見證人控告他，他被問是否為基督，隨後被定罪並受侮辱。原圖稱此為非正式審訊，估計在凌晨三點。"
+      }
     },
     {
       "id": "peter",
@@ -219,6 +310,43 @@
         "Matthew 27:1-2",
         "Mark 15:1"
       ],
+      "clockHour": null,
+      "diagramHour": 5,
+      "diagramRefs": [
+        "Matthew 27:1-2",
+        "Luke 22:66-71"
+      ],
+      "diagramSummary": {
+        "en": "At daybreak the council questions Jesus and agrees to deliver him to Pilate. The diagram places this formal council hearing and condemnation at about 05:00. The source caption also associates this council hearing with the death sentence.",
+        "zh-Hans": "天亮时，公会审问耶稣，并决定把他交给彼拉多。原图将这场正式审讯和定罪安排在约清晨五点。 原图也把公会审讯与死刑判决列在此处。",
+        "zh-Hant": "天亮時，公會審問耶穌，並決定把他交給彼拉多。原圖將這場正式審訊和定罪安排在約清晨五點。 原圖也把公會審訊與死刑判決列在此處。"
+      }
+    },
+    {
+      "id": "judas-remorse",
+      "title": {
+        "en": "Judas returns the silver",
+        "zh-Hans": "犹大懊悔并退还银钱",
+        "zh-Hant": "猶大懊悔並退還銀錢"
+      },
+      "place": {
+        "en": "Chief priests and elders · temple",
+        "zh-Hans": "祭司长和长老面前 · 圣殿",
+        "zh-Hant": "祭司長和長老面前 · 聖殿"
+      },
+      "period": {
+        "en": "After Jesus is condemned · hour unspecified",
+        "zh-Hans": "耶稣被定罪后 · 未记确切时辰",
+        "zh-Hant": "耶穌被定罪後 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "Matthew records that Judas, seeing Jesus condemned, regrets his betrayal and returns the thirty pieces of silver. He casts the silver into the temple; the chief priests later buy the potter’s field. The passage gives no clock time.",
+        "zh-Hans": "马太记载，犹大见耶稣被定罪，就懊悔，退还三十块银钱，承认出卖了无辜之人的血。他把银钱丢在殿里；祭司长后来用它买了窑户的田。经文没有给出具体钟点。",
+        "zh-Hant": "馬太記載，猶大見耶穌被定罪，就懊悔，退還三十塊銀錢，承認出賣了無辜之人的血。他把銀錢丟在殿裡；祭司長後來用它買了窯戶的田。經文沒有給出具體鐘點。"
+      },
+      "refs": [
+        "Matthew 27:3-10"
+      ],
       "clockHour": null
     },
     {
@@ -249,7 +377,19 @@
         "Luke 23:1-5",
         "John 18:28-38"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 6,
+      "diagramRefs": [
+        "Matthew 27:1-2",
+        "Matthew 27:11-14",
+        "Luke 23:1-7",
+        "John 18:28-38"
+      ],
+      "diagramSummary": {
+        "en": "Jesus is brought before Pontius Pilate for the first hearing. Pilate questions him about being king and hears the accusations. The diagram estimates about 06:00.",
+        "zh-Hans": "耶稣在彼拉多官邸接受第一次审讯；彼拉多问他是否为王，并听取控告。原图估计为清晨六点。",
+        "zh-Hant": "耶穌在彼拉多官邸接受第一次審訊；彼拉多問他是否為王，並聽取控告。原圖估計為清晨六點。"
+      }
     },
     {
       "id": "herod",
@@ -276,7 +416,16 @@
       "refs": [
         "Luke 23:6-12"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 7,
+      "diagramRefs": [
+        "Luke 23:6-11"
+      ],
+      "diagramSummary": {
+        "en": "Pilate sends Jesus to Herod. Herod questions him, then he and his soldiers mock him and send him back to Pilate. The diagram estimates about 07:00.",
+        "zh-Hans": "彼拉多把耶稣送到希律那里；希律盘问他，随后与兵丁藐视并戏弄他，再把他送回彼拉多。原图估计为早上七点。",
+        "zh-Hant": "彼拉多把耶穌送到希律那裡；希律盤問他，隨後與兵丁藐視並戲弄他，再把他送回彼拉多。原圖估計為早上七點。"
+      }
     },
     {
       "id": "sentence",
@@ -306,7 +455,19 @@
         "Luke 23:13-25",
         "John 19:13-16"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 8,
+      "diagramRefs": [
+        "Matthew 27:11-26",
+        "Mark 15:1-15",
+        "Luke 23:13-25",
+        "John 19:1-16"
+      ],
+      "diagramSummary": {
+        "en": "Pilate’s final judgment: Barabbas is released, and Jesus is handed over to be crucified. The diagram groups this judgment at about 08:00 together with the soldiers’ mockery; both events are shown here.",
+        "zh-Hans": "彼拉多作最终审判，释放巴拉巴，将耶稣交出去钉十字架。原图把最终审判与兵丁戏弄同列在约早上八点；此时点会显示这两件事。",
+        "zh-Hant": "彼拉多作最終審判，釋放巴拉巴，將耶穌交出去釘十字架。原圖把最終審判與兵丁戲弄同列在約早上八點；此時點會顯示這兩件事。"
+      }
     },
     {
       "id": "mockery",
@@ -335,7 +496,17 @@
         "Mark 15:15-20",
         "John 19:1-5"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 8,
+      "diagramRefs": [
+        "Matthew 27:26-31",
+        "Mark 15:15-20"
+      ],
+      "diagramSummary": {
+        "en": "In the governor’s headquarters, Jesus is scourged and mocked by the soldiers with a robe and a crown of thorns. This is the second event printed beside about 08:00 on the diagram. The accounts differ in how the scourging and final judgment are narrated.",
+        "zh-Hans": "在巡抚府，耶稣受鞭打，被兵丁穿上袍、戴上荆棘冠冕并受戏弄。这是原图早上八点旁列出的第二件事；各福音书叙述鞭打与最终审判的次序有所不同。",
+        "zh-Hant": "在巡撫府，耶穌受鞭打，被兵丁穿上袍、戴上荊棘冠冕並受戲弄。這是原圖早上八點旁列出的第二件事；各福音書敘述鞭打與最終審判的次序有所不同。"
+      }
     },
     {
       "id": "road",
@@ -395,7 +566,19 @@
         "Luke 23:32-34",
         "John 19:18-24"
       ],
-      "clockHour": 9
+      "clockHour": 9,
+      "diagramHour": 9,
+      "diagramRefs": [
+        "Matthew 27:31-44",
+        "Mark 15:20-32",
+        "Luke 23:26-38",
+        "John 19:16-22"
+      ],
+      "diagramSummary": {
+        "en": "Jesus is led to Golgotha and nailed to the cross. Mark names the third hour, conventionally about 09:00. The other accounts should be read alongside it without assigning them Mark’s time.",
+        "zh-Hans": "耶稣被带往各各他，被钉在十字架上。马可记为第三时，通常对应约早上九点；其余福音书应并列阅读，不把马可的时辰直接套入。",
+        "zh-Hant": "耶穌被帶往各各他，被釘在十字架上。馬可記為第三時，通常對應約早上九點；其餘福音書應並列閱讀，不把馬可的時辰直接套入。"
+      }
     },
     {
       "id": "taunts",
@@ -480,7 +663,45 @@
         "Mark 15:33",
         "Luke 23:44-45"
       ],
-      "clockHour": 12
+      "clockHour": 12,
+      "diagramHour": 12,
+      "diagramRefs": [
+        "Matthew 27:45",
+        "Mark 15:33",
+        "Luke 23:44"
+      ],
+      "diagramSummary": {
+        "en": "From the sixth hour darkness covers the land until the ninth hour, conventionally about noon to 15:00. Matthew, Mark and Luke record the darkness; John does not mention this interval.",
+        "zh-Hans": "从第六时直到第九时，遍地黑暗，通常对应约正午十二点至下午三点。马太、马可、路加记载此事，约翰未提这段黑暗。",
+        "zh-Hant": "從第六時直到第九時，遍地黑暗，通常對應約正午十二點至下午三點。馬太、馬可、路加記載此事，約翰未提這段黑暗。"
+      }
+    },
+    {
+      "id": "thirst",
+      "title": {
+        "en": "“I thirst”",
+        "zh-Hans": "“我渴了”",
+        "zh-Hant": "「我渴了」"
+      },
+      "place": {
+        "en": "Golgotha · on the cross",
+        "zh-Hans": "各各他 · 十字架上",
+        "zh-Hant": "各各他 · 十字架上"
+      },
+      "period": {
+        "en": "Before Jesus’ death · hour unspecified",
+        "zh-Hans": "耶稣死亡前 · 未记确切时辰",
+        "zh-Hant": "耶穌死亡前 · 未記確切時辰"
+      },
+      "summary": {
+        "en": "John records Jesus saying “I thirst.” Sour wine is raised to him on hyssop; after receiving it he says “It is finished” and gives up his spirit. John gives the sequence but no clock time for the thirst.",
+        "zh-Hans": "约翰记载耶稣说：“我渴了。”有人用牛膝草把醋送到祂口边；耶稣尝了以后说“成了”，便交付了灵。约翰记下事件先后，没有为口渴这句话指定钟点。",
+        "zh-Hant": "約翰記載耶穌說：「我渴了。」有人用牛膝草把醋送到祂口邊；耶穌嚐了以後說「成了」，便交付了靈。約翰記下事件先後，沒有為口渴這句話指定鐘點。"
+      },
+      "refs": [
+        "John 19:28-30"
+      ],
+      "clockHour": null
     },
     {
       "id": "death",
@@ -510,7 +731,19 @@
         "Luke 23:46",
         "John 19:28-30"
       ],
-      "clockHour": 15
+      "clockHour": 15,
+      "diagramHour": 15,
+      "diagramRefs": [
+        "John 19:30",
+        "Matthew 27:45-50",
+        "Mark 15:33-37",
+        "Luke 23:44-46"
+      ],
+      "diagramSummary": {
+        "en": "Jesus dies. Matthew and Mark give the ninth-hour cry, conventionally about 15:00; John records “It is finished” without a clock time. The diagram also proposes a parallel with a lamb offering in the temple; that comparison is the diagram author’s interpretation, not a time statement in these Gospel passages. The source specifically claims the same phrase, “It is finished”, was spoken during that offering; this is included as source commentary and is not asserted as a Gospel-reported temple event.",
+        "zh-Hans": "耶稣死亡。马太、马可记第九时的呼喊，通常对应约下午三点；约翰记“成了”，但未给出钟点。原图还将此与圣殿献羊的祭祀作对照；这属于原图作者的解释，并非这些福音经文明确记载的同时事件或时刻。 原图还称献祭时喊出同一句“成了”；这里保留为原图注解，不把它当作福音书所记载的圣殿事件。",
+        "zh-Hant": "耶穌死亡。馬太、馬可記第九時的呼喊，通常對應約下午三點；約翰記「成了」，但未給出鐘點。原圖還將此與聖殿獻羊的祭祀作對照；這屬於原圖作者的解釋，並非這些福音經文明確記載的同時事件或時刻。 原圖還稱獻祭時喊出同一句「成了」；這裡保留為原圖註解，不把它當作福音書所記載的聖殿事件。"
+      }
     },
     {
       "id": "witness",
@@ -596,7 +829,19 @@
         "Luke 23:50-56",
         "John 19:38-42"
       ],
-      "clockHour": null
+      "clockHour": null,
+      "diagramHour": 17,
+      "diagramRefs": [
+        "Matthew 27:57-61",
+        "Mark 15:42-47",
+        "Luke 23:50-56",
+        "John 19:38-42"
+      ],
+      "diagramSummary": {
+        "en": "Joseph of Arimathea obtains Jesus’ body, wraps it and lays it in a tomb before the Sabbath. John also names Nicodemus. The diagram estimates about 17:00; the accounts describe evening and preparation, without this exact clock time.",
+        "zh-Hans": "亚利马太的约瑟领走耶稣的身体，包裹并安放在坟墓中，赶在安息日之前完成；约翰还提到尼哥底母。原图估计为下午五点；经文记傍晚和预备日，并未给出这个准确钟点。",
+        "zh-Hant": "亞利馬太的約瑟領走耶穌的身體，包裹並安放在墳墓中，趕在安息日之前完成；約翰還提到尼哥底母。原圖估計為下午五點；經文記傍晚和預備日，並未給出這個準確鐘點。"
+      }
     }
   ]
 }

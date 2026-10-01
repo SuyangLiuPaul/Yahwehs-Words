@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart' as gsi;
+import 'package:yahwehs_words/services/desktop_google_auth.dart';
 
 import 'package:yahwehs_words/firebase_options.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
@@ -157,8 +158,10 @@ class CloudAuthService extends ChangeNotifier {
   bool get isSignedIn => _user != null;
   bool get accountDeletionInProgress => _accountDeletionInProgress;
   bool get deletionRequiresPassword {
-    final providers = _user?.providerData.map((p) => p.providerId).toSet() ?? {};
-    return !providers.contains('apple.com') && !providers.contains('google.com');
+    final providers =
+        _user?.providerData.map((p) => p.providerId).toSet() ?? {};
+    return !providers.contains('apple.com') &&
+        !providers.contains('google.com');
   }
 
   /// Initialise Firebase if config has been filled in. Safe to call
@@ -369,7 +372,8 @@ class CloudAuthService extends ChangeNotifier {
         await Firebase.initializeApp();
       }
       // ignore: avoid_print
-      print('[CloudAuthService] Firebase.initializeApp done, authDomain=${kIsWeb ? _webOptions().authDomain : "n/a"}');
+      print(
+          '[CloudAuthService] Firebase.initializeApp done, authDomain=${kIsWeb ? _webOptions().authDomain : "n/a"}');
       // Tell Firestore to auto-detect when the WebChannel transport
       // is being blocked (some browser extensions, corporate
       // proxies, mobile carrier networks) and fall back to long-
@@ -404,7 +408,8 @@ class CloudAuthService extends ChangeNotifier {
       try {
         _user = auth.currentUser;
       } catch (e, st) {
-        debugPrint('CloudAuthService: currentUser threw, treating as null: $e\n$st');
+        debugPrint(
+            'CloudAuthService: currentUser threw, treating as null: $e\n$st');
         _user = null;
       }
       step = 'FirebaseAuth.userChanges';
@@ -462,7 +467,8 @@ class CloudAuthService extends ChangeNotifier {
                   '[CloudAuthService] captured Drive access token from redirect result');
             }
             // ignore: avoid_print
-            print('[CloudAuthService] picked up redirect sign-in for ${pending.user!.email}');
+            print(
+                '[CloudAuthService] picked up redirect sign-in for ${pending.user!.email}');
             // 2026-08-02 (redirect-primary refactor): the popup path's
             // signInWithGoogleAndAdoptProfile() always ran profile
             // adoption (match-or-create a local Profile by the Google
@@ -546,23 +552,40 @@ class CloudAuthService extends ChangeNotifier {
     try {
       String? appleAuthorizationCode;
       if (providers.contains('apple.com')) {
-        final credential = await user.reauthenticateWithProvider(AppleAuthProvider())
+        final credential = await user
+            .reauthenticateWithProvider(AppleAuthProvider())
             .timeout(kAuthOpTimeout);
-        appleAuthorizationCode = credential.additionalUserInfo?.authorizationCode;
+        appleAuthorizationCode =
+            credential.additionalUserInfo?.authorizationCode;
       } else if (providers.contains('google.com')) {
-        await user.reauthenticateWithProvider(GoogleAuthProvider())
-            .timeout(kAuthOpTimeout);
+        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+          final credential = await desktopGoogleCredential();
+          await user
+              .reauthenticateWithCredential(credential)
+              .timeout(kAuthOpTimeout);
+        } else {
+          await user
+              .reauthenticateWithProvider(GoogleAuthProvider())
+              .timeout(kAuthOpTimeout);
+        }
       } else if (providers.contains('password') &&
-          user.email != null && password != null && password.isNotEmpty) {
-        await user.reauthenticateWithCredential(
-          EmailAuthProvider.credential(email: user.email!, password: password),
-        ).timeout(kAuthOpTimeout);
+          user.email != null &&
+          password != null &&
+          password.isNotEmpty) {
+        await user
+            .reauthenticateWithCredential(
+              EmailAuthProvider.credential(
+                  email: user.email!, password: password),
+            )
+            .timeout(kAuthOpTimeout);
       } else {
         return const CloudAuthActionResult.error('yswords/reauth-unavailable');
       }
       _accountDeletionInProgress = true;
       notifyListeners(); // Sync listeners stop before cloud nodes are removed.
-      await FirebaseDatabase.instance.ref('users/${user.uid}').remove()
+      await FirebaseDatabase.instance
+          .ref('users/${user.uid}')
+          .remove()
           .timeout(kAuthOpTimeout);
       await FirebaseFirestore.instance
           .collection('users')
@@ -613,6 +636,11 @@ class CloudAuthService extends ChangeNotifier {
   Future<bool> refreshDriveAccessToken({bool interactive = false}) async {
     if (!_configured) return false;
     if (!isSignedIn) return false;
+    // Windows browser sign-in deliberately grants no Drive scope. RTDB sync
+    // remains available; never report a minimal-scope token as Drive consent.
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      return false;
+    }
     final provider = GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');
@@ -634,18 +662,15 @@ class CloudAuthService extends ChangeNotifier {
       final c = cred.credential;
       if (c is OAuthCredential && c.accessToken != null) {
         _driveAccessToken = c.accessToken;
-        _driveTokenExpiresAt =
-            DateTime.now().add(const Duration(minutes: 55));
+        _driveTokenExpiresAt = DateTime.now().add(const Duration(minutes: 55));
         notifyListeners();
         // ignore: avoid_print
-        print(
-            '[CloudAuth] refreshDriveAccessToken (interactive=$interactive): '
+        print('[CloudAuth] refreshDriveAccessToken (interactive=$interactive): '
             'OK, captured ${c.accessToken!.length} chars');
         return true;
       }
       // ignore: avoid_print
-      print(
-          '[CloudAuth] refreshDriveAccessToken (interactive=$interactive): '
+      print('[CloudAuth] refreshDriveAccessToken (interactive=$interactive): '
           'no accessToken in credential. cred type=${c?.runtimeType}');
       return false;
     } catch (e) {
@@ -695,6 +720,10 @@ class CloudAuthService extends ChangeNotifier {
   Future<UserCredential> _googleSignIn(GoogleAuthProvider provider) async {
     if (kIsWeb) {
       return FirebaseAuth.instance.signInWithPopup(provider);
+    }
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      final credential = await desktopGoogleCredential();
+      return FirebaseAuth.instance.signInWithCredential(credential);
     }
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       final signIn = gsi.GoogleSignIn(
@@ -789,16 +818,13 @@ class CloudAuthService extends ChangeNotifier {
         _driveAccessToken = c.accessToken;
         // Conservative 55-min expiry (real token is ~1 hour) so we
         // refresh slightly early.
-        _driveTokenExpiresAt =
-            DateTime.now().add(const Duration(minutes: 55));
+        _driveTokenExpiresAt = DateTime.now().add(const Duration(minutes: 55));
         // ignore: avoid_print
-        print(
-            '[CloudAuth] popup signin: captured Drive access token '
+        print('[CloudAuth] popup signin: captured Drive access token '
             '(${c.accessToken!.length} chars)');
       } else {
         // ignore: avoid_print
-        print(
-            '[CloudAuth] popup signin: NO Drive access token in '
+        print('[CloudAuth] popup signin: NO Drive access token in '
             'credential. credential type=${c?.runtimeType}, '
             'accessToken=${c is OAuthCredential ? c.accessToken : "n/a"}. '
             'Will fall back to silent-refresh on first Drive call.');
@@ -851,11 +877,12 @@ class CloudAuthService extends ChangeNotifier {
       return const CloudAuthResult.error('Cloud sync not configured.');
     }
     try {
-      final credential = await FirebaseAuth.instance
-          .signInWithProvider(AppleAuthProvider());
+      final credential =
+          await FirebaseAuth.instance.signInWithProvider(AppleAuthProvider());
       final user = credential.user;
       if (user == null) {
-        return const CloudAuthResult.error('Apple sign-in returned no account.');
+        return const CloudAuthResult.error(
+            'Apple sign-in returned no account.');
       }
       _user = user;
       notifyListeners();
@@ -1151,6 +1178,8 @@ class CloudAuthService extends ChangeNotifier {
         return 'Too many attempts — please wait a moment and try again.';
       case 'network-request-failed':
         return 'Network error — check your connection.';
+      case 'web-context-cancelled':
+      case 'cancelled':
       case 'popup-closed-by-user':
       case 'cancelled-popup-request':
         return 'Sign-in cancelled.';

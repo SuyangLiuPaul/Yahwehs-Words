@@ -503,3 +503,9 @@ email to that address is sufficient. I will acknowledge within
 ### Learning release 1.7.0
 
 [Features and sources](docs/learning-features-2026-10-01.md) · [Responsive browser gallery](docs/screenshots/2026-10-01/web-learning/README.md) · [Delivery checkpoint](docs/release-learning-1.7.0-2026-10-01.md).
+
+### Reference clock maintenance
+
+The existing hidden Passion page now follows the supplied reference image, with selectable day/night hours, Gospel citations and the original zoomable attachment. See [implementation and verification](docs/passion-reference-clock.md). Store approval and real paired-device checks remain separate release gates.
+
+The Passion timetable is visible in both apps, with English, 简体中文 and 繁體中文 content and language switching. It includes all 14 source-diagram placements (both 08:00 events) and the original zoomable attachment. Exact Gospel markers and estimated diagram times are identified separately.
