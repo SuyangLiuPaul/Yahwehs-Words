@@ -2,7 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import 'package:yahwehs_words/constants/motion.dart';
-import 'package:yahwehs_words/utils/route_paths.dart' show matchesRegisteredRoute;
+import 'package:yahwehs_words/utils/route_paths.dart'
+    show matchesRegisteredRoute;
 
 /// Canonical page-push helper — every `Get.to(...)` in the app should
 /// route through here instead of specifying its own transition/duration/
@@ -62,17 +63,20 @@ Future<T?>? pushPage<T>(
   bool reverse = false,
   String? routeName,
   bool preventDuplicates = true,
+  Object? arguments,
 }) {
   if (routeName != null && matchesRegisteredRoute(routeName)) {
     return Get.toNamed<T>(
       routeName,
       preventDuplicates: preventDuplicates,
+      arguments: arguments,
     );
   }
   return Get.to<T>(
     () => page,
     routeName: routeName ?? '/${page.runtimeType}',
     preventDuplicates: preventDuplicates,
+    arguments: arguments,
     transition: reverse ? Transition.leftToRight : Transition.rightToLeft,
     duration: AppMotion.standard,
     curve: AppMotion.enter,

@@ -1,3 +1,6 @@
+import 'package:yahwehs_words/pages/passion_wheel_page.dart';
+import 'package:yahwehs_words/pages/bible_principles_page.dart';
+import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +12,8 @@ import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/spinner_ceiling.dart';
 import 'package:yahwehs_words/utils/short_book_name.dart' show shortBookName;
 import 'package:yahwehs_words/widgets/fitted_line.dart';
-import 'package:yahwehs_words/constants/text_patterns.dart' show sanitizeForSearch;
+import 'package:yahwehs_words/constants/text_patterns.dart'
+    show sanitizeForSearch;
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/dashboard_section.dart';
@@ -23,7 +27,6 @@ import 'package:yahwehs_words/pages/bible_timeline_page.dart';
 import 'package:yahwehs_words/pages/bible_trivia_page.dart';
 import 'package:yahwehs_words/pages/family_tree_page.dart';
 import 'package:yahwehs_words/pages/jesus_teachings_page.dart';
-import 'package:yahwehs_words/pages/sermon_detail_page.dart';
 import 'package:yahwehs_words/pages/sermons_page.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/liquid_glass.dart';
@@ -51,7 +54,8 @@ import 'package:yahwehs_words/services/daily_verse_fallback.dart';
 import 'package:yahwehs_words/services/daily_verse_service.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
 import 'package:yahwehs_words/utils/jump_to_reference.dart' as jumper;
-import 'package:yahwehs_words/utils/passage_localizer.dart' show localizePassage;
+import 'package:yahwehs_words/utils/passage_localizer.dart'
+    show localizePassage;
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/responsive.dart';
 import 'package:yahwehs_words/utils/version_mapper.dart'
@@ -87,17 +91,20 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   Verse? _dailyVerse;
+
   /// Set when [_dailyVerse] was resolved from a fallback bundle
   /// (e.g. user is on LJK1, today's verse is OT, we pulled it from
   /// CUVS-YHWH). Holds the friendly label of the source version so
   /// the UI can show a "via {version}" note. null when the verse
   /// came from the user's own selected version as normal.
   String? _dailyVerseFromVersionLabel;
+
   /// Cached canonical English ref ("John 3:16") loaded once from the
   /// asset. Kept separate from [_dailyVerse] so a Bible-version
   /// switch can re-resolve the verse text without re-fetching the
   /// reference list.
   String? _dailyVerseRef;
+
   /// Today's spotlight from the Biblical Evidence Archive (one of
   /// 225, deterministic by day-of-year so all devices see the same
   /// item). Loaded lazily so the dashboard renders before the
@@ -275,7 +282,8 @@ class _DashboardPageState extends State<DashboardPage> {
   /// session-progress invariants apply (id is already saved; the
   /// detail page will write a fresh offset on dispose).
   Future<void> _openResumeSermon(Sermon s) async {
-    await pushPage(SermonDetailPage(sermon: s), routeName: '/sermons/${s.id}');
+    await pushPage(const SermonsPage(),
+        routeName: '/sermons', arguments: SermonResumeRequest(s.id));
     if (!mounted) return;
     // Pull the new scroll offset (the detail page wrote it on
     // dispose) so the meter on the dashboard immediately reflects
@@ -360,8 +368,7 @@ class _DashboardPageState extends State<DashboardPage> {
     if (parsed == null) return;
     final mp = context.read<MainProvider>();
     if (mp.verses.isEmpty) return;
-    final localBook =
-        translateBookName(parsed.englishBook, mp.currentVersion);
+    final localBook = translateBookName(parsed.englishBook, mp.currentVersion);
     final targetVerse = parsed.verseStart ?? 1;
     Verse? match;
     for (final v in mp.verses) {
@@ -374,8 +381,7 @@ class _DashboardPageState extends State<DashboardPage> {
     }
     if (!mounted) return;
     if (match != null) {
-      if (match.book != _dailyVerse?.book ||
-          match.text != _dailyVerse?.text) {
+      if (match.book != _dailyVerse?.book || match.text != _dailyVerse?.text) {
         setState(() {
           _dailyVerse = match;
           _dailyVerseFromVersionLabel = null;
@@ -444,8 +450,7 @@ class _DashboardPageState extends State<DashboardPage> {
     // (the floating-header "Home" entry pops to first instead of
     // pushing a duplicate). Hard-disable the back arrow here so a
     // weirdly-stacked navigator never sneaks one in.
-    final dc = ResponsiveBreakpoints.classOf(
-        MediaQuery.of(context).size.width);
+    final dc = ResponsiveBreakpoints.classOf(MediaQuery.of(context).size.width);
     // Cap reading width on iPad / desktop so the dashboard doesn't
     // become a row of stretched, half-empty cards. Same constraint
     // pattern used in Settings keeps the app's wide-screen feel
@@ -455,8 +460,7 @@ class _DashboardPageState extends State<DashboardPage> {
     // Round 36: every header/label scales with settings.fontSize.
     // Caps prevent very-large reader settings (24-40 pt) from
     // making chrome tower over the cards.
-    final headerSize =
-        (settings.fontSize - 1).clamp(12.0, 22.0).toDouble();
+    final headerSize = (settings.fontSize - 1).clamp(12.0, 22.0).toDouble();
 
     final greetingName = _greetingName();
     return Scaffold(
@@ -583,41 +587,41 @@ class _DashboardPageState extends State<DashboardPage> {
           child: RefreshIndicator(
             onRefresh: _pullToRefresh,
             child: ListView(
-            // Needed for the pull to work at all when the content fits
-            // on screen, which on a tablet it does.
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            children: [
-              // Above everything the reader arranged: this is the one
-              // item on the page that is about the app rather than about
-              // scripture, and the one that stops appearing the moment it
-              // is acted on. It renders nothing at all when there is no
-              // newer version — which is nearly always — so it costs the
-              // layout below it nothing.
-              UpdateAvailableBanner(
-                locale: locale,
-                release: _update,
-                releaseInstallsInApp: _updateInstallsInApp,
-              ),
-              // ── DASHBOARD SECTIONS (customizable order + visibility) ──
-              // The user controls both the render order and which blocks
-              // are visible via Settings → "Dashboard layout" (round 55).
-              // We walk `settings.dashboardSectionOrder` and emit each
-              // section that is both explicitly enabled AND has content
-              // to show. Spacing is inserted between non-null blocks.
-              ..._buildOrderedSections(
-                order: settings.dashboardSectionOrder,
-                settings: settings,
-                mainProvider: mainProvider,
-                scheme: scheme,
-                locale: locale,
-                isWide: isWide,
-                headerSize: headerSize,
-              ),
-              const SizedBox(height: 28),
-              _HomeFooter(locale: locale, scheme: scheme),
-            ],
-          ),
+              // Needed for the pull to work at all when the content fits
+              // on screen, which on a tablet it does.
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Above everything the reader arranged: this is the one
+                // item on the page that is about the app rather than about
+                // scripture, and the one that stops appearing the moment it
+                // is acted on. It renders nothing at all when there is no
+                // newer version — which is nearly always — so it costs the
+                // layout below it nothing.
+                UpdateAvailableBanner(
+                  locale: locale,
+                  release: _update,
+                  releaseInstallsInApp: _updateInstallsInApp,
+                ),
+                // ── DASHBOARD SECTIONS (customizable order + visibility) ──
+                // The user controls both the render order and which blocks
+                // are visible via Settings → "Dashboard layout" (round 55).
+                // We walk `settings.dashboardSectionOrder` and emit each
+                // section that is both explicitly enabled AND has content
+                // to show. Spacing is inserted between non-null blocks.
+                ..._buildOrderedSections(
+                  order: settings.dashboardSectionOrder,
+                  settings: settings,
+                  mainProvider: mainProvider,
+                  scheme: scheme,
+                  locale: locale,
+                  isWide: isWide,
+                  headerSize: headerSize,
+                ),
+                const SizedBox(height: 28),
+                _HomeFooter(locale: locale, scheme: scheme),
+              ],
+            ),
           ),
         ),
       ),
@@ -841,8 +845,8 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             _SectionHeader(
               icon: Icons.bookmark_rounded,
-              label:
-                  uiStrings['homeRecentBookmarks']?[locale] ?? 'Recent bookmarks',
+              label: uiStrings['homeRecentBookmarks']?[locale] ??
+                  'Recent bookmarks',
               settings: settings,
               scheme: scheme,
               fontSize: headerSize,
@@ -856,7 +860,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 title: Text(
                   '${v.book} ${v.chapter}:${v.verseLabel}',
                   style: TextStyle(
-                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
                       fontSize: settings.fontSize,
                       fontWeight: FontWeight.w600),
                 ),
@@ -945,8 +950,8 @@ class _DashboardPageState extends State<DashboardPage> {
             // is a second door, not a second timeline.
             _FeaturedCard(
               icon: Icons.stacked_bar_chart_rounded,
-              title: uiStrings['chronologyChart']?[locale] ??
-                  'Chronology chart',
+              title:
+                  uiStrings['chronologyChart']?[locale] ?? 'Chronology chart',
               subtitle: uiStrings['chronologyFeaturedSubtitle']?[locale] ??
                   'Who was alive at the same time — Adam to Joseph, drag '
                       'the year and see',
@@ -957,6 +962,18 @@ class _DashboardPageState extends State<DashboardPage> {
                 routeName: '/chronology',
               ),
             ),
+            const SizedBox(height: 8),
+            _FeaturedCard(icon: Icons.schedule, title: kPassionTitle[locale] ?? kPassionTitle['en']!,
+              subtitle: const {'en': 'When, where and what · compare all four Gospels', 'zh-Hans': '时间、地点与事件 · 并列四福音', 'zh-Hant': '時間、地點與事件 · 並列四福音'}[locale]!, scheme: scheme, settings: settings,
+              onTap: () => pushPage(const PassionWheelPage(), routeName: kPassionWheelPath)),
+            const SizedBox(height: 8),
+            _FeaturedCard(icon: Icons.menu_book_outlined, title: kPrinciplesTitle[locale] ?? kPrinciplesTitle['en']!,
+              subtitle: const {'en': 'Pastor Eric’s sermons · explanations and Scripture', 'zh-Hans': '张牧师讲道 · 简释、出处与经文', 'zh-Hant': '張牧師講道 · 簡釋、出處與經文'}[locale]!, scheme: scheme, settings: settings,
+              onTap: () => pushPage(const BiblePrinciplesPage(), routeName: kPrinciplesPath)),
+            const SizedBox(height: 8),
+            _FeaturedCard(icon: Icons.public, title: kWorldWheelTitle[locale] ?? kWorldWheelTitle['en']!,
+              subtitle: const {'en': 'Nations, powers and events · explore the dates', 'zh-Hans': '民族、政权与事件 · 探索历史年代', 'zh-Hant': '民族、政權與事件 · 探索歷史年代'}[locale]!, scheme: scheme, settings: settings,
+              onTap: () => pushPage(const WorldHistoryWheelPage(), routeName: kWorldWheelPath)),
           ],
         );
 
@@ -1014,8 +1031,8 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(height: 10),
             _QuickLinksGroupLabel(
-              label: uiStrings['quickLinksFrequent']?[locale] ??
-                  'Frequently used',
+              label:
+                  uiStrings['quickLinksFrequent']?[locale] ?? 'Frequently used',
               settings: settings,
               scheme: scheme,
             ),
@@ -1041,7 +1058,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 _LinkTile(
                   icon: Icons.menu_book_outlined,
                   label: uiStrings['sermons']?[locale] ?? 'Sermons',
-                  onTap: () => pushPage(const SermonsPage(), routeName: '/sermons'),
+                  onTap: () =>
+                      pushPage(const SermonsPage(), routeName: '/sermons'),
                 ),
                 _LinkTile(
                   icon: Icons.settings_outlined,
@@ -1053,8 +1071,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(height: 16),
             _QuickLinksGroupLabel(
-              label:
-                  uiStrings['quickLinksExplore']?[locale] ?? 'Explore more',
+              label: uiStrings['quickLinksExplore']?[locale] ?? 'Explore more',
               settings: settings,
               scheme: scheme,
             ),
@@ -1077,24 +1094,27 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () => pushPage(const ReadingStatsPage(),
                       routeName: '/reading-stats'),
                 ),
-                if (settings.isDashboardSectionVisible(
-                    DashboardSection.todayEvidence))
+                if (settings
+                    .isDashboardSectionVisible(DashboardSection.todayEvidence))
                   _LinkTile(
                     icon: Icons.museum_outlined,
                     label:
                         uiStrings['bibleEvidence']?[locale] ?? 'Bible Evidence',
-                    onTap: () => pushPage(const EvidencePage(),
-                        routeName: '/evidence'),
+                    onTap: () =>
+                        pushPage(const EvidencePage(), routeName: '/evidence'),
                   ),
                 _LinkTile(
                   icon: Icons.account_tree_outlined,
                   label: uiStrings['familyTree']?[locale] ?? 'Family Tree',
-                  onTap: () => pushPage(const FamilyTreePage(), routeName: '/family-tree'),
+                  onTap: () => pushPage(const FamilyTreePage(),
+                      routeName: '/family-tree'),
                 ),
                 _LinkTile(
                   icon: Icons.timeline_rounded,
-                  label: uiStrings['bibleTimeline']?[locale] ?? 'Bible Timeline',
-                  onTap: () => pushPage(const BibleTimelinePage(), routeName: '/timeline'),
+                  label:
+                      uiStrings['bibleTimeline']?[locale] ?? 'Bible Timeline',
+                  onTap: () => pushPage(const BibleTimelinePage(),
+                      routeName: '/timeline'),
                 ),
                 _LinkTile(
                   icon: Icons.auto_awesome_rounded,
@@ -1127,21 +1147,23 @@ class _DashboardPageState extends State<DashboardPage> {
                 // Not simply deleted: Featured is a section the user
                 // can hide in Settings, and hiding it must not take
                 // Songs and the video off the dashboard altogether.
-                if (!settings.isDashboardSectionVisible(
-                    DashboardSection.featured)) ...[
+                if (!settings
+                    .isDashboardSectionVisible(DashboardSection.featured)) ...[
                   // 2026-08-09 (Songs v2): back after v1.3.126 removed
                   // it. Note `pushPage`, not the `Get.to` the original
                   // tile used — see the v1.4.4 note in HANDOFF.md.
                   _LinkTile(
                     icon: Icons.library_music_rounded,
                     label: uiStrings['songsPageTitle']?[locale] ?? 'Songs',
-                    onTap: () => pushPage(const SongsPage(), routeName: '/songs'),
+                    onTap: () =>
+                        pushPage(const SongsPage(), routeName: '/songs'),
                   ),
                   _LinkTile(
                     icon: Icons.play_circle_outline_rounded,
-                    label: uiStrings['videosTitle']?[locale] ??
-                        'Featured videos',
-                    onTap: () => pushPage(const VideosPage(), routeName: '/videos'),
+                    label:
+                        uiStrings['videosTitle']?[locale] ?? 'Featured videos',
+                    onTap: () =>
+                        pushPage(const VideosPage(), routeName: '/videos'),
                   ),
                 ],
                 // 2026-05-07 (v12): feedback tile -- mailto-driven
@@ -1158,7 +1180,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   // it broke mid-word ("Common misu / nderstandings").
                   label: uiStrings['misconceptionsTile']?[locale] ??
                       'Misunderstandings',
-                  onTap: () => pushPage(const MisconceptionsPage(), routeName: '/misconceptions'),
+                  onTap: () => pushPage(const MisconceptionsPage(),
+                      routeName: '/misconceptions'),
                 ),
                 // 2026-09-18: beside Feedback, which is the other thing a
                 // reader who is stuck reaches for.
@@ -1170,7 +1193,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 _LinkTile(
                   icon: Icons.feedback_outlined,
                   label: uiStrings['feedback']?[locale] ?? 'Feedback',
-                  onTap: () => pushPage(const FeedbackPage(), routeName: '/feedback'),
+                  onTap: () =>
+                      pushPage(const FeedbackPage(), routeName: '/feedback'),
                 ),
               ],
             ),
@@ -1251,9 +1275,9 @@ class _HomeFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final tagline =
         uiStrings['appTagline']?[locale] ?? 'A bilingual Bible study app.';
-    final updated = (uiStrings['homeFooterUpdated']?[locale] ??
-            'Updated {time}')
-        .replaceFirst('{time}', formatReleaseTimeLocal());
+    final updated =
+        (uiStrings['homeFooterUpdated']?[locale] ?? 'Updated {time}')
+            .replaceFirst('{time}', formatReleaseTimeLocal());
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8),
@@ -1462,6 +1486,7 @@ class _CountTile extends StatelessWidget {
   final int count;
   final String label;
   final VoidCallback onTap;
+
   /// Per-category accent (round 60: bookmarks/notes/highlights each
   /// get a distinct theme-derived color instead of three visually
   /// identical tiles) — tints the icon, count, and tile background.
@@ -1524,8 +1549,7 @@ class _CountTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 14, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -1552,10 +1576,10 @@ class _CountTile extends StatelessWidget {
                 Text(
                   count.toString(),
                   style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
                     fontFeatures: const [FontFeature.tabularFigures()],
-                    fontSize:
-                        (fs + 6).clamp(20.0, 32.0).toDouble(),
+                    fontSize: (fs + 6).clamp(20.0, 32.0).toDouble(),
                     fontWeight: FontWeight.w800,
                     // An empty category should read as empty at a
                     // glance, without having to focus on the digit.
@@ -1571,9 +1595,9 @@ class _CountTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize:
-                        (fs - 4).clamp(11.0, 14.0).toDouble(),
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
+                    fontSize: (fs - 4).clamp(11.0, 14.0).toDouble(),
                     fontWeight: FontWeight.w500,
                     color: scheme.onSurfaceVariant,
                   ),
@@ -1594,9 +1618,11 @@ class _CountTile extends StatelessWidget {
 class _DailyVerseCard extends StatelessWidget {
   final Verse verse;
   final String fontFamily;
+
   /// User's reading font size — daily verse text uses it directly so
   /// the verse renders at the same scale as their Bible reading.
   final double fontSize;
+
   /// Non-null when the verse text came from a fallback Bible bundle
   /// because the user's selected version doesn't carry that book
   /// (e.g. on LJK1/LJK2 + an OT verse). Drives a small "via {label}"
@@ -1632,25 +1658,25 @@ class _DailyVerseCard extends StatelessWidget {
         ],
       ),
       child: Material(
-      color: scheme.surface,
-      borderRadius: BorderRadius.circular(12),
-      // v1.3.x: was Ink(BoxDecoration(borderRadius: 12, border:
-      // Border(left: primary w3, top/right/bottom: outlineVariant))).
-      // A non-uniform border combined with a borderRadius throws
-      // "A borderRadius can only be given on borders with uniform
-      // colors" in Border.paint — the reported InkDecoration crash on
-      // this daily-verse card. LeftAccentCard draws the left stripe as
-      // a clipped child and the 3 grey sides as a uniform outline.
-      child: InkWell(
-        onTap: onTap,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(12),
-        child: LeftAccentCard(
+        // v1.3.x: was Ink(BoxDecoration(borderRadius: 12, border:
+        // Border(left: primary w3, top/right/bottom: outlineVariant))).
+        // A non-uniform border combined with a borderRadius throws
+        // "A borderRadius can only be given on borders with uniform
+        // colors" in Border.paint — the reported InkDecoration crash on
+        // this daily-verse card. LeftAccentCard draws the left stripe as
+        // a clipped child and the 3 grey sides as a uniform outline.
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          accentColor: scheme.primary,
-          accentWidth: 3,
-          outlineColor: scheme.outlineVariant.withValues(alpha: 0.6),
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          child: Column(
+          child: LeftAccentCard(
+            borderRadius: BorderRadius.circular(12),
+            accentColor: scheme.primary,
+            accentWidth: 3,
+            outlineColor: scheme.outlineVariant.withValues(alpha: 0.6),
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -1684,8 +1710,7 @@ class _DailyVerseCard extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 2),
                               child: Text(
-                                (uiStrings['dailyVerseFromFallback']
-                                            ?[locale] ??
+                                (uiStrings['dailyVerseFromFallback']?[locale] ??
                                         'Shown from {version}')
                                     .replaceAll('{version}', fromVersionLabel!),
                                 style: TextStyle(
@@ -1701,8 +1726,7 @@ class _DailyVerseCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward,
-                        size: 16, color: scheme.outline),
+                    Icon(Icons.arrow_forward, size: 16, color: scheme.outline),
                   ],
                 ),
               ],
@@ -1824,8 +1848,7 @@ class _LinkTile extends StatelessWidget {
               ),
             ),
           ),
-          Icon(Icons.chevron_right,
-              size: 16, color: scheme.outline),
+          Icon(Icons.chevron_right, size: 16, color: scheme.outline),
         ],
       ),
     );
@@ -1851,8 +1874,7 @@ class _DashboardEvidenceCard extends StatelessWidget {
     final settings = context.read<AppSettings>();
     final currentVersion = context.read<MainProvider>().currentVersion;
     final fs = settings.fontSize;
-    final imgUrl =
-        evidence.images.isNotEmpty ? evidence.images.first : null;
+    final imgUrl = evidence.images.isNotEmpty ? evidence.images.first : null;
     // 2026-08-02 (round 60, craft pass): soft ambient shadow instead
     // of a flat outline, matching the other dashboard cards.
     return Container(
@@ -1867,9 +1889,9 @@ class _DashboardEvidenceCard extends StatelessWidget {
         ],
       ),
       child: Material(
-      color: scheme.surface,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
@@ -1914,9 +1936,9 @@ class _DashboardEvidenceCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                                fontSize:
-                                    (fs - 1).clamp(13.0, 18.0).toDouble(),
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                                fontSize: (fs - 1).clamp(13.0, 18.0).toDouble(),
                                 fontWeight: FontWeight.w700,
                                 color: scheme.onSurface,
                               ),
@@ -1930,7 +1952,8 @@ class _DashboardEvidenceCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
                           fontSize: (fs - 3).clamp(11.0, 15.0).toDouble(),
                           color: scheme.onSurfaceVariant,
                           height: 1.3,
@@ -1951,9 +1974,9 @@ class _DashboardEvidenceCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                                fontSize:
-                                    (fs - 4).clamp(11.0, 14.0).toDouble(),
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                                fontSize: (fs - 4).clamp(11.0, 14.0).toDouble(),
                                 fontWeight: FontWeight.w600,
                                 color: scheme.primary,
                               ),
@@ -2086,105 +2109,110 @@ class _ContinueReadingHero extends StatelessWidget {
     return PressScale(
       onTap: onTap,
       child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            scheme.primary,
-            Color.lerp(scheme.primary, Colors.black, 0.22)!,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              scheme.primary,
+              Color.lerp(scheme.primary, Colors.black, 0.22)!,
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.primary.withValues(alpha: 0.32),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
+            ),
           ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.primary.withValues(alpha: 0.32),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -16,
-                  bottom: -22,
-                  child: Icon(
-                    Icons.menu_book_rounded,
-                    size: 116,
-                    color: scheme.onPrimary.withValues(alpha: 0.08),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -16,
+                    bottom: -22,
+                    child: Icon(
+                      Icons.menu_book_rounded,
+                      size: 116,
+                      color: scheme.onPrimary.withValues(alpha: 0.08),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 18, 20),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: scheme.onPrimary.withValues(alpha: 0.18),
-                          shape: BoxShape.circle,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 18, 20),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: scheme.onPrimary.withValues(alpha: 0.18),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.menu_book_rounded,
+                            color: scheme.onPrimary,
+                            size: (fs + 8).clamp(20.0, 32.0).toDouble(),
+                          ),
                         ),
-                        child: Icon(
-                          Icons.menu_book_rounded,
-                          color: scheme.onPrimary,
-                          size: (fs + 8).clamp(20.0, 32.0).toDouble(),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              ctaTitle,
-                              style: TextStyle(
-                                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                                fontSize: (fs + 3).clamp(16.0, 24.0).toDouble(),
-                                fontWeight: FontWeight.w700,
-                                color: scheme.onPrimary,
-                                letterSpacing: 0.1,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ctaTitle,
+                                style: TextStyle(
+                                  fontFamily: settings.fontFamily,
+                                  fontFamilyFallback: kCjkFontFallback,
+                                  fontSize:
+                                      (fs + 3).clamp(16.0, 24.0).toDouble(),
+                                  fontWeight: FontWeight.w700,
+                                  color: scheme.onPrimary,
+                                  letterSpacing: 0.1,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            FittedLine(
-                              candidates: positionCandidates,
-                              style: TextStyle(
-                                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                                fontSize: (fs - 2).clamp(11.0, 16.0).toDouble(),
-                                color: scheme.onPrimary.withValues(alpha: 0.85),
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(height: 4),
+                              FittedLine(
+                                candidates: positionCandidates,
+                                style: TextStyle(
+                                  fontFamily: settings.fontFamily,
+                                  fontFamilyFallback: kCjkFontFallback,
+                                  fontSize:
+                                      (fs - 2).clamp(11.0, 16.0).toDouble(),
+                                  color:
+                                      scheme.onPrimary.withValues(alpha: 0.85),
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: scheme.onPrimary.withValues(alpha: 0.14),
-                          shape: BoxShape.circle,
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: scheme.onPrimary.withValues(alpha: 0.14),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward_rounded,
+                            color: scheme.onPrimary,
+                            size: 18,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          color: scheme.onPrimary,
-                          size: 18,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -2226,8 +2254,9 @@ class _ResumeSermonHero extends StatelessWidget {
     final passage = sermon.passage.trim().isEmpty
         ? null
         : localizePassage(sermon.passage.trim(), locale);
-    final percent =
-        progress == null ? null : '${(progress!.clamp(0.0, 1.0) * 100).round()}%';
+    final percent = progress == null
+        ? null
+        : '${(progress!.clamp(0.0, 1.0) * 100).round()}%';
     final subtitleParts = <String>[
       sermon.localizedTitle(locale),
       if (passage != null) passage,
@@ -2255,81 +2284,82 @@ class _ResumeSermonHero extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 18, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: scheme.primaryContainer.withValues(alpha: 0.55),
-                      shape: BoxShape.circle,
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 18, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer.withValues(alpha: 0.55),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.headset_mic_rounded,
+                        color: scheme.primary,
+                        size: (fs + 6).clamp(18.0, 26.0).toDouble(),
+                      ),
                     ),
-                    child: Icon(
-                      Icons.headset_mic_rounded,
-                      color: scheme.primary,
-                      size: (fs + 6).clamp(18.0, 26.0).toDouble(),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ctaTitle,
-                          style: TextStyle(
-                            fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                            fontSize: (fs + 1).clamp(14.0, 20.0).toDouble(),
-                            fontWeight: FontWeight.w700,
-                            color: scheme.onSurface,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ctaTitle,
+                            style: TextStyle(
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              fontSize: (fs + 1).clamp(14.0, 20.0).toDouble(),
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                            fontSize: (fs - 2).clamp(11.0, 15.0).toDouble(),
-                            color: scheme.onSurface.withValues(alpha: 0.75),
-                            fontWeight: FontWeight.w500,
-                            height: 1.35,
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              fontSize: (fs - 2).clamp(11.0, 15.0).toDouble(),
+                              color: scheme.onSurface.withValues(alpha: 0.75),
+                              fontWeight: FontWeight.w500,
+                              height: 1.35,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    color: scheme.onSurface.withValues(alpha: 0.55),
-                    size: 20,
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: scheme.onSurface.withValues(alpha: 0.55),
+                      size: 20,
+                    ),
+                  ],
+                ),
+                if (progress != null) ...[
+                  const SizedBox(height: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: LinearProgressIndicator(
+                      value: progress!.clamp(0.0, 1.0),
+                      minHeight: 3,
+                      backgroundColor:
+                          scheme.surfaceContainerHighest.withValues(alpha: 0.7),
+                      valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+                    ),
                   ),
                 ],
-              ),
-              if (progress != null) ...[
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: LinearProgressIndicator(
-                    value: progress!.clamp(0.0, 1.0),
-                    minHeight: 3,
-                    backgroundColor:
-                        scheme.surfaceContainerHighest.withValues(alpha: 0.7),
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(scheme.primary),
-                  ),
-                ),
               ],
-            ],
+            ),
           ),
-        ),
         ),
       ),
     );

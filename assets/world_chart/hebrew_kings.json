@@ -1,0 +1,1173 @@
+{
+ "schemaVersion": 1,
+ "system": "thiele",
+ "systemName": {
+  "en": "Thiele",
+  "zh-Hans": "锡尔年代系统",
+  "zh-Hant": "錫爾年代系統"
+ },
+ "_meta": {
+  "generator": "scripts/build_hebrew_kings.py",
+  "kingCount": 42,
+  "yearSign": "Years are negative for BC.",
+  "note": {
+   "en": "Thiele frequently writes a date as a pair (792/791) because a Hebrew regnal year straddles two Julian years; the single years here are the conventional reproduction of his figures, not a claim of greater precision.",
+   "zh-Hans": "锡尔常把年份写成一对（792/791），因为希伯来的王年跨越两个儒略年；此处的单一年份是对他数字的惯常复述，并非声称更高的精确度。",
+   "zh-Hant": "錫爾常把年份寫成一對（792/791），因為希伯來的王年跨越兩個儒略年；此處的單一年份是對他數字的慣常複述，並非聲稱更高的精確度。"
+  },
+  "systems": "Chronologies of the Hebrew kings differ over Nisan vs Tishri new year, accession vs non-accession year reckoning, co-regencies, and the Assyrian synchronisms. Albright, Galil and Kitchen each give different dates. This chart follows Thiele throughout and offers no other system.",
+  "sources": [
+   "Edwin R. Thiele, The Mysterious Numbers of the Hebrew Kings, 3rd ed. (Grand Rapids: Zondervan/Kregel, 1983).",
+   "Leslie McFall, 'A Translation Guide to the Chronological Data in Kings and Chronicles', Bibliotheca Sacra 148 (1991): 3-45 — source of the co-regency years, which McFall states for Thiele in the course of departing from them.",
+   "Wikipedia, 'Kings of Judah' and 'Kings of Israel (Samaria)', Thiele columns (retrieved 2026-08-08)."
+  ]
+ },
+ "epochs": [
+  {
+   "id": "division",
+   "year": -931,
+   "name": {
+    "en": "The kingdom divides",
+    "zh-Hans": "王国分裂",
+    "zh-Hant": "王國分裂"
+   },
+   "ref": "1 Kings 12:16-20"
+  },
+  {
+   "id": "jehu_tribute",
+   "year": -841,
+   "name": {
+    "en": "Jehu pays tribute to Shalmaneser III",
+    "zh-Hans": "耶户向撒缦以色三世进贡",
+    "zh-Hant": "耶戶向撒縵以色三世進貢"
+   },
+   "ref": "2 Kings 10:32"
+  },
+  {
+   "id": "samaria",
+   "year": -722,
+   "name": {
+    "en": "Samaria falls; Israel ends",
+    "zh-Hans": "撒玛利亚陷落，以色列亡",
+    "zh-Hant": "撒瑪利亞陷落，以色列亡"
+   },
+   "ref": "2 Kings 17:5-6"
+  },
+  {
+   "id": "jerusalem",
+   "year": -586,
+   "name": {
+    "en": "Jerusalem falls; Judah ends",
+    "zh-Hans": "耶路撒冷陷落，犹大亡",
+    "zh-Hant": "耶路撒冷陷落，猶大亡"
+   },
+   "ref": "2 Kings 25:8-10"
+  }
+ ],
+ "kings": [
+  {
+   "id": "david",
+   "kingdom": "united",
+   "house": "david",
+   "name": {
+    "en": "David",
+    "zh-Hans": "大卫",
+    "zh-Hant": "大衛"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -1010,
+     "end": -970
+    }
+   ],
+   "reignStart": -1010,
+   "reignEnd": -970,
+   "kingsRef": "1 Kings 1:1-2:11",
+   "chroniclesRef": "1 Chronicles 11-29",
+   "accessionRef": null
+  },
+  {
+   "id": "solomon",
+   "kingdom": "united",
+   "house": "david",
+   "name": {
+    "en": "Solomon",
+    "zh-Hans": "所罗门",
+    "zh-Hant": "所羅門"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -970,
+     "end": -931
+    }
+   ],
+   "reignStart": -970,
+   "reignEnd": -931,
+   "kingsRef": "1 Kings 2:11-11:43",
+   "chroniclesRef": "2 Chronicles 1-9",
+   "accessionRef": null
+  },
+  {
+   "id": "rehoboam",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Rehoboam",
+    "zh-Hans": "罗波安",
+    "zh-Hant": "羅波安"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -931,
+     "end": -913
+    }
+   ],
+   "reignStart": -931,
+   "reignEnd": -913,
+   "kingsRef": "1 Kings 14:21-31",
+   "chroniclesRef": "2 Chronicles 10-12",
+   "accessionRef": "1 Kings 12:1"
+  },
+  {
+   "id": "abijah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Abijah",
+    "zh-Hans": "亚比雅",
+    "zh-Hant": "亞比雅"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -913,
+     "end": -911
+    }
+   ],
+   "reignStart": -913,
+   "reignEnd": -911,
+   "kingsRef": "1 Kings 15:1-8",
+   "chroniclesRef": "2 Chronicles 13",
+   "accessionRef": "1 Kings 15:1",
+   "altName": {
+    "en": "Abijam",
+    "zh-Hans": "亚比央",
+    "zh-Hant": "亞比央"
+   }
+  },
+  {
+   "id": "asa",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Asa",
+    "zh-Hans": "亚撒",
+    "zh-Hant": "亞撒"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -911,
+     "end": -870
+    }
+   ],
+   "reignStart": -911,
+   "reignEnd": -870,
+   "kingsRef": "1 Kings 15:9-24",
+   "chroniclesRef": "2 Chronicles 14-16",
+   "accessionRef": "1 Kings 15:9"
+  },
+  {
+   "id": "jehoshaphat",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jehoshaphat",
+    "zh-Hans": "约沙法",
+    "zh-Hant": "約沙法"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -872,
+     "end": -870
+    },
+    {
+     "kind": "sole",
+     "start": -870,
+     "end": -848
+    }
+   ],
+   "reignStart": -872,
+   "reignEnd": -848,
+   "kingsRef": "1 Kings 22:41-51",
+   "chroniclesRef": "2 Chronicles 17-20",
+   "accessionRef": "1 Kings 22:41"
+  },
+  {
+   "id": "jehoram_judah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jehoram",
+    "zh-Hans": "约兰",
+    "zh-Hant": "約蘭"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -853,
+     "end": -848
+    },
+    {
+     "kind": "sole",
+     "start": -848,
+     "end": -841
+    }
+   ],
+   "reignStart": -853,
+   "reignEnd": -841,
+   "kingsRef": "2 Kings 8:16-24",
+   "chroniclesRef": "2 Chronicles 21",
+   "accessionRef": "2 Kings 8:16",
+   "altName": {
+    "en": "Joram",
+    "zh-Hans": "Joram",
+    "zh-Hant": "Joram"
+   }
+  },
+  {
+   "id": "ahaziah_judah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Ahaziah",
+    "zh-Hans": "亚哈谢",
+    "zh-Hant": "亞哈謝"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -841,
+     "end": -841
+    }
+   ],
+   "reignStart": -841,
+   "reignEnd": -841,
+   "kingsRef": "2 Kings 8:25-9:29",
+   "chroniclesRef": "2 Chronicles 22:1-9",
+   "accessionRef": "2 Kings 8:25",
+   "altName": {
+    "en": "Jehoahaz",
+    "zh-Hans": "Jehoahaz",
+    "zh-Hant": "Jehoahaz"
+   },
+   "note": {
+    "en": "Reigned one year. Killed by Jehu in the same purge that ended the house of Omri in Israel.",
+    "zh-Hans": "在位一年，与以色列暗利家同在耶户的清洗中被杀。",
+    "zh-Hant": "在位一年，與以色列暗利家同在耶戶的清洗中被殺。"
+   }
+  },
+  {
+   "id": "athaliah",
+   "kingdom": "judah",
+   "house": "omri",
+   "name": {
+    "en": "Athaliah",
+    "zh-Hans": "亚他利雅",
+    "zh-Hant": "亞他利雅"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -841,
+     "end": -835
+    }
+   ],
+   "reignStart": -841,
+   "reignEnd": -835,
+   "kingsRef": "2 Kings 11:1-21",
+   "chroniclesRef": "2 Chronicles 22:10-23:21",
+   "accessionRef": "2 Kings 11:1",
+   "note": {
+    "en": "The one break in the Davidic line: a queen of the house of Omri who seized Judah's throne after her son died.",
+    "zh-Hans": "大卫王朝唯一的中断：暗利家的王后在儿子死后夺取犹大王位。",
+    "zh-Hant": "大衛王朝唯一的中斷：暗利家的王后在兒子死後奪取猶大王位。"
+   }
+  },
+  {
+   "id": "joash_judah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Joash",
+    "zh-Hans": "约阿施",
+    "zh-Hant": "約阿施"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -835,
+     "end": -796
+    }
+   ],
+   "reignStart": -835,
+   "reignEnd": -796,
+   "kingsRef": "2 Kings 12:1-21",
+   "chroniclesRef": "2 Chronicles 24",
+   "accessionRef": "2 Kings 12:1",
+   "altName": {
+    "en": "Jehoash",
+    "zh-Hans": "Jehoash",
+    "zh-Hant": "Jehoash"
+   }
+  },
+  {
+   "id": "amaziah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Amaziah",
+    "zh-Hans": "亚玛谢",
+    "zh-Hant": "亞瑪謝"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -796,
+     "end": -767
+    }
+   ],
+   "reignStart": -796,
+   "reignEnd": -767,
+   "kingsRef": "2 Kings 14:1-22",
+   "chroniclesRef": "2 Chronicles 25",
+   "accessionRef": "2 Kings 14:1"
+  },
+  {
+   "id": "uzziah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Uzziah",
+    "zh-Hans": "乌西雅",
+    "zh-Hant": "烏西雅"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -792,
+     "end": -767
+    },
+    {
+     "kind": "sole",
+     "start": -767,
+     "end": -740
+    }
+   ],
+   "reignStart": -792,
+   "reignEnd": -740,
+   "kingsRef": "2 Kings 15:1-7",
+   "chroniclesRef": "2 Chronicles 26",
+   "accessionRef": "2 Kings 15:1",
+   "altName": {
+    "en": "Azariah",
+    "zh-Hans": "亚撒利雅",
+    "zh-Hant": "亞撒利雅"
+   },
+   "note": {
+    "en": "Struck with leprosy, after which his son Jotham governed the household (2 Chronicles 26:21) — the reason Thiele reads a second co-regency at the other end of his reign.",
+    "zh-Hans": "后来长大痲疯，由儿子约坦管理家事（历代志下26:21）；这正是锡尔在其在位末期另立摄政的理由。",
+    "zh-Hant": "後來長大痲瘋，由兒子約坦管理家事（歷代志下26:21）；這正是錫爾在其在位末期另立攝政的理由。"
+   }
+  },
+  {
+   "id": "jotham",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jotham",
+    "zh-Hans": "约坦",
+    "zh-Hant": "約坦"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -750,
+     "end": -740
+    },
+    {
+     "kind": "sole",
+     "start": -740,
+     "end": -732
+    }
+   ],
+   "reignStart": -750,
+   "reignEnd": -732,
+   "kingsRef": "2 Kings 15:32-38",
+   "chroniclesRef": "2 Chronicles 27",
+   "accessionRef": "2 Kings 15:32"
+  },
+  {
+   "id": "ahaz",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Ahaz",
+    "zh-Hans": "亚哈斯",
+    "zh-Hant": "亞哈斯"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -735,
+     "end": -732
+    },
+    {
+     "kind": "sole",
+     "start": -732,
+     "end": -716
+    }
+   ],
+   "reignStart": -735,
+   "reignEnd": -716,
+   "kingsRef": "2 Kings 16:1-20",
+   "chroniclesRef": "2 Chronicles 28",
+   "accessionRef": "2 Kings 16:1"
+  },
+  {
+   "id": "hezekiah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Hezekiah",
+    "zh-Hans": "希西家",
+    "zh-Hant": "希西家"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -716,
+     "end": -687
+    }
+   ],
+   "reignStart": -716,
+   "reignEnd": -687,
+   "kingsRef": "2 Kings 18:1-20:21",
+   "chroniclesRef": "2 Chronicles 29-32",
+   "accessionRef": "2 Kings 18:1",
+   "note": {
+    "en": "Thiele gives Hezekiah no co-regency. Later scholars, McFall among them, argue for one from 729 BC; that reading is outside Thiele's system and is not charted here.",
+    "zh-Hans": "锡尔未给希西家设摄政期。后来学者（如麦克福尔）主张自公元前729年起有摄政；该说不属锡尔系统，本表不列。",
+    "zh-Hant": "錫爾未給希西家設攝政期。後來學者（如麥克福爾）主張自公元前729年起有攝政；該說不屬錫爾系統，本表不列。"
+   }
+  },
+  {
+   "id": "manasseh",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Manasseh",
+    "zh-Hans": "玛拿西",
+    "zh-Hant": "瑪拿西"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -697,
+     "end": -687
+    },
+    {
+     "kind": "sole",
+     "start": -687,
+     "end": -643
+    }
+   ],
+   "reignStart": -697,
+   "reignEnd": -643,
+   "kingsRef": "2 Kings 21:1-18",
+   "chroniclesRef": "2 Chronicles 33:1-20",
+   "accessionRef": "2 Kings 21:1"
+  },
+  {
+   "id": "amon",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Amon",
+    "zh-Hans": "亚们",
+    "zh-Hant": "亞們"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -643,
+     "end": -641
+    }
+   ],
+   "reignStart": -643,
+   "reignEnd": -641,
+   "kingsRef": "2 Kings 21:19-26",
+   "chroniclesRef": "2 Chronicles 33:21-25",
+   "accessionRef": "2 Kings 21:19"
+  },
+  {
+   "id": "josiah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Josiah",
+    "zh-Hans": "约西亚",
+    "zh-Hant": "約西亞"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -641,
+     "end": -609
+    }
+   ],
+   "reignStart": -641,
+   "reignEnd": -609,
+   "kingsRef": "2 Kings 22:1-23:30",
+   "chroniclesRef": "2 Chronicles 34-35",
+   "accessionRef": "2 Kings 22:1"
+  },
+  {
+   "id": "jehoahaz_judah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jehoahaz",
+    "zh-Hans": "约哈斯",
+    "zh-Hant": "約哈斯"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -609,
+     "end": -609
+    }
+   ],
+   "reignStart": -609,
+   "reignEnd": -609,
+   "kingsRef": "2 Kings 23:31-35",
+   "chroniclesRef": "2 Chronicles 36:1-3",
+   "accessionRef": "2 Kings 23:31",
+   "altName": {
+    "en": "Shallum",
+    "zh-Hans": "Shallum",
+    "zh-Hant": "Shallum"
+   },
+   "note": {
+    "en": "Three months, then deposed by Pharaoh Necho.",
+    "zh-Hans": "在位三个月，被法老尼哥废黜。",
+    "zh-Hant": "在位三個月，被法老尼哥廢黜。"
+   }
+  },
+  {
+   "id": "jehoiakim",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jehoiakim",
+    "zh-Hans": "约雅敬",
+    "zh-Hant": "約雅敬"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -609,
+     "end": -598
+    }
+   ],
+   "reignStart": -609,
+   "reignEnd": -598,
+   "kingsRef": "2 Kings 23:36-24:7",
+   "chroniclesRef": "2 Chronicles 36:4-8",
+   "accessionRef": "2 Kings 23:36",
+   "altName": {
+    "en": "Eliakim",
+    "zh-Hans": "Eliakim",
+    "zh-Hant": "Eliakim"
+   }
+  },
+  {
+   "id": "jehoiachin",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Jehoiachin",
+    "zh-Hans": "约雅斤",
+    "zh-Hant": "約雅斤"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -598,
+     "end": -597
+    }
+   ],
+   "reignStart": -598,
+   "reignEnd": -597,
+   "kingsRef": "2 Kings 24:8-17",
+   "chroniclesRef": "2 Chronicles 36:9-10",
+   "accessionRef": "2 Kings 24:8",
+   "altName": {
+    "en": "Jeconiah, Coniah",
+    "zh-Hans": "Jeconiah, Coniah",
+    "zh-Hant": "Jeconiah, Coniah"
+   },
+   "note": {
+    "en": "Three months, then carried to Babylon. Released from prison there long after (2 Kings 25:27-30).",
+    "zh-Hans": "在位三个月即被掳往巴比伦，多年后获释出监（列王纪下25:27-30）。",
+    "zh-Hant": "在位三個月即被擄往巴比倫，多年後獲釋出監（列王紀下25:27-30）。"
+   }
+  },
+  {
+   "id": "zedekiah",
+   "kingdom": "judah",
+   "house": "david",
+   "name": {
+    "en": "Zedekiah",
+    "zh-Hans": "西底家",
+    "zh-Hant": "西底家"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -597,
+     "end": -586
+    }
+   ],
+   "reignStart": -597,
+   "reignEnd": -586,
+   "kingsRef": "2 Kings 24:18-25:7",
+   "chroniclesRef": "2 Chronicles 36:11-21",
+   "accessionRef": "2 Kings 24:18",
+   "altName": {
+    "en": "Mattaniah",
+    "zh-Hans": "Mattaniah",
+    "zh-Hant": "Mattaniah"
+   },
+   "note": {
+    "en": "The last king of Judah. Jerusalem fell in his eleventh year.",
+    "zh-Hans": "犹大末代君王，耶路撒冷于其在位第十一年陷落。",
+    "zh-Hant": "猶大末代君王，耶路撒冷於其在位第十一年陷落。"
+   }
+  },
+  {
+   "id": "jeroboam_i",
+   "kingdom": "israel",
+   "house": "jeroboam_i",
+   "name": {
+    "en": "Jeroboam I",
+    "zh-Hans": "耶罗波安",
+    "zh-Hant": "耶羅波安"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -931,
+     "end": -910
+    }
+   ],
+   "reignStart": -931,
+   "reignEnd": -910,
+   "kingsRef": "1 Kings 12:1-14:20",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 12:20"
+  },
+  {
+   "id": "nadab",
+   "kingdom": "israel",
+   "house": "jeroboam_i",
+   "name": {
+    "en": "Nadab",
+    "zh-Hans": "拿答",
+    "zh-Hant": "拿答"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -910,
+     "end": -909
+    }
+   ],
+   "reignStart": -910,
+   "reignEnd": -909,
+   "kingsRef": "1 Kings 15:25-32",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 15:25"
+  },
+  {
+   "id": "baasha",
+   "kingdom": "israel",
+   "house": "baasha",
+   "name": {
+    "en": "Baasha",
+    "zh-Hans": "巴沙",
+    "zh-Hant": "巴沙"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -909,
+     "end": -886
+    }
+   ],
+   "reignStart": -909,
+   "reignEnd": -886,
+   "kingsRef": "1 Kings 15:33-16:7",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 15:33"
+  },
+  {
+   "id": "elah",
+   "kingdom": "israel",
+   "house": "baasha",
+   "name": {
+    "en": "Elah",
+    "zh-Hans": "以拉",
+    "zh-Hant": "以拉"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -886,
+     "end": -885
+    }
+   ],
+   "reignStart": -886,
+   "reignEnd": -885,
+   "kingsRef": "1 Kings 16:8-14",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 16:8"
+  },
+  {
+   "id": "zimri",
+   "kingdom": "israel",
+   "house": "zimri",
+   "name": {
+    "en": "Zimri",
+    "zh-Hans": "心利",
+    "zh-Hant": "心利"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -885,
+     "end": -885
+    }
+   ],
+   "reignStart": -885,
+   "reignEnd": -885,
+   "kingsRef": "1 Kings 16:15-20",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 16:15",
+   "note": {
+    "en": "Seven days — the shortest reign in either kingdom.",
+    "zh-Hans": "在位七日，两国之中最短。",
+    "zh-Hant": "在位七日，兩國之中最短。"
+   }
+  },
+  {
+   "id": "tibni",
+   "kingdom": "israel",
+   "house": "tibni",
+   "name": {
+    "en": "Tibni",
+    "zh-Hans": "提比尼",
+    "zh-Hant": "提比尼"
+   },
+   "spans": [
+    {
+     "kind": "rival",
+     "start": -885,
+     "end": -880
+    }
+   ],
+   "reignStart": -885,
+   "reignEnd": -880,
+   "kingsRef": "1 Kings 16:21-22",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 16:21",
+   "note": {
+    "en": "Never reigned alone: half of Israel followed him and half followed Omri for about five years.",
+    "zh-Hans": "从未独自作王：以色列民分为两半，一半随从他，一半随从暗利，约五年之久。",
+    "zh-Hant": "從未獨自作王：以色列民分為兩半，一半隨從他，一半隨從暗利，約五年之久。"
+   }
+  },
+  {
+   "id": "omri",
+   "kingdom": "israel",
+   "house": "omri",
+   "name": {
+    "en": "Omri",
+    "zh-Hans": "暗利",
+    "zh-Hant": "暗利"
+   },
+   "spans": [
+    {
+     "kind": "rival",
+     "start": -885,
+     "end": -880
+    },
+    {
+     "kind": "sole",
+     "start": -880,
+     "end": -874
+    }
+   ],
+   "reignStart": -885,
+   "reignEnd": -874,
+   "kingsRef": "1 Kings 16:23-28",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 16:23",
+   "note": {
+    "en": "Bought the hill of Samaria and made it the northern capital; Assyrian records call Israel 'the house of Omri' long after his dynasty ended.",
+    "zh-Hans": "购撒玛利亚山，立为北国京都；其王朝覆亡后多年，亚述文献仍称以色列为「暗利家」。",
+    "zh-Hant": "購撒瑪利亞山，立為北國京都；其王朝覆亡後多年，亞述文獻仍稱以色列為「暗利家」。"
+   }
+  },
+  {
+   "id": "ahab",
+   "kingdom": "israel",
+   "house": "omri",
+   "name": {
+    "en": "Ahab",
+    "zh-Hans": "亚哈",
+    "zh-Hant": "亞哈"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -874,
+     "end": -853
+    }
+   ],
+   "reignStart": -874,
+   "reignEnd": -853,
+   "kingsRef": "1 Kings 16:29-22:40",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 16:29"
+  },
+  {
+   "id": "ahaziah_israel",
+   "kingdom": "israel",
+   "house": "omri",
+   "name": {
+    "en": "Ahaziah",
+    "zh-Hans": "亚哈谢",
+    "zh-Hant": "亞哈謝"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -853,
+     "end": -852
+    }
+   ],
+   "reignStart": -853,
+   "reignEnd": -852,
+   "kingsRef": "2 Kings 1:1-18",
+   "chroniclesRef": null,
+   "accessionRef": "1 Kings 22:51"
+  },
+  {
+   "id": "joram_israel",
+   "kingdom": "israel",
+   "house": "omri",
+   "name": {
+    "en": "Joram",
+    "zh-Hans": "约兰",
+    "zh-Hant": "約蘭"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -852,
+     "end": -841
+    }
+   ],
+   "reignStart": -852,
+   "reignEnd": -841,
+   "kingsRef": "2 Kings 3:1-8:15",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 3:1",
+   "altName": {
+    "en": "Jehoram",
+    "zh-Hans": "Jehoram",
+    "zh-Hant": "Jehoram"
+   }
+  },
+  {
+   "id": "jehu",
+   "kingdom": "israel",
+   "house": "jehu",
+   "name": {
+    "en": "Jehu",
+    "zh-Hans": "耶户",
+    "zh-Hant": "耶戶"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -841,
+     "end": -814
+    }
+   ],
+   "reignStart": -841,
+   "reignEnd": -814,
+   "kingsRef": "2 Kings 9:30-10:36",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 10:36",
+   "note": {
+    "en": "841 BC is the anchor: the Black Obelisk records Jehu's tribute in Shalmaneser III's eighteenth year, one of the fixed points Thiele's whole reconstruction hangs on.",
+    "zh-Hans": "公元前841年是定点：黑方尖碑记载耶户在撒缦以色三世第十八年进贡，为锡尔整个系统所依据的固定年代之一。",
+    "zh-Hant": "公元前841年是定點：黑方尖碑記載耶戶在撒縵以色三世第十八年進貢，為錫爾整個系統所依據的固定年代之一。"
+   }
+  },
+  {
+   "id": "jehoahaz_israel",
+   "kingdom": "israel",
+   "house": "jehu",
+   "name": {
+    "en": "Jehoahaz",
+    "zh-Hans": "约哈斯",
+    "zh-Hant": "約哈斯"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -814,
+     "end": -798
+    }
+   ],
+   "reignStart": -814,
+   "reignEnd": -798,
+   "kingsRef": "2 Kings 13:1-9",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 13:1"
+  },
+  {
+   "id": "jehoash_israel",
+   "kingdom": "israel",
+   "house": "jehu",
+   "name": {
+    "en": "Jehoash",
+    "zh-Hans": "约阿施",
+    "zh-Hant": "約阿施"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -798,
+     "end": -782
+    }
+   ],
+   "reignStart": -798,
+   "reignEnd": -782,
+   "kingsRef": "2 Kings 13:10-25",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 13:10",
+   "altName": {
+    "en": "Joash",
+    "zh-Hans": "Joash",
+    "zh-Hant": "Joash"
+   }
+  },
+  {
+   "id": "jeroboam_ii",
+   "kingdom": "israel",
+   "house": "jehu",
+   "name": {
+    "en": "Jeroboam II",
+    "zh-Hans": "耶罗波安二世",
+    "zh-Hant": "耶羅波安二世"
+   },
+   "spans": [
+    {
+     "kind": "coregency",
+     "start": -793,
+     "end": -782
+    },
+    {
+     "kind": "sole",
+     "start": -782,
+     "end": -753
+    }
+   ],
+   "reignStart": -793,
+   "reignEnd": -753,
+   "kingsRef": "2 Kings 14:23-29",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 14:23",
+   "note": {
+    "en": "The one co-regency Thiele finds in the northern kingdom.",
+    "zh-Hans": "锡尔在北国所认定的唯一一次摄政。",
+    "zh-Hant": "錫爾在北國所認定的唯一一次攝政。"
+   }
+  },
+  {
+   "id": "zechariah_israel",
+   "kingdom": "israel",
+   "house": "jehu",
+   "name": {
+    "en": "Zechariah",
+    "zh-Hans": "撒迦利雅",
+    "zh-Hant": "撒迦利雅"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -753,
+     "end": -752
+    }
+   ],
+   "reignStart": -753,
+   "reignEnd": -752,
+   "kingsRef": "2 Kings 15:8-12",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 15:8",
+   "note": {
+    "en": "Six months. The last of Jehu's house, as promised to Jehu to the fourth generation.",
+    "zh-Hans": "在位六个月。耶户家末代，应验神应许耶户的四代之限。",
+    "zh-Hant": "在位六個月。耶戶家末代，應驗神應許耶戶的四代之限。"
+   }
+  },
+  {
+   "id": "shallum_israel",
+   "kingdom": "israel",
+   "house": "shallum",
+   "name": {
+    "en": "Shallum",
+    "zh-Hans": "沙龙",
+    "zh-Hant": "沙龍"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -752,
+     "end": -752
+    }
+   ],
+   "reignStart": -752,
+   "reignEnd": -752,
+   "kingsRef": "2 Kings 15:13-15",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 15:13",
+   "note": {
+    "en": "One month.",
+    "zh-Hans": "在位一个月。",
+    "zh-Hant": "在位一個月。"
+   }
+  },
+  {
+   "id": "menahem",
+   "kingdom": "israel",
+   "house": "menahem",
+   "name": {
+    "en": "Menahem",
+    "zh-Hans": "米拿现",
+    "zh-Hant": "米拿現"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -752,
+     "end": -742
+    }
+   ],
+   "reignStart": -752,
+   "reignEnd": -742,
+   "kingsRef": "2 Kings 15:16-22",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 15:17"
+  },
+  {
+   "id": "pekahiah",
+   "kingdom": "israel",
+   "house": "menahem",
+   "name": {
+    "en": "Pekahiah",
+    "zh-Hans": "比加辖",
+    "zh-Hant": "比加轄"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -742,
+     "end": -740
+    }
+   ],
+   "reignStart": -742,
+   "reignEnd": -740,
+   "kingsRef": "2 Kings 15:23-26",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 15:23"
+  },
+  {
+   "id": "pekah",
+   "kingdom": "israel",
+   "house": "pekah",
+   "name": {
+    "en": "Pekah",
+    "zh-Hans": "比加",
+    "zh-Hant": "比加"
+   },
+   "spans": [
+    {
+     "kind": "rival",
+     "start": -752,
+     "end": -740
+    },
+    {
+     "kind": "sole",
+     "start": -740,
+     "end": -732
+    }
+   ],
+   "reignStart": -752,
+   "reignEnd": -732,
+   "kingsRef": "2 Kings 15:27-31",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 15:27",
+   "note": {
+    "en": "2 Kings 15:27 gives Pekah twenty years, which will not fit after Pekahiah. Thiele reads the first twelve as a rival reign in Gilead, running alongside Menahem and Pekahiah in Samaria — one of the load-bearing moves of his system.",
+    "zh-Hans": "列王纪下15:27记比加在位二十年，若排在比加辖之后则无法容纳。锡尔视其前十二年为在基列的对立王权，与撒玛利亚的米拿现、比加辖并行——这是其系统的关键一环。",
+    "zh-Hant": "列王紀下15:27記比加在位二十年，若排在比加轄之後則無法容納。錫爾視其前十二年為在基列的對立王權，與撒瑪利亞的米拿現、比加轄並行——這是其系統的關鍵一環。"
+   }
+  },
+  {
+   "id": "hoshea",
+   "kingdom": "israel",
+   "house": "hoshea",
+   "name": {
+    "en": "Hoshea",
+    "zh-Hans": "何细亚",
+    "zh-Hant": "何細亞"
+   },
+   "spans": [
+    {
+     "kind": "sole",
+     "start": -732,
+     "end": -722
+    }
+   ],
+   "reignStart": -732,
+   "reignEnd": -722,
+   "kingsRef": "2 Kings 17:1-41",
+   "chroniclesRef": null,
+   "accessionRef": "2 Kings 17:1",
+   "note": {
+    "en": "The last king of Israel. Samaria fell and the northern kingdom ended; the Israel column stops here.",
+    "zh-Hans": "以色列末代君王。撒玛利亚陷落，北国灭亡；以色列一栏至此为止。",
+    "zh-Hant": "以色列末代君王。撒瑪利亞陷落，北國滅亡；以色列一欄至此為止。"
+   }
+  }
+ ]
+}

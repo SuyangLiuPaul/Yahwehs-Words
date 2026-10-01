@@ -1,0 +1,1650 @@
+{
+ "schemaVersion": 1,
+ "_meta": {
+  "generator": "scripts/build_chronology.py",
+  "unit": "am",
+  "unitNote": {
+   "en": "Anno Mundi — years counted from the creation, as the ages in Genesis 5 and 11 accumulate them. The text supplies no absolute date, so no BC year is stated here. Ussher's 4004 BC is one 17th-century reconstruction among several and is not adopted.",
+   "zh-Hans": "创世纪元——自创世起算的年数，按创世纪 5 章与 11 章所记的岁数累加而得。经文并未给出可换算的绝对年代，故此处不列公元前年份。Ussher 的公元前 4004 年只是十七世纪诸多推算之一，本图未予采用。",
+   "zh-Hant": "創世紀元——自創世起算的年數，按創世紀 5 章與 11 章所記的歲數累加而得。經文並未給出可換算的絕對年代，故此處不列公元前年份。Ussher 的公元前 4004 年只是十七世紀諸多推算之一，本圖未予採用。"
+  },
+  "derivedFrom": {
+   "mt": {
+    "asset": "assets/kjv.json",
+    "text": {
+     "en": "Every Masoretic figure on this chart is read out of the Authorised Version bundled with this app (public domain), which renders the Masoretic numbers. Only the verse addresses are written down; every number is taken from the verse itself.",
+     "zh-Hans": "本图表中马所拉一系的每个数字，都是从本应用所载的英王钦定本（公有领域）中读出的，该译本所据即马所拉经文。写定的只有经文出处，数字一概取自经文本身。",
+     "zh-Hant": "本圖表中馬所拉一系的每個數字，都是從本應用所載的英王欽定本（公有領域）中讀出的，該譯本所據即馬所拉經文。寫定的只有經文出處，數字一概取自經文本身。"
+    }
+   },
+   "lxx": {
+    "asset": "assets/lxxwh.json",
+    "text": {
+     "en": "The Septuagint figures are read in Greek out of the Septuagint bundled with this app, by the same script and in the same way.",
+     "zh-Hans": "七十士一系的数字，则以希腊文从本应用所载的七十士译本中读出，方法与上相同。",
+     "zh-Hant": "七十士一系的數字，則以希臘文從本應用所載的七十士譯本中讀出，方法與上相同。"
+    }
+   }
+  },
+  "checks": {
+   "sumsChecked": 24,
+   "note": {
+    "en": "Genesis 5 states the age at begetting, the years lived afterwards, and the total, so the parse of every Genesis 5 figure is checked against the third number the verse itself supplies. Genesis 11 states only the first two, so those lifespans are sums and carry no such check. In Genesis 12-50 only Jacob has a third figure — Genesis 47:9's 130 plus Genesis 47:28's 17 years in Egypt against the 147 that same verse states — and it checks the descent year as well as the parse. Moses and Aaron are checked the same way across three books: an age before Pharaoh (Exodus 7:7), the forty years of Numbers 14:33, and a lifetime stated separately in Deuteronomy 34:7 and Numbers 33:39. Checked describes the parse, never the year on the axis; where a year had to be supplied the note says so.",
+    "zh-Hans": "创世纪 5 章同时记下生子时的岁数、生子之后所活的年数，以及一生的总年数，所以该章每个数字的解析，都可以用经文自己给出的第三个数来核对。创世纪 11 章只记前两项，故那些寿数是相加所得，无从如此核对。创世纪 12-50 章中只有雅各有第三个数——创世纪 47:9 的 130 岁，加上创世纪 47:28 在埃及的 17 年，正是同一节所说的 147 年——这不但核对了数字的解析，也核对了下埃及的那一年。摩西与亚伦则跨三卷书以同样方式核对：见法老前的岁数（出埃及记 7:7）、民数记 14:33 的四十年，以及申命记 34:7 与民数记 33:39 分别记下的一生年数。所谓核对，说的是数字的解析，而非轴上的年份；凡年份须由推算补上之处，注中都会说明。",
+    "zh-Hant": "創世紀 5 章同時記下生子時的歲數、生子之後所活的年數，以及一生的總年數，所以該章每個數字的解析，都可以用經文自己給出的第三個數來核對。創世紀 11 章只記前兩項，故那些壽數是相加所得，無從如此核對。創世紀 12-50 章中只有雅各有第三個數——創世紀 47:9 的 130 歲，加上創世紀 47:28 在埃及的 17 年，正是同一節所說的 147 年——這不但核對了數字的解析，也核對了下埃及的那一年。摩西與亞倫則跨三卷書以同樣方式核對：見法老前的歲數（出埃及記 7:7）、民數記 14:33 的四十年，以及申命記 34:7 與民數記 33:39 分別記下的一生年數。所謂核對，說的是數字的解析，而非軸上的年份；凡年份須由推算補上之處，註中都會說明。"
+   },
+   "traditionAgreement": {
+    "en": "Genesis 5 and 11: the two texts state the same figures for 4 of 19 men. Genesis 12-50: 4 of 4. Exodus to Deuteronomy: 2 of 2. The choice of text therefore moves the genealogies and leaves everyone after them where they are.",
+    "zh-Hans": "创世纪 5、11 章：两种经文对其中 19 人里的 4 人，所记数字相同。创世纪 12-50 章：4 人里 4 人。出埃及记至申命记：2 人里 2 人。可见选用哪一种经文，动的是家谱，其后各人所在的年代并不改变。",
+    "zh-Hant": "創世紀 5、11 章：兩種經文對其中 19 人裡的 4 人，所記數字相同。創世紀 12-50 章：4 人裡 4 人。出埃及記至申命記：2 人裡 2 人。可見選用哪一種經文，動的是家譜，其後各人所在的年代並不改變。"
+   },
+   "secondWitness": {
+    "en": "28 of 28 figures agree with this app's Family Tree, which was built separately, from a different source: 19 Anno Mundi birth years compared directly, 6 lifespans compared as intervals because that record dates those men BC, and 3 father-to-son gaps. A disagreement stops this chart being built.",
+    "zh-Hans": "本图表有 28 处可与本应用另行建立的圣经家谱对照，28 处相符。家谱是另据别的资料、由另一段程式建成的：其中 19 处直接比对创世纪元的出生年，6 处因家谱以公元前纪年，改以一生年数这一段年数比对，另有 3 处比对父子出生相隔的年数。若有一处不合，本图表便不会生成。",
+    "zh-Hant": "本圖表有 28 處可與本應用另行建立的聖經家譜對照，28 處相符。家譜是另據別的資料、由另一段程式建成的：其中 19 處直接比對創世紀元的出生年，6 處因家譜以公元前紀年，改以一生年數這一段年數比對，另有 3 處比對父子出生相隔的年數。若有一處不合，本圖表便不會生成。"
+   },
+   "disagreements": []
+  },
+  "traditions": {
+   "en": "The Masoretic Text and the Septuagint state different ages in Genesis 5 and 11, and both texts ship with this app, so both are charted. The Samaritan Pentateuch states a third set of figures; this app does not carry that text, so it is absent here rather than estimated.",
+   "zh-Hans": "马所拉经文与七十士译本在创世纪 5、11 章所记的岁数并不相同，而本应用两种经文都有，故两种都绘出。撒玛利亚五经另记第三套数字；本应用未收录该经文，因此此处付之阙如，而不以推算补足。",
+   "zh-Hant": "馬所拉經文與七十士譯本在創世紀 5、11 章所記的歲數並不相同，而本應用兩種經文都有，故兩種都繪出。撒瑪利亞五經另記第三套數字；本應用未收錄該經文，因此此處付之闕如，而不以推算補足。"
+  }
+ },
+ "traditions": [
+  {
+   "id": "mt",
+   "name": {
+    "en": "Masoretic",
+    "zh-Hans": "马所拉",
+    "zh-Hant": "馬所拉"
+   },
+   "longName": {
+    "en": "Masoretic Text (via the Authorised Version)",
+    "zh-Hans": "马所拉经文（据英王钦定本）",
+    "zh-Hant": "馬所拉經文（據英王欽定本）"
+   },
+   "floodAm": 1656,
+   "endAm": 2708
+  },
+  {
+   "id": "lxx",
+   "name": {
+    "en": "Septuagint",
+    "zh-Hans": "七十士",
+    "zh-Hant": "七十士"
+   },
+   "longName": {
+    "en": "Septuagint (Greek Old Testament)",
+    "zh-Hans": "七十士译本（希腊文旧约）",
+    "zh-Hant": "七十士譯本（希臘文舊約）"
+   },
+   "floodAm": 2242,
+   "endAm": 3859
+  }
+ ],
+ "epochs": [
+  {
+   "id": "flood",
+   "name": {
+    "en": "The Flood",
+    "zh-Hans": "洪水",
+    "zh-Hant": "洪水"
+   },
+   "ref": "Genesis 7:6",
+   "years": {
+    "mt": 1656,
+    "lxx": 2242
+   },
+   "note": {
+    "en": "Genesis 7:6 states Noah was 600 years old at the flood.",
+    "zh-Hans": "创世纪 7:6 记洪水在挪亚600岁那年。",
+    "zh-Hant": "創世紀 7:6 記洪水在挪亞600歲那年。"
+   }
+  },
+  {
+   "id": "haran",
+   "name": {
+    "en": "Abram leaves Haran",
+    "zh-Hans": "亚伯兰离开哈兰",
+    "zh-Hant": "亞伯蘭離開哈蘭"
+   },
+   "ref": "Genesis 12:4",
+   "years": {
+    "mt": 2023,
+    "lxx": 3389
+   },
+   "note": {
+    "en": "Genesis 12:4 has Abram 75 years old when he left Haran.",
+    "zh-Hans": "创世纪 12:4 记亚伯兰离开哈兰时75岁。",
+    "zh-Hant": "創世紀 12:4 記亞伯蘭離開哈蘭時75歲。"
+   }
+  },
+  {
+   "id": "descent",
+   "name": {
+    "en": "Into Egypt",
+    "zh-Hans": "下埃及",
+    "zh-Hant": "下埃及"
+   },
+   "ref": "Genesis 47:9",
+   "years": {
+    "mt": 2238,
+    "lxx": 3604
+   },
+   "note": {
+    "en": "Jacob tells Pharaoh he is 130 (Genesis 47:9); 47:28 adds the 17 years he then lived in Egypt and states the total, so this year is checked against a third figure.",
+    "zh-Hans": "雅各对法老说自己130岁（创世纪 47:9）；47:28 记他此后在埃及又活了17年，并记出总岁数，故此年另有第三个数字可核。",
+    "zh-Hant": "雅各對法老說自己130歲（創世紀 47:9）；47:28 記他此後在埃及又活了17年，並記出總歲數，故此年另有第三個數字可核。"
+   }
+  },
+  {
+   "id": "exodus",
+   "name": {
+    "en": "The Exodus",
+    "zh-Hans": "出埃及",
+    "zh-Hant": "出埃及"
+   },
+   "ref": "Exodus 12:40",
+   "years": {
+    "mt": 2668,
+    "lxx": 3819
+   },
+   "note": {
+    "en": "Exodus 12:40's 430 years. Each text is counted from where its own wording starts them, which is why this line moves when the text does; see the note on the sojourn.",
+    "zh-Hans": "出埃及记 12:40 所记的430年。两种经文各按自身措辞的起点起算，故切换经文时此线会移动；参寄居年数一条的说明。",
+    "zh-Hant": "出埃及記 12:40 所記的430年。兩種經文各按自身措辭的起點起算，故切換經文時此線會移動；參寄居年數一條的說明。"
+   }
+  },
+  {
+   "id": "moses_death",
+   "name": {
+    "en": "Moses dies",
+    "zh-Hans": "摩西去世",
+    "zh-Hant": "摩西去世"
+   },
+   "ref": "Deuteronomy 34:7",
+   "years": {
+    "mt": 2708,
+    "lxx": 3859
+   },
+   "note": {
+    "en": "Moses is 80 before Pharaoh (Exodus 7:7), the wilderness is 40 years (Numbers 14:33), and Deuteronomy 34:7 states the 120 those two add to — which he also says himself at Deuteronomy 31:2.",
+    "zh-Hans": "摩西见法老时80岁（出埃及记 7:7），旷野40年（民数记 14:33），申命记 34:7 所记的120岁正是二者之和；申命记 31:2 他也亲口说出这个岁数。",
+    "zh-Hant": "摩西見法老時80歲（出埃及記 7:7），曠野40年（民數記 14:33），申命記 34:7 所記的120歲正是二者之和；申命記 31:2 他也親口說出這個歲數。"
+   }
+  }
+ ],
+ "notes": [
+  {
+   "id": "flood_two_datings",
+   "tradition": "mt",
+   "personId": "noah",
+   "text": {
+    "en": "The flood is dated twice. Genesis 7:6 states Noah was 600 years old, and this chart takes that plain number, putting the flood at AM 1656. Genesis 7:11 dates the same day to the 600th year of his life, which is 599 years complete; read that way the flood falls at AM 1655, and because Shem's birth is counted from the flood every year after it on this chart moves 1 year with it. That subtraction is the one the era below makes at 1 Kings 6:1, where the text offers no plain number and there is no choice to make.",
+    "zh-Hans": "洪水有两处纪年。创世纪 7:6 记挪亚600岁，本图取此明数，故洪水落在创世纪元1656年。创世纪 7:11 则记同一日在他一生的第600年，即已过599年；照此读法洪水落在创世纪元1655年，而闪的出生是从洪水起算的，故本图洪水之后的每一年都随之移前1年。下方世代总账在列王纪上 6:1 所作的正是这一减法，那里经文并未另给明数，别无选择。",
+    "zh-Hant": "洪水有兩處紀年。創世紀 7:6 記挪亞600歲，本圖取此明數，故洪水落在創世紀元1656年。創世紀 7:11 則記同一日在他一生的第600年，即已過599年；照此讀法洪水落在創世紀元1655年，而閃的出生是從洪水起算的，故本圖洪水之後的每一年都隨之移前1年。下方世代總賬在列王紀上 6:1 所作的正是這一減法，那裡經文並未另給明數，別無選擇。"
+   }
+  },
+  {
+   "id": "flood_two_datings",
+   "tradition": "lxx",
+   "personId": "noah",
+   "text": {
+    "en": "The flood is dated twice. Genesis 7:6 states Noah was 600 years old, and this chart takes that plain number, putting the flood at AM 2242. Genesis 7:11 dates the same day to the 600th year of his life, which is 599 years complete; read that way the flood falls at AM 2241, and because Shem's birth is counted from the flood every year after it on this chart moves 1 year with it. That subtraction is the one the era below makes at 1 Kings 6:1, where the text offers no plain number and there is no choice to make.",
+    "zh-Hans": "洪水有两处纪年。创世纪 7:6 记挪亚600岁，本图取此明数，故洪水落在创世纪元2242年。创世纪 7:11 则记同一日在他一生的第600年，即已过599年；照此读法洪水落在创世纪元2241年，而闪的出生是从洪水起算的，故本图洪水之后的每一年都随之移前1年。下方世代总账在列王纪上 6:1 所作的正是这一减法，那里经文并未另给明数，别无选择。",
+    "zh-Hant": "洪水有兩處紀年。創世紀 7:6 記挪亞600歲，本圖取此明數，故洪水落在創世紀元2242年。創世紀 7:11 則記同一日在他一生的第600年，即已過599年；照此讀法洪水落在創世紀元2241年，而閃的出生是從洪水起算的，故本圖洪水之後的每一年都隨之移前1年。下方世代總賬在列王紀上 6:1 所作的正是這一減法，那裡經文並未另給明數，別無選擇。"
+   }
+  },
+  {
+   "id": "methuselah_flood",
+   "tradition": "lxx",
+   "personId": "methuselah",
+   "text": {
+    "en": "On these figures Methuselah dies 14 years after the flood. That follows from the ages this text states and is a long-discussed feature of it, not a slip in the arithmetic.",
+    "zh-Hans": "按此经文所记的岁数，玛土撒拉在洪水之后14年才去世。这是该经文自身数字推出的结果，历来多有讨论，并非此处计算有误。",
+    "zh-Hant": "按此經文所記的歲數，瑪土撒拉在洪水之後14年才去世。這是該經文自身數字推出的結果，歷來多有討論，並非此處計算有誤。"
+   }
+  },
+  {
+   "id": "abram_birth",
+   "tradition": "mt",
+   "personId": "abraham",
+   "text": {
+    "en": "Genesis 11:26 has Terah fathering Abram, Nahor and Haran at 70, and this chart takes that as Abram's year. On it Abram leaves Haran at 75 (Genesis 12:4) 60 years before Terah dies at 205 (Genesis 11:32). Acts 7:4 has Abram moving on after his father's death; chronologies that follow it make Abram the youngest of the three and put his birth at AM 2008, moving him and everyone after him 60 years later.",
+    "zh-Hans": "创世纪 11:26 记他拉70岁生亚伯兰、拿鹤、哈兰，本图即以此年为亚伯兰的出生年。照此，亚伯兰75岁离开哈兰（创世纪 12:4）时，他拉尚有60年才去世（创世纪 11:32 记他拉活了205岁）。使徒行传 7:4 说亚伯兰是在父亲死后才迁往迦南；采此读法的年代学把亚伯兰视为三子中最幼的，出生年定在创世纪元 2008 年，他与其后各人都要往后推60年。",
+    "zh-Hant": "創世紀 11:26 記他拉70歲生亞伯蘭、拿鶴、哈蘭，本圖即以此年為亞伯蘭的出生年。照此，亞伯蘭75歲離開哈蘭（創世紀 12:4）時，他拉尚有60年才去世（創世紀 11:32 記他拉活了205歲）。使徒行傳 7:4 說亞伯蘭是在父親死後才遷往迦南；採此讀法的年代學把亞伯蘭視為三子中最幼的，出生年定在創世紀元 2008 年，他與其後各人都要往後推60年。"
+   }
+  },
+  {
+   "id": "abram_birth",
+   "tradition": "lxx",
+   "personId": "abraham",
+   "text": {
+    "en": "Genesis 11:26 has Terah fathering Abram, Nahor and Haran at 70, and this chart takes that as Abram's year. On it Abram leaves Haran at 75 (Genesis 12:4) 60 years before Terah dies at 205 (Genesis 11:32). Acts 7:4 has Abram moving on after his father's death; chronologies that follow it make Abram the youngest of the three and put his birth at AM 3374, moving him and everyone after him 60 years later.",
+    "zh-Hans": "创世纪 11:26 记他拉70岁生亚伯兰、拿鹤、哈兰，本图即以此年为亚伯兰的出生年。照此，亚伯兰75岁离开哈兰（创世纪 12:4）时，他拉尚有60年才去世（创世纪 11:32 记他拉活了205岁）。使徒行传 7:4 说亚伯兰是在父亲死后才迁往迦南；采此读法的年代学把亚伯兰视为三子中最幼的，出生年定在创世纪元 3374 年，他与其后各人都要往后推60年。",
+    "zh-Hant": "創世紀 11:26 記他拉70歲生亞伯蘭、拿鶴、哈蘭，本圖即以此年為亞伯蘭的出生年。照此，亞伯蘭75歲離開哈蘭（創世紀 12:4）時，他拉尚有60年才去世（創世紀 11:32 記他拉活了205歲）。使徒行傳 7:4 說亞伯蘭是在父親死後才遷往迦南；採此讀法的年代學把亞伯蘭視為三子中最幼的，出生年定在創世紀元 3374 年，他與其後各人都要往後推60年。"
+   }
+  },
+  {
+   "id": "sojourn_430",
+   "tradition": "mt",
+   "personId": null,
+   "text": {
+    "en": "Exodus 12:40 gives 430 years and this text counts them in Egypt, so the chart runs them from Jacob's descent and the exodus falls in AM 2668. The Greek of the same verse counts them “in the land of Egypt and in the land of Canaan”, which begins them at Abraham instead; switch texts above to see where that puts the exodus.",
+    "zh-Hans": "出埃及记 12:40 记430年，本经文把这些年数算在埃及，故本图自雅各下埃及起算，出埃及落在创世纪元 2668 年。希腊文同一节作「在埃及地和迦南地」，起点便移到亚伯拉罕；可在上方切换经文查看。",
+    "zh-Hant": "出埃及記 12:40 記430年，本經文把這些年數算在埃及，故本圖自雅各下埃及起算，出埃及落在創世紀元 2668 年。希臘文同一節作「在埃及地和迦南地」，起點便移到亞伯拉罕；可在上方切換經文查看。"
+   }
+  },
+  {
+   "id": "sojourn_430",
+   "tradition": "lxx",
+   "personId": null,
+   "text": {
+    "en": "Exodus 12:40 gives 430 years and this text counts them “in the land of Egypt and in the land of Canaan”. Where the Canaan part begins is not stated; this chart starts it at Abram's departure from Haran, which is a reading and not a figure the verse supplies — the one place on this axis where a year had to be supplied rather than read. On it the 430 divide into 215 years in Canaan and 215 in Egypt, but the second is the first taken off the same total and is not an independent check. Galatians 3:17 puts 430 years between a promise to Abraham and the law without saying which promise, and is cited on both sides of this.",
+    "zh-Hans": "出埃及记 12:40 记430年，本经文作「在埃及地和迦南地」。迦南那一段从何时起算，经文并未言明；本图以亚伯兰离开哈兰为起点，这是一种读法，并非该节所记的数字——也是本时间轴上唯一需要补入而非读出的年份。照此，430年分为迦南215年、埃及215年，但后者是从同一总数中减出，并非独立的旁证。加拉太书 3:17 记神应许亚伯拉罕与律法相隔430年，却未指明是哪一次应许，故两种读法皆引之。",
+    "zh-Hant": "出埃及記 12:40 記430年，本經文作「在埃及地和迦南地」。迦南那一段從何時起算，經文並未言明；本圖以亞伯蘭離開哈蘭為起點，這是一種讀法，並非該節所記的數字——也是本時間軸上唯一需要補入而非讀出的年份。照此，430年分為迦南215年、埃及215年，但後者是從同一總數中減出，並非獨立的旁證。加拉太書 3:17 記神應許亞伯拉罕與律法相隔430年，卻未指明是哪一次應許，故兩種讀法皆引之。"
+   }
+  },
+  {
+   "id": "levi_ceiling",
+   "tradition": "mt",
+   "personId": "moses",
+   "text": {
+    "en": "Exodus 6:18 gives Kohath 133 years and Exodus 6:20 gives Amram 137, and Genesis 46:11 has Kohath already born when Jacob went down. Read as father to son, what is left of Kohath's life, the whole of Amram's and Moses' 80 years before Pharaoh cannot exceed 350 years — 80 short of the 430 this text puts between the descent and the exodus. It is the oldest objection to counting all 430 in Egypt, and it comes from these same verses rather than from outside them.",
+    "zh-Hans": "出埃及记 6:18 记哥辖活了133岁，出埃及记 6:20 记暗兰活了137岁，而创世纪 46:11 已列哥辖在下埃及之人中。若按父子相承来读，哥辖余下的年岁、暗兰的一生，加上摩西见法老时的80岁，至多不过350年——比本经文所定下埃及至出埃及的430年还少80年。这正是反对把430年全算在埃及的最古老质疑，且出自这几节经文本身，而非外来之说。",
+    "zh-Hant": "出埃及記 6:18 記哥轄活了133歲，出埃及記 6:20 記暗蘭活了137歲，而創世紀 46:11 已列哥轄在下埃及之人中。若按父子相承來讀，哥轄餘下的年歲、暗蘭的一生，加上摩西見法老時的80歲，至多不過350年——比本經文所定下埃及至出埃及的430年還少80年。這正是反對把430年全算在埃及的最古老質疑，且出自這幾節經文本身，而非外來之說。"
+   }
+  },
+  {
+   "id": "levi_ceiling",
+   "tradition": "lxx",
+   "personId": "moses",
+   "text": {
+    "en": "Exodus 6:18 gives Kohath 130 years and Exodus 6:20 gives Amram 132, and Genesis 46:11 has Kohath already born when Jacob went down. Read as father to son, what is left of Kohath's life, the whole of Amram's and Moses' 80 years before Pharaoh cannot exceed 342 years, and this text puts 215 years between the descent and the exodus — so the generations fit, with 127 years to spare. On the other text's reading of Exodus 12:40 the same three lives fall short, which is what the argument over that verse is about.",
+    "zh-Hans": "出埃及记 6:18 记哥辖活了130岁，出埃及记 6:20 记暗兰活了132岁，而创世纪 46:11 已列哥辖在下埃及之人中。若按父子相承来读，哥辖余下的年岁、暗兰的一生，加上摩西见法老时的80岁，至多不过342年；而本经文所定下埃及至出埃及为215年，故三代人足以相接，尚余127年。若照另一经文对出埃及记 12:40 的读法，这三人的年岁便不够——两种读法之争正在于此。",
+    "zh-Hant": "出埃及記 6:18 記哥轄活了130歲，出埃及記 6:20 記暗蘭活了132歲，而創世紀 46:11 已列哥轄在下埃及之人中。若按父子相承來讀，哥轄餘下的年歲、暗蘭的一生，加上摩西見法老時的80歲，至多不過342年；而本經文所定下埃及至出埃及為215年，故三代人足以相接，尚餘127年。若照另一經文對出埃及記 12:40 的讀法，這三人的年歲便不夠——兩種讀法之爭正在於此。"
+   }
+  },
+  {
+   "id": "same_year_deaths",
+   "tradition": "mt",
+   "personId": "aaron",
+   "text": {
+    "en": "Aaron's bar and Moses' end in the same year. Numbers 33:38 has Aaron die in the fortieth year after the exodus and Moses dies at the close of those forty, so at this chart's resolution of one year the two coincide. Aaron dies first.",
+    "zh-Hans": "亚伦与摩西的横条结束于同一年。民数记 33:38 记亚伦死于出埃及后第四十年，摩西则死于这四十年之末，按本图以年为最小刻度，二者遂落在同一年。亚伦先死。",
+    "zh-Hant": "亞倫與摩西的橫條結束於同一年。民數記 33:38 記亞倫死於出埃及後第四十年，摩西則死於這四十年之末，按本圖以年為最小刻度，二者遂落在同一年。亞倫先死。"
+   }
+  },
+  {
+   "id": "same_year_deaths",
+   "tradition": "lxx",
+   "personId": "aaron",
+   "text": {
+    "en": "Aaron's bar and Moses' end in the same year. Numbers 33:38 has Aaron die in the fortieth year after the exodus and Moses dies at the close of those forty, so at this chart's resolution of one year the two coincide. Aaron dies first.",
+    "zh-Hans": "亚伦与摩西的横条结束于同一年。民数记 33:38 记亚伦死于出埃及后第四十年，摩西则死于这四十年之末，按本图以年为最小刻度，二者遂落在同一年。亚伦先死。",
+    "zh-Hant": "亞倫與摩西的橫條結束於同一年。民數記 33:38 記亞倫死於出埃及後第四十年，摩西則死於這四十年之末，按本圖以年為最小刻度，二者遂落在同一年。亞倫先死。"
+   }
+  },
+  {
+   "id": "era_join",
+   "tradition": "lxx",
+   "personId": null,
+   "text": {
+    "en": "This text does not state that span in one place. 1 Kings 6:1 in this app's numbering holds 5 of the edition's own verses, and the reading text marks where each of them begins. The 440th year stands in 6:1, which dates it to Solomon's fourth year and the second month and then says nothing about what was done in it; the founding of the house is stated in 6:1c. So this total is read across two units, and the ledger below says which. The other text states the year and the building in one sentence.",
+    "zh-Hans": "本经文并非在一处记下这段年数。列王纪上 6:1 在本应用的编号之下，含该版本自己的 5 节，阅读界面在每节起处均有标记。第440年记在 6:1，只把它系于所罗门作王第四年二月，并未说那一年作了什么；殿的奠基则记在 6:1c。故此总数是跨两节读出的，下方的统计表注明是哪两节。另一经文则在一句之内同记年份与建殿。",
+    "zh-Hant": "本經文並非在一處記下這段年數。列王紀上 6:1 在本應用的編號之下，含該版本自己的 5 節，閱讀介面在每節起處均有標記。第440年記在 6:1，只把它繫於所羅門作王第四年二月，並未說那一年作了什麼；殿的奠基則記在 6:1c。故此總數是跨兩節讀出的，下方的統計表註明是哪兩節。另一經文則在一句之內同記年份與建殿。"
+   }
+  },
+  {
+   "id": "chart_end",
+   "tradition": "mt",
+   "personId": null,
+   "text": {
+    "en": "The chart ends here, and not for want of numbers. 1 Kings 6:1 carries the span on to Solomon's temple — the 480th year after the exodus, 479 years — but the periods the text states inside it come to 530, over by 51, with more stretches it gives no number to at all. Laying those bars end to end would be a reconstruction, so this era is counted below instead of drawn.",
+    "zh-Hans": "本图到此为止，并非因为经文没有数字。列王纪上 6:1 把年数一直带到所罗门建殿——出埃及后第480年，即479年——但其间经文逐条所记的各段年数合计530年，多出51年，还有几段全然未记年数。把这些年段一段接一段排在轴上，就成了重构；故本图不画这一段，只在下方作统计。",
+    "zh-Hant": "本圖到此為止，並非因為經文沒有數字。列王紀上 6:1 把年數一直帶到所羅門建殿——出埃及後第480年，即479年——但其間經文逐條所記的各段年數合計530年，多出51年，還有幾段全然未記年數。把這些年段一段接一段排在軸上，就成了重構；故本圖不畫這一段，只在下方作統計。"
+   }
+  },
+  {
+   "id": "chart_end",
+   "tradition": "lxx",
+   "personId": null,
+   "text": {
+    "en": "The chart ends here, and not for want of numbers. 1 Kings 6:1 (read across its 6:1 and 6:1c, see the note above) carries the span on to Solomon's temple — the 440th year after the exodus, 439 years — but the periods the text states inside it come to 520, over by 81, with more stretches it gives no number to at all. Laying those bars end to end would be a reconstruction, so this era is counted below instead of drawn.",
+    "zh-Hans": "本图到此为止，并非因为经文没有数字。列王纪上 6:1（跨该版本 6:1 与 6:1c 两节读出，见上）把年数一直带到所罗门建殿——出埃及后第440年，即439年——但其间经文逐条所记的各段年数合计520年，多出81年，还有几段全然未记年数。把这些年段一段接一段排在轴上，就成了重构；故本图不画这一段，只在下方作统计。",
+    "zh-Hant": "本圖到此為止，並非因為經文沒有數字。列王紀上 6:1（跨該版本 6:1 與 6:1c 兩節讀出，見上）把年數一直帶到所羅門建殿——出埃及後第440年，即439年——但其間經文逐條所記的各段年數合計520年，多出81年，還有幾段全然未記年數。把這些年段一段接一段排在軸上，就成了重構；故本圖不畫這一段，只在下方作統計。"
+   }
+  }
+ ],
+ "era": {
+  "id": "exodus_to_temple",
+  "name": {
+   "en": "From the exodus to the temple",
+   "zh-Hans": "从出埃及到建殿",
+   "zh-Hant": "從出埃及到建殿"
+  },
+  "stated": {
+   "mt": {
+    "ordinal": 480,
+    "elapsed": 479,
+    "ref": "1 Kings 6:1",
+    "yearAt": "6:1",
+    "foundingAt": "6:1",
+    "units": 1
+   },
+   "lxx": {
+    "ordinal": 440,
+    "elapsed": 439,
+    "ref": "1 Kings 6:1",
+    "yearAt": "6:1",
+    "foundingAt": "6:1c",
+    "units": 5
+   }
+  },
+  "counted": {
+   "mt": 530,
+   "lxx": 520
+  },
+  "residue": {
+   "mt": 51,
+   "lxx": 81
+  },
+  "splitIds": [
+   "othniel",
+   "eli"
+  ],
+  "periods": [
+   {
+    "id": "wilderness",
+    "kind": "wilderness",
+    "name": {
+     "en": "The wilderness",
+     "zh-Hans": "旷野漂流",
+     "zh-Hant": "曠野漂流"
+    },
+    "ref": "Numbers 14:33",
+    "years": {
+     "mt": 40,
+     "lxx": 40
+    }
+   },
+   {
+    "id": "cushan",
+    "kind": "servitude",
+    "name": {
+     "en": "Servitude to Cushan-Rishathaim",
+     "zh-Hans": "服事古珊利萨田",
+     "zh-Hant": "服事古珊利薩田"
+    },
+    "ref": "Judges 3:8",
+    "years": {
+     "mt": 8,
+     "lxx": 8
+    }
+   },
+   {
+    "id": "othniel",
+    "kind": "rest",
+    "name": {
+     "en": "Rest under Othniel",
+     "zh-Hans": "俄陀聂时的太平",
+     "zh-Hant": "俄陀聶時的太平"
+    },
+    "ref": "Judges 3:11",
+    "years": {
+     "mt": 40,
+     "lxx": 50
+    }
+   },
+   {
+    "id": "eglon",
+    "kind": "servitude",
+    "name": {
+     "en": "Servitude to Eglon of Moab",
+     "zh-Hans": "服事摩押王伊矶伦",
+     "zh-Hant": "服事摩押王伊磯倫"
+    },
+    "ref": "Judges 3:14",
+    "years": {
+     "mt": 18,
+     "lxx": 18
+    }
+   },
+   {
+    "id": "ehud",
+    "kind": "rest",
+    "name": {
+     "en": "Rest under Ehud",
+     "zh-Hans": "以笏时的太平",
+     "zh-Hant": "以笏時的太平"
+    },
+    "ref": "Judges 3:30",
+    "years": {
+     "mt": 80,
+     "lxx": 80
+    }
+   },
+   {
+    "id": "jabin",
+    "kind": "servitude",
+    "name": {
+     "en": "Oppression by Jabin",
+     "zh-Hans": "耶宾的欺压",
+     "zh-Hant": "耶賓的欺壓"
+    },
+    "ref": "Judges 4:3",
+    "years": {
+     "mt": 20,
+     "lxx": 20
+    }
+   },
+   {
+    "id": "deborah",
+    "kind": "rest",
+    "name": {
+     "en": "Rest after Deborah",
+     "zh-Hans": "底波拉之后的太平",
+     "zh-Hant": "底波拉之後的太平"
+    },
+    "ref": "Judges 5:31",
+    "years": {
+     "mt": 40,
+     "lxx": 40
+    }
+   },
+   {
+    "id": "midian",
+    "kind": "servitude",
+    "name": {
+     "en": "Midian",
+     "zh-Hans": "米甸的手下",
+     "zh-Hant": "米甸的手下"
+    },
+    "ref": "Judges 6:1",
+    "years": {
+     "mt": 7,
+     "lxx": 7
+    }
+   },
+   {
+    "id": "gideon",
+    "kind": "rest",
+    "name": {
+     "en": "Quietness in Gideon's days",
+     "zh-Hans": "基甸年间的安静",
+     "zh-Hant": "基甸年間的安靜"
+    },
+    "ref": "Judges 8:28",
+    "years": {
+     "mt": 40,
+     "lxx": 40
+    }
+   },
+   {
+    "id": "abimelech",
+    "kind": "judge",
+    "name": {
+     "en": "Abimelech",
+     "zh-Hans": "亚比米勒",
+     "zh-Hant": "亞比米勒"
+    },
+    "ref": "Judges 9:22",
+    "years": {
+     "mt": 3,
+     "lxx": 3
+    }
+   },
+   {
+    "id": "tola",
+    "kind": "judge",
+    "name": {
+     "en": "Tola",
+     "zh-Hans": "陀拉",
+     "zh-Hant": "陀拉"
+    },
+    "ref": "Judges 10:2",
+    "years": {
+     "mt": 23,
+     "lxx": 23
+    }
+   },
+   {
+    "id": "jair",
+    "kind": "judge",
+    "name": {
+     "en": "Jair",
+     "zh-Hans": "睚珥",
+     "zh-Hant": "睚珥"
+    },
+    "ref": "Judges 10:3",
+    "years": {
+     "mt": 22,
+     "lxx": 22
+    }
+   },
+   {
+    "id": "ammon",
+    "kind": "servitude",
+    "name": {
+     "en": "Oppression from Ammon",
+     "zh-Hans": "亚扪人的欺压",
+     "zh-Hant": "亞捫人的欺壓"
+    },
+    "ref": "Judges 10:8",
+    "years": {
+     "mt": 18,
+     "lxx": 18
+    }
+   },
+   {
+    "id": "jephthah",
+    "kind": "judge",
+    "name": {
+     "en": "Jephthah",
+     "zh-Hans": "耶弗他",
+     "zh-Hant": "耶弗他"
+    },
+    "ref": "Judges 12:7",
+    "years": {
+     "mt": 6,
+     "lxx": 6
+    }
+   },
+   {
+    "id": "ibzan",
+    "kind": "judge",
+    "name": {
+     "en": "Ibzan",
+     "zh-Hans": "以比赞",
+     "zh-Hant": "以比讚"
+    },
+    "ref": "Judges 12:9",
+    "years": {
+     "mt": 7,
+     "lxx": 7
+    }
+   },
+   {
+    "id": "elon",
+    "kind": "judge",
+    "name": {
+     "en": "Elon",
+     "zh-Hans": "以伦",
+     "zh-Hant": "以倫"
+    },
+    "ref": "Judges 12:11",
+    "years": {
+     "mt": 10,
+     "lxx": 10
+    }
+   },
+   {
+    "id": "abdon",
+    "kind": "judge",
+    "name": {
+     "en": "Abdon",
+     "zh-Hans": "押顿",
+     "zh-Hant": "押頓"
+    },
+    "ref": "Judges 12:14",
+    "years": {
+     "mt": 8,
+     "lxx": 8
+    }
+   },
+   {
+    "id": "philistines",
+    "kind": "servitude",
+    "name": {
+     "en": "The Philistines",
+     "zh-Hans": "非利士人的手下",
+     "zh-Hant": "非利士人的手下"
+    },
+    "ref": "Judges 13:1",
+    "years": {
+     "mt": 40,
+     "lxx": 40
+    }
+   },
+   {
+    "id": "samson",
+    "kind": "judge",
+    "name": {
+     "en": "Samson",
+     "zh-Hans": "参孙",
+     "zh-Hant": "參孫"
+    },
+    "ref": "Judges 15:20",
+    "years": {
+     "mt": 20,
+     "lxx": 20
+    }
+   },
+   {
+    "id": "eli",
+    "kind": "judge",
+    "name": {
+     "en": "Eli",
+     "zh-Hans": "以利",
+     "zh-Hant": "以利"
+    },
+    "ref": "1 Samuel 4:18",
+    "years": {
+     "mt": 40,
+     "lxx": 20
+    }
+   },
+   {
+    "id": "david",
+    "kind": "reign",
+    "name": {
+     "en": "David's reign",
+     "zh-Hans": "大卫作王",
+     "zh-Hant": "大衛作王"
+    },
+    "ref": "2 Samuel 5:4",
+    "years": {
+     "mt": 40,
+     "lxx": 40
+    }
+   }
+  ],
+  "unnumbered": [
+   {
+    "id": "joshua",
+    "ref": "Joshua 24:29",
+    "note": {
+     "en": "Joshua's leadership after the conquest — the verse gives his age at death, 110, not the length of his rule.",
+     "zh-Hans": "约书亚得地之后带领以色列的年数——该节只记他去世时110岁，未记年数。",
+     "zh-Hant": "約書亞得地之後帶領以色列的年數——該節只記他去世時110歲，未記年數。"
+    }
+   },
+   {
+    "id": "elders",
+    "ref": "Judges 2:7",
+    "note": {
+     "en": "The elders who outlived Joshua. No number of years is given.",
+     "zh-Hans": "比约书亚长寿的众长老在世的年数，经文未记。",
+     "zh-Hant": "比約書亞長壽的眾長老在世的年數，經文未記。"
+    }
+   },
+   {
+    "id": "samuel",
+    "ref": "1 Samuel 7:15",
+    "note": {
+     "en": "Samuel judged Israel all the days of his life; the days are not counted.",
+     "zh-Hans": "撒母耳一生作以色列的士师，但未记年数。",
+     "zh-Hant": "撒母耳一生作以色列的士師，但未記年數。"
+    }
+   },
+   {
+    "id": "saul",
+    "ref": "1 Samuel 13:1",
+    "note": {
+     "en": "Saul's reign. The figure in this verse is famously incomplete in the Hebrew, and the forty years usually given for it come from Acts 13:21, not from the books this era is read out of.",
+     "zh-Hans": "扫罗作王的年数。此节在希伯来文中数字残缺，通常所说的四十年出自使徒行传 13:21，并非出自本段所据的经卷。",
+     "zh-Hant": "掃羅作王的年數。此節在希伯來文中數字殘缺，通常所說的四十年出自使徒行傳 13:21，並非出自本段所據的經卷。"
+    }
+   },
+   {
+    "id": "solomon",
+    "ref": "1 Kings 6:1",
+    "note": {
+     "en": "Solomon's years before the temple. The verse dates it in his fourth year — an ordinal, and one this total leaves out so that the overflow below is the smallest the text allows.",
+     "zh-Hans": "所罗门在建殿之前作王的年数。该节记为他作王第四年——是序数；此处不计入总数，使下面的超出量取经文所容许的最小值。",
+     "zh-Hant": "所羅門在建殿之前作王的年數。該節記為他作王第四年——是序數；此處不計入總數，使下面的超出量取經文所容許的最小值。"
+    }
+   }
+  ],
+  "summary": {
+   "en": "1 Kings 6:1 states the whole span from the exodus to the founding of the temple as one number — the 480th year, so 479 years have run. The periods this era states one by one add up to 530, which is 51 years more than the span containing them, and that is before 5 further stretches listed below that this total does not count. On the Greek the same two figures are 520 against 439, over by 81. Nothing here is reconciled: the text nowhere says these periods run one after another, and at Judges 10:7 two oppressions run at once. So this era is counted and not drawn — no arrangement of these figures on the chart's axis can be read out of the text alone.",
+   "zh-Hans": "列王纪上 6:1 把出埃及到建殿的整段年数记作一个数字——第480年，即已过479年。而本段逐条所记的各段年数相加共530年，比容纳它们的总年数多出51年；这还没算下列5段未计入此数的时期。按希腊文，这两个数字是520对439，多出81年。此处不作调和：经文从未说这些时期是一段接一段的，士师记 10:7 更记有两处欺压同时进行。故本段只作统计，不入图——单凭经文无法定出这些数字在年表轴上的位置。",
+   "zh-Hant": "列王紀上 6:1 把出埃及到建殿的整段年數記作一個數字——第480年，即已過479年。而本段逐條所記的各段年數相加共530年，比容納它們的總年數多出51年；這還沒算下列5段未計入此數的時期。按希臘文，這兩個數字是520對439，多出81年。此處不作調和：經文從未說這些時期是一段接一段的，士師記 10:7 更記有兩處欺壓同時進行。故本段只作統計，不入圖——單憑經文無法定出這些數字在年表軸上的位置。"
+  },
+  "divergence": {
+   "en": "The two texts do not state the same figures here. They differ at 2 of 21 periods, and at the total itself: the Hebrew's 480th year is the Greek's 440th.",
+   "zh-Hans": "两种经文在此所记的数字并不相同：21段之中有2段不同，连总数也不同——希伯来文的第480年，在希腊文是第440年。",
+   "zh-Hant": "兩種經文在此所記的數字並不相同：21段之中有2段不同，連總數也不同——希伯來文的第480年，在希臘文是第440年。"
+  }
+ },
+ "patriarchs": [
+  {
+   "id": "adam",
+   "name": {
+    "en": "Adam",
+    "zh-Hans": "亚当",
+    "zh-Hant": "亞當"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 130,
+     "livedAfter": 800,
+     "lifespan": 930,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:3",
+      "livedAfter": "Genesis 5:4",
+      "lifespan": "Genesis 5:5"
+     },
+     "birthAm": 0,
+     "deathAm": 930
+    },
+    "lxx": {
+     "begatAt": 230,
+     "livedAfter": 700,
+     "lifespan": 930,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:3",
+      "livedAfter": "Genesis 5:4",
+      "lifespan": "Genesis 5:5"
+     },
+     "birthAm": 0,
+     "deathAm": 930
+    }
+   }
+  },
+  {
+   "id": "seth",
+   "name": {
+    "en": "Seth",
+    "zh-Hans": "塞特",
+    "zh-Hant": "塞特"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 105,
+     "livedAfter": 807,
+     "lifespan": 912,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:6",
+      "livedAfter": "Genesis 5:7",
+      "lifespan": "Genesis 5:8"
+     },
+     "birthAm": 130,
+     "deathAm": 1042
+    },
+    "lxx": {
+     "begatAt": 205,
+     "livedAfter": 707,
+     "lifespan": 912,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:6",
+      "livedAfter": "Genesis 5:7",
+      "lifespan": "Genesis 5:8"
+     },
+     "birthAm": 230,
+     "deathAm": 1142
+    }
+   }
+  },
+  {
+   "id": "enosh",
+   "name": {
+    "en": "Enosh",
+    "zh-Hans": "以挪士",
+    "zh-Hant": "以挪士"
+   },
+   "nameKjv": "Enos",
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 90,
+     "livedAfter": 815,
+     "lifespan": 905,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:9",
+      "livedAfter": "Genesis 5:10",
+      "lifespan": "Genesis 5:11"
+     },
+     "birthAm": 235,
+     "deathAm": 1140
+    },
+    "lxx": {
+     "begatAt": 190,
+     "livedAfter": 715,
+     "lifespan": 905,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:9",
+      "livedAfter": "Genesis 5:10",
+      "lifespan": "Genesis 5:11"
+     },
+     "birthAm": 435,
+     "deathAm": 1340
+    }
+   }
+  },
+  {
+   "id": "kenan",
+   "name": {
+    "en": "Kenan",
+    "zh-Hans": "该南",
+    "zh-Hant": "該南"
+   },
+   "nameKjv": "Cainan",
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 70,
+     "livedAfter": 840,
+     "lifespan": 910,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:12",
+      "livedAfter": "Genesis 5:13",
+      "lifespan": "Genesis 5:14"
+     },
+     "birthAm": 325,
+     "deathAm": 1235
+    },
+    "lxx": {
+     "begatAt": 170,
+     "livedAfter": 740,
+     "lifespan": 910,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:12",
+      "livedAfter": "Genesis 5:13",
+      "lifespan": "Genesis 5:14"
+     },
+     "birthAm": 625,
+     "deathAm": 1535
+    }
+   }
+  },
+  {
+   "id": "mahalalel",
+   "name": {
+    "en": "Mahalalel",
+    "zh-Hans": "玛勒列",
+    "zh-Hant": "瑪勒列"
+   },
+   "nameKjv": "Mahalaleel",
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 65,
+     "livedAfter": 830,
+     "lifespan": 895,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:15",
+      "livedAfter": "Genesis 5:16",
+      "lifespan": "Genesis 5:17"
+     },
+     "birthAm": 395,
+     "deathAm": 1290
+    },
+    "lxx": {
+     "begatAt": 165,
+     "livedAfter": 730,
+     "lifespan": 895,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:15",
+      "livedAfter": "Genesis 5:16",
+      "lifespan": "Genesis 5:17"
+     },
+     "birthAm": 795,
+     "deathAm": 1690
+    }
+   }
+  },
+  {
+   "id": "jared",
+   "name": {
+    "en": "Jared",
+    "zh-Hans": "雅列",
+    "zh-Hant": "雅列"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 162,
+     "livedAfter": 800,
+     "lifespan": 962,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:18",
+      "livedAfter": "Genesis 5:19",
+      "lifespan": "Genesis 5:20"
+     },
+     "birthAm": 460,
+     "deathAm": 1422
+    },
+    "lxx": {
+     "begatAt": 162,
+     "livedAfter": 800,
+     "lifespan": 962,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:18",
+      "livedAfter": "Genesis 5:19",
+      "lifespan": "Genesis 5:20"
+     },
+     "birthAm": 960,
+     "deathAm": 1922
+    }
+   }
+  },
+  {
+   "id": "enoch",
+   "name": {
+    "en": "Enoch",
+    "zh-Hans": "以诺",
+    "zh-Hant": "以諾"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 65,
+     "livedAfter": 300,
+     "lifespan": 365,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:21",
+      "livedAfter": "Genesis 5:22",
+      "lifespan": "Genesis 5:23"
+     },
+     "birthAm": 622,
+     "deathAm": 987
+    },
+    "lxx": {
+     "begatAt": 165,
+     "livedAfter": 200,
+     "lifespan": 365,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:21",
+      "livedAfter": "Genesis 5:22",
+      "lifespan": "Genesis 5:23"
+     },
+     "birthAm": 1122,
+     "deathAm": 1487
+    }
+   }
+  },
+  {
+   "id": "methuselah",
+   "name": {
+    "en": "Methuselah",
+    "zh-Hans": "玛土撒拉",
+    "zh-Hant": "瑪土撒拉"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 187,
+     "livedAfter": 782,
+     "lifespan": 969,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:25",
+      "livedAfter": "Genesis 5:26",
+      "lifespan": "Genesis 5:27"
+     },
+     "birthAm": 687,
+     "deathAm": 1656
+    },
+    "lxx": {
+     "begatAt": 167,
+     "livedAfter": 802,
+     "lifespan": 969,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:25",
+      "livedAfter": "Genesis 5:26",
+      "lifespan": "Genesis 5:27"
+     },
+     "birthAm": 1287,
+     "deathAm": 2256
+    }
+   }
+  },
+  {
+   "id": "lamech",
+   "name": {
+    "en": "Lamech",
+    "zh-Hans": "拉麦",
+    "zh-Hant": "拉麥"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 182,
+     "livedAfter": 595,
+     "lifespan": 777,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:28",
+      "livedAfter": "Genesis 5:30",
+      "lifespan": "Genesis 5:31"
+     },
+     "birthAm": 874,
+     "deathAm": 1651
+    },
+    "lxx": {
+     "begatAt": 188,
+     "livedAfter": 565,
+     "lifespan": 753,
+     "checked": true,
+     "refs": {
+      "begatAt": "Genesis 5:28",
+      "livedAfter": "Genesis 5:30",
+      "lifespan": "Genesis 5:31"
+     },
+     "birthAm": 1454,
+     "deathAm": 2207
+    }
+   }
+  },
+  {
+   "id": "noah",
+   "name": {
+    "en": "Noah",
+    "zh-Hans": "挪亚",
+    "zh-Hant": "挪亞"
+   },
+   "line": "seth",
+   "figures": {
+    "mt": {
+     "begatAt": 500,
+     "livedAfter": 450,
+     "lifespan": 950,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 5:32",
+      "livedAfter": null,
+      "lifespan": "Genesis 9:29"
+     },
+     "birthAm": 1056,
+     "deathAm": 2006
+    },
+    "lxx": {
+     "begatAt": 500,
+     "livedAfter": 450,
+     "lifespan": 950,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 5:32",
+      "livedAfter": null,
+      "lifespan": "Genesis 9:29"
+     },
+     "birthAm": 1642,
+     "deathAm": 2592
+    }
+   }
+  },
+  {
+   "id": "shem",
+   "name": {
+    "en": "Shem",
+    "zh-Hans": "闪",
+    "zh-Hant": "閃"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 100,
+     "livedAfter": 500,
+     "lifespan": 600,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:10",
+      "livedAfter": "Genesis 11:11",
+      "lifespan": null
+     },
+     "birthAm": 1558,
+     "deathAm": 2158
+    },
+    "lxx": {
+     "begatAt": 100,
+     "livedAfter": 500,
+     "lifespan": 600,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:10",
+      "livedAfter": "Genesis 11:11",
+      "lifespan": null
+     },
+     "birthAm": 2144,
+     "deathAm": 2744
+    }
+   }
+  },
+  {
+   "id": "arphaxad",
+   "name": {
+    "en": "Arphaxad",
+    "zh-Hans": "亚法撒",
+    "zh-Hant": "亞法撒"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 35,
+     "livedAfter": 403,
+     "lifespan": 438,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:12",
+      "livedAfter": "Genesis 11:13",
+      "lifespan": null
+     },
+     "birthAm": 1658,
+     "deathAm": 2096
+    },
+    "lxx": {
+     "begatAt": 135,
+     "livedAfter": 430,
+     "lifespan": 565,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:12",
+      "livedAfter": "Genesis 11:13",
+      "lifespan": null
+     },
+     "birthAm": 2244,
+     "deathAm": 2809
+    }
+   }
+  },
+  {
+   "id": "kainan2",
+   "name": {
+    "en": "Kainan",
+    "zh-Hans": "该南",
+    "zh-Hant": "該南"
+   },
+   "line": "shem",
+   "figures": {
+    "lxx": {
+     "begatAt": 130,
+     "livedAfter": 330,
+     "lifespan": 460,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:13",
+      "livedAfter": "Genesis 11:13",
+      "lifespan": null
+     },
+     "birthAm": 2379,
+     "deathAm": 2839
+    }
+   }
+  },
+  {
+   "id": "shelah",
+   "name": {
+    "en": "Shelah",
+    "zh-Hans": "沙拉",
+    "zh-Hant": "沙拉"
+   },
+   "nameKjv": "Salah",
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 30,
+     "livedAfter": 403,
+     "lifespan": 433,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:14",
+      "livedAfter": "Genesis 11:15",
+      "lifespan": null
+     },
+     "birthAm": 1693,
+     "deathAm": 2126
+    },
+    "lxx": {
+     "begatAt": 130,
+     "livedAfter": 330,
+     "lifespan": 460,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:14",
+      "livedAfter": "Genesis 11:15",
+      "lifespan": null
+     },
+     "birthAm": 2509,
+     "deathAm": 2969
+    }
+   }
+  },
+  {
+   "id": "eber",
+   "name": {
+    "en": "Eber",
+    "zh-Hans": "希伯",
+    "zh-Hant": "希伯"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 34,
+     "livedAfter": 430,
+     "lifespan": 464,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:16",
+      "livedAfter": "Genesis 11:17",
+      "lifespan": null
+     },
+     "birthAm": 1723,
+     "deathAm": 2187
+    },
+    "lxx": {
+     "begatAt": 134,
+     "livedAfter": 370,
+     "lifespan": 504,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:16",
+      "livedAfter": "Genesis 11:17",
+      "lifespan": null
+     },
+     "birthAm": 2639,
+     "deathAm": 3143
+    }
+   }
+  },
+  {
+   "id": "peleg",
+   "name": {
+    "en": "Peleg",
+    "zh-Hans": "法勒",
+    "zh-Hant": "法勒"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 30,
+     "livedAfter": 209,
+     "lifespan": 239,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:18",
+      "livedAfter": "Genesis 11:19",
+      "lifespan": null
+     },
+     "birthAm": 1757,
+     "deathAm": 1996
+    },
+    "lxx": {
+     "begatAt": 130,
+     "livedAfter": 209,
+     "lifespan": 339,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:18",
+      "livedAfter": "Genesis 11:19",
+      "lifespan": null
+     },
+     "birthAm": 2773,
+     "deathAm": 3112
+    }
+   }
+  },
+  {
+   "id": "reu",
+   "name": {
+    "en": "Reu",
+    "zh-Hans": "拉吴",
+    "zh-Hant": "拉吳"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 32,
+     "livedAfter": 207,
+     "lifespan": 239,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:20",
+      "livedAfter": "Genesis 11:21",
+      "lifespan": null
+     },
+     "birthAm": 1787,
+     "deathAm": 2026
+    },
+    "lxx": {
+     "begatAt": 132,
+     "livedAfter": 207,
+     "lifespan": 339,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:20",
+      "livedAfter": "Genesis 11:21",
+      "lifespan": null
+     },
+     "birthAm": 2903,
+     "deathAm": 3242
+    }
+   }
+  },
+  {
+   "id": "serug",
+   "name": {
+    "en": "Serug",
+    "zh-Hans": "西鹿",
+    "zh-Hant": "西鹿"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 30,
+     "livedAfter": 200,
+     "lifespan": 230,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:22",
+      "livedAfter": "Genesis 11:23",
+      "lifespan": null
+     },
+     "birthAm": 1819,
+     "deathAm": 2049
+    },
+    "lxx": {
+     "begatAt": 130,
+     "livedAfter": 200,
+     "lifespan": 330,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:22",
+      "livedAfter": "Genesis 11:23",
+      "lifespan": null
+     },
+     "birthAm": 3035,
+     "deathAm": 3365
+    }
+   }
+  },
+  {
+   "id": "nahor_elder",
+   "name": {
+    "en": "Nahor",
+    "zh-Hans": "拿鹤",
+    "zh-Hant": "拿鶴"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 29,
+     "livedAfter": 119,
+     "lifespan": 148,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:24",
+      "livedAfter": "Genesis 11:25",
+      "lifespan": null
+     },
+     "birthAm": 1849,
+     "deathAm": 1997
+    },
+    "lxx": {
+     "begatAt": 79,
+     "livedAfter": 129,
+     "lifespan": 208,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:24",
+      "livedAfter": "Genesis 11:25",
+      "lifespan": null
+     },
+     "birthAm": 3165,
+     "deathAm": 3373
+    }
+   }
+  },
+  {
+   "id": "terah",
+   "name": {
+    "en": "Terah",
+    "zh-Hans": "他拉",
+    "zh-Hant": "他拉"
+   },
+   "line": "shem",
+   "figures": {
+    "mt": {
+     "begatAt": 70,
+     "livedAfter": 135,
+     "lifespan": 205,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:26",
+      "livedAfter": null,
+      "lifespan": "Genesis 11:32"
+     },
+     "birthAm": 1878,
+     "deathAm": 2083
+    },
+    "lxx": {
+     "begatAt": 70,
+     "livedAfter": 135,
+     "lifespan": 205,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 11:26",
+      "livedAfter": null,
+      "lifespan": "Genesis 11:32"
+     },
+     "birthAm": 3244,
+     "deathAm": 3449
+    }
+   }
+  },
+  {
+   "id": "abraham",
+   "name": {
+    "en": "Abraham",
+    "zh-Hans": "亚伯拉罕",
+    "zh-Hant": "亞伯拉罕"
+   },
+   "line": "abraham",
+   "figures": {
+    "mt": {
+     "begatAt": 100,
+     "livedAfter": 75,
+     "lifespan": 175,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 21:5",
+      "livedAfter": null,
+      "lifespan": "Genesis 25:7"
+     },
+     "birthAm": 1948,
+     "deathAm": 2123
+    },
+    "lxx": {
+     "begatAt": 100,
+     "livedAfter": 75,
+     "lifespan": 175,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 21:5",
+      "livedAfter": null,
+      "lifespan": "Genesis 25:7"
+     },
+     "birthAm": 3314,
+     "deathAm": 3489
+    }
+   }
+  },
+  {
+   "id": "isaac",
+   "name": {
+    "en": "Isaac",
+    "zh-Hans": "以撒",
+    "zh-Hant": "以撒"
+   },
+   "line": "abraham",
+   "figures": {
+    "mt": {
+     "begatAt": 60,
+     "livedAfter": 120,
+     "lifespan": 180,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 25:26",
+      "livedAfter": null,
+      "lifespan": "Genesis 35:28"
+     },
+     "birthAm": 2048,
+     "deathAm": 2228
+    },
+    "lxx": {
+     "begatAt": 60,
+     "livedAfter": 120,
+     "lifespan": 180,
+     "checked": false,
+     "refs": {
+      "begatAt": "Genesis 25:26",
+      "livedAfter": null,
+      "lifespan": "Genesis 35:28"
+     },
+     "birthAm": 3414,
+     "deathAm": 3594
+    }
+   }
+  },
+  {
+   "id": "jacob",
+   "name": {
+    "en": "Jacob",
+    "zh-Hans": "雅各",
+    "zh-Hant": "雅各"
+   },
+   "line": "abraham",
+   "figures": {
+    "mt": {
+     "begatAt": 91,
+     "livedAfter": 56,
+     "lifespan": 147,
+     "checked": true,
+     "refs": {
+      "lifespan": "Genesis 47:28"
+     },
+     "birthAm": 2108,
+     "deathAm": 2255
+    },
+    "lxx": {
+     "begatAt": 91,
+     "livedAfter": 56,
+     "lifespan": 147,
+     "checked": true,
+     "refs": {
+      "lifespan": "Genesis 47:28"
+     },
+     "birthAm": 3474,
+     "deathAm": 3621
+    }
+   }
+  },
+  {
+   "id": "joseph",
+   "name": {
+    "en": "Joseph",
+    "zh-Hans": "约瑟",
+    "zh-Hant": "約瑟"
+   },
+   "line": "abraham",
+   "figures": {
+    "mt": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 110,
+     "checked": false,
+     "refs": {
+      "lifespan": "Genesis 50:26"
+     },
+     "birthAm": 2199,
+     "deathAm": 2309
+    },
+    "lxx": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 110,
+     "checked": false,
+     "refs": {
+      "lifespan": "Genesis 50:26"
+     },
+     "birthAm": 3565,
+     "deathAm": 3675
+    }
+   }
+  },
+  {
+   "id": "aaron",
+   "name": {
+    "en": "Aaron",
+    "zh-Hans": "亚伦",
+    "zh-Hant": "亞倫"
+   },
+   "line": "levi",
+   "figures": {
+    "mt": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 123,
+     "checked": true,
+     "refs": {
+      "lifespan": "Numbers 33:39"
+     },
+     "birthAm": 2585,
+     "deathAm": 2708
+    },
+    "lxx": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 123,
+     "checked": true,
+     "refs": {
+      "lifespan": "Numbers 33:39"
+     },
+     "birthAm": 3736,
+     "deathAm": 3859
+    }
+   }
+  },
+  {
+   "id": "moses",
+   "name": {
+    "en": "Moses",
+    "zh-Hans": "摩西",
+    "zh-Hant": "摩西"
+   },
+   "line": "levi",
+   "figures": {
+    "mt": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 120,
+     "checked": true,
+     "refs": {
+      "lifespan": "Deuteronomy 34:7"
+     },
+     "birthAm": 2588,
+     "deathAm": 2708
+    },
+    "lxx": {
+     "begatAt": null,
+     "livedAfter": null,
+     "lifespan": 120,
+     "checked": true,
+     "refs": {
+      "lifespan": "Deuteronomy 34:7"
+     },
+     "birthAm": 3739,
+     "deathAm": 3859
+    }
+   }
+  }
+ ]
+}
