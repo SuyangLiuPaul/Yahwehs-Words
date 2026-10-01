@@ -1,3 +1,9 @@
+## Complete authentication follow-up — 2026-10-01
+
+Words 1.7.2 delivered: source/main CI and five GitHub platform builds succeeded, seven assets uploaded, six websites verified, signed iOS/Mac 1070002 delivered and submitted for external beta, phone Play 1007002 submitted. The real browser-to-native Google handoff and Firebase backend credential exchange succeeded. Initial public Apple reviews and Microsoft certification are preserved.
+
+The owner's latest complete-login request triggered an additional platform audit. Mac Google reauthentication now acquires a credential without replacing the existing Firebase user; web/mobile/Windows use their supported APIs. 105 auth regressions pass, analysis is clean, all three configured providers are enabled. Words 1.7.3 is prepared via the canonical web wrapper; full updated CI and delivery remain gates. Sword has local profiles and stays at its verified 1.7.2 release. No owner account was deleted to test reauthentication.
+
 ## Owner timetable correction and login follow-up — 2026-10-01
 
 The Passion entry is now visible in both apps as **The Passion of Jesus / 主耶稣受难日时间表 / 主耶穌受難日時間表**. The 14 source diagram placements include fully translated event descriptions, with both events at 08:00; the unchanged original image remains attached. Passion and principles have visible language controls and localized Gospel names. Principles stay hidden; Words history stays hidden and Sword retains its existing history tools. This supersedes the earlier hidden Passion policy below. First 1.7.2 PR CI attempts were red; image decode/failure handling and Sword type scaling have been corrected. Full updated CI and native store delivery are still pending at this checkpoint.

@@ -16,6 +16,14 @@ Google Cloud’s Android key for `ysword` was restricted to Pollen API alone. Af
 
 Public authentication-endpoint probes of the actual Android APK/Play, Apple and web/Windows configurations returned HTTP200 and a Google authorization URI. This verifies the reported API restriction is resolved, not a full device login. Dedicated browser round-trip and physical Windows/Play-installed verification are separate gates.
 
+## Verified delivery and complete provider audit — 2026-10-01
+
+Words 1.7.2 passed source CI (3,926 tests, 40 existing platform skips), main CI and all five GitHub platform builds. Seven release assets are uploaded. All six international/China websites were re-fetched and their versions and matching build bundles verified. The real Google browser flow reached the native loopback receiver, and the returned credential was accepted by Firebase's signInWithIdp backend (HTTP200). The actual Windows Firebase DLL exchange and Play-installed Android login still require physical-device confirmation; a browser/backend success is not evidence of those device-specific steps.
+
+A follow-up audit found that Google account reauthentication on Mac still used the generic provider API unsupported by the macOS Firebase plugin. It now acquires a Google credential using the same GIDSignIn flow as main Mac login, then calls reauthenticateWithCredential on the existing user. Windows retains its browser credential bridge; web uses reauthenticateWithPopup; Android/iOS retain their provider API. No reauthentication path signs in a replacement Firebase user. Cancellation and the SDK's wrong-account rejection stop before cloud deletion.
+
+The Apple branch was checked in the installed firebase_auth 6.4.0 Objective-C source: apple.com takes launchAppleSignInRequest before the macOS generic-provider rejection, for both sign-in and reauthentication. The existing iOS/Mac Apple entitlement remains present. No custom replacement Apple OAuth flow is needed. Email sign-in, registration, reset, account-collision privacy and timeout behavior are covered by the existing regression tests. The combined platform/desktop/email authentication checks pass 105 tests; static analysis has no issues. This follow-up source still needs its own full CI, immutable release and native deliveries; it is not in the already-uploaded 1.7.2 binaries.
+
 ## Checks and release gates
 
 Loopback regressions cover valid completion, wrong state/origin/path/method, oversized/missing credentials, cancellation, duplicate attempts, browser disconnect, deadline, retries, closed listener and config consistency. Existing email authentication, Windows Firebase initialization and PWA tests are retained. The full updated GitHub CI, actual browser flow and signed Windows build must be checked before declaring release complete. Device credentials remain for the owner to enter.
