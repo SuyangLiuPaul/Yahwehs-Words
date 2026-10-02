@@ -59,7 +59,8 @@ void main() {
     // Its synchronous first line still cancels our stall watchdog.
     unawaited(handler.stop());
     await tester.pump();
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   }
 
   testWidgets('unsupported current mix never jumps or restarts the queue',
@@ -173,7 +174,8 @@ void main() {
     await tester.pump();
     expect(handler.duration, Duration.zero);
     expect(handler.mediaItem.value?.duration, isNull);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   });
 
   testWidgets('an unplayed replacement queue cannot inherit a decoded length',
@@ -210,7 +212,8 @@ void main() {
       updateTime: sampleTime,
     ));
     expect(MediaCompanionService.snapshotFor(handler)['position'], 17);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   });
 
   testWidgets('sermon metadata retains its own overall duration after songs',
@@ -228,7 +231,8 @@ void main() {
     expect(snapshot['duration'], 3600);
     expect(snapshot['position'], 300);
     expect(snapshot['sermon'], true);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
     sermon.dispose();
   });
 }

@@ -29,11 +29,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   /// network. See test/song_auto_advance_test.dart.
   SongAudioHandler({SongPlaybackEngine? engine})
       : _player = engine ?? SongPlaybackEngine() {
-    _player.onPlaying.listen((playing) {
+    _engineSubscriptions.add(_player.onPlaying.listen((playing) {
       _playing = playing;
       _broadcast();
-    });
-    _player.onDuration.listen((d) {
+    }));
+    _engineSubscriptions.add(_player.onDuration.listen((d) {
       _duration = d;
       // Restore the position carried across a mix change, now that the
       // new file is long enough to seek into. Doing it before the
@@ -50,16 +50,17 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       _broadcast();
       _publishMediaItem();
       unawaited(_publishQueue());
-    });
-    _player.onPosition.listen((p) {
+    }));
+    _engineSubscriptions.add(_player.onPosition.listen((p) {
       if (p > Duration.zero) _cancelStallWatchdog();
       _position = p;
       _maybePreloadNext(p);
       _broadcast();
-    });
+    }));
     // Auto-advance. Fires only on a natural end — not on stop() or
     // pause() — so this cannot loop on user-initiated stops.
-    _player.onComplete.listen((_) => _onTrackFinished());
+    _engineSubscriptions
+        .add(_player.onComplete.listen((_) => _onTrackFinished()));
     // Web reports playback failures asynchronously from the element,
     // long after play() returned, so they arrive here rather than as
     // a thrown exception. On native, `_guard` (song_playback_engine_
@@ -67,7 +68,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // this exact same stream — play, resume, pause, stop, seek and
     // setVolume alike — so this listener cannot tell "the track is
     // dead" apart from "the user's pause failed" by the message alone.
-    _player.onError.listen((event) {
+    _engineSubscriptions.add(_player.onError.listen((event) {
       if (_remote != null) return;
       final (attempt, message) = event;
       // Discard an error that belongs to a play() attempt this handler
@@ -103,7 +104,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       final item = _queue.current;
       if (item != null) _failed.add(item.song.id);
       _skipPastFailure();
-    });
+    }));
 
     // ignore: unawaited_futures
     _configureSession();
@@ -172,8 +173,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   Future<void> _sessionEvents = Future.value();
 
   void _queueSessionEvent(Future<void> Function() action) {
-    _sessionEvents =
-        _sessionEvents.then((_) => action()).catchError((Object error) {
+    _sessionEvents = _sessionEvents.then((_) async {
+      if (!_disposed) await action();
+    }).catchError((Object error) {
       debugPrint('[SongAudioHandler] session event failed: $error');
     });
   }
@@ -202,6 +204,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     }
   }
 
+  final List<StreamSubscription<dynamic>> _engineSubscriptions = [];
   bool _disposed = false;
   RemoteAudioSource? _remote;
 
@@ -1123,6 +1126,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _stallTimer?.cancel();
     _remote?.removeListener(_broadcast);
     _sleepTimer?.cancel();
+    // Drop buffered engine events before closing its streams; no callbacks
+    // may publish state or retain a pending close after disposal.
+    await Future.wait(_engineSubscriptions.map((s) => s.cancel()));
+    _engineSubscriptions.clear();
     await _player.dispose();
   }
 }
