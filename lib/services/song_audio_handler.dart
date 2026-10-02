@@ -136,6 +136,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       if (_disposed) return;
       await _interruptions?.cancel();
       await _noisyRoute?.cancel();
+      if (_disposed) return;
       _interruptions = session.interruptionEventStream.listen(
           (event) => _queueSessionEvent(() => _handleInterruption(event)));
       _noisyRoute = session.becomingNoisyEventStream
@@ -997,7 +998,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     if (remote != null) {
       mediaItem.add(remote.remoteItem);
       queue.add(remote.remoteItem == null ? [] : [remote.remoteItem!]);
-      playbackState.add(remote.remoteState);
+      playbackState.add(_interrupted
+          ? remote.remoteState.copyWith(playing: false)
+          : remote.remoteState);
       notifyUi();
       return;
     }
@@ -1065,6 +1068,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       // `seek` is the scrubber and it works; the interval-skip actions
       // are deliberately absent — see above.
       systemActions: {
+        // A dashboard can retain its previous icon briefly. Keep both
+        // idempotent commands callable so stale Play still reacquires focus.
+        if (_queue.isNotEmpty) MediaAction.play,
+        if (_queue.isNotEmpty) MediaAction.pause,
         MediaAction.seek,
         MediaAction.setShuffleMode,
         MediaAction.setRepeatMode,

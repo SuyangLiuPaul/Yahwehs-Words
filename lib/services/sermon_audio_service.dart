@@ -255,6 +255,8 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           MediaControl.stop
         ],
         systemActions: {
+          if (_sermonId != null) MediaAction.play,
+          if (_sermonId != null) MediaAction.pause,
           MediaAction.seek,
           MediaAction.seekForward,
           MediaAction.seekBackward
@@ -277,7 +279,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
 
   @override
   Future<void> remotePlay() async {
-    if (_sermonId == null || _playing) return;
+    if (_sermonId == null) return;
     if (_completed) {
       await play(_sermonId!);
     } else {

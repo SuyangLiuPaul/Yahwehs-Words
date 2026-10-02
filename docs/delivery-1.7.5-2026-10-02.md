@@ -11,8 +11,9 @@ store reviews remain unchanged. This record is preparation, not store publicatio
 - iOS / Mac App Store: public Apple lookup for this app, platform and locale country;
   only a newer public version produces a prompt, with a corresponding store link.
 - Microsoft Store: asynchronous StoreContext package-update query, with store link.
-  No GitHub installer in a Store package. Windows compilation is an open gate until
-  the Windows runner completes; Mac cannot compile this native Windows integration.
+  No GitHub installer in a Store package. Windows runner compiled and packaged the integration successfully
+  (Words preflight 36979332124; Sword preflight 36979335268). The final
+  release must use the final tested tag, not an older preflight artifact.
 - Direct APK / EXE: retain the existing corresponding GitHub asset/update flow.
 - Web: visible refresh prompt from deployed version metadata, preserving local data.
 - Prompt labels and actions cover English, Simplified Chinese and Traditional Chinese.
@@ -47,8 +48,17 @@ for the same active source/item and when the OS allows it.
 
 Apple Watch UI SDK type-check passed. Actual CarPlay bridge/templates type-checked
 against iOS SDK with a stub for app-delegate engine plumbing; two pre-existing Swift
-warnings remain. Wear Activity compiled against Android 36 and official wearable
-libraries before final control-disabling adjustment; repeat compile required.
+warnings remain. Final Wear Activity compiled against Android 36 and official wearable libraries
+(exit 0, wear-final-compile.log). Existing queue/remote/media-control tests passed
+49 checks.
 Physical vehicle, phone-call recovery, Watch/Wear linkage and real Play older-to-newer
 update installation remain required verification gates. Do not describe them as
 verified or use disconnected screenshots as marketing.
+
+The real-car report showed CarPlay retaining Play while the phone claimed playback.
+Both Play and Pause remain callable in the native media session even during a
+stale dashboard icon; Play reactivates audio focus. Sermon Play also attempts
+recovery even when its last cached state claimed playing. Interruption snapshots
+report paused across songs and sermons. CarPlay reuses existing Now Playing and
+pagination templates, avoiding duplicate-template and stack-depth failures.
+These are source repairs; audible physical CarPlay recovery is not yet verified.
