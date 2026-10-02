@@ -1,3 +1,4 @@
+import 'companion_theme.dart';
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'remote_audio_source.dart';
@@ -242,7 +243,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           title: _remoteTitle ?? 'Sermon $_sermonId',
           artist: 'Eric H. H. Chang',
           album: 'Sermons · 讲道',
-          artUri: Uri.parse('https://yahwehword.com/icons/Icon-512.png'),
+          artUri: CompanionTheme.artwork,
           duration: overallDuration,
         );
 

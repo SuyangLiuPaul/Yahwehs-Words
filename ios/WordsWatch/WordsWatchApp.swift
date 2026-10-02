@@ -41,6 +41,51 @@ struct WatchConnectionProof {
   func canFail(requestGeneration: Int) -> Bool { generation == requestGeneration }
 }
 
+
+/// The phone's theme as the watch shows it. The phone sends `accent` (its theme
+/// colour, ARGB) and `logo` (which logo variant matches); the watch cannot read
+/// the phone's settings, so it follows what it is told. A state with neither —
+/// an older phone — keeps the original blue.
+struct WatchThemePalette: Equatable {
+  typealias RGB = (r: Double, g: Double, b: Double)
+  let accent: RGB, surface: RGB, page: RGB, secondary: RGB
+
+  static let logoNames: Set<String> = ["Default", "Red", "Orange", "Green", "Purple", "Pink", "Dark"]
+
+  static let original = WatchThemePalette(
+    accent: (0.33, 0.78, 0.96), surface: (0.12, 0.22, 0.30),
+    page: (0.04, 0.10, 0.15), secondary: (0.79, 0.86, 0.92))
+
+  static func == (a: WatchThemePalette, b: WatchThemePalette) -> Bool {
+    a.accent == b.accent && a.surface == b.surface && a.page == b.page && a.secondary == b.secondary
+  }
+
+  /// The asset-catalogue name of the logo for [state] (`LogoRed`, `LogoDefault`, …).
+  static func logoName(_ state: [String: Any]) -> String {
+    let variant = state["logo"] as? String ?? "Default"
+    return "Logo" + (logoNames.contains(variant) ? variant : "Default")
+  }
+
+  static func from(_ state: [String: Any]) -> WatchThemePalette {
+    guard let number = state["accent"] as? NSNumber else { return original }
+    let argb = UInt32(truncatingIfNeeded: number.int64Value)
+    var rgb: RGB = (Double((argb >> 16) & 0xFF) / 255, Double((argb >> 8) & 0xFF) / 255, Double(argb & 0xFF) / 255)
+    // The watch is dark: a deep theme colour must be lifted to stay legible as
+    // text and as a button, without losing its hue.
+    let luminance = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b
+    if luminance < 0.45 {
+      let t = min(0.65, (0.45 - luminance) / (1 - luminance))
+      rgb = (rgb.r + (1 - rgb.r) * t, rgb.g + (1 - rgb.g) * t, rgb.b + (1 - rgb.b) * t)
+    }
+    func tinted(_ base: Double, _ weight: Double) -> RGB {
+      (base + weight * rgb.r, base + weight * rgb.g, base + weight * rgb.b)
+    }
+    let white: RGB = (1, 1, 1)
+    let secondary: RGB = (white.r * 0.8 + rgb.r * 0.2, white.g * 0.8 + rgb.g * 0.2, white.b * 0.8 + rgb.b * 0.2)
+    return WatchThemePalette(accent: rgb, surface: tinted(0.06, 0.22), page: tinted(0.03, 0.10), secondary: secondary)
+  }
+}
+
 #if !WATCH_COMPANION_LOGIC_TEST
 import SwiftUI
 import WatchConnectivity
@@ -84,6 +129,7 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
   override init() {
     super.init()
     state = UserDefaults.standard.dictionary(forKey: "words.lastState") ?? [:]
+    WatchStyle.palette = WatchThemePalette.from(state)
     if WCSession.isSupported() {
       WCSession.default.delegate = self
       WCSession.default.activate()
@@ -104,6 +150,7 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
   private func acceptOnMain(_ value: [String: Any]) {
     guard WatchPlaybackSnapshot.accepts(value, after: state) else { return }
     state = value
+    WatchStyle.palette = WatchThemePalette.from(value)
     if WatchPlaybackSnapshot.isFresh(value, now: Date()) {
       connectionProof.received()
       connected = WCSession.default.isReachable
@@ -180,10 +227,14 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
 }
 
 enum WatchStyle {
-  static let accent = Color(red: 0.33, green: 0.78, blue: 0.96)
-  static let surface = Color(red: 0.12, green: 0.22, blue: 0.30)
-  static let page = Color(red: 0.04, green: 0.10, blue: 0.15)
-  static let secondary = Color(red: 0.79, green: 0.86, blue: 0.92)
+  /// Set from each accepted state (main thread); views read it as they build,
+  /// and rebuild whenever the state changes.
+  static var palette = WatchThemePalette.original
+  private static func color(_ c: WatchThemePalette.RGB) -> Color { Color(red: c.r, green: c.g, blue: c.b) }
+  static var accent: Color { color(palette.accent) }
+  static var surface: Color { color(palette.surface) }
+  static var page: Color { color(palette.page) }
+  static var secondary: Color { color(palette.secondary) }
   static let artworkPaper = Color(red: 0.91, green: 0.96, blue: 1.0)
   static func text(_ state: [String: Any], _ en: String, _ hans: String, _ hant: String) -> String {
     let locale = state["locale"] as? String ?? "en"
@@ -202,10 +253,7 @@ struct WatchArtwork: View {
   var body: some View {
     AsyncImage(url: url) { phase in
       if let image = phase.image { image.resizable().scaledToFit().padding(3).background(WatchStyle.artworkPaper) }
-      else { ZStack {
-        LinearGradient(colors: [WatchStyle.surface, WatchStyle.accent.opacity(0.30)], startPoint: .topLeading, endPoint: .bottomTrailing)
-        Image(systemName: state["sermon"] as? Bool == true ? "waveform" : "music.note").font(.system(size: size * 0.35, weight: .medium)).foregroundStyle(WatchStyle.accent)
-      } }
+      else { Image(WatchThemePalette.logoName(state)).resizable().scaledToFill() }
     }.frame(width: size, height: size).background(WatchStyle.surface)
       .clipShape(RoundedRectangle(cornerRadius: 14)).accessibilityHidden(true)
   }
@@ -219,7 +267,11 @@ struct WatchHome: View {
     NavigationStack {
       ScrollView {
         VStack(spacing: 10) {
-          Text("Yahweh’s Words").font(.caption).fontWeight(.semibold).foregroundStyle(WatchStyle.accent)
+          HStack(spacing: 6) {
+            Image(WatchThemePalette.logoName(state)).resizable().scaledToFit().frame(width: 18, height: 18)
+              .clipShape(RoundedRectangle(cornerRadius: 4)).accessibilityHidden(true)
+            Text("Yahweh’s Words").font(.caption).fontWeight(.semibold).foregroundStyle(WatchStyle.accent)
+          }
           Button { playbackPresented = true } label: {
             VStack(spacing: 8) {
               WatchArtwork(state: state)

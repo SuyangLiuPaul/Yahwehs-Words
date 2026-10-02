@@ -1,3 +1,4 @@
+import 'companion_theme.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/song.dart';
@@ -13,7 +14,9 @@ import 'sermon_audio_service.dart';
 /// hundreds of rows on a driving screen.
 class CarAudioCatalogue {
   static const root = 'car:root';
-  static final artwork = Uri.parse('https://yahwehword.com/icons/Icon-512.png');
+  /// The themed logo, standing in for a cover. A getter, not a constant:
+  /// it follows the theme colour the reader picks.
+  static Uri get artwork => CompanionTheme.artwork;
   static String _title(String locale, String en, String hans, String hant) =>
       locale == 'zh-Hant'
           ? hant

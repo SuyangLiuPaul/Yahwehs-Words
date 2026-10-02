@@ -38,8 +38,10 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private val callbacks = Handler(Looper.getMainLooper())
     private val pending = mutableMapOf<String, Runnable>()
     private val requestProofs = mutableMapOf<String, Long>()
-    private val accent = Color.rgb(84, 199, 245)
-    private val surface = Color.rgb(31, 56, 77)
+    // Follow the phone's theme colour (the phone sends it as `accent`); these are
+    // the original blue until a state carrying one arrives.
+    private var accent = Color.rgb(84, 199, 245)
+    private var surface = Color.rgb(31, 56, 77)
     private val artworkWorker = Executors.newSingleThreadExecutor()
     private var artworkUrl = ""
     private var artworkBitmap: Bitmap? = null
@@ -61,6 +63,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         state = try { JSONObject(getPreferences(0).getString("state", "{}")!!) } catch (_:Exception) { JSONObject() }
+        applyTheme(state)
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.BLACK); isVerticalScrollBarEnabled=false }
         content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(dp(12),dp(24),dp(12),dp(32)) }
         scroll.addView(content); setContentView(scroll); render()
@@ -137,6 +140,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private fun accept(value: JSONObject, liveContact: Boolean = true) {
         if (value.optLong("syncedAt", 0) < state.optLong("syncedAt", 0)) return
         state = value
+        applyTheme(value)
         if (liveContact && isFresh()) {
             connected = true
             connectionProof++
@@ -144,6 +148,29 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             error = value.optString("error")
         }
         getPreferences(0).edit().putString("state", value.toString()).apply()
+    }
+    /** The phone's theme colour, lifted for the dark screen the same way the iPhone's watch app does. */
+    private fun applyTheme(value: JSONObject) {
+        if (!value.has("accent")) return
+        val argb = value.optLong("accent").toInt()
+        var r = Color.red(argb) / 255.0
+        var g = Color.green(argb) / 255.0
+        var b = Color.blue(argb) / 255.0
+        val luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        if (luminance < 0.45) {
+            val t = minOf(0.65, (0.45 - luminance) / (1 - luminance))
+            r += (1 - r) * t; g += (1 - g) * t; b += (1 - b) * t
+        }
+        fun channel(base: Double, weight: Double, v: Double) = ((base + weight * v).coerceIn(0.0, 1.0) * 255).toInt()
+        accent = Color.rgb((r * 255).toInt(), (g * 255).toInt(), (b * 255).toInt())
+        surface = Color.rgb(channel(0.06, 0.22, r), channel(0.06, 0.22, g), channel(0.06, 0.22, b))
+    }
+    /** The app's logo in the colour the phone uses, standing in for a cover that has not loaded. */
+    private fun logoResource(): Int {
+        val variant = state.optString("logo").lowercase()
+        val known = setOf("red", "orange", "green", "purple", "pink", "dark")
+        val id = resources.getIdentifier("logo_" + (if (variant in known) variant else "default"), "drawable", packageName)
+        return if (id != 0) id else android.R.drawable.ic_media_play
     }
     private fun send(action: String, id: String? = null) {
         if (!foreground) return
@@ -200,8 +227,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         content.addView(image,LinearLayout.LayoutParams(dp(size),dp(size)).apply { bottomMargin=dp(8) })
         val raw=state.optString("artwork")
         if(raw==artworkUrl && artworkBitmap!=null) { image.setImageBitmap(artworkBitmap); return }
-        image.setImageResource(android.R.drawable.ic_media_play)
-        image.imageTintList=ColorStateList.valueOf(accent)
+        image.setImageResource(logoResource())
+        image.imageTintList=null
         if(raw.isEmpty() || raw==artworkUrl) return
         val url=try { URL(raw).takeIf { it.protocol=="https" && it.host.isNotEmpty() && it.userInfo==null } } catch(_:Exception){null} ?: return
         artworkUrl=raw;artworkBitmap=null
