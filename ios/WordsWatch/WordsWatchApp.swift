@@ -49,11 +49,15 @@ import WatchKit
 final class WordsWatchDelegate: NSObject, WKApplicationDelegate {
   static let playbackRequested = Notification.Name("WordsWatchPlaybackRequested")
   static let pendingPlaybackKey = "words.pendingPlaybackLaunch"
+  /// A request nobody acted on within this long is stale. It was made for a
+  /// listener who has long since stopped waiting, and opening the playback
+  /// page on some later launch would be a surprise, not a convenience.
+  static let pendingPlaybackLifetime: TimeInterval = 60
   func handleRemoteNowPlayingActivity() {
     // The OS chooses whether to launch us. Preserve a cold-launch request
     // until SwiftUI is ready; this does not force the watch into foreground.
     DispatchQueue.main.async {
-      UserDefaults.standard.set(true, forKey: Self.pendingPlaybackKey)
+      UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.pendingPlaybackKey)
       NotificationCenter.default.post(name: Self.playbackRequested, object: nil)
     }
   }
@@ -238,8 +242,10 @@ struct WatchHome: View {
       .onReceive(NotificationCenter.default.publisher(for: WordsWatchDelegate.playbackRequested)) { _ in consumePlaybackLaunch() }
   }
   private func consumePlaybackLaunch() {
-    guard UserDefaults.standard.bool(forKey: WordsWatchDelegate.pendingPlaybackKey) else { return }
+    let requestedAt = UserDefaults.standard.double(forKey: WordsWatchDelegate.pendingPlaybackKey)
+    guard requestedAt > 0 else { return }
     UserDefaults.standard.removeObject(forKey: WordsWatchDelegate.pendingPlaybackKey)
+    guard Date().timeIntervalSince1970 - requestedAt <= WordsWatchDelegate.pendingPlaybackLifetime else { return }
     companion.send("snapshot")
     playbackPresented = true
   }
