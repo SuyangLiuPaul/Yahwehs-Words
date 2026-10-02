@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/song.dart';
 import '../models/song_queue.dart';
 import 'song_service.dart';
+import 'song_playlist_service.dart';
 import 'song_player_service.dart';
 import 'sermon_service.dart';
 import 'sermon_audio_service.dart';
@@ -34,9 +35,68 @@ class CarAudioCatalogue {
       final locale =
           (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
       return [
+        folder('car:queue', _title(locale, 'Playing queue', '播放队列', '播放佇列')),
+        folder('car:playlists', _title(locale, 'Playlists', '播放列表', '播放清單')),
         folder('car:songs', _title(locale, 'Hymns', '诗歌', '詩歌')),
         folder('car:instrumental', _title(locale, 'Instrumental', '伴奏', '伴奏')),
         folder('car:sermons', _title(locale, 'Sermons', '讲道', '講道'))
+      ];
+    }
+    final locale =
+        (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+    if (id == 'car:queue' || id.startsWith('car:queue-page/')) {
+      final queue = SongPlayerService.instance.queue;
+      final offset =
+          id == 'car:queue' ? 0 : int.tryParse(id.split('/').last) ?? -1;
+      if (offset < 0) return const [];
+      final rows = <MediaItem>[
+        for (final entry in queue.items.skip(offset).take(40))
+          MediaItem(
+              id: 'car:queued/${Uri.encodeComponent(entry.url)}',
+              title: entry.song.title,
+              artist: entry.song.creditLine ?? entry.song.sourceLabel,
+              album: queue.sourceLabel,
+              artUri: Uri.tryParse(entry.song.artworkUrl ?? '') ?? artwork),
+      ];
+      if (offset + 40 < queue.length) {
+        rows.add(folder('car:queue-page/${offset + 40}',
+            _title(locale, 'More', '更多', '更多')));
+      }
+      return rows;
+    }
+    if (id == 'car:playlists' || id.startsWith('car:playlist/')) {
+      final service = SongPlaylistService.instance;
+      await service.load();
+      if (id == 'car:playlists') {
+        return [
+          for (final playlist in service.ordered)
+            folder(
+                'car:playlist/${Uri.encodeComponent(playlist.id)}/0',
+                playlist.isFavourites
+                    ? _title(locale, 'Favourites', '收藏', '收藏')
+                    : playlist.name)
+        ];
+      }
+      final parts = id.split('/');
+      if (parts.length != 3) return const [];
+      final offset = int.tryParse(parts[2]) ?? -1;
+      if (offset < 0) return const [];
+      final matches =
+          service.playlists.where((p) => p.id == Uri.decodeComponent(parts[1]));
+      if (matches.isEmpty) return const [];
+      final playlist = matches.first;
+      final queue = SongQueue.fromSongs(playlist.resolve(await _songs()),
+          preference: playlist.preference, fallback: playlist.fallback);
+      return [
+        for (final entry in queue.items.skip(offset).take(40))
+          MediaItem(
+              id: 'car:playlist-song/${parts[1]}/${Uri.encodeComponent(entry.song.id)}',
+              title: entry.song.title,
+              album: playlist.name,
+              artUri: Uri.tryParse(entry.song.artworkUrl ?? '') ?? artwork),
+        if (offset + 40 < queue.length)
+          folder('car:playlist/${parts[1]}/${offset + 40}',
+              _title(locale, 'More', '更多', '更多'))
       ];
     }
     if (id == 'car:songs' || id == 'car:instrumental') {
@@ -179,6 +239,52 @@ class CarAudioCatalogue {
   }
 
   static Future<void> play(String id) async {
+    if (id.startsWith('car:queued/')) {
+      final url = Uri.decodeComponent(id.substring('car:queued/'.length));
+      final player = SongPlayerService.instance;
+      final index = player.queue.items.indexWhere((entry) => entry.url == url);
+      if (index < 0) {
+        final locale =
+            (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+        throw StateError(_title(
+            locale,
+            'Queue changed. Refresh and select again.',
+            '队列已更新，请刷新后重新选择。',
+            '佇列已更新，請重新整理後再選擇。'));
+      }
+      if (index == player.queue.index) {
+        await player.resumeCurrent();
+      } else {
+        await player.playAt(index);
+      }
+      return;
+    }
+    if (id.startsWith('car:playlist-song/')) {
+      final parts = id.split('/');
+      if (parts.length != 3) return;
+      final service = SongPlaylistService.instance;
+      await service.load();
+      final matches =
+          service.playlists.where((p) => p.id == Uri.decodeComponent(parts[1]));
+      if (matches.isEmpty) return;
+      final playlist = matches.first;
+      final songs = playlist.resolve(await _songs());
+      final songId = Uri.decodeComponent(parts[2]);
+      if (!songs.any((song) => song.id == songId)) return;
+      final player = SongPlayerService.instance;
+      if (player.queue.sourceLabel == playlist.name &&
+          player.queue.current?.song.id == songId) {
+        await player.resumeCurrent();
+        return;
+      }
+      await player.playQueue(songs,
+          startSongId: songId,
+          preference: playlist.preference,
+          fallback: playlist.fallback,
+          label: playlist.name);
+      return;
+    }
+
     if (id.startsWith('car:sermon/')) {
       final audio = SermonAudioService.instance;
       final sermonId = id.substring('car:sermon/'.length);

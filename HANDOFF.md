@@ -1,3 +1,11 @@
+## Active paired 1.7.5 preparation
+
+See `docs/delivery-1.7.5-2026-10-02.md`. New update prompts and Words companion/audio repairs are in preparation; preserve pending store reviews and immutable prior tags.
+
+## Google Play in-app update preparation — 2026-10-02
+
+Added the official flexible Play update bridge and localized home/workbench banner. Both apps target the next shared release **1.7.5**; current source versions, immutable tags and pending reviews remain unchanged. [Implementation, channel guards and next-release checklist](docs/google-play-in-app-updates-2026-10-02.md). Real Play-installed old-to-new transaction remains a delivery check.
+
 ## Words media repair delivery — 2026-10-02
 
 Words **1.7.4** fixes recording choices for the current song, preserves queue/position on mix changes, keeps paused loading silent, improves Watch/Wear readability and playback-state publication, and makes car catalogue resume idempotent. Source PR26 and version PR27 passed their matching head CI and merged. Immutable tag `v1.7.4` is `df5ed7beeb6a19892fb859c8399cd921b2c96b82`. Sword stays **1.7.3**; it has no media/watch/car capability.

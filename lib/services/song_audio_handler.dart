@@ -29,11 +29,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   /// network. See test/song_auto_advance_test.dart.
   SongAudioHandler({SongPlaybackEngine? engine})
       : _player = engine ?? SongPlaybackEngine() {
-    _player.onPlaying.listen((playing) {
+    _engineSubscriptions.add(_player.onPlaying.listen((playing) {
       _playing = playing;
       _broadcast();
-    });
-    _player.onDuration.listen((d) {
+    }));
+    _engineSubscriptions.add(_player.onDuration.listen((d) {
       _duration = d;
       // Restore the position carried across a mix change, now that the
       // new file is long enough to seek into. Doing it before the
@@ -50,16 +50,17 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       _broadcast();
       _publishMediaItem();
       unawaited(_publishQueue());
-    });
-    _player.onPosition.listen((p) {
+    }));
+    _engineSubscriptions.add(_player.onPosition.listen((p) {
       if (p > Duration.zero) _cancelStallWatchdog();
       _position = p;
       _maybePreloadNext(p);
       _broadcast();
-    });
+    }));
     // Auto-advance. Fires only on a natural end — not on stop() or
     // pause() — so this cannot loop on user-initiated stops.
-    _player.onComplete.listen((_) => _onTrackFinished());
+    _engineSubscriptions
+        .add(_player.onComplete.listen((_) => _onTrackFinished()));
     // Web reports playback failures asynchronously from the element,
     // long after play() returned, so they arrive here rather than as
     // a thrown exception. On native, `_guard` (song_playback_engine_
@@ -67,7 +68,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // this exact same stream — play, resume, pause, stop, seek and
     // setVolume alike — so this listener cannot tell "the track is
     // dead" apart from "the user's pause failed" by the message alone.
-    _player.onError.listen((event) {
+    _engineSubscriptions.add(_player.onError.listen((event) {
       if (_remote != null) return;
       final (attempt, message) = event;
       // Discard an error that belongs to a play() attempt this handler
@@ -84,6 +85,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       _error = message;
       _loading = false;
       _broadcast();
+      if (message.contains('[audio-focus]')) {
+        _durationUrl = null;
+        _cancelStallWatchdog();
+        return; // A call is not a broken recording; retain the whole queue.
+      }
       // A track that already produced real position or duration — the
       // same "is this track alive" signal _armStallWatchdog trusts —
       // is not the one that just failed to start; some other command
@@ -98,7 +104,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       final item = _queue.current;
       if (item != null) _failed.add(item.song.id);
       _skipPastFailure();
-    });
+    }));
 
     // ignore: unawaited_futures
     _configureSession();
@@ -128,6 +134,17 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     if (kIsWeb) return;
     try {
       final session = await AudioSession.instance;
+      if (_disposed) return;
+      await _interruptions?.cancel();
+      await _noisyRoute?.cancel();
+      if (_disposed) return;
+      _interruptions = session.interruptionEventStream.listen(
+          (event) => _queueSessionEvent(() => _handleInterruption(event)));
+      _noisyRoute = session.becomingNoisyEventStream
+          .listen((_) => _queueSessionEvent(() async {
+                _resumeAfterInterruption = false;
+                await pause();
+              }));
       await session.configure(const AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playback,
         avAudioSessionMode: AVAudioSessionMode.defaultMode,
@@ -135,8 +152,8 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
           contentType: AndroidAudioContentType.music,
           usage: AndroidAudioUsage.media,
         ),
-        // Pause for a phone call, duck for a nav prompt, and resume
-        // after — the behaviour a driver expects.
+        // Pause during audio interruptions and recover only when the
+        // system grants focus again.
         androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
         androidWillPauseWhenDucked: false,
       ));
@@ -147,6 +164,48 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     }
   }
 
+  StreamSubscription<AudioInterruptionEvent>? _interruptions;
+  StreamSubscription<void>? _noisyRoute;
+  bool _interrupted = false;
+  bool _resumeAfterInterruption = false;
+  RemoteAudioSource? _interruptedSource;
+  String? _interruptedItem;
+  Future<void> _sessionEvents = Future.value();
+
+  void _queueSessionEvent(Future<void> Function() action) {
+    _sessionEvents = _sessionEvents.then((_) async {
+      if (!_disposed) await action();
+    }).catchError((Object error) {
+      debugPrint('[SongAudioHandler] session event failed: $error');
+    });
+  }
+
+  Future<void> _handleInterruption(AudioInterruptionEvent event) async {
+    // Both songs and sermons feed one session. A call must not leave the
+    // phone claiming playback after the OS has silenced the audio route.
+    if (event.begin) {
+      if (!_interrupted) {
+        _resumeAfterInterruption = playbackState.value.playing;
+        _interruptedSource = _remote;
+        _interruptedItem = mediaItem.valueOrNull?.id;
+      }
+      _interrupted = true;
+      _playing = false;
+      _broadcast();
+      await (_remote?.remotePause() ?? _player.pause());
+    } else {
+      _interrupted = false;
+      final resume = _resumeAfterInterruption &&
+          event.type != AudioInterruptionType.unknown &&
+          identical(_remote, _interruptedSource) &&
+          mediaItem.valueOrNull?.id == _interruptedItem;
+      _resumeAfterInterruption = false;
+      if (resume) await play();
+    }
+  }
+
+  final List<StreamSubscription<dynamic>> _engineSubscriptions = [];
+  bool _disposed = false;
   RemoteAudioSource? _remote;
 
   void attachRemote(RemoteAudioSource source) {
@@ -159,6 +218,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> pauseSongForFocus() {
+    _resumeAfterInterruption = false;
     _cancelStallWatchdog();
     return _player.pause();
   }
@@ -367,13 +427,37 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     await _playCurrent();
   }
 
+  static String remoteLocale = 'en';
+  String _remoteText(String en, String hans, String hant) =>
+      remoteLocale == 'zh-Hant'
+          ? hant
+          : remoteLocale.startsWith('zh')
+              ? hans
+              : en;
+
+  @override
+  Future<dynamic> customAction(String name,
+      [Map<String, dynamic>? extras]) async {
+    if (_remote != null || _queue.isEmpty) return null;
+    if (name == 'words.shuffle' && extras?['on'] is bool) {
+      await setShuffle(extras!['on'] as bool);
+    } else if (name == 'words.repeat') {
+      final modes = {
+        'off': RepeatMode.off,
+        'all': RepeatMode.all,
+        'one': RepeatMode.one
+      };
+      final mode = modes[extras?['mode']];
+      if (mode != null) await setRepeat(mode);
+    }
+    return null;
+  }
+
   Future<void> setShuffle(bool on) async {
-    // Keep the current track first only if it is actually being heard.
-    // A queue opened with autoPlay:false is sitting on row one because
-    // that is where the index starts, not because anyone chose it, and
-    // a shuffle pressed then should be free to start anywhere.
+    // Repeated remote commands are idempotent and never reshuffle twice.
+    if (_remote != null || _queue.shuffled == on) return;
     _queue = _queue.withShuffle(on,
-        keepCurrent: _playing || _position > Duration.zero);
+        keepCurrent: _durationUrl == _queue.current?.url);
     await _publishQueue();
     _broadcast();
   }
@@ -527,14 +611,21 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> play() async {
+    if (_interrupted) return;
     if (_remote != null) return _remote!.remotePlay();
     if (_queue.isEmpty) return;
     if (currentItem == null) return;
-    await _player.resume();
+    _error = null;
+    if (_durationUrl != currentItem!.url) {
+      await _playCurrent(resumeAt: _position);
+    } else {
+      await _player.resume();
+    }
   }
 
   @override
   Future<void> pause() {
+    _resumeAfterInterruption = false;
     if (_remote != null) return _remote!.remotePause();
     // A user pause is not a stall; the watchdog would otherwise fire
     // on a track paused within 20s of starting.
@@ -544,6 +635,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   @override
   Future<void> stop() async {
+    _resumeAfterInterruption = false;
     if (_remote != null) {
       await _remote!.remoteStop();
       _broadcast();
@@ -606,7 +698,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   @override
   Future<void> skipToNext() async {
     if (_remote != null) return _remote!.remoteForward();
-    final next = _queue.nextIndex();
+    final next = _queue.nextIndex(manual: true);
     if (next == null) {
       await stop();
       return;
@@ -624,7 +716,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       await seek(Duration.zero);
       return;
     }
-    final prev = _queue.previousIndex();
+    final prev = _queue.previousIndex(manual: true);
     if (prev == null) {
       await seek(Duration.zero);
       return;
@@ -909,7 +1001,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     if (remote != null) {
       mediaItem.add(remote.remoteItem);
       queue.add(remote.remoteItem == null ? [] : [remote.remoteItem!]);
-      playbackState.add(remote.remoteState);
+      playbackState.add(_interrupted
+          ? remote.remoteState.copyWith(playing: false)
+          : remote.remoteState);
       notifyUi();
       return;
     }
@@ -935,11 +1029,55 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
         if (_playing) MediaControl.pause else MediaControl.play,
         if (multi) MediaControl.skipToNext,
         MediaControl.stop,
+        if (_queue.isNotEmpty)
+          MediaControl.custom(
+              androidIcon: 'drawable/ic_shuffle',
+              label: _remoteText(
+                  _queue.shuffled ? 'Shuffle off' : 'Shuffle on',
+                  _queue.shuffled ? '关闭随机' : '随机播放',
+                  _queue.shuffled ? '關閉隨機' : '隨機播放'),
+              name: 'words.shuffle',
+              extras: {'on': !_queue.shuffled}),
+        if (_queue.isNotEmpty)
+          MediaControl.custom(
+              androidIcon: _queue.repeat == RepeatMode.one
+                  ? 'drawable/ic_repeat_one'
+                  : 'drawable/ic_repeat',
+              label: _remoteText(
+                  _queue.repeat == RepeatMode.off
+                      ? 'Repeat queue'
+                      : _queue.repeat == RepeatMode.all
+                          ? 'Repeat one'
+                          : 'Repeat off',
+                  _queue.repeat == RepeatMode.off
+                      ? '列表循环'
+                      : _queue.repeat == RepeatMode.all
+                          ? '单曲循环'
+                          : '关闭循环',
+                  _queue.repeat == RepeatMode.off
+                      ? '清單循環'
+                      : _queue.repeat == RepeatMode.all
+                          ? '單曲循環'
+                          : '關閉循環'),
+              name: 'words.repeat',
+              extras: {
+                'mode': _queue.repeat == RepeatMode.off
+                    ? 'all'
+                    : _queue.repeat == RepeatMode.all
+                        ? 'one'
+                        : 'off'
+              }),
       ],
       // `seek` is the scrubber and it works; the interval-skip actions
       // are deliberately absent — see above.
       systemActions: {
+        // A dashboard can retain its previous icon briefly. Keep both
+        // idempotent commands callable so stale Play still reacquires focus.
+        if (_queue.isNotEmpty) MediaAction.play,
+        if (_queue.isNotEmpty) MediaAction.pause,
         MediaAction.seek,
+        MediaAction.setShuffleMode,
+        MediaAction.setRepeatMode,
         if (multi) MediaAction.skipToNext,
         if (multi) MediaAction.skipToPrevious,
       },
@@ -982,8 +1120,16 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> dispose() async {
+    _disposed = true;
+    await _interruptions?.cancel();
+    await _noisyRoute?.cancel();
+    _stallTimer?.cancel();
     _remote?.removeListener(_broadcast);
     _sleepTimer?.cancel();
+    // Drop buffered engine events before closing its streams; no callbacks
+    // may publish state or retain a pending close after disposal.
+    await Future.wait(_engineSubscriptions.map((s) => s.cancel()));
+    _engineSubscriptions.clear();
     await _player.dispose();
   }
 }

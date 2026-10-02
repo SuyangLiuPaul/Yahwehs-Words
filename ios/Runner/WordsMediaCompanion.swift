@@ -2,7 +2,7 @@ import Foundation
 
 struct CompanionPublicationPolicy {
   static func needsImmediateContext(_ data: [String: Any], after previous: [String: Any]) -> Bool {
-    let keys = ["id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon"]
+    let keys = ["id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat"]
     let identity = NSDictionary(dictionary: data.filter { keys.contains($0.key) })
     let old = NSDictionary(dictionary: previous.filter { keys.contains($0.key) })
     if !identity.isEqual(old) { return true }
@@ -27,6 +27,8 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
   private(set) var channel: FlutterMethodChannel?
   private var ready = false
   private var latest: [String: Any] = [:]
+  static let stateChanged = Notification.Name("WordsMediaStateChanged")
+  var snapshot: [String: Any] { latest }
   var locale: String { latest["locale"] as? String ?? "en" }
   private var sentContext: [String: Any] = [:]
   private var liveTransferPending = false
@@ -52,6 +54,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     }
     ready = true
     latest = data
+    NotificationCenter.default.post(name: Self.stateChanged, object: self)
     publishToWatch()
     result(nil)
   }
@@ -135,7 +138,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
           replyHandler(failure)
         } else { replyHandler(["items": value as? [[String: Any]] ?? []]) }
       }
-    } else if ["play", "pause", "next", "previous", "forward", "backward", "stop", "select"].contains(action) {
+    } else if ["play", "pause", "next", "previous", "forward", "backward", "stop", "select", "shuffle", "repeat"].contains(action) {
       request("command", arguments: message) { replyHandler($0 as? [String: Any] ?? [:]) }
     } else { replyHandler(["error": "Unsupported command"]) }
   }

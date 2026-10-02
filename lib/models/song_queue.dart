@@ -53,6 +53,7 @@ class SongQueue {
 
   final int index;
   final bool shuffled;
+  final List<String>? originalOrder;
   final RepeatMode repeat;
 
   /// Where the queue came from, for the now-playing header
@@ -63,6 +64,7 @@ class SongQueue {
     required this.items,
     this.index = 0,
     this.shuffled = false,
+    this.originalOrder,
     this.repeat = RepeatMode.off,
     this.sourceLabel,
   });
@@ -212,6 +214,7 @@ class SongQueue {
     List<QueueItem>? items,
     int? index,
     bool? shuffled,
+    List<String>? originalOrder,
     RepeatMode? repeat,
     String? sourceLabel,
   }) =>
@@ -219,6 +222,7 @@ class SongQueue {
         items: items ?? this.items,
         index: index ?? this.index,
         shuffled: shuffled ?? this.shuffled,
+        originalOrder: originalOrder ?? this.originalOrder,
         repeat: repeat ?? this.repeat,
         sourceLabel: sourceLabel ?? this.sourceLabel,
       );
@@ -304,10 +308,14 @@ class SongQueue {
     final playing = keepCurrent ? current : null;
 
     if (!on) {
-      // Restore catalogue order. Sorting by the song id is stable and
-      // needs no separate "original order" copy to fall out of sync.
-      final restored = [...items]
-        ..sort((a, b) => a.song.id.compareTo(b.song.id));
+      // Restore the user's playlist order, not alphabetical catalogue IDs.
+      final order = originalOrder;
+      final restored = [...items];
+      if (order != null) {
+        final rank = {for (var i = 0; i < order.length; i++) order[i]: i};
+        restored.sort((a, b) => (rank[a.song.id] ?? order.length)
+            .compareTo(rank[b.song.id] ?? order.length));
+      }
       final at = playing == null
           ? 0
           : restored.indexWhere((i) => i.song.id == playing.song.id);
@@ -322,23 +330,27 @@ class SongQueue {
       rest.removeWhere((i) => i.song.id == playing.song.id);
       rest.insert(0, playing);
     }
-    return copyWith(items: rest, index: 0, shuffled: true);
+    return copyWith(
+        items: rest,
+        index: 0,
+        shuffled: true,
+        originalOrder: originalOrder ?? items.map((i) => i.song.id).toList());
   }
 
   /// Index of the next item, or null at the end with repeat off.
-  int? nextIndex() {
+  int? nextIndex({bool manual = false}) {
     if (items.isEmpty) return null;
-    if (repeat == RepeatMode.one) return index;
+    if (repeat == RepeatMode.one && !manual) return index;
     if (index < items.length - 1) return index + 1;
-    return repeat == RepeatMode.all ? 0 : null;
+    return repeat != RepeatMode.off ? 0 : null;
   }
 
   /// Index of the previous item, or null at the start with repeat off.
-  int? previousIndex() {
+  int? previousIndex({bool manual = false}) {
     if (items.isEmpty) return null;
-    if (repeat == RepeatMode.one) return index;
+    if (repeat == RepeatMode.one && !manual) return index;
     if (index > 0) return index - 1;
-    return repeat == RepeatMode.all ? items.length - 1 : null;
+    return repeat != RepeatMode.off ? items.length - 1 : null;
   }
 
   /// Drop the item at [at] — used when a URL turns out to be dead, so

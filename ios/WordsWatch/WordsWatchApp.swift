@@ -292,6 +292,25 @@ struct WatchPlaybackView: View {
           transport(playing ? "pause" : "play", image: playing ? "pause.fill" : "play.fill", label: playing ? WatchStyle.text(state,"Pause","暂停","暫停") : WatchStyle.text(state,"Play","播放","播放"), primary: true)
           transport(sermon ? "forward" : "next", image: sermon ? "goforward.30" : "forward.end.fill", label: sermon ? WatchStyle.text(state,"Forward 30 seconds","快进 30 秒","快進 30 秒") : WatchStyle.text(state,"Next hymn","下一首","下一首")).disabled(!canNext)
         }.disabled(!enabled)
+        if !sermon && (state["queueCount"] as? Int ?? 0) > 0 {
+          Text("\((state["queueIndex"] as? Int ?? 0) + 1) / \(state["queueCount"] as? Int ?? 0) · \(state["queueLabel"] as? String ?? "")")
+            .font(.caption2).foregroundStyle(WatchStyle.secondary).lineLimit(2)
+          HStack {
+            Button { companion.send("shuffle", id: state["shuffled"] as? Bool == true ? "off" : "on") } label: {
+              Label(WatchStyle.text(state,"Shuffle","随机","隨機"), systemImage: "shuffle").font(.caption2)
+                .frame(minHeight: 44).foregroundStyle(state["shuffled"] as? Bool == true ? WatchStyle.accent : .white)
+            }
+            Button { companion.send("repeat", id: state["repeat"] as? String == "off" ? "all" : state["repeat"] as? String == "all" ? "one" : "off") } label: {
+              Label(WatchStyle.text(state,"Repeat","循环","循環"), systemImage: state["repeat"] as? String == "one" ? "repeat.1" : "repeat").font(.caption2)
+                .frame(minHeight: 44).foregroundStyle(state["repeat"] as? String == "off" ? .white : WatchStyle.accent)
+            }
+          }.disabled(!enabled)
+          Text(WatchStyle.text(state, state["repeat"] as? String == "one" ? "Repeat one" : state["repeat"] as? String == "all" ? "Repeat queue" : "Repeat off", state["repeat"] as? String == "one" ? "单曲循环" : state["repeat"] as? String == "all" ? "列表循环" : "不循环", state["repeat"] as? String == "one" ? "單曲循環" : state["repeat"] as? String == "all" ? "清單循環" : "不循環"))
+            .font(.caption2).foregroundStyle(WatchStyle.secondary)
+          NavigationLink { WatchLibrary(id:"car:queue", title:WatchStyle.text(state,"Playing queue","播放队列","播放佇列")) } label: {
+            Label(WatchStyle.text(state,"Playing queue","播放队列","播放佇列"), systemImage:"list.bullet")
+          }.font(.caption)
+        }
         if total > 0 { ProgressView(value: Double(elapsed), total: Double(total)).tint(WatchStyle.accent) }
         HStack { Text(WatchPlaybackSnapshot.clock(elapsed)); Spacer(); Text(total > 0 ? WatchPlaybackSnapshot.clock(total) : "—") }.font(.caption2).monospacedDigit().foregroundStyle(WatchStyle.secondary)
         Label(!live ? WatchStyle.text(state,"Saved · reconnect iPhone","已保存 · 重新连接 iPhone","已儲存 · 重新連接 iPhone") : state["loading"] as? Bool == true ? WatchStyle.text(state,"Loading on iPhone…","iPhone 正在加载…","iPhone 正在載入…") : WatchStyle.text(state,"Playing on iPhone","音频在 iPhone 播放","音訊在 iPhone 播放"), systemImage: live ? "iphone" : "iphone.slash")
