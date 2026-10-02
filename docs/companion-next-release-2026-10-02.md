@@ -10,9 +10,12 @@ Owner requested one consolidated next release for iPhone/Apple Watch/CarPlay and
 - Wear ignores replies and async node/data callbacks belonging to a previous foreground generation. Reopening a catalogue reloads its current folder; canceled loading state cannot remain indefinitely. Data buffers are released even for abandoned reads.
 - A failed Wear cover fetch can retry after a fresh publication. Daily verse changes are part of Android publication identity.
 
+- Corrected the CarPlay disconnect delegate selector to the actual SDK requirement didDisconnectInterfaceController. The old similarly-named optional method was not the protocol callback, so observer/scene cleanup could be missed. Confirmed the selector against the installed SDK.
+- CarPlay shuffle/repeat buttons disable while a request is pending/loading or an error is present, reject overlapping mode changes and show command failures. A callback from an old disconnected scene cannot update a newly connected scene.
+
 ## Verification so far
 
-Watch SDK arm64/watchOS9 simulator type-check succeeded. Wear Activity compiled against Android36 and official Google wearable/base/task libraries with Kotlin2.0 compiler (wear-next-compile.log, exit0). iPhone companion Swift syntax parse succeeded. These checks are not physical synchronization or end-to-end audio proof.
+Watch SDK arm64/watchOS9 simulator type-check succeeded. Wear Activity compiled against Android36 and official Google wearable/base/task libraries with Kotlin2.0 compiler (wear-next-compile.log, exit0). Actual iPhone companion and CarPlay sources type-checked together against the iOS15 target, official CarPlay SDK and Flutter module; an AppDelegate-only engine plumbing stub was used. No warnings remain in that compile. This does not replace a full signed app build. These checks are not physical synchronization or end-to-end audio proof.
 
 ## Required before next consolidated publication
 
