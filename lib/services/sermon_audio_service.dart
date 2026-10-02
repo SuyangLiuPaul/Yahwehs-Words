@@ -549,6 +549,8 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
   }
 
   Future<void> resume() async {
+    _error = null;
+    notifyListeners();
     await MediaFocus.instance.claim(this);
     onRemoteActivation?.call(this);
     await _player.resume();

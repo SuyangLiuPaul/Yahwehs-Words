@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'song_audio_handler.dart';
+import '../models/song_queue.dart';
 import 'car_audio_catalogue.dart';
 import 'daily_verse_service.dart';
 import '../constants/book_name_mapping.dart';
@@ -17,6 +18,7 @@ class MediaCompanionService {
   static Map<String, dynamic> _daily = {};
   static String? _dailyDate;
   static Timer? _timer;
+  static Future<void> _commands = Future.value();
   static Future<void>? _dailyLoading;
   static final _subscriptions = <StreamSubscription<dynamic>>[];
   static String? _publishedIdentity;
@@ -68,6 +70,11 @@ class MediaCompanionService {
           'canPrevious',
           'playing',
           'error',
+          'queueIndex',
+          'queueCount',
+          'queueLabel',
+          'shuffled',
+          'repeat',
           'sermon'
         ])
           key: snapshot[key],
@@ -119,7 +126,10 @@ class MediaCompanionService {
         case 'command':
           await _loadLocale();
           final args = Map<String, dynamic>.from(call.arguments as Map);
-          await _command(args['action'] as String, args['id'] as String?);
+          final task = _commands.then(
+              (_) => _command(args['action'] as String, args['id'] as String?));
+          _commands = task.catchError((Object _) {});
+          await task;
           unawaited(_publish());
           return _snapshot();
         default:
@@ -151,6 +161,23 @@ class MediaCompanionService {
         await h.rewind();
       case 'stop':
         await h.stop();
+      case 'shuffle':
+        if (id != 'on' && id != 'off') {
+          throw ArgumentError('Invalid shuffle mode');
+        }
+        if (h.mediaItem.valueOrNull?.id.startsWith('car:sermon/') != true) {
+          await h.setShuffle(id == 'on');
+        }
+      case 'repeat':
+        final modes = {
+          'off': RepeatMode.off,
+          'all': RepeatMode.all,
+          'one': RepeatMode.one
+        };
+        if (!modes.containsKey(id)) throw ArgumentError('Invalid repeat mode');
+        if (h.mediaItem.valueOrNull?.id.startsWith('car:sermon/') != true) {
+          await h.setRepeat(modes[id]!);
+        }
       case 'select':
         if (id != null) await h.playFromMediaId(id);
       default:
@@ -187,6 +214,12 @@ class MediaCompanionService {
           state.position.inSeconds >= 3,
       'error': state.errorMessage ?? '',
       'reading': _reading,
+      'queueIndex': h.songQueue.index,
+      'queueCount':
+          item?.id.startsWith('car:sermon/') == true ? 0 : h.songQueue.length,
+      'queueLabel': h.songQueue.sourceLabel ?? '',
+      'shuffled': h.songQueue.shuffled,
+      'repeat': h.songQueue.repeat.name,
       'daily': _daily
     };
   }
@@ -207,6 +240,7 @@ class MediaCompanionService {
   static Future<void> _loadLocale() async {
     _locale = (await SharedPreferences.getInstance()).getString('locale') ??
         'zh-Hans';
+    SongAudioHandler.remoteLocale = _locale;
   }
 
   static Future<void> _loadDaily() async {

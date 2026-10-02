@@ -8,19 +8,24 @@ import UIKit
 class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver {
   private var controller: CPInterfaceController?
   private var connection: UUID?
+  private var stateObserver: NSObjectProtocol?
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                 didConnect interfaceController: CPInterfaceController) {
     controller = interfaceController
     connection = UUID()
     CPNowPlayingTemplate.shared.add(self)
     CPNowPlayingTemplate.shared.isUpNextButtonEnabled = true
-    CPNowPlayingTemplate.shared.upNextTitle = text("Browse audio", "音频目录", "音訊目錄")
+    CPNowPlayingTemplate.shared.upNextTitle = text("Playing queue", "播放队列", "播放佇列")
+    stateObserver = NotificationCenter.default.addObserver(forName: WordsMediaCompanion.stateChanged, object: nil, queue: .main) { [weak self] _ in self?.updateModes() }
+    updateModes()
     (UIApplication.shared.delegate as? AppDelegate)?.ensureMediaEngine()
     showFolder("car:root", title: "Yahweh’s Words", root: true)
   }
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                 didDisconnect interfaceController: CPInterfaceController) {
     CPNowPlayingTemplate.shared.remove(self)
+    if let observer = stateObserver { NotificationCenter.default.removeObserver(observer) }
+    stateObserver = nil
     connection = nil
     controller = nil // The phone's existing audio session keeps playing.
   }
@@ -29,7 +34,26 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
     return locale == "zh-Hant" ? hant : locale.hasPrefix("zh") ? hans : en
   }
   func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
-    controller?.popToRootTemplate(animated: true, completion: presentationFinished)
+    showFolder("car:queue", title: text("Playing queue", "播放队列", "播放佇列"))
+  }
+  private func updateModes() {
+    let state = WordsMediaCompanion.shared.snapshot
+    let template = CPNowPlayingTemplate.shared
+    let songs = state["sermon"] as? Bool != true && (state["queueCount"] as? Int ?? 0) > 0
+    template.isUpNextButtonEnabled = songs
+    guard songs else { template.updateNowPlayingButtons([]); return }
+    let shuffle = CPNowPlayingImageButton(image: UIImage(systemName: "shuffle")!) { _ in
+      let on = WordsMediaCompanion.shared.snapshot["shuffled"] as? Bool == true
+      WordsMediaCompanion.shared.request("command", arguments: ["action":"shuffle", "id":on ? "off" : "on"]) { _ in }
+    }
+    shuffle.isSelected = state["shuffled"] as? Bool == true
+    let mode = state["repeat"] as? String ?? "off"
+    let repeatButton = CPNowPlayingImageButton(image: UIImage(systemName: mode == "one" ? "repeat.1" : "repeat")!) { _ in
+      let current = WordsMediaCompanion.shared.snapshot["repeat"] as? String ?? "off"
+      WordsMediaCompanion.shared.request("command", arguments: ["action":"repeat", "id":current == "off" ? "all" : current == "all" ? "one" : "off"]) { _ in }
+    }
+    repeatButton.isSelected = mode != "off"
+    template.updateNowPlayingButtons([shuffle, repeatButton])
   }
   private func presentationFinished(_ success: Bool, _ error: Error?) {
     // CarPlay raises a native exception on failed presentation when its
@@ -78,7 +102,7 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
               if let error = (result as? [String: Any])?["error"] as? String, !error.isEmpty {
                 self.showError(error)
               } else if controller.topTemplate !== CPNowPlayingTemplate.shared {
-                CPNowPlayingTemplate.shared.upNextTitle = self.text("Browse audio", "音频目录", "音訊目錄")
+                CPNowPlayingTemplate.shared.upNextTitle = self.text("Playing queue", "播放队列", "播放佇列")
                 controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
               }
             }

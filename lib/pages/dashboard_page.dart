@@ -4,6 +4,7 @@ import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'package:flutter/material.dart';
+import '../widgets/store_update_banner.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -601,6 +602,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 // newer version — which is nearly always — so it costs the
                 // layout below it nothing.
                 PlayUpdateBanner(locale: locale),
+                StoreUpdateBanner(locale: locale),
                 UpdateAvailableBanner(
                   locale: locale,
                   release: _update,

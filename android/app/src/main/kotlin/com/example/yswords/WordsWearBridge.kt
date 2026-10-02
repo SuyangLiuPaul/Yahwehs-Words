@@ -22,7 +22,7 @@ object WordsWearBridge {
             if (call.method != "state") { result.notImplemented(); return@setMethodCallHandler }
             val data = call.arguments as? Map<*, *> ?: emptyMap<String, Any>()
             val metadata = linkedMapOf<String, Any?>()
-            for (key in listOf("id", "title", "subtitle", "artwork", "locale", "reading", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon")) metadata[key] = data[key]
+            for (key in listOf("id", "title", "subtitle", "artwork", "locale", "reading", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat")) metadata[key] = data[key]
             val next = JSONObject(metadata).toString()
             val now = System.currentTimeMillis()
             val position = (data["position"] as? Number)?.toDouble() ?: 0.0
@@ -47,7 +47,7 @@ object WordsWearBridge {
             install(context.applicationContext, engine)
             val data = try { JSONObject(String(event.data, Charsets.UTF_8)) } catch (_: Exception) { return@post }
             val action = data.optString("action", "snapshot")
-            val allowed = setOf("play", "pause", "next", "previous", "forward", "backward", "stop", "select")
+            val allowed = setOf("play", "pause", "next", "previous", "forward", "backward", "stop", "select", "shuffle", "repeat")
             val method = when { action == "snapshot" -> "snapshot"; action == "children" -> "children"; action in allowed -> "command"; else -> return@post }
             val args = mutableMapOf<String, Any>("action" to action)
             if (data.has("id")) args["id"] = data.getString("id")

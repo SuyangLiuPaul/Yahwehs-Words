@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:audio_session/audio_session.dart';
 
 import 'package:audioplayers/audioplayers.dart' as ap;
 
@@ -155,6 +157,7 @@ class SongPlaybackEngine {
       var started = false;
       await _guard(id, () async {
         try {
+          await _activate(active);
           await active.resume();
           started = true;
         } finally {
@@ -168,7 +171,10 @@ class SongPlaybackEngine {
     }
     final active = _player;
     _sourceRevisions[active] = ++_sourceRevision;
-    await _guard(id, () => active.play(_sourceFor(url)));
+    await _guard(id, () async {
+      await _activate(active);
+      await active.play(_sourceFor(url));
+    });
   }
 
   /// Prepare a recording while paused without briefly starting audio.
@@ -202,7 +208,32 @@ class SongPlaybackEngine {
     } catch (_) {/* Metadata failure does not fail sounding audio. */}
   }
 
-  Future<void> resume() => _guard(_attempt, _player.resume);
+  final Set<ap.AudioPlayer> _focusConfigured = {};
+  Future<void> _activate(ap.AudioPlayer player) async {
+    if (!Platform.isIOS && !Platform.isAndroid) return;
+    if (Platform.isAndroid && !_focusConfigured.contains(player)) {
+      // audio_session owns focus events for the shared media session.
+      // A second per-player focus request would hide call/navigation events.
+      await player.setAudioContext(ap.AudioContext(
+          android: const ap.AudioContextAndroid(
+              audioFocus: ap.AndroidAudioFocus.none)));
+      _focusConfigured.add(player);
+    }
+    try {
+      final session = await AudioSession.instance;
+      if (!await session.setActive(true)) {
+        throw StateError('Audio focus was denied');
+      }
+    } catch (error) {
+      throw StateError(
+          '[audio-focus] Playback is unavailable during an audio interruption: $error');
+    }
+  }
+
+  Future<void> resume() => _guard(_attempt, () async {
+        await _activate(_player);
+        await _player.resume();
+      });
   Future<void> pause() => _guard(_attempt, _player.pause);
   Future<void> stop() => _guard(_attempt, _player.stop);
   Future<void> seek(Duration to) => _guard(_attempt, () => _player.seek(to));
@@ -276,6 +307,7 @@ class SongPlaybackEngine {
     try {
       await action();
     } catch (e) {
+      _playing.add(false);
       _error.add((id, '$e'));
     }
   }

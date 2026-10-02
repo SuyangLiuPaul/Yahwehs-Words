@@ -48,6 +48,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private var progressBar: ProgressBar? = null
     private var playbackStatus: TextView? = null
     private val playbackControls = mutableListOf<Button>()
+    private val modeControls = mutableListOf<Button>()
     private val progressTick = object : Runnable {
         override fun run() {
             updatePlaybackProgress()
@@ -132,6 +133,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         getPreferences(0).edit().putString("state", value.toString()).apply()
     }
     private fun send(action: String, id: String? = null) {
+        if (action in setOf("shuffle", "repeat") && (!connected || !isFresh() || state.optBoolean("loading") || error.isNotEmpty())) return
+
         val request = UUID.randomUUID().toString()
         val proofAtRequest = connectionProof
         requestProofs[request] = proofAtRequest
@@ -231,6 +234,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val live = connected && isFresh()
         val busy = state.optBoolean("loading")
         val canControl = live && !busy && error.isEmpty() && state.optString("error").isEmpty() && state.optString("id").isNotEmpty()
+        modeControls.forEach { it.isEnabled = canControl; it.alpha = if(canControl) 1f else 0.45f }
         playbackControls.forEachIndexed { index, button ->
             button.isEnabled = canControl && (index == 0 || state.optBoolean("sermon") || state.optBoolean(if (index == 1) "canPrevious" else "canNext", state.optBoolean("canSkip")))
         }
@@ -259,6 +263,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         progressBar = null
         playbackStatus = null
         playbackControls.clear()
+        modeControls.clear()
         when(screen) {
             "home" -> {
                 text("Yahweh’s Words",true)
@@ -298,6 +303,19 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { max = 1000;progressTintList=ColorStateList.valueOf(accent);progressBackgroundTintList=ColorStateList.valueOf(surface) }
                 content.addView(progressBar, LinearLayout.LayoutParams(-1, dp(6)))
                 transportRow(sermon)
+                if (!sermon && state.optInt("queueCount") > 0) {
+                    text("${state.optInt("queueIndex") + 1} / ${state.optInt("queueCount")} · ${state.optString("queueLabel")}")
+                    modeControls.add(button(tr("Shuffle", "随机播放", "隨機播放") + if(state.optBoolean("shuffled")) " ✓" else " —") {
+                        send("shuffle", if(state.optBoolean("shuffled")) "off" else "on")
+                    })
+                    val repeat = state.optString("repeat", "off")
+                    modeControls.add(button(when(repeat) { "one" -> tr("Repeat one", "单曲循环", "單曲循環"); "all" -> tr("Repeat queue", "列表循环", "清單循環"); else -> tr("Repeat off", "不循环", "不循環") }) {
+                        send("repeat", when(repeat) { "off" -> "all"; "all" -> "one"; else -> "off" })
+                    })
+                    button(tr("Playing queue", "播放队列", "播放佇列")) {
+                        screen="library"; folder="car:queue"; title=tr("Playing queue", "播放队列", "播放佇列"); history.clear(); items=emptyList(); send("children",folder); render()
+                    }
+                }
                 playbackStatus = text("")
                 updatePlaybackProgress()
             }

@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "win32_window.h"
+#include "store_update_bridge.h"
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
@@ -23,6 +24,8 @@ class FlutterWindow : public Win32Window {
                          LPARAM const lparam) noexcept override;
 
  private:
+  std::unique_ptr<StoreUpdateBridge> store_update_;
+
   // The project to run.
   flutter::DartProject project_;
 
