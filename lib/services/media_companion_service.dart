@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'song_audio_handler.dart';
 import '../models/song_queue.dart';
 import 'car_audio_catalogue.dart';
+import 'companion_theme.dart';
 import 'daily_verse_service.dart';
 import '../constants/book_name_mapping.dart';
 import '../utils/reference_parser.dart';
@@ -75,7 +76,9 @@ class MediaCompanionService {
           'queueLabel',
           'shuffled',
           'repeat',
-          'sermon'
+          'sermon',
+          'accent',
+          'logo'
         ])
           key: snapshot[key],
       });
@@ -220,7 +223,10 @@ class MediaCompanionService {
       'queueLabel': h.songQueue.sourceLabel ?? '',
       'shuffled': h.songQueue.shuffled,
       'repeat': h.songQueue.repeat.name,
-      'daily': _daily
+      'daily': _daily,
+      // The phone's theme, so the watch and the car follow it.
+      'accent': CompanionTheme.accent,
+      'logo': CompanionTheme.logo
     };
   }
 
@@ -241,6 +247,13 @@ class MediaCompanionService {
     _locale = (await SharedPreferences.getInstance()).getString('locale') ??
         'zh-Hans';
     SongAudioHandler.remoteLocale = _locale;
+    await CompanionTheme.loadSaved();
+  }
+
+  /// The theme colour changed on the phone: tell the watch and the car now,
+  /// not at the next song.
+  static void themeChanged() {
+    if (_handler != null) unawaited(_publish());
   }
 
   static Future<void> _loadDaily() async {

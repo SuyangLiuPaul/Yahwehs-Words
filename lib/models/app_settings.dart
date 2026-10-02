@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/companion_theme.dart';
+import '../services/media_companion_service.dart';
 
 import 'package:yahwehs_words/constants/update_check_frequency.dart';
 import 'package:yahwehs_words/models/projection_agenda.dart';
@@ -1008,6 +1010,8 @@ class AppSettings extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_kPrimaryColor, color.toARGB32());
+    // The watch and the car follow the theme: hand them the new colour now.
+    if (CompanionTheme.update(color)) MediaCompanionService.themeChanged();
     // 2026-05-24 (v1.2.96): also swap the iOS home-screen icon if
     // the user picked a color that has a matching alternate-icon
     // variant. Non-iOS platforms are a silent no-op. The OS shows
@@ -1538,6 +1542,7 @@ class AppSettings extends ChangeNotifier {
     _lineSpacing = (rawLineSpacing * 10).roundToDouble() / 10;
     _primaryColor =
         Color(prefs.getInt(_kPrimaryColor) ?? Colors.lightBlue.toARGB32());
+    if (CompanionTheme.update(_primaryColor)) MediaCompanionService.themeChanged();
     // 2026-06-14 (v1.3.70): re-apply the themed home-screen / dock /
     // favicon icon on startup so it tracks the saved theme colour.
     // iOS resets `alternateIconName` to the primary icon on every app

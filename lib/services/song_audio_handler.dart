@@ -1,3 +1,4 @@
+import 'companion_theme.dart';
 import 'dart:async';
 import 'remote_audio_source.dart';
 import 'car_audio_catalogue.dart';
@@ -989,7 +990,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       album: s.album ?? _queue.sourceLabel,
       duration: _itemDuration(item, active: active),
       artUri: s.artworkUrl == null
-          ? Uri.parse('https://yahwehword.com/icons/Icon-512.png')
+          ? CompanionTheme.artwork
           : Uri.tryParse(s.artworkUrl!),
       extras: {'songId': s.id, 'kind': item.kind},
     );

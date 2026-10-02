@@ -88,6 +88,29 @@ void main() {
             'together they are a wall with nothing to say where one ends');
   });
 
+  testWidgets('the number never touches the note, whatever its glyph width',
+      (tester) async {
+    // 2026-10-03, owner's screenshot (出埃及记 35:29): 「①或作」 read as one
+    // word. The number's box was a fixed `fs * 1.1`; in the system sans-serif
+    // the 現代 style uses, a circled digit is wider than that and its circle
+    // ran into the note's first character. The test font here draws every
+    // glyph a full em, so the circled digit is as wide as the worst real one.
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_host(['或作：“鼻环”', _short], settings));
+    final fontSize = settings.fontSize;
+    for (final entry in {'①': '或作：“鼻环”', '②': _short}.entries) {
+      final number = tester.getRect(find.text(entry.key));
+      final note = tester.getRect(find.text(entry.value));
+      expect(note.left - number.right, greaterThanOrEqualTo(fontSize * 0.3),
+          reason: '${entry.key} must leave a visible gap before its note');
+      expect(note.left, greaterThan(number.right));
+    }
+    // And the notes still line up under each other: one column.
+    expect(tester.getRect(find.text('或作：“鼻环”')).left,
+        tester.getRect(find.text(_short)).left);
+  });
+
   testWidgets('the numbers are CIRCLED, and keep counting past nine',
       (tester) async {
     // 2026-09-15: 「这个看起来很confuse 你可能右上角 圈圈数字」. A bare

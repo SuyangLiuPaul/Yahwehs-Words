@@ -115,9 +115,18 @@ android {
             .split(".")
             .map { it.toIntOrNull() ?: 0 }
             .let { p ->
-                p.getOrElse(0) { 0 } * 1_000_000 +
+                // 2026-10-03: x10 plus the build number (`--build-number`, 1
+                // when none is given; 1-9), so the SAME visible version can be
+                // rebuilt and re-uploaded. Play rejects a repeated code, and
+                // 1.7.7 had to be cut twice (owner: after the icon and theme
+                // changes "还是 1.7.7"). 1.7.7 build 1 is 10070071, above the 1007007
+                // already on Play, and every later version stays above. It must
+                // stay BELOW the Wear codes (20,001,000 + run number, see
+                // play_version_code_guard_test), which holds through 1.9.x.
+                (p.getOrElse(0) { 0 } * 1_000_000 +
                     p.getOrElse(1) { 0 } * 1_000 +
-                    p.getOrElse(2) { 0 }
+                    p.getOrElse(2) { 0 }) * 10 +
+                    flutter.versionCode.coerceIn(1, 9)
             }
         versionName = flutter.versionName
         // 2026-05-24 (v1.3.38): default app_name. Each productFlavor

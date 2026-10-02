@@ -2,7 +2,7 @@ import Foundation
 
 struct CompanionPublicationPolicy {
   static func needsImmediateContext(_ data: [String: Any], after previous: [String: Any]) -> Bool {
-    let keys = ["id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat"]
+    let keys = ["id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat", "accent", "logo"]
     let identity = NSDictionary(dictionary: data.filter { keys.contains($0.key) })
     let old = NSDictionary(dictionary: previous.filter { keys.contains($0.key) })
     if !identity.isEqual(old) { return true }
