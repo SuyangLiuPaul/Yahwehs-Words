@@ -1,3 +1,4 @@
+import '../widgets/play_update_banner.dart';
 import 'package:yahwehs_words/constants/learning_visibility.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
@@ -599,6 +600,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 // is acted on. It renders nothing at all when there is no
                 // newer version — which is nearly always — so it costs the
                 // layout below it nothing.
+                PlayUpdateBanner(locale: locale),
                 UpdateAvailableBanner(
                   locale: locale,
                   release: _update,
