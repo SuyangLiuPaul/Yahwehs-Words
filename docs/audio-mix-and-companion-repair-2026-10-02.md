@@ -19,3 +19,13 @@ The physical Watch report showed a transparent blue SAIL cover against a dark su
 Focused Dart regressions, native pure logic checks, watch SDK type-check, full suite, real paired simulator UI and signed/native builds are separate checks. Physical Watch and vehicle results must be verified rather than inferred from a green build. This preparation record does not claim a new store delivery. Pending reviews and immutable v1.7.3 packages/tags remain intact.
 
 References: [Watch application context](https://developer.apple.com/documentation/watchconnectivity/wcsession/updateapplicationcontext(_:)), [Reachable session](https://developer.apple.com/documentation/watchconnectivity/wcsession/isreachable), [Apple interface appearance](https://developer.apple.com/design/human-interface-guidelines/dark-mode).
+
+## Verified source checks
+
+- Source repair PR26 merged after exact-head CI36943978155 succeeded at6c7caa55be8d812feeb5fd2b448cafa6bb64c797.
+- Local full stable-head suite:3,959 passed,36 existing skips,zero failures; analyze clean.
+- Swift publication/seek and Watch snapshot-order checks passed; Watch SDK type-check and full phone/Watch simulator builds passed. Wear debug build passed.
+- Actual phone UI showed Ask祈求 with backing/instrumental disabled and its unchanged574-song queue. Proof is retained locally as ask-disabled-mixes.jpg.
+- Watch/CarPlay UI follow-up was interrupted by an invalid native window/menu handle. This does not count as successful companion UI verification. Prior1.7.3 paired results remain dated evidence; physical checks and OS CarPlay progress remain open.
+
+New delivery follows the separate1.7.4 record; existing1.7.3 reviews and tags are unchanged.

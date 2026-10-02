@@ -1,3 +1,5 @@
+> October2 media repair: Words1.7.4 carries current-song mix guards, brighter cover backing and reachable/foreground companion refresh. [Current delivery](delivery-1.7.4-2026-10-02.md) distinguishes shipped binaries from preparation and open physical-device checks.
+
 ## Current-song and live companion repair — October 2
 
 [Repair scope and verification](audio-mix-and-companion-repair-2026-10-02.md): now-playing mix selection is per current song, transparent covers have a bright backing, visible Apple Watch uses live messages and foreground refresh, and both watch bridges detect seek discontinuities. Catalogue reselect resumes the same recording. New native packages and physical checks are still required; this is not a claim that existing1.7.3 binaries contain these changes.
