@@ -20,6 +20,7 @@ class MediaCompanionService {
   static Future<void>? _dailyLoading;
   static final _subscriptions = <StreamSubscription<dynamic>>[];
   static String? _publishedIdentity;
+  static Map<String, dynamic>? _lastEventSample;
   static String _locale = 'en';
   static Map<String, dynamic> _reading = {};
   static String _readingIdentity = '';
@@ -50,6 +51,7 @@ class MediaCompanionService {
     }
     _subscriptions.clear();
     _publishedIdentity = null;
+    _lastEventSample = null;
     void publishChange(dynamic _) {
       final snapshot = _snapshot();
       final identity = jsonEncode({
@@ -70,7 +72,23 @@ class MediaCompanionService {
         ])
           key: snapshot[key],
       });
-      if (identity != _publishedIdentity) {
+      final last = _lastEventSample;
+      final now = snapshot['syncedAt'] as int;
+      final elapsed =
+          last == null ? 0 : (now - (last['syncedAt'] as int)) / 1000;
+      final expected = last == null
+          ? 0
+          : (last['position'] as int) +
+              (last['playing'] == true && last['loading'] != true
+                  ? elapsed
+                  : 0);
+      final jumped =
+          last != null && ((snapshot['position'] as int) - expected).abs() > 2;
+      if (identity != _publishedIdentity ||
+          last == null ||
+          elapsed >= 3 ||
+          jumped) {
+        _lastEventSample = snapshot;
         _publishedIdentity = identity;
         unawaited(_publish());
       }
@@ -164,8 +182,9 @@ class MediaCompanionService {
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
       'canNext':
           item?.id.startsWith('car:sermon/') == true || h.songQueue.hasNext,
-      'canPrevious':
-          item?.id.startsWith('car:sermon/') == true || h.songQueue.hasPrevious,
+      'canPrevious': item?.id.startsWith('car:sermon/') == true ||
+          h.songQueue.hasPrevious ||
+          state.position.inSeconds >= 3,
       'error': state.errorMessage ?? '',
       'reading': _reading,
       'daily': _daily

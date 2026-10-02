@@ -468,8 +468,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     final wasPlaying = _playing;
     final resumeAt = _position;
     _queue = next;
-    _resumeAt = resumeAt > Duration.zero ? resumeAt : null;
-    await _playCurrent(autoPlay: wasPlaying);
+    await _playCurrent(
+        autoPlay: wasPlaying,
+        resumeAt: resumeAt > Duration.zero ? resumeAt : null);
     await _publishQueue();
   }
 
@@ -558,6 +559,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _position = Duration.zero;
     _duration = Duration.zero;
     _durationUrl = null;
+    _resumeAt = null;
     _publishMediaItem();
     unawaited(_publishQueue());
     _broadcast();
@@ -651,7 +653,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   // ── Internals ───────────────────────────────────────────────────
 
-  Future<void> _playCurrent({bool autoPlay = true}) async {
+  Future<void> _playCurrent({bool autoPlay = true, Duration? resumeAt}) async {
     if (_remote != null) useSongs();
     final item = _queue.current;
     if (item == null) return;
@@ -673,6 +675,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // So the play call is issued FIRST, synchronously, before any
     // state updates or notifications — and the future is awaited
     // afterwards. Everything below this line used to happen before it.
+    _resumeAt = resumeAt;
     final resolved = _resolvedUrl(item);
     _preloadedUrl = null;
     // Reset before asking the engine to play: a new file must not
@@ -680,7 +683,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _position = Duration.zero;
     _duration = Duration.zero;
     _durationUrl = item.url;
-    final playing = _player.play(resolved);
+    if (!autoPlay) _playing = false;
+    final playing =
+        autoPlay ? _player.play(resolved) : _player.loadPaused(resolved);
     _currentAttempt = _player.attempt;
     final attempt = _currentAttempt;
     // Applied per track, not once: the web element keeps `loop` across
@@ -698,11 +703,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     try {
       await playing;
       if (attempt != _currentAttempt) return;
-      if (!autoPlay) {
-        _playing = false;
-        _cancelStallWatchdog();
-        await _player.pause();
-      }
+      if (!autoPlay) _cancelStallWatchdog();
       _failed.remove(item.song.id);
     } on PlaybackBlockedException catch (e) {
       // The browser refused to START — not a bad track. Handled apart

@@ -103,6 +103,13 @@ class FakeSongPlaybackEngine implements SongPlaybackEngine {
     return Future.value();
   }
 
+  final List<String> pausedLoadCalls = [];
+  @override
+  Future<void> loadPaused(String url) async {
+    _attempt++;
+    pausedLoadCalls.add(url);
+  }
+
   void resolveHeldPlay() => _held?.complete();
 
   /// [attempt] defaults to whatever the most recent play() issued —
@@ -111,6 +118,7 @@ class FakeSongPlaybackEngine implements SongPlaybackEngine {
   /// STALE error for a superseded attempt.
   void emitError(String message, {int? attempt}) =>
       _error.add((attempt ?? _attempt, message));
+
   /// A natural end of track — what the real engines report from
   /// `ended` (web) and `onPlayerComplete` (native). Deliberately not
   /// emitted by [play] or [stop]: both engines fire it only on a

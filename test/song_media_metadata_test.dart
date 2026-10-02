@@ -98,6 +98,9 @@ void main() {
     engine.emitDuration(const Duration(seconds: 180));
     await tester.pump();
     expect(handler.currentSong!.id, 'current');
+    expect(engine.pausedLoadCalls.length, 1);
+    expect(engine.playCalls.length, 1,
+        reason: 'changing a paused mix must make no sound');
     expect(handler.songQueue.length, 2);
     expect(engine.seekCalls.last, const Duration(seconds: 33));
     // The real engine reports the acknowledged seek through this stream.

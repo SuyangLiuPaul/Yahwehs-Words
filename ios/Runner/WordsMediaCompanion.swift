@@ -30,6 +30,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
   var locale: String { latest["locale"] as? String ?? "en" }
   private var sentContext: [String: Any] = [:]
   private var liveTransferPending = false
+  private var liveTransferGeneration = 0
   private var lastTransfer = Date.distantPast
 
   static func register(with registrar: FlutterPluginRegistrar) {
@@ -72,10 +73,18 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     // watch needs the live message path as well, including phone seeks.
     if session.isReachable && !liveTransferPending {
       liveTransferPending = true
+      liveTransferGeneration += 1
+      let generation = liveTransferGeneration
+      func completed() {
+        DispatchQueue.main.async {
+          if generation == self.liveTransferGeneration { self.liveTransferPending = false }
+        }
+      }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: completed)
       session.sendMessage(data, replyHandler: { _ in
-        DispatchQueue.main.async { self.liveTransferPending = false }
+        completed()
       }, errorHandler: { _ in
-        DispatchQueue.main.async { self.liveTransferPending = false }
+        completed()
       })
     }
   }

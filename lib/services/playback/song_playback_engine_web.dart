@@ -124,7 +124,6 @@ class SongPlaybackEngine {
   /// engine's [attempt] doc.
   int get attempt => _attempt;
 
-
   String _describeError() {
     final e = _el.error;
     if (e == null) return 'playback failed';
@@ -180,6 +179,16 @@ class SongPlaybackEngine {
     // resume goes through resume(), which leaves the position alone.
     _el.currentTime = 0;
     await _start();
+  }
+
+  /// Loading a paused mix is not a play gesture and must make no sound.
+  Future<void> loadPaused(String url) async {
+    _attempt++;
+    _el.pause();
+    _lastSrc = url;
+    _el.src = url;
+    _el.load();
+    _playing.add(false);
   }
 
   String? _lastSrc;
