@@ -1,3 +1,9 @@
+## Latest verified delivery and next companion preparation — 2026-10-02
+
+Both apps have immutable1.7.6 source/releases; all8websites verified1.7.6 and Google existingphone/Wearinternaltracks published. Microsoftsubmission6bothcertification. AllfourApple1.7.6 packagesdelivered; WordsMacprocessing, otherthreeexternalbetasWaitingforReview. Preserveinitialpublicreviews. [Delivery record](docs/delivery-1.7.6-2026-10-02.md).
+
+Owner requests companion improvements in one next release. Branch feat/companion-launch-reliability contains Watch audio-launch routing, truthful paused labels, coalesced iPhone snapshots and Wear foreground/lifecycle fixes. Native Watch type-check/Wear compile passed; fullCI and paired/physical checks remain. No new tag/version or store upload for this preparation. [Next release gates](docs/companion-next-release-2026-10-02.md). Exclude yahwehdehua.
+
 ## Active paired 1.7.5 preparation
 
 See `docs/delivery-1.7.5-2026-10-02.md`. New update prompts and Words companion/audio repairs are in preparation; preserve pending store reviews and immutable prior tags.

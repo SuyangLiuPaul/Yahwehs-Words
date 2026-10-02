@@ -80,7 +80,14 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
       let generation = liveTransferGeneration
       func completed() {
         DispatchQueue.main.async {
-          if generation == self.liveTransferGeneration { self.liveTransferPending = false }
+          if generation == self.liveTransferGeneration {
+            self.liveTransferPending = false
+            // Deliver a pause/seek/track change that arrived while a prior
+            // sample was in flight, rather than waiting for the next timer.
+            if CompanionPublicationPolicy.needsImmediateContext(self.latest, after: data) {
+              self.publishToWatch()
+            }
+          }
         }
       }
       DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: completed)

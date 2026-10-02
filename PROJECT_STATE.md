@@ -1,3 +1,9 @@
+## Latest verified delivery and next companion preparation — 2026-10-02
+
+Both apps have immutable1.7.6 source/releases; all8websites verified1.7.6 and Google existingphone/Wearinternaltracks published. Microsoftsubmission6bothcertification. AllfourApple1.7.6 packagesdelivered; WordsMacprocessing, otherthreeexternalbetasWaitingforReview. Preserveinitialpublicreviews. [Delivery record](docs/delivery-1.7.6-2026-10-02.md).
+
+Owner requests companion improvements in one next release. Branch feat/companion-launch-reliability contains Watch audio-launch routing, truthful paused labels, coalesced iPhone snapshots and Wear foreground/lifecycle fixes. Native Watch type-check/Wear compile passed; fullCI and paired/physical checks remain. No new tag/version or store upload for this preparation. [Next release gates](docs/companion-next-release-2026-10-02.md). Exclude yahwehdehua.
+
 ## Words media repair delivery — 2026-10-02
 
 Words **1.7.4** fixes recording choices for the current song, preserves queue/position on mix changes, keeps paused loading silent, improves Watch/Wear readability and playback-state publication, and makes car catalogue resume idempotent. Source PR26 and version PR27 passed their matching head CI and merged. Immutable tag `v1.7.4` is `df5ed7beeb6a19892fb859c8399cd921b2c96b82`. Sword stays **1.7.3**; it has no media/watch/car capability.

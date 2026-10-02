@@ -46,8 +46,26 @@ import SwiftUI
 import WatchConnectivity
 import WatchKit
 
+final class WordsWatchDelegate: NSObject, WKApplicationDelegate {
+  static let playbackRequested = Notification.Name("WordsWatchPlaybackRequested")
+  static let pendingPlaybackKey = "words.pendingPlaybackLaunch"
+  /// A request nobody acted on within this long is stale. It was made for a
+  /// listener who has long since stopped waiting, and opening the playback
+  /// page on some later launch would be a surprise, not a convenience.
+  static let pendingPlaybackLifetime: TimeInterval = 60
+  func handleRemoteNowPlayingActivity() {
+    // The OS chooses whether to launch us. Preserve a cold-launch request
+    // until SwiftUI is ready; this does not force the watch into foreground.
+    DispatchQueue.main.async {
+      UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: Self.pendingPlaybackKey)
+      NotificationCenter.default.post(name: Self.playbackRequested, object: nil)
+    }
+  }
+}
+
 @main
 struct WordsWatchApp: App {
+  @WKApplicationDelegateAdaptor(WordsWatchDelegate.self) private var appDelegate
   @Environment(\.scenePhase) private var scenePhase
   @StateObject private var companion = WatchCompanion()
   var body: some Scene {
@@ -195,13 +213,14 @@ struct WatchArtwork: View {
 
 struct WatchHome: View {
   @EnvironmentObject var companion: WatchCompanion
+  @State private var playbackPresented = false
   var body: some View {
     let state = companion.state
     NavigationStack {
       ScrollView {
         VStack(spacing: 10) {
           Text("Yahweh’s Words").font(.caption).fontWeight(.semibold).foregroundStyle(WatchStyle.accent)
-          NavigationLink { WatchPlaybackView() } label: {
+          Button { playbackPresented = true } label: {
             VStack(spacing: 8) {
               WatchArtwork(state: state)
               Text((state["title"] as? String ?? "").isEmpty ? WatchStyle.text(state,"Now playing","正在播放","正在播放") : state["title"] as? String ?? "")
@@ -217,7 +236,18 @@ struct WatchHome: View {
           Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh","刷新","重新整理"), systemImage: "arrow.clockwise") }.font(.caption)
         }.padding(.horizontal, 6)
       }.background(.black)
+        .navigationDestination(isPresented: $playbackPresented) { WatchPlaybackView() }
     }.tint(WatchStyle.accent)
+      .onAppear { consumePlaybackLaunch() }
+      .onReceive(NotificationCenter.default.publisher(for: WordsWatchDelegate.playbackRequested)) { _ in consumePlaybackLaunch() }
+  }
+  private func consumePlaybackLaunch() {
+    let requestedAt = UserDefaults.standard.double(forKey: WordsWatchDelegate.pendingPlaybackKey)
+    guard requestedAt > 0 else { return }
+    UserDefaults.standard.removeObject(forKey: WordsWatchDelegate.pendingPlaybackKey)
+    guard Date().timeIntervalSince1970 - requestedAt <= WordsWatchDelegate.pendingPlaybackLifetime else { return }
+    companion.send("snapshot")
+    playbackPresented = true
   }
 }
 
@@ -313,7 +343,7 @@ struct WatchPlaybackView: View {
         }
         if total > 0 { ProgressView(value: Double(elapsed), total: Double(total)).tint(WatchStyle.accent) }
         HStack { Text(WatchPlaybackSnapshot.clock(elapsed)); Spacer(); Text(total > 0 ? WatchPlaybackSnapshot.clock(total) : "—") }.font(.caption2).monospacedDigit().foregroundStyle(WatchStyle.secondary)
-        Label(!live ? WatchStyle.text(state,"Saved · reconnect iPhone","已保存 · 重新连接 iPhone","已儲存 · 重新連接 iPhone") : state["loading"] as? Bool == true ? WatchStyle.text(state,"Loading on iPhone…","iPhone 正在加载…","iPhone 正在載入…") : WatchStyle.text(state,"Playing on iPhone","音频在 iPhone 播放","音訊在 iPhone 播放"), systemImage: live ? "iphone" : "iphone.slash")
+        Label(!live ? WatchStyle.text(state,"Saved · reconnect iPhone","已保存 · 重新连接 iPhone","已儲存 · 重新連接 iPhone") : state["loading"] as? Bool == true ? WatchStyle.text(state,"Loading on iPhone…","iPhone 正在加载…","iPhone 正在載入…") : state["playing"] as? Bool == true ? WatchStyle.text(state,"Playing on iPhone","音频在 iPhone 播放","音訊在 iPhone 播放") : WatchStyle.text(state,"Paused on iPhone","iPhone 已暂停","iPhone 已暫停"), systemImage: live ? "iphone" : "iphone.slash")
           .font(.caption2).foregroundStyle(WatchStyle.secondary).multilineTextAlignment(.center)
         if !companion.error.isEmpty { Text(companion.error).font(.caption2).foregroundStyle(WatchStyle.accent) }
         NavigationLink { NowPlayingView() } label: { Label(WatchStyle.text(state,"Volume & system controls","音量与系统控制","音量與系統控制"), systemImage: "speaker.wave.2") }.font(.caption)
