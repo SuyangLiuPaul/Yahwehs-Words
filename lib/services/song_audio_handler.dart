@@ -133,6 +133,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     if (kIsWeb) return;
     try {
       final session = await AudioSession.instance;
+      if (_disposed) return;
       await _interruptions?.cancel();
       await _noisyRoute?.cancel();
       _interruptions = session.interruptionEventStream.listen(
@@ -200,6 +201,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     }
   }
 
+  bool _disposed = false;
   RemoteAudioSource? _remote;
 
   void attachRemote(RemoteAudioSource source) {
@@ -212,6 +214,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> pauseSongForFocus() {
+    _resumeAfterInterruption = false;
     _cancelStallWatchdog();
     return _player.pause();
   }
@@ -1107,6 +1110,10 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> dispose() async {
+    _disposed = true;
+    await _interruptions?.cancel();
+    await _noisyRoute?.cancel();
+    _stallTimer?.cancel();
     _remote?.removeListener(_broadcast);
     _sleepTimer?.cancel();
     await _player.dispose();

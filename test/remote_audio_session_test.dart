@@ -75,7 +75,13 @@ void main() {
     for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
       SharedPreferences.setMockInitialValues({'locale': locale});
       final children = await CarAudioCatalogue.children(CarAudioCatalogue.root);
-      expect(children.length, 3);
+      expect(children.map((item) => item.id), [
+        'car:queue',
+        'car:playlists',
+        'car:songs',
+        'car:instrumental',
+        'car:sermons'
+      ]);
       expect(children.every((item) => item.playable == false), true);
       expect(children.every((item) => item.artUri?.scheme == 'https'), true);
       expect(
