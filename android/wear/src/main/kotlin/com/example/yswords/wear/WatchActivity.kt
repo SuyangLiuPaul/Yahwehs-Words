@@ -31,6 +31,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private var error = ""
     private var activeRequest = ""
     private var connected = false
+    private var foreground = false
+    private var foregroundGeneration = 0L
     private var connectionProof = 0L
     private var loading = false
     private val callbacks = Handler(Looper.getMainLooper())
@@ -65,12 +67,15 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     }
     override fun onResume() {
         super.onResume()
+        foreground = true
+        val generation = ++foregroundGeneration
         connected = false
         callbacks.post(progressTick)
         Wearable.getMessageClient(this).addListener(this)
         Wearable.getDataClient(this).addListener(this)
         Wearable.getDataClient(this).dataItems.addOnSuccessListener { buffer ->
             try {
+                if (!foreground || generation != foregroundGeneration) return@addOnSuccessListener
                 for (item in buffer) if (item.uri.path == "/words/state") {
                     val raw = DataMapItem.fromDataItem(item).dataMap.getString("json")
                     if (raw != null) try { accept(JSONObject(raw), liveContact = false) } catch (_: Exception) { }
@@ -79,21 +84,29 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             } finally { buffer.release() }
         }
         send("snapshot")
+        if (screen == "library") send("children", folder)
     }
     override fun onPause() {
+        foreground = false
+        foregroundGeneration++
         Wearable.getMessageClient(this).removeListener(this)
         Wearable.getDataClient(this).removeListener(this)
         callbacks.removeCallbacksAndMessages(null)
         pending.clear()
         requestProofs.clear()
+        loading = false
+        activeRequest = ""
         super.onPause()
     }
     override fun onMessageReceived(event: MessageEvent) {
         if (event.path != "/words/reply") return
         val reply = try { JSONObject(String(event.data, Charsets.UTF_8)) } catch (_: Exception) { return }
         runOnUiThread {
+            if (!foreground) return@runOnUiThread
             val request = reply.optString("requestId")
-            val proofAtRequest = requestProofs.remove(request)
+            // Discard replies from a previous foreground session or from
+            // requests already timed out/canceled when the screen closed.
+            val proofAtRequest = requestProofs.remove(request) ?: return@runOnUiThread
             pending.remove(request)?.let { callbacks.removeCallbacks(it) }
             if (reply.has("items")) {
                 if (reply.optString("requestId") != activeRequest) return@runOnUiThread
@@ -108,7 +121,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 if (request == activeRequest) {
                     // A media publication is not completion of this folder.
                     loading = false
-                } else if (proofAtRequest == null || proofAtRequest != connectionProof) return@runOnUiThread
+                } else if (proofAtRequest != connectionProof) return@runOnUiThread
                 error = reply.optString("error")
             }
             render()
@@ -118,7 +131,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         for (event in events) if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == "/words/state") {
             val raw = DataMapItem.fromDataItem(event.dataItem).dataMap.getString("json") ?: continue
             val value = try { JSONObject(raw) } catch (_: Exception) { continue }
-            runOnUiThread { accept(value); render() }
+            runOnUiThread { if (foreground) { accept(value); render() } }
         }
     }
     private fun accept(value: JSONObject, liveContact: Boolean = true) {
@@ -133,12 +146,15 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         getPreferences(0).edit().putString("state", value.toString()).apply()
     }
     private fun send(action: String, id: String? = null) {
+        if (!foreground) return
+        val generation = foregroundGeneration
         if (action in setOf("shuffle", "repeat") && (!connected || !isFresh() || state.optBoolean("loading") || error.isNotEmpty())) return
 
         val request = UUID.randomUUID().toString()
         val proofAtRequest = connectionProof
         requestProofs[request] = proofAtRequest
         fun fail(message: String) {
+            if (!foreground || generation != foregroundGeneration) return
             requestProofs.remove(request)
             if (action == "children" && request != activeRequest) return
             if (action == "children") loading = false
@@ -154,6 +170,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val data = JSONObject().put("action",action).put("requestId",request)
         if (id != null) data.put("id", id)
         Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            if (!foreground || generation != foregroundGeneration) return@addOnSuccessListener
             if (nodes.isEmpty()) { fail("Connect your phone to Words. Saved daily verse is available."); return@addOnSuccessListener }
             // One nearby paired phone; do not trigger playback on every node.
             val node = nodes.firstOrNull { it.isNearby } ?: nodes.first()
@@ -204,7 +221,13 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 val options=BitmapFactory.Options().apply { inSampleSize=1 };while(maxOf(bounds.outWidth,bounds.outHeight)/options.inSampleSize>256) options.inSampleSize*=2
                 BitmapFactory.decodeByteArray(bytes,0,bytes.size,options)
             }catch(_:Exception){null}finally{connection?.disconnect()}
-            runOnUiThread { if(!isFinishing && artworkUrl==raw && bitmap!=null) { artworkBitmap=bitmap;artworkView?.imageTintList=null;artworkView?.setImageBitmap(bitmap) } }
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed && artworkUrl == raw) {
+                    if (bitmap != null) {
+                        artworkBitmap=bitmap;artworkView?.imageTintList=null;artworkView?.setImageBitmap(bitmap)
+                    } else { artworkUrl="" } // Retry a failed cover on the next fresh publication.
+                }
+            }
         }
     }
     private fun transportRow(sermon: Boolean) {
@@ -253,7 +276,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             !live -> tr("Saved playback · reconnect phone","已保存 · 重新连接手机","已儲存 · 重新連接手機")
             state.optString("error").isNotEmpty() -> state.optString("error")
             busy -> tr("Loading on phone…","手机正在加载…","手機正在載入…")
-            else -> tr("Audio plays on phone","音频在手机播放","音訊在手機播放")
+            state.optBoolean("playing") -> tr("Audio plays on phone","音频在手机播放","音訊在手機播放")
+            else -> tr("Paused on phone","手机已暂停","手機已暫停")
         }
     }
     private fun render() {
