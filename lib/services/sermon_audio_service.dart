@@ -1,3 +1,4 @@
+import 'companion_theme.dart';
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'remote_audio_source.dart';
@@ -242,7 +243,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           title: _remoteTitle ?? 'Sermon $_sermonId',
           artist: 'Eric H. H. Chang',
           album: 'Sermons · 讲道',
-          artUri: Uri.parse('https://yahwehword.com/icons/Icon-512.png'),
+          artUri: CompanionTheme.artwork,
           duration: overallDuration,
         );
 
@@ -255,6 +256,8 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           MediaControl.stop
         ],
         systemActions: {
+          if (_sermonId != null) MediaAction.play,
+          if (_sermonId != null) MediaAction.pause,
           MediaAction.seek,
           MediaAction.seekForward,
           MediaAction.seekBackward
@@ -277,7 +280,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
 
   @override
   Future<void> remotePlay() async {
-    if (_sermonId == null || _playing) return;
+    if (_sermonId == null) return;
     if (_completed) {
       await play(_sermonId!);
     } else {
@@ -549,6 +552,8 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
   }
 
   Future<void> resume() async {
+    _error = null;
+    notifyListeners();
     await MediaFocus.instance.claim(this);
     onRemoteActivation?.call(this);
     await _player.resume();

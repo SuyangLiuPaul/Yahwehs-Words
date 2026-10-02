@@ -26,6 +26,21 @@ struct WatchCompanionLogicChecks {
     precondition(!WatchPlaybackSnapshot.canControl(sample, now: now, connected: true, error: "Phone unavailable"))
     precondition(!WatchPlaybackSnapshot.isFresh(["syncedAt": 1006000], now: now))
     precondition(WatchPlaybackSnapshot.elapsed(sample.merging(["position": 119]) { _, new in new }, now: now, connected: true) == 120)
+
+    // The theme follows the phone: no accent keeps the original blue, a colour
+    // moves the whole palette, and a deep colour is lifted to stay legible.
+    precondition(WatchThemePalette.from([:]) == WatchThemePalette.original)
+    let red = WatchThemePalette.from(["accent": NSNumber(value: 0xFFF44336 as UInt32)])
+    precondition(red.accent.r > red.accent.b && red.accent.r > 0.9, "red stays red")
+    precondition(red != WatchThemePalette.original)
+    let navy = WatchThemePalette.from(["accent": NSNumber(value: 0xFF0D1B4F as UInt32)])
+    let navyLuminance = 0.2126 * navy.accent.r + 0.7152 * navy.accent.g + 0.0722 * navy.accent.b
+    precondition(navyLuminance >= 0.44, "a dark theme colour is lifted for a dark screen")
+    precondition(navy.accent.b > navy.accent.r, "…and keeps its hue")
+    precondition(red.surface.r < 0.35 && red.page.r < 0.2, "surfaces stay dark")
+    precondition(WatchThemePalette.logoName(["logo": "Red"]) == "LogoRed")
+    precondition(WatchThemePalette.logoName([:]) == "LogoDefault")
+    precondition(WatchThemePalette.logoName(["logo": "../../etc"]) == "LogoDefault", "an unknown variant never names an asset")
     precondition(WatchPlaybackSnapshot.clock(3601) == "1:00:01")
     precondition(WatchPlaybackSnapshot.clock(17) == "0:17")
     var proof = WatchConnectionProof()

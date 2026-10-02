@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:audio_session/audio_session.dart';
 
 import 'package:audioplayers/audioplayers.dart' as ap;
 
@@ -129,6 +131,8 @@ class SongPlaybackEngine {
   Stream<(int, String)> get onError => _error.stream;
 
   int _attempt = 0;
+  String? _requestedSource;
+  String? _loadedSource;
 
   /// The id of the most recently issued `play()` call. Bumped
   /// synchronously at the top of [play], before any `await`, so a
@@ -140,6 +144,7 @@ class SongPlaybackEngine {
   /// Start [url], which may be an https URL or a local file path from
   /// the offline downloads.
   Future<void> play(String url) async {
+    _requestedSource = url;
     final id = ++_attempt;
     // The hand-off. If the standby was prepared with this very track it
     // is already buffered, so the two swap roles and the new live player
@@ -155,7 +160,9 @@ class SongPlaybackEngine {
       var started = false;
       await _guard(id, () async {
         try {
+          await _activate(active);
           await active.resume();
+          _loadedSource = url;
           started = true;
         } finally {
           if (!identical(old, _player) && _sourceRevisions[old] == oldSource) {
@@ -168,7 +175,27 @@ class SongPlaybackEngine {
     }
     final active = _player;
     _sourceRevisions[active] = ++_sourceRevision;
-    await _guard(id, () => active.play(_sourceFor(url)));
+    await _guard(id, () async {
+      await _activate(active);
+      await active.play(_sourceFor(url));
+      _loadedSource = url;
+    });
+  }
+
+  /// Prepare a recording while paused without briefly starting audio.
+  Future<void> loadPaused(String url) async {
+    _requestedSource = url;
+    final id = ++_attempt;
+    final active = _player;
+    _standbyUrl = null;
+    _sourceRevisions[active] = ++_sourceRevision;
+    await _guard(id, () async {
+      await active.pause();
+      if (id != _attempt) return;
+      await active.setSource(_sourceFor(url));
+      _loadedSource = url;
+    });
+    if (id == _attempt) _playing.add(false);
   }
 
   Future<void> _publishHandoffDuration(ap.AudioPlayer active, int id) async {
@@ -188,7 +215,38 @@ class SongPlaybackEngine {
     } catch (_) {/* Metadata failure does not fail sounding audio. */}
   }
 
-  Future<void> resume() => _guard(_attempt, _player.resume);
+  final Set<ap.AudioPlayer> _focusConfigured = {};
+  Future<void> _activate(ap.AudioPlayer player) async {
+    if (!Platform.isIOS && !Platform.isAndroid) return;
+    if (Platform.isAndroid && !_focusConfigured.contains(player)) {
+      // audio_session owns focus events for the shared media session.
+      // A second per-player focus request would hide call/navigation events.
+      await player.setAudioContext(ap.AudioContext(
+          android: const ap.AudioContextAndroid(
+              audioFocus: ap.AndroidAudioFocus.none)));
+      _focusConfigured.add(player);
+    }
+    try {
+      final session = await AudioSession.instance;
+      if (!await session.setActive(true)) {
+        throw StateError('Audio focus was denied');
+      }
+    } catch (error) {
+      throw StateError(
+          '[audio-focus] Playback is unavailable during an audio interruption: $error');
+    }
+  }
+
+  Future<void> resume() => _guard(_attempt, () async {
+        await _activate(_player);
+        final source = _requestedSource;
+        if (source != null && _loadedSource != source) {
+          await _player.play(_sourceFor(source));
+          _loadedSource = source;
+        } else {
+          await _player.resume();
+        }
+      });
   Future<void> pause() => _guard(_attempt, _player.pause);
   Future<void> stop() => _guard(_attempt, _player.stop);
   Future<void> seek(Duration to) => _guard(_attempt, () => _player.seek(to));
@@ -262,6 +320,7 @@ class SongPlaybackEngine {
     try {
       await action();
     } catch (e) {
+      _playing.add(false);
       _error.add((id, '$e'));
     }
   }

@@ -36,6 +36,38 @@ void main() {
         themes: const [],
       );
 
+  test('current mix availability ignores recordings on other songs', () {
+    final queue = SongQueue.fromSongs([
+      song('ask'),
+      song('free-man', accompaniment: 'https://x/free-acc.mp3'),
+    ]);
+    expect(queue.hasMix(TrackPreference.accompaniment), true);
+    expect(queue.hasCurrentMix(TrackPreference.accompaniment), false);
+    expect(
+        identical(queue.withCurrentMix(TrackPreference.accompaniment), queue),
+        true);
+  });
+
+  test('current recording round trip retains neighbours, shuffle and repeat',
+      () {
+    final queue = SongQueue.fromSongs([
+      song('before'),
+      song('current', accompaniment: 'https://x/current-acc.mp3'),
+      song('after'),
+    ], startSongId: 'current', shuffled: true, repeat: RepeatMode.all);
+    final mixed = queue.withCurrentMix(TrackPreference.accompaniment);
+    expect(mixed.current!.song.id, 'current');
+    expect(mixed.current!.kind, 'accompaniment');
+    expect(mixed.length, queue.length);
+    expect(mixed.index, queue.index);
+    expect(mixed.shuffled, queue.shuffled);
+    expect(mixed.repeat, queue.repeat);
+    expect(
+        mixed.items.map((i) => i.song.id), queue.items.map((i) => i.song.id));
+    final vocal = mixed.withCurrentMix(TrackPreference.vocal);
+    expect(vocal.items.map((i) => i.url), queue.items.map((i) => i.url));
+  });
+
   test('switching mix keeps the current song and the running order', () {
     final songs = [
       for (var i = 0; i < 4; i++)
@@ -44,15 +76,14 @@ void main() {
     final queue = SongQueue.fromSongs(songs, startSongId: 's2');
     expect(queue.current!.song.id, 's2');
 
-    final next = queue.withPreference(
-        TrackPreference.accompaniment, TrackFallback.skip);
+    final next =
+        queue.withPreference(TrackPreference.accompaniment, TrackFallback.skip);
 
     expect(next.current!.song.id, 's2',
         reason: 'changing the mix should not move you to another song');
     expect(next.current!.kind, 'accompaniment');
     expect(next.current!.url, 'https://x/s2-acc.mp3');
-    expect(next.items.map((i) => i.song.id).toList(),
-        ['s0', 's1', 's2', 's3'],
+    expect(next.items.map((i) => i.song.id).toList(), ['s0', 's1', 's2', 's3'],
         reason: 'the running order must survive a mix change');
   });
 
@@ -79,8 +110,8 @@ void main() {
       song('also', accompaniment: 'https://x/also-acc.mp3'),
     ]);
 
-    final next = queue.withPreference(
-        TrackPreference.accompaniment, TrackFallback.skip);
+    final next =
+        queue.withPreference(TrackPreference.accompaniment, TrackFallback.skip);
 
     expect(next.items.map((i) => i.song.id).toList(), ['has', 'also'],
         reason: 'a queue set to accompaniment must never sing');
@@ -101,8 +132,8 @@ void main() {
       song('s3', accompaniment: 'https://x/s3-acc.mp3'),
     ], startSongId: 's2');
 
-    final next = queue.withPreference(
-        TrackPreference.accompaniment, TrackFallback.skip);
+    final next =
+        queue.withPreference(TrackPreference.accompaniment, TrackFallback.skip);
 
     expect(next.current!.song.id, 's3',
         reason: 'skipping means going on to the next song that has the '
@@ -118,8 +149,8 @@ void main() {
       song('s3'),
     ], startSongId: 's3');
 
-    final next = queue.withPreference(
-        TrackPreference.accompaniment, TrackFallback.skip);
+    final next =
+        queue.withPreference(TrackPreference.accompaniment, TrackFallback.skip);
 
     expect(next.current!.song.id, 's1',
         reason: 'the end of the queue is nearer to where you were than '
@@ -140,21 +171,19 @@ void main() {
         reason: 'the song with no accompaniment keeps its sung take');
   });
 
-  test('a mix nothing has yields an empty queue for the caller to reject',
-      () {
-    final queue = SongQueue.fromSongs(
-        [for (var i = 0; i < 3; i++) song('s$i')], startSongId: 's1');
+  test('a mix nothing has yields an empty queue for the caller to reject', () {
+    final queue = SongQueue.fromSongs([for (var i = 0; i < 3; i++) song('s$i')],
+        startSongId: 's1');
 
-    final next = queue.withPreference(
-        TrackPreference.instrumental, TrackFallback.skip);
+    final next =
+        queue.withPreference(TrackPreference.instrumental, TrackFallback.skip);
 
     expect(next.isEmpty, isTrue,
         reason: 'the handler keeps the old queue and reports no-tracks '
             'rather than stopping the music');
   });
 
-  test('hasMix answers for the queue, so a dead chip can be greyed out',
-      () {
+  test('hasMix answers for the queue, so a dead chip can be greyed out', () {
     final none = SongQueue.fromSongs([song('s0'), song('s1')]);
     expect(none.hasMix(TrackPreference.accompaniment), isFalse);
     expect(none.hasMix(TrackPreference.vocal), isTrue);
@@ -175,8 +204,8 @@ void main() {
       for (var i = 0; i < 3; i++)
         song('s$i', accompaniment: 'https://x/s$i-acc.mp3'),
     ];
-    final acc = SongQueue.fromSongs(songs).withPreference(
-        TrackPreference.accompaniment, TrackFallback.skip);
+    final acc = SongQueue.fromSongs(songs)
+        .withPreference(TrackPreference.accompaniment, TrackFallback.skip);
     expect(acc.current!.kind, 'accompaniment');
 
     final back =

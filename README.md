@@ -119,6 +119,8 @@ any APIs themselves**; everything is at the Firebase project level.
 
 ## Companion follow-up
 
+Words 1.7.4 fixes unavailable song recordings, preserves the current queue/position during mix changes, and improves companion contrast and playback-state delivery. Google internal phone and Wear releases are available; public stores and physical pairing have separate gates. See [the current delivery record](docs/delivery-1.7.4-2026-10-02.md).
+
 The 1.7.3 source update adds watch cover/title/progress presentation and the phone's currently selected Bible chapter, locale-aware car folders and a CarPlay return-to-library action. Google web reauthentication is verified through a separate same-origin helper without replacing the current user. Store deliveries and physical pairing checks are recorded separately in [the follow-up report](docs/release-authentication-1.7.3-2026-10-01.md).
 
 ## App screenshots

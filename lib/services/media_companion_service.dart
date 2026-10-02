@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'song_audio_handler.dart';
+import '../models/song_queue.dart';
 import 'car_audio_catalogue.dart';
+import 'companion_theme.dart';
 import 'daily_verse_service.dart';
 import '../constants/book_name_mapping.dart';
 import '../utils/reference_parser.dart';
@@ -17,9 +19,11 @@ class MediaCompanionService {
   static Map<String, dynamic> _daily = {};
   static String? _dailyDate;
   static Timer? _timer;
+  static Future<void> _commands = Future.value();
   static Future<void>? _dailyLoading;
   static final _subscriptions = <StreamSubscription<dynamic>>[];
   static String? _publishedIdentity;
+  static Map<String, dynamic>? _lastEventSample;
   static String _locale = 'en';
   static Map<String, dynamic> _reading = {};
   static String _readingIdentity = '';
@@ -50,6 +54,7 @@ class MediaCompanionService {
     }
     _subscriptions.clear();
     _publishedIdentity = null;
+    _lastEventSample = null;
     void publishChange(dynamic _) {
       final snapshot = _snapshot();
       final identity = jsonEncode({
@@ -62,13 +67,38 @@ class MediaCompanionService {
           'duration',
           'loading',
           'canSkip',
+          'canNext',
+          'canPrevious',
           'playing',
           'error',
-          'sermon'
+          'queueIndex',
+          'queueCount',
+          'queueLabel',
+          'shuffled',
+          'repeat',
+          'sermon',
+          'accent',
+          'logo'
         ])
           key: snapshot[key],
       });
-      if (identity != _publishedIdentity) {
+      final last = _lastEventSample;
+      final now = snapshot['syncedAt'] as int;
+      final elapsed =
+          last == null ? 0 : (now - (last['syncedAt'] as int)) / 1000;
+      final expected = last == null
+          ? 0
+          : (last['position'] as int) +
+              (last['playing'] == true && last['loading'] != true
+                  ? elapsed
+                  : 0);
+      final jumped =
+          last != null && ((snapshot['position'] as int) - expected).abs() > 2;
+      if (identity != _publishedIdentity ||
+          last == null ||
+          elapsed >= 3 ||
+          jumped) {
+        _lastEventSample = snapshot;
         _publishedIdentity = identity;
         unawaited(_publish());
       }
@@ -79,6 +109,7 @@ class MediaCompanionService {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'snapshot':
+          await _loadLocale();
           await _loadDaily();
           return _snapshot();
         case 'children':
@@ -96,8 +127,12 @@ class MediaCompanionService {
               }
           ];
         case 'command':
+          await _loadLocale();
           final args = Map<String, dynamic>.from(call.arguments as Map);
-          await _command(args['action'] as String, args['id'] as String?);
+          final task = _commands.then(
+              (_) => _command(args['action'] as String, args['id'] as String?));
+          _commands = task.catchError((Object _) {});
+          await task;
           unawaited(_publish());
           return _snapshot();
         default:
@@ -129,6 +164,23 @@ class MediaCompanionService {
         await h.rewind();
       case 'stop':
         await h.stop();
+      case 'shuffle':
+        if (id != 'on' && id != 'off') {
+          throw ArgumentError('Invalid shuffle mode');
+        }
+        if (h.mediaItem.valueOrNull?.id.startsWith('car:sermon/') != true) {
+          await h.setShuffle(id == 'on');
+        }
+      case 'repeat':
+        final modes = {
+          'off': RepeatMode.off,
+          'all': RepeatMode.all,
+          'one': RepeatMode.one
+        };
+        if (!modes.containsKey(id)) throw ArgumentError('Invalid repeat mode');
+        if (h.mediaItem.valueOrNull?.id.startsWith('car:sermon/') != true) {
+          await h.setRepeat(modes[id]!);
+        }
       case 'select':
         if (id != null) await h.playFromMediaId(id);
       default:
@@ -146,7 +198,7 @@ class MediaCompanionService {
     final state = h.playbackState.value;
     return {
       'title': item?.title ?? '',
-      'subtitle': item?.artist ?? item?.album ?? '',
+      'subtitle': item?.album ?? item?.artist ?? '',
       'artwork': item?.artUri?.toString() ?? '',
       'locale': locale,
       'id': item?.id ?? '',
@@ -158,16 +210,29 @@ class MediaCompanionService {
       'syncedAt': DateTime.now().millisecondsSinceEpoch,
       'sermon': item?.id.startsWith('car:sermon/') ?? false,
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
+      'canNext':
+          item?.id.startsWith('car:sermon/') == true || h.songQueue.hasNext,
+      'canPrevious': item?.id.startsWith('car:sermon/') == true ||
+          h.songQueue.hasPrevious ||
+          state.position.inSeconds >= 3,
       'error': state.errorMessage ?? '',
       'reading': _reading,
-      'daily': _daily
+      'queueIndex': h.songQueue.index,
+      'queueCount':
+          item?.id.startsWith('car:sermon/') == true ? 0 : h.songQueue.length,
+      'queueLabel': h.songQueue.sourceLabel ?? '',
+      'shuffled': h.songQueue.shuffled,
+      'repeat': h.songQueue.repeat.name,
+      'daily': _daily,
+      // The phone's theme, so the watch and the car follow it.
+      'accent': CompanionTheme.accent,
+      'logo': CompanionTheme.logo
     };
   }
 
   static Future<void> _publish() async {
     try {
-      _locale =
-          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+      await _loadLocale();
       await _loadDaily();
       await _channel.invokeMethod<void>('state', _snapshot());
     } on MissingPluginException {
@@ -176,6 +241,19 @@ class MediaCompanionService {
     } catch (e) {
       debugPrint('[MediaCompanion] state unavailable: $e');
     }
+  }
+
+  static Future<void> _loadLocale() async {
+    _locale = (await SharedPreferences.getInstance()).getString('locale') ??
+        'zh-Hans';
+    SongAudioHandler.remoteLocale = _locale;
+    await CompanionTheme.loadSaved();
+  }
+
+  /// The theme colour changed on the phone: tell the watch and the car now,
+  /// not at the next song.
+  static void themeChanged() {
+    if (_handler != null) unawaited(_publish());
   }
 
   static Future<void> _loadDaily() async {

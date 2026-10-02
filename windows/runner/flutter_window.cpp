@@ -25,6 +25,7 @@ bool FlutterWindow::OnCreate() {
     return false;
   }
   RegisterPlugins(flutter_controller_->engine());
+  store_update_ = std::make_unique<StoreUpdateBridge>(flutter_controller_->engine()->messenger(), GetHandle());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
@@ -40,6 +41,7 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  store_update_.reset();
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
   }

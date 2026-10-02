@@ -67,6 +67,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "461522287670-i9vfblgep2n5f0u6aeqlg88jvrdc2gtt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yahwehword.words",
+            "certificate_hash": "0873fa13ec610c75da61dfce4a132eb0666e6f34"
+          }
+        },
+        {
           "client_id": "461522287670-a1vgu2ganbmf373b6u7nr6pfju21u50r.apps.googleusercontent.com",
           "client_type": 3
         }

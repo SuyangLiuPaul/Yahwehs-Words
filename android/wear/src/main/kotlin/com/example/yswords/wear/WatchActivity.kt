@@ -31,13 +31,17 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private var error = ""
     private var activeRequest = ""
     private var connected = false
+    private var foreground = false
+    private var foregroundGeneration = 0L
     private var connectionProof = 0L
     private var loading = false
     private val callbacks = Handler(Looper.getMainLooper())
     private val pending = mutableMapOf<String, Runnable>()
     private val requestProofs = mutableMapOf<String, Long>()
-    private val accent = Color.rgb(84, 199, 245)
-    private val surface = Color.rgb(15, 31, 44)
+    // Follow the phone's theme colour (the phone sends it as `accent`); these are
+    // the original blue until a state carrying one arrives.
+    private var accent = Color.rgb(84, 199, 245)
+    private var surface = Color.rgb(31, 56, 77)
     private val artworkWorker = Executors.newSingleThreadExecutor()
     private var artworkUrl = ""
     private var artworkBitmap: Bitmap? = null
@@ -48,6 +52,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private var progressBar: ProgressBar? = null
     private var playbackStatus: TextView? = null
     private val playbackControls = mutableListOf<Button>()
+    private val modeControls = mutableListOf<Button>()
     private val progressTick = object : Runnable {
         override fun run() {
             updatePlaybackProgress()
@@ -58,18 +63,22 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         state = try { JSONObject(getPreferences(0).getString("state", "{}")!!) } catch (_:Exception) { JSONObject() }
+        applyTheme(state)
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.BLACK); isVerticalScrollBarEnabled=false }
         content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(dp(12),dp(24),dp(12),dp(32)) }
         scroll.addView(content); setContentView(scroll); render()
     }
     override fun onResume() {
         super.onResume()
+        foreground = true
+        val generation = ++foregroundGeneration
         connected = false
         callbacks.post(progressTick)
         Wearable.getMessageClient(this).addListener(this)
         Wearable.getDataClient(this).addListener(this)
         Wearable.getDataClient(this).dataItems.addOnSuccessListener { buffer ->
             try {
+                if (!foreground || generation != foregroundGeneration) return@addOnSuccessListener
                 for (item in buffer) if (item.uri.path == "/words/state") {
                     val raw = DataMapItem.fromDataItem(item).dataMap.getString("json")
                     if (raw != null) try { accept(JSONObject(raw), liveContact = false) } catch (_: Exception) { }
@@ -78,21 +87,29 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             } finally { buffer.release() }
         }
         send("snapshot")
+        if (screen == "library") send("children", folder)
     }
     override fun onPause() {
+        foreground = false
+        foregroundGeneration++
         Wearable.getMessageClient(this).removeListener(this)
         Wearable.getDataClient(this).removeListener(this)
         callbacks.removeCallbacksAndMessages(null)
         pending.clear()
         requestProofs.clear()
+        loading = false
+        activeRequest = ""
         super.onPause()
     }
     override fun onMessageReceived(event: MessageEvent) {
         if (event.path != "/words/reply") return
         val reply = try { JSONObject(String(event.data, Charsets.UTF_8)) } catch (_: Exception) { return }
         runOnUiThread {
+            if (!foreground) return@runOnUiThread
             val request = reply.optString("requestId")
-            val proofAtRequest = requestProofs.remove(request)
+            // Discard replies from a previous foreground session or from
+            // requests already timed out/canceled when the screen closed.
+            val proofAtRequest = requestProofs.remove(request) ?: return@runOnUiThread
             pending.remove(request)?.let { callbacks.removeCallbacks(it) }
             if (reply.has("items")) {
                 if (reply.optString("requestId") != activeRequest) return@runOnUiThread
@@ -107,7 +124,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 if (request == activeRequest) {
                     // A media publication is not completion of this folder.
                     loading = false
-                } else if (proofAtRequest == null || proofAtRequest != connectionProof) return@runOnUiThread
+                } else if (proofAtRequest != connectionProof) return@runOnUiThread
                 error = reply.optString("error")
             }
             render()
@@ -117,12 +134,13 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         for (event in events) if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == "/words/state") {
             val raw = DataMapItem.fromDataItem(event.dataItem).dataMap.getString("json") ?: continue
             val value = try { JSONObject(raw) } catch (_: Exception) { continue }
-            runOnUiThread { accept(value); render() }
+            runOnUiThread { if (foreground) { accept(value); render() } }
         }
     }
     private fun accept(value: JSONObject, liveContact: Boolean = true) {
         if (value.optLong("syncedAt", 0) < state.optLong("syncedAt", 0)) return
         state = value
+        applyTheme(value)
         if (liveContact && isFresh()) {
             connected = true
             connectionProof++
@@ -131,11 +149,39 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         }
         getPreferences(0).edit().putString("state", value.toString()).apply()
     }
+    /** The phone's theme colour, lifted for the dark screen the same way the iPhone's watch app does. */
+    private fun applyTheme(value: JSONObject) {
+        if (!value.has("accent")) return
+        val argb = value.optLong("accent").toInt()
+        var r = Color.red(argb) / 255.0
+        var g = Color.green(argb) / 255.0
+        var b = Color.blue(argb) / 255.0
+        val luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        if (luminance < 0.45) {
+            val t = minOf(0.65, (0.45 - luminance) / (1 - luminance))
+            r += (1 - r) * t; g += (1 - g) * t; b += (1 - b) * t
+        }
+        fun channel(base: Double, weight: Double, v: Double) = ((base + weight * v).coerceIn(0.0, 1.0) * 255).toInt()
+        accent = Color.rgb((r * 255).toInt(), (g * 255).toInt(), (b * 255).toInt())
+        surface = Color.rgb(channel(0.06, 0.22, r), channel(0.06, 0.22, g), channel(0.06, 0.22, b))
+    }
+    /** The app's logo in the colour the phone uses, standing in for a cover that has not loaded. */
+    private fun logoResource(): Int {
+        val variant = state.optString("logo").lowercase()
+        val known = setOf("red", "orange", "green", "purple", "pink", "dark")
+        val id = resources.getIdentifier("logo_" + (if (variant in known) variant else "default"), "drawable", packageName)
+        return if (id != 0) id else android.R.drawable.ic_media_play
+    }
     private fun send(action: String, id: String? = null) {
+        if (!foreground) return
+        val generation = foregroundGeneration
+        if (action in setOf("shuffle", "repeat") && (!connected || !isFresh() || state.optBoolean("loading") || error.isNotEmpty())) return
+
         val request = UUID.randomUUID().toString()
         val proofAtRequest = connectionProof
         requestProofs[request] = proofAtRequest
         fun fail(message: String) {
+            if (!foreground || generation != foregroundGeneration) return
             requestProofs.remove(request)
             if (action == "children" && request != activeRequest) return
             if (action == "children") loading = false
@@ -151,6 +197,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val data = JSONObject().put("action",action).put("requestId",request)
         if (id != null) data.put("id", id)
         Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            if (!foreground || generation != foregroundGeneration) return@addOnSuccessListener
             if (nodes.isEmpty()) { fail("Connect your phone to Words. Saved daily verse is available."); return@addOnSuccessListener }
             // One nearby paired phone; do not trigger playback on every node.
             val node = nodes.firstOrNull { it.isNearby } ?: nodes.first()
@@ -175,13 +222,13 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         return view
     }
     private fun artwork(size: Int = 68) {
-        val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(surface,14); contentDescription=null }
+        val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(Color.rgb(232, 245, 255),14); setPadding(dp(3),dp(3),dp(3),dp(3)); contentDescription=null }
         artworkView=image
         content.addView(image,LinearLayout.LayoutParams(dp(size),dp(size)).apply { bottomMargin=dp(8) })
         val raw=state.optString("artwork")
         if(raw==artworkUrl && artworkBitmap!=null) { image.setImageBitmap(artworkBitmap); return }
-        image.setImageResource(android.R.drawable.ic_media_play)
-        image.imageTintList=ColorStateList.valueOf(accent)
+        image.setImageResource(logoResource())
+        image.imageTintList=null
         if(raw.isEmpty() || raw==artworkUrl) return
         val url=try { URL(raw).takeIf { it.protocol=="https" && it.host.isNotEmpty() && it.userInfo==null } } catch(_:Exception){null} ?: return
         artworkUrl=raw;artworkBitmap=null
@@ -201,7 +248,13 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 val options=BitmapFactory.Options().apply { inSampleSize=1 };while(maxOf(bounds.outWidth,bounds.outHeight)/options.inSampleSize>256) options.inSampleSize*=2
                 BitmapFactory.decodeByteArray(bytes,0,bytes.size,options)
             }catch(_:Exception){null}finally{connection?.disconnect()}
-            runOnUiThread { if(!isFinishing && artworkUrl==raw && bitmap!=null) { artworkBitmap=bitmap;artworkView?.imageTintList=null;artworkView?.setImageBitmap(bitmap) } }
+            runOnUiThread {
+                if (!isFinishing && !isDestroyed && artworkUrl == raw) {
+                    if (bitmap != null) {
+                        artworkBitmap=bitmap;artworkView?.imageTintList=null;artworkView?.setImageBitmap(bitmap)
+                    } else { artworkUrl="" } // Retry a failed cover on the next fresh publication.
+                }
+            }
         }
     }
     private fun transportRow(sermon: Boolean) {
@@ -231,8 +284,9 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val live = connected && isFresh()
         val busy = state.optBoolean("loading")
         val canControl = live && !busy && error.isEmpty() && state.optString("error").isEmpty() && state.optString("id").isNotEmpty()
+        modeControls.forEach { it.isEnabled = canControl; it.alpha = if(canControl) 1f else 0.45f }
         playbackControls.forEachIndexed { index, button ->
-            button.isEnabled = canControl && (index == 0 || state.optBoolean("sermon") || state.optBoolean("canSkip"))
+            button.isEnabled = canControl && (index == 0 || state.optBoolean("sermon") || state.optBoolean(if (index == 1) "canPrevious" else "canNext", state.optBoolean("canSkip")))
         }
         val total = state.optLong("duration", 0).coerceAtLeast(0)
         val advance = if (live && state.optBoolean("playing") && !busy && state.optString("error").isEmpty())
@@ -249,7 +303,8 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
             !live -> tr("Saved playback · reconnect phone","已保存 · 重新连接手机","已儲存 · 重新連接手機")
             state.optString("error").isNotEmpty() -> state.optString("error")
             busy -> tr("Loading on phone…","手机正在加载…","手機正在載入…")
-            else -> tr("Audio plays on phone","音频在手机播放","音訊在手機播放")
+            state.optBoolean("playing") -> tr("Audio plays on phone","音频在手机播放","音訊在手機播放")
+            else -> tr("Paused on phone","手机已暂停","手機已暫停")
         }
     }
     private fun render() {
@@ -259,6 +314,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         progressBar = null
         playbackStatus = null
         playbackControls.clear()
+        modeControls.clear()
         when(screen) {
             "home" -> {
                 text("Yahweh’s Words",true)
@@ -298,6 +354,19 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { max = 1000;progressTintList=ColorStateList.valueOf(accent);progressBackgroundTintList=ColorStateList.valueOf(surface) }
                 content.addView(progressBar, LinearLayout.LayoutParams(-1, dp(6)))
                 transportRow(sermon)
+                if (!sermon && state.optInt("queueCount") > 0) {
+                    text("${state.optInt("queueIndex") + 1} / ${state.optInt("queueCount")} · ${state.optString("queueLabel")}")
+                    modeControls.add(button(tr("Shuffle", "随机播放", "隨機播放") + if(state.optBoolean("shuffled")) " ✓" else " —") {
+                        send("shuffle", if(state.optBoolean("shuffled")) "off" else "on")
+                    })
+                    val repeat = state.optString("repeat", "off")
+                    modeControls.add(button(when(repeat) { "one" -> tr("Repeat one", "单曲循环", "單曲循環"); "all" -> tr("Repeat queue", "列表循环", "清單循環"); else -> tr("Repeat off", "不循环", "不循環") }) {
+                        send("repeat", when(repeat) { "off" -> "all"; "all" -> "one"; else -> "off" })
+                    })
+                    button(tr("Playing queue", "播放队列", "播放佇列")) {
+                        screen="library"; folder="car:queue"; title=tr("Playing queue", "播放队列", "播放佇列"); history.clear(); items=emptyList(); send("children",folder); render()
+                    }
+                }
                 playbackStatus = text("")
                 updatePlaybackProgress()
             }

@@ -1,7 +1,7 @@
 name: yahwehs_words
 description: "Yahweh's Words / 雅伟之言 — a bilingual Bible app to help you listen to His voice and abide in Him daily."
 publish_to: 'none'
-version: 1.7.3
+version: 1.7.7
 
 environment:
   sdk: '>=3.2.3 <4.0.0'
@@ -432,7 +432,9 @@ msix_config:
   publisher_display_name: Yahweh's People
   identity_name: YahwehsPeople.YahwehsWords
   publisher: CN=C4997401-2CEE-44B6-9803-4775768C89A5
-  logo_path: assets/app_icon.png
+  # Rounded, transparent corners: the Start tile and Store listing showed a
+  # sharp square beside rounded neighbours (owner, 2026-10-03).
+  logo_path: assets/app_icon_rounded.png
   capabilities: internetClient
   languages: en-us
   trim_logo: false

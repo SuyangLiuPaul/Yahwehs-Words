@@ -59,8 +59,60 @@ void main() {
     // Its synchronous first line still cancels our stall watchdog.
     unawaited(handler.stop());
     await tester.pump();
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   }
+
+  testWidgets('unsupported current mix never jumps or restarts the queue',
+      (tester) async {
+    final engine = FakeSongPlaybackEngine();
+    final handler = SongAudioHandler(engine: engine);
+    await handler
+        .setQueue(SongQueue.fromSongs([song('ask'), song('free-man')]));
+    engine.emitDuration(const Duration(seconds: 266));
+    engine.emitPosition(const Duration(seconds: 33));
+    engine.emitPlaying(true);
+    await tester.pump();
+    final before = handler.songQueue;
+    await handler.setTrackPreference(
+        TrackPreference.accompaniment, TrackFallback.skip);
+    expect(identical(handler.songQueue, before), true);
+    expect(handler.currentSong!.id, 'ask');
+    expect(handler.position.inSeconds, 33);
+    expect(handler.isPlaying, true);
+    expect(engine.playCalls.length, 1);
+    await close(handler, tester);
+  });
+
+  testWidgets('supported mix preserves paused state and surrounding songs',
+      (tester) async {
+    final engine = FakeSongPlaybackEngine();
+    final handler = SongAudioHandler(engine: engine);
+    await handler
+        .setQueue(SongQueue.fromSongs([song('current'), song('next')]));
+    engine.emitDuration(const Duration(seconds: 200));
+    engine.emitPosition(const Duration(seconds: 33));
+    engine.emitPlaying(false);
+    await tester.pump();
+    await handler.setTrackPreference(
+        TrackPreference.instrumental, TrackFallback.skip);
+    engine.emitDuration(const Duration(seconds: 180));
+    await tester.pump();
+    expect(handler.currentSong!.id, 'current');
+    expect(engine.pausedLoadCalls.length, 1);
+    expect(engine.playCalls.length, 1,
+        reason: 'changing a paused mix must make no sound');
+    expect(handler.songQueue.length, 2);
+    expect(engine.seekCalls.last, const Duration(seconds: 33));
+    // The real engine reports the acknowledged seek through this stream.
+    engine.emitPosition(const Duration(seconds: 33));
+    await tester.pump();
+    expect(handler.position.inSeconds, 33);
+    expect(handler.isPlaying, false);
+    expect(handler.preference, TrackPreference.instrumental);
+    expect(handler.mediaItem.value!.id, contains('instrumental'));
+    await close(handler, tester);
+  });
 
   testWidgets(
       'decoded active duration reaches OS queue and watch snapshot without leaking to siblings',
@@ -122,7 +174,8 @@ void main() {
     await tester.pump();
     expect(handler.duration, Duration.zero);
     expect(handler.mediaItem.value?.duration, isNull);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   });
 
   testWidgets('an unplayed replacement queue cannot inherit a decoded length',
@@ -159,7 +212,8 @@ void main() {
       updateTime: sampleTime,
     ));
     expect(MediaCompanionService.snapshotFor(handler)['position'], 17);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
   });
 
   testWidgets('sermon metadata retains its own overall duration after songs',
@@ -177,7 +231,8 @@ void main() {
     expect(snapshot['duration'], 3600);
     expect(snapshot['position'], 300);
     expect(snapshot['sermon'], true);
-    await handler.dispose();
+    // Stream cancellation/close uses the real event loop, not frame time.
+    await tester.runAsync(handler.dispose);
     sermon.dispose();
   });
 }

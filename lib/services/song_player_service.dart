@@ -244,6 +244,14 @@ class SongPlayerService extends ChangeNotifier {
   /// Drop a track from the queue you are listening to.
   Future<void> removeFromQueue(int index) => _h.removeFromQueue(index);
 
+  /// Car/watch catalogue selection is idempotent; selecting the current
+  /// recording resumes it without replacing the queue or resetting time.
+  Future<void> resumeCurrent() {
+    _h.useSongs();
+    unawaited(MediaFocus.instance.claim(this));
+    return _h.play();
+  }
+
   Future<void> next() => _h.skipToNext();
 
   /// Registered with [MediaFocus] so a video can silence the hymn.
@@ -267,8 +275,7 @@ class SongPlayerService extends ChangeNotifier {
   void setSleepAtEndOfTrack(bool on) => _h.setSleepAtEndOfTrack(on);
   void clearError() => _h.clearError();
 
-  /// Switch the whole queue between the sung take, the instrumental
-  /// and the accompaniment without losing your place.
+  /// Switch only the current song to an available recording.
   Future<void> setTrackPreference(
     TrackPreference preference, {
     TrackFallback fallback = TrackFallback.useVocal,

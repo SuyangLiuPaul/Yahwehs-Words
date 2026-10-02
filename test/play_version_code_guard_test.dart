@@ -19,11 +19,15 @@ void main() {
     final parts = [1, 2, 3].map((i) => int.parse(version.group(i)!)).toList();
     expect(parts[1], lessThan(1000));
     expect(parts[2], lessThan(1000));
-    final code = parts[0] * 1000000 + parts[1] * 1000 + parts[2];
+    expect(gradle, contains('* 10 +'));
+    expect(gradle, contains('flutter.versionCode.coerceIn(1, 9)'));
+    // x10 plus the build number (1 when none is given): the same visible
+    // version can be rebuilt and uploaded again.
+    final code = (parts[0] * 1000000 + parts[1] * 1000 + parts[2]) * 10 + 1;
     final wear =
         RegExp(r'-PwearVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
             .firstMatch(workflow)!;
-    expect(code, greaterThan(1006032));
+    expect(code, greaterThan(1006032 * 10));
     expect(code, lessThan(int.parse(wear.group(1)!)));
   });
 }

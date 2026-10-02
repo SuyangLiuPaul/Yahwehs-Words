@@ -1,3 +1,22 @@
+import Foundation
+
+struct CompanionPublicationPolicy {
+  static func needsImmediateContext(_ data: [String: Any], after previous: [String: Any]) -> Bool {
+    let keys = ["id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat", "accent", "logo"]
+    let identity = NSDictionary(dictionary: data.filter { keys.contains($0.key) })
+    let old = NSDictionary(dictionary: previous.filter { keys.contains($0.key) })
+    if !identity.isEqual(old) { return true }
+    // A seek changes neither title nor playing. Do not leave a watch
+    // projecting the old position until the next background transfer.
+    let elapsed = max(0, ((data["syncedAt"] as? NSNumber)?.doubleValue ?? 0) -
+      ((previous["syncedAt"] as? NSNumber)?.doubleValue ?? 0)) / 1000
+    let advancing = previous["playing"] as? Bool == true && previous["loading"] as? Bool != true
+    let expected = ((previous["position"] as? NSNumber)?.doubleValue ?? 0) + (advancing ? elapsed : 0)
+    return abs(((data["position"] as? NSNumber)?.doubleValue ?? 0) - expected) > 2
+  }
+}
+
+#if !MEDIA_COMPANION_LOGIC_TEST
 import Flutter
 import WatchConnectivity
 
@@ -8,8 +27,12 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
   private(set) var channel: FlutterMethodChannel?
   private var ready = false
   private var latest: [String: Any] = [:]
+  static let stateChanged = Notification.Name("WordsMediaStateChanged")
+  var snapshot: [String: Any] { latest }
   var locale: String { latest["locale"] as? String ?? "en" }
-  private var sentIdentity: NSDictionary?
+  private var sentContext: [String: Any] = [:]
+  private var liveTransferPending = false
+  private var liveTransferGeneration = 0
   private var lastTransfer = Date.distantPast
 
   static func register(with registrar: FlutterPluginRegistrar) {
@@ -31,19 +54,49 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
     }
     ready = true
     latest = data
-    if WCSession.isSupported(), WCSession.default.activationState == .activated,
-       WCSession.default.isPaired, WCSession.default.isWatchAppInstalled {
-      let identity = NSDictionary(dictionary: data.filter { ["id", "title", "subtitle", "artwork", "locale", "reading", "duration", "loading", "canSkip", "playing", "error", "sermon"].contains($0.key) })
-      // Coalesce position updates to spare the watch radio. Pause/change
-      // metadata publishes immediately, so controls never wait 15 seconds.
-      if sentIdentity?.isEqual(identity) != true || Date().timeIntervalSince(lastTransfer) >= 15 {
-        do {
-          try WCSession.default.updateApplicationContext(data)
-          sentIdentity = identity; lastTransfer = Date()
-        } catch { /* A disconnected watch retains its last daily verse. */ }
-      }
-    }
+    NotificationCenter.default.post(name: Self.stateChanged, object: self)
+    publishToWatch()
     result(nil)
+  }
+
+  private func publishToWatch() {
+    guard WCSession.isSupported() else { return }
+    let session = WCSession.default
+    guard session.activationState == .activated, session.isPaired,
+      session.isWatchAppInstalled, !latest.isEmpty else { return }
+    let data = latest
+    if CompanionPublicationPolicy.needsImmediateContext(data, after: sentContext) ||
+      Date().timeIntervalSince(lastTransfer) >= 15 {
+      do {
+        try session.updateApplicationContext(data)
+        sentContext = data; lastTransfer = Date()
+      } catch { /* Keep the previous sample so the next tick retries. */ }
+    }
+    // Application context is opportunistic background delivery. A visible
+    // watch needs the live message path as well, including phone seeks.
+    if session.isReachable && !liveTransferPending {
+      liveTransferPending = true
+      liveTransferGeneration += 1
+      let generation = liveTransferGeneration
+      func completed() {
+        DispatchQueue.main.async {
+          if generation == self.liveTransferGeneration {
+            self.liveTransferPending = false
+            // Deliver a pause/seek/track change that arrived while a prior
+            // sample was in flight, rather than waiting for the next timer.
+            if CompanionPublicationPolicy.needsImmediateContext(self.latest, after: data) {
+              self.publishToWatch()
+            }
+          }
+        }
+      }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: completed)
+      session.sendMessage(data, replyHandler: { _ in
+        completed()
+      }, errorHandler: { _ in
+        completed()
+      })
+    }
   }
 
   func request(_ method: String, arguments: Any? = nil,
@@ -92,13 +145,20 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
           replyHandler(failure)
         } else { replyHandler(["items": value as? [[String: Any]] ?? []]) }
       }
-    } else if ["play", "pause", "next", "previous", "forward", "backward", "stop", "select"].contains(action) {
+    } else if ["play", "pause", "next", "previous", "forward", "backward", "stop", "select", "shuffle", "repeat"].contains(action) {
       request("command", arguments: message) { replyHandler($0 as? [String: Any] ?? [:]) }
     } else { replyHandler(["error": "Unsupported command"]) }
   }
 
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState,
-               error: Error?) {}
+               error: Error?) {
+    DispatchQueue.main.async { self.sentContext = [:]; self.publishToWatch() }
+  }
+  func sessionReachabilityDidChange(_ session: WCSession) {
+    DispatchQueue.main.async { self.publishToWatch() }
+  }
   func sessionDidBecomeInactive(_ session: WCSession) {}
   func sessionDidDeactivate(_ session: WCSession) { session.activate() }
 }
+
+#endif

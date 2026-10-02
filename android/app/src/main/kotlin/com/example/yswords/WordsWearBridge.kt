@@ -13,6 +13,8 @@ object WordsWearBridge {
     private var channel: MethodChannel? = null
     private var identity = ""
     private var sentAt = 0L
+    private var sentPosition = 0.0
+    private var sentPlaying = false
     fun install(context: Context, engine: FlutterEngine) {
         if (channel != null) return
         channel = MethodChannel(engine.dartExecutor.binaryMessenger, "yswords/media_companion")
@@ -20,13 +22,16 @@ object WordsWearBridge {
             if (call.method != "state") { result.notImplemented(); return@setMethodCallHandler }
             val data = call.arguments as? Map<*, *> ?: emptyMap<String, Any>()
             val metadata = linkedMapOf<String, Any?>()
-            for (key in listOf("id", "title", "subtitle", "artwork", "locale", "reading", "duration", "loading", "canSkip", "playing", "error", "sermon")) metadata[key] = data[key]
+            for (key in listOf("id", "title", "subtitle", "artwork", "locale", "reading", "daily", "duration", "loading", "canSkip", "canNext", "canPrevious", "playing", "error", "sermon", "queueIndex", "queueCount", "queueLabel", "shuffled", "repeat", "accent", "logo")) metadata[key] = data[key]
             val next = JSONObject(metadata).toString()
             val now = System.currentTimeMillis()
-            if (identity != next || now - sentAt >= 15000) {
+            val position = (data["position"] as? Number)?.toDouble() ?: 0.0
+            val expected = sentPosition + if (sentPlaying) (now - sentAt).coerceAtLeast(0) / 1000.0 else 0.0
+            val discontinuity = kotlin.math.abs(position - expected) > 2
+            if (identity != next || discontinuity || now - sentAt >= 15000) {
                 val request = PutDataMapRequest.create("/words/state")
                 request.dataMap.putString("json", JSONObject(data).toString())
-                identity = next; sentAt = now
+                identity = next; sentAt = now; sentPosition = position; sentPlaying = data["playing"] == true && data["loading"] != true
                 Wearable.getDataClient(context).putDataItem(request.asPutDataRequest().setUrgent())
                     .addOnFailureListener {
                         // Retry the current state on the next Flutter tick.
@@ -42,7 +47,7 @@ object WordsWearBridge {
             install(context.applicationContext, engine)
             val data = try { JSONObject(String(event.data, Charsets.UTF_8)) } catch (_: Exception) { return@post }
             val action = data.optString("action", "snapshot")
-            val allowed = setOf("play", "pause", "next", "previous", "forward", "backward", "stop", "select")
+            val allowed = setOf("play", "pause", "next", "previous", "forward", "backward", "stop", "select", "shuffle", "repeat")
             val method = when { action == "snapshot" -> "snapshot"; action == "children" -> "children"; action in allowed -> "command"; else -> return@post }
             val args = mutableMapOf<String, Any>("action" to action)
             if (data.has("id")) args["id"] = data.getString("id")

@@ -101,7 +101,16 @@ const double _kPillRadius = 999.0;
 
 const String _nbsp = ' ';
 const List<String> _superscripts = [
-  '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹',
+  '⁰',
+  '¹',
+  '²',
+  '³',
+  '⁴',
+  '⁵',
+  '⁶',
+  '⁷',
+  '⁸',
+  '⁹',
 ];
 
 /// `3` → `③`. The note marker, in the verse and in the block.
@@ -181,26 +190,36 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
       for (var i = 0; i < widget.notes.length; i++)
         '${superscriptNumber(i + 1)}$_nbsp${widget.notes[i].trim()}',
     ].join('\n');
-    final body = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+    // 2026-10-03: the number's column is sized by the NUMBER, not guessed.
+    // It used to be a fixed `fs * 1.1` box, and a circled digit is as wide as
+    // the font makes it: in the system sans-serif the 現代 style uses, ① is
+    // wider than that, so its circle ran into the first character of the
+    // note — 「①或作」 read as one word (owner's screenshot, 出埃及记 35:29).
+    // A two-column table gives the number column its own intrinsic width and
+    // then a fixed gap, and keeps the notes' continuation lines aligned under
+    // each other whatever the font does to the digits.
+    final body = Table(
+      columnWidths: const {
+        0: IntrinsicColumnWidth(),
+        1: FlexColumnWidth(),
+      },
+      defaultVerticalAlignment: TableCellVerticalAlignment.top,
       children: [
         for (var i = 0; i < widget.notes.length; i++)
-          Padding(
-            padding: EdgeInsets.only(bottom: fs * 0.12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: fs * 1.1,
-                  child: Text(
-                    superscriptNumber(i + 1),
-                    style: style.copyWith(color: scheme.primary),
-                  ),
+          TableRow(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: fs * 0.45, bottom: fs * 0.12),
+                child: Text(
+                  superscriptNumber(i + 1),
+                  style: style.copyWith(color: scheme.primary),
                 ),
-                Expanded(child: Text(widget.notes[i].trim(), style: style)),
-              ],
-            ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: fs * 0.12),
+                child: Text(widget.notes[i].trim(), style: style),
+              ),
+            ],
           ),
       ],
     );

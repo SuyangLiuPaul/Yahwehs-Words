@@ -8,19 +8,26 @@ import UIKit
 class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver {
   private var controller: CPInterfaceController?
   private var connection: UUID?
+  private var stateObserver: NSObjectProtocol?
+  private var modeRequestPending = false
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
                                 didConnect interfaceController: CPInterfaceController) {
     controller = interfaceController
     connection = UUID()
     CPNowPlayingTemplate.shared.add(self)
     CPNowPlayingTemplate.shared.isUpNextButtonEnabled = true
-    CPNowPlayingTemplate.shared.upNextTitle = text("Browse audio", "音频目录", "音訊目錄")
-    (UIApplication.shared.delegate as? AppDelegate)?.ensureMediaEngine()
+    CPNowPlayingTemplate.shared.upNextTitle = text("Playing queue", "播放队列", "播放佇列")
+    stateObserver = NotificationCenter.default.addObserver(forName: WordsMediaCompanion.stateChanged, object: nil, queue: .main) { [weak self] _ in self?.updateModes() }
+    updateModes()
+    _ = (UIApplication.shared.delegate as? AppDelegate)?.ensureMediaEngine()
     showFolder("car:root", title: "Yahweh’s Words", root: true)
   }
   func templateApplicationScene(_ scene: CPTemplateApplicationScene,
-                                didDisconnect interfaceController: CPInterfaceController) {
+                                didDisconnectInterfaceController interfaceController: CPInterfaceController) {
     CPNowPlayingTemplate.shared.remove(self)
+    if let observer = stateObserver { NotificationCenter.default.removeObserver(observer) }
+    stateObserver = nil
+    modeRequestPending = false
     connection = nil
     controller = nil // The phone's existing audio session keeps playing.
   }
@@ -29,7 +36,43 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
     return locale == "zh-Hant" ? hant : locale.hasPrefix("zh") ? hans : en
   }
   func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
-    controller?.popToRootTemplate(animated: true, completion: presentationFinished)
+    showFolder("car:queue", title: text("Playing queue", "播放队列", "播放佇列"))
+  }
+  private func updateModes() {
+    let state = WordsMediaCompanion.shared.snapshot
+    let template = CPNowPlayingTemplate.shared
+    let songs = state["sermon"] as? Bool != true && (state["queueCount"] as? Int ?? 0) > 0
+    template.isUpNextButtonEnabled = songs
+    guard songs else { template.updateNowPlayingButtons([]); return }
+    let shuffle = CPNowPlayingImageButton(image: UIImage(systemName: "shuffle")!) { [weak self] _ in
+      let on = WordsMediaCompanion.shared.snapshot["shuffled"] as? Bool == true
+      self?.changeMode("shuffle", id: on ? "off" : "on")
+    }
+    shuffle.isSelected = state["shuffled"] as? Bool == true
+    let enabled = !modeRequestPending && state["loading"] as? Bool != true &&
+      (state["error"] as? String ?? "").isEmpty
+    shuffle.isEnabled = enabled
+    let mode = state["repeat"] as? String ?? "off"
+    let repeatButton = CPNowPlayingImageButton(image: UIImage(systemName: mode == "one" ? "repeat.1" : "repeat")!) { [weak self] _ in
+      let current = WordsMediaCompanion.shared.snapshot["repeat"] as? String ?? "off"
+      self?.changeMode("repeat", id: current == "off" ? "all" : current == "all" ? "one" : "off")
+    }
+    repeatButton.isSelected = mode != "off"
+    repeatButton.isEnabled = enabled
+    template.updateNowPlayingButtons([shuffle, repeatButton])
+  }
+  private func changeMode(_ action: String, id: String) {
+    guard !modeRequestPending, let connection = connection else { return }
+    modeRequestPending = true
+    updateModes()
+    WordsMediaCompanion.shared.request("command", arguments: ["action":action, "id":id]) { [weak self] result in
+      guard let self = self, self.connection == connection else { return }
+      self.modeRequestPending = false
+      self.updateModes()
+      if let error = (result as? [String: Any])?["error"] as? String, !error.isEmpty {
+        self.showError(error)
+      }
+    }
   }
   private func presentationFinished(_ success: Bool, _ error: Error?) {
     // CarPlay raises a native exception on failed presentation when its
@@ -78,11 +121,23 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
               if let error = (result as? [String: Any])?["error"] as? String, !error.isEmpty {
                 self.showError(error)
               } else if controller.topTemplate !== CPNowPlayingTemplate.shared {
-                CPNowPlayingTemplate.shared.upNextTitle = self.text("Browse audio", "音频目录", "音訊目錄")
-                controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                CPNowPlayingTemplate.shared.upNextTitle = self.text("Playing queue", "播放队列", "播放佇列")
+                if controller.templates.contains(where: { $0 === CPNowPlayingTemplate.shared }) {
+                  controller.pop(to: CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                } else {
+                  controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                }
               }
             }
-          } else { self?.showFolder(key, title: row["title"] as? String ?? title); complete() }
+          } else {
+            let paging = key.hasPrefix("car:queue-page/") ||
+              (key.hasPrefix("car:playlist/") && (Int(key.split(separator: "/").last ?? "0") ?? 0) > 0)
+            if paging {
+              template.updateSections([])
+              self?.loadFolder(key, title: title, template: template, connection: connection)
+            } else { self?.showFolder(key, title: row["title"] as? String ?? title) }
+            complete()
+          }
         }
         return item
       }
@@ -93,7 +148,7 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
   }
   private func showError(_ message: String) {
     guard let controller = controller else { return }
-    let close = CPAlertAction(title: "OK", style: .default) { [weak self] _ in
+    let close = CPAlertAction(title: text("OK", "确定", "確定"), style: .default) { [weak self] _ in
       guard let self = self else { return }
       self.controller?.dismissTemplate(animated: true, completion: self.presentationFinished)
     }
