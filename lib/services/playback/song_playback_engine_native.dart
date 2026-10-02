@@ -171,6 +171,20 @@ class SongPlaybackEngine {
     await _guard(id, () => active.play(_sourceFor(url)));
   }
 
+  /// Prepare a recording while paused without briefly starting audio.
+  Future<void> loadPaused(String url) async {
+    final id = ++_attempt;
+    final active = _player;
+    _standbyUrl = null;
+    _sourceRevisions[active] = ++_sourceRevision;
+    await _guard(id, () async {
+      await active.pause();
+      if (id != _attempt) return;
+      await active.setSource(_sourceFor(url));
+    });
+    if (id == _attempt) _playing.add(false);
+  }
+
   Future<void> _publishHandoffDuration(ap.AudioPlayer active, int id) async {
     // Android reports duration when prepared, while this player was still
     // standby. Metadata discovery must not hold sounding playback loading.

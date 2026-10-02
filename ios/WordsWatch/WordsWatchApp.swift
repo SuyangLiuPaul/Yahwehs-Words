@@ -48,9 +48,14 @@ import WatchKit
 
 @main
 struct WordsWatchApp: App {
+  @Environment(\.scenePhase) private var scenePhase
   @StateObject private var companion = WatchCompanion()
   var body: some Scene {
-    WindowGroup { WatchHome().environmentObject(companion) }
+    WindowGroup {
+      WatchHome().environmentObject(companion)
+        .onAppear { companion.setForeground(scenePhase == .active) }
+        .onChange(of: scenePhase) { phase in companion.setForeground(phase == .active) }
+    }
   }
 }
 
@@ -68,6 +73,16 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
   }
   private var connectionProof = WatchConnectionProof()
   private var pendingRequests = Set<UUID>()
+  private var refreshTimer: Timer?
+  func setForeground(_ active: Bool) {
+    refreshTimer?.invalidate(); refreshTimer = nil
+    guard active else { return }
+    send("snapshot")
+    refreshTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+      guard let self = self, self.pendingRequests.isEmpty, WCSession.default.isReachable else { return }
+      self.send("snapshot")
+    }
+  }
   private func acceptOnMain(_ value: [String: Any]) {
     guard WatchPlaybackSnapshot.accepts(value, after: state) else { return }
     state = value
@@ -116,7 +131,7 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
       }
     }
     DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
-      finish(nil, failure: "iPhone did not reply. Open Words and retry.")
+      finish(nil, failure: WatchStyle.text(self.state,"iPhone did not reply. Open Words and retry.","iPhone 未回复，请打开 Words 后重试。","iPhone 未回覆，請開啟 Words 後重試。"))
     }
     var data: [String: Any] = ["action": action]
     if let id = id { data["id"] = id }
@@ -134,6 +149,13 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
       if self.connected { self.send("snapshot") }
     }
   }
+  func session(_ session: WCSession, didReceiveMessage message: [String: Any],
+               replyHandler: @escaping ([String: Any]) -> Void) {
+    DispatchQueue.main.async {
+      self.acceptOnMain(message)
+      replyHandler(["received": true])
+    }
+  }
   func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     accept(applicationContext)
   }
@@ -141,7 +163,10 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
 
 enum WatchStyle {
   static let accent = Color(red: 0.33, green: 0.78, blue: 0.96)
-  static let surface = Color(red: 0.06, green: 0.12, blue: 0.17)
+  static let surface = Color(red: 0.12, green: 0.22, blue: 0.30)
+  static let page = Color(red: 0.04, green: 0.10, blue: 0.15)
+  static let secondary = Color(red: 0.79, green: 0.86, blue: 0.92)
+  static let artworkPaper = Color(red: 0.91, green: 0.96, blue: 1.0)
   static func text(_ state: [String: Any], _ en: String, _ hans: String, _ hant: String) -> String {
     let locale = state["locale"] as? String ?? "en"
     return locale == "zh-Hant" ? hant : locale.hasPrefix("zh") ? hans : en
@@ -158,7 +183,7 @@ struct WatchArtwork: View {
   }
   var body: some View {
     AsyncImage(url: url) { phase in
-      if let image = phase.image { image.resizable().scaledToFit() }
+      if let image = phase.image { image.resizable().scaledToFit().padding(3).background(WatchStyle.artworkPaper) }
       else { ZStack {
         LinearGradient(colors: [WatchStyle.surface, WatchStyle.accent.opacity(0.30)], startPoint: .topLeading, endPoint: .bottomTrailing)
         Image(systemName: state["sermon"] as? Bool == true ? "waveform" : "music.note").font(.system(size: size * 0.35, weight: .medium)).foregroundStyle(WatchStyle.accent)
@@ -181,14 +206,14 @@ struct WatchHome: View {
               WatchArtwork(state: state)
               Text((state["title"] as? String ?? "").isEmpty ? WatchStyle.text(state,"Now playing","正在播放","正在播放") : state["title"] as? String ?? "")
                 .font(.headline).lineLimit(2).multilineTextAlignment(.center)
-              Label(WatchStyle.text(state,"Listen on iPhone","在 iPhone 上聆听","在 iPhone 上聆聽"), systemImage: "iphone").font(.caption2).foregroundStyle(.secondary)
+              Label(WatchStyle.text(state,"Listen on iPhone","在 iPhone 上聆听","在 iPhone 上聆聽"), systemImage: "iphone").font(.caption2).foregroundStyle(WatchStyle.secondary)
             }.frame(maxWidth: .infinity).padding(12).background(WatchStyle.surface, in: RoundedRectangle(cornerRadius: 18))
           }.buttonStyle(.plain)
           NavigationLink { WatchLibrary(id: "car:root", title: WatchStyle.text(state,"Listen","聆听","聆聽")) } label: { Label(WatchStyle.text(state,"Hymns & sermons","诗歌与讲道","詩歌與講道"), systemImage: "headphones") }
           NavigationLink { WatchBibleView() } label: { Label(WatchStyle.text(state,"Bible · on your phone","圣经 · 手机当前章节","聖經 · 手機目前章節"), systemImage: "text.book.closed") }
           NavigationLink { DailyVerseView() } label: { Label(WatchStyle.text(state,"Daily verse","每日经文","每日經文"), systemImage: "book.closed") }
           Text(companion.connected ? WatchStyle.text(state,"Connected to iPhone","已连接 iPhone","已連接 iPhone") : WatchStyle.text(state,"iPhone offline · saved verse available","iPhone 离线 · 可读已保存经文","iPhone 離線 · 可讀已儲存經文"))
-            .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            .font(.caption2).foregroundStyle(WatchStyle.secondary).multilineTextAlignment(.center)
           Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh","刷新","重新整理"), systemImage: "arrow.clockwise") }.font(.caption)
         }.padding(.horizontal, 6)
       }.background(.black)
@@ -206,7 +231,7 @@ struct DailyVerseView: View {
         Text(daily["reference"] as? String ?? WatchStyle.text(companion.state,"Daily verse","每日经文","每日經文")).font(.headline).foregroundStyle(WatchStyle.accent)
         Text(daily["english"] as? String ?? WatchStyle.text(companion.state,"Open Words on iPhone to sync today’s verse.","在 iPhone 打开 Words，同步今日经文。","在 iPhone 開啟 Words，同步今日經文。"))
         Text(daily["chinese"] as? String ?? "").font(.body)
-        Text("\(daily["date"] as? String ?? "") · BSB-Y / CUVS-Y").font(.caption2).foregroundStyle(.secondary)
+        Text("\(daily["date"] as? String ?? "") · BSB-Y / CUVS-Y").font(.caption2).foregroundStyle(WatchStyle.secondary)
       }.padding(.horizontal, 6)
     }.navigationTitle(WatchStyle.text(companion.state,"Daily verse","每日经文","每日經文"))
   }
@@ -221,15 +246,15 @@ struct WatchBibleView: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 10) {
         Text(reading["reference"] as? String ?? WatchStyle.text(state,"Bible","圣经","聖經")).font(.headline).foregroundStyle(WatchStyle.accent)
-        Text(reading["versionLabel"] as? String ?? reading["version"] as? String ?? "").font(.caption2).foregroundStyle(.secondary)
-        Text(companion.connected ? WatchStyle.text(state,"Follows the chapter selected on iPhone","跟随 iPhone 所选章节","跟隨 iPhone 所選章節") : WatchStyle.text(state,"Saved chapter · reconnect to update","已保存章节 · 连接后更新","已儲存章節 · 連接後更新")).font(.caption2).foregroundStyle(.secondary)
+        Text(reading["versionLabel"] as? String ?? reading["version"] as? String ?? "").font(.caption2).foregroundStyle(WatchStyle.secondary)
+        Text(companion.connected ? WatchStyle.text(state,"Follows the chapter selected on iPhone","跟随 iPhone 所选章节","跟隨 iPhone 所選章節") : WatchStyle.text(state,"Saved chapter · reconnect to update","已保存章节 · 连接后更新","已儲存章節 · 連接後更新")).font(.caption2).foregroundStyle(WatchStyle.secondary)
         if verses.isEmpty { Text(WatchStyle.text(state,"Open a Bible chapter in Words on iPhone, then refresh.","在 iPhone 的 Words 打开圣经章节，然后刷新。","在 iPhone 的 Words 開啟聖經章節，然後重新整理。")) }
         ForEach(verses.indices, id: \.self) { index in
           let verse = verses[index]
-          if let heading = verse["heading"], !heading.isEmpty { Text(heading).font(.caption).foregroundStyle(.secondary) }
+          if let heading = verse["heading"], !heading.isEmpty { Text(heading).font(.caption).foregroundStyle(WatchStyle.secondary) }
           Text("\(verse["number"] ?? "")  \(verse["text"] ?? "")").font(.body).fixedSize(horizontal: false, vertical: true)
         }
-        if reading["truncated"] as? Bool == true { Text(WatchStyle.text(state,"This chapter exceeds the watch transfer limit. Read the remaining verses on iPhone.","本章超过手表传输上限；其余经文请在 iPhone 阅读。","本章超過手錶傳輸上限；其餘經文請在 iPhone 閱讀。")).font(.caption2).foregroundStyle(.secondary) }
+        if reading["truncated"] as? Bool == true { Text(WatchStyle.text(state,"This chapter exceeds the watch transfer limit. Read the remaining verses on iPhone.","本章超过手表传输上限；其余经文请在 iPhone 阅读。","本章超過手錶傳輸上限；其餘經文請在 iPhone 閱讀。")).font(.caption2).foregroundStyle(WatchStyle.secondary) }
         Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh from iPhone","从 iPhone 刷新","從 iPhone 重新整理"), systemImage: "arrow.clockwise") }
       }.padding(.horizontal, 6)
     }.navigationTitle(WatchStyle.text(state,"Bible","圣经","聖經"))
@@ -248,29 +273,34 @@ struct WatchPlaybackView: View {
     let sermon = state["sermon"] as? Bool ?? false
     let live = companion.connected && WatchPlaybackSnapshot.isFresh(state, now: now)
     let enabled = WatchPlaybackSnapshot.canControl(state, now: now, connected: companion.connected, error: companion.error)
-    let canSkip = sermon || state["canSkip"] as? Bool == true
+    let canPrevious = sermon || (state["canPrevious"] as? Bool ?? state["canSkip"] as? Bool ?? false)
+    let canNext = sermon || (state["canNext"] as? Bool ?? state["canSkip"] as? Bool ?? false)
     let elapsed = WatchPlaybackSnapshot.elapsed(state, now: now, connected: companion.connected)
     let total = (state["duration"] as? NSNumber)?.intValue ?? 0
     return ScrollView {
       VStack(spacing: 8) {
-        WatchArtwork(state: state, size: 64)
-        Text((state["title"] as? String ?? "").isEmpty ? WatchStyle.text(state,"Choose audio from Listen","从聆听选择音频","從聆聽選擇音訊") : state["title"] as? String ?? "")
-          .font(.system(.headline, design: .rounded)).lineLimit(3).multilineTextAlignment(.center)
-        Text(state["subtitle"] as? String ?? "").font(.caption2).foregroundStyle(.secondary).lineLimit(2).multilineTextAlignment(.center)
         HStack(spacing: 8) {
-          transport(sermon ? "backward" : "previous", image: sermon ? "gobackward.15" : "backward.end.fill", label: sermon ? WatchStyle.text(state,"Back 15 seconds","快退 15 秒","快退 15 秒") : WatchStyle.text(state,"Previous hymn","上一首","上一首")).disabled(!canSkip)
+          WatchArtwork(state: state, size: 44)
+          VStack(alignment: .leading, spacing: 3) {
+            Text((state["title"] as? String ?? "").isEmpty ? WatchStyle.text(state,"Choose audio from Listen","从聆听选择音频","從聆聽選擇音訊") : state["title"] as? String ?? "")
+              .font(.system(.caption, design: .rounded).weight(.semibold)).lineLimit(3)
+            Text(state["subtitle"] as? String ?? "").font(.caption2).foregroundStyle(WatchStyle.secondary).lineLimit(2)
+          }.frame(maxWidth: .infinity, alignment: .leading)
+        }
+        HStack(spacing: 8) {
+          transport(sermon ? "backward" : "previous", image: sermon ? "gobackward.15" : "backward.end.fill", label: sermon ? WatchStyle.text(state,"Back 15 seconds","快退 15 秒","快退 15 秒") : WatchStyle.text(state,"Previous hymn","上一首","上一首")).disabled(!canPrevious)
           transport(playing ? "pause" : "play", image: playing ? "pause.fill" : "play.fill", label: playing ? WatchStyle.text(state,"Pause","暂停","暫停") : WatchStyle.text(state,"Play","播放","播放"), primary: true)
-          transport(sermon ? "forward" : "next", image: sermon ? "goforward.30" : "forward.end.fill", label: sermon ? WatchStyle.text(state,"Forward 30 seconds","快进 30 秒","快進 30 秒") : WatchStyle.text(state,"Next hymn","下一首","下一首")).disabled(!canSkip)
+          transport(sermon ? "forward" : "next", image: sermon ? "goforward.30" : "forward.end.fill", label: sermon ? WatchStyle.text(state,"Forward 30 seconds","快进 30 秒","快進 30 秒") : WatchStyle.text(state,"Next hymn","下一首","下一首")).disabled(!canNext)
         }.disabled(!enabled)
         if total > 0 { ProgressView(value: Double(elapsed), total: Double(total)).tint(WatchStyle.accent) }
-        HStack { Text(WatchPlaybackSnapshot.clock(elapsed)); Spacer(); Text(total > 0 ? WatchPlaybackSnapshot.clock(total) : "—") }.font(.caption2).monospacedDigit().foregroundStyle(.secondary)
+        HStack { Text(WatchPlaybackSnapshot.clock(elapsed)); Spacer(); Text(total > 0 ? WatchPlaybackSnapshot.clock(total) : "—") }.font(.caption2).monospacedDigit().foregroundStyle(WatchStyle.secondary)
         Label(!live ? WatchStyle.text(state,"Saved · reconnect iPhone","已保存 · 重新连接 iPhone","已儲存 · 重新連接 iPhone") : state["loading"] as? Bool == true ? WatchStyle.text(state,"Loading on iPhone…","iPhone 正在加载…","iPhone 正在載入…") : WatchStyle.text(state,"Playing on iPhone","音频在 iPhone 播放","音訊在 iPhone 播放"), systemImage: live ? "iphone" : "iphone.slash")
-          .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+          .font(.caption2).foregroundStyle(WatchStyle.secondary).multilineTextAlignment(.center)
         if !companion.error.isEmpty { Text(companion.error).font(.caption2).foregroundStyle(WatchStyle.accent) }
         NavigationLink { NowPlayingView() } label: { Label(WatchStyle.text(state,"Volume & system controls","音量与系统控制","音量與系統控制"), systemImage: "speaker.wave.2") }.font(.caption)
         Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh","刷新","重新整理"), systemImage: "arrow.clockwise") }.font(.caption)
       }.padding(.horizontal, 4)
-    }
+    }.background(WatchStyle.page).foregroundStyle(.white)
   }
   func transport(_ action: String, image: String, label: String, primary: Bool = false) -> some View {
     Button { companion.send(action) } label: {

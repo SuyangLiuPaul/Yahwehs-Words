@@ -157,8 +157,7 @@ class SongQueue {
             if (song.instrumentalUrl != null)
               SongTrackInfo(url: song.instrumentalUrl!, kind: 'instrumental'),
             if (song.accompanimentUrl != null)
-              SongTrackInfo(
-                  url: song.accompanimentUrl!, kind: 'accompaniment'),
+              SongTrackInfo(url: song.accompanimentUrl!, kind: 'accompaniment'),
           ];
     if (tracks.isEmpty) return null;
 
@@ -189,8 +188,25 @@ class SongQueue {
   /// and 208 an instrumental, and both live on two of the four sources
   /// — so a queue filtered to CGDC or Cahaya has neither. Offering the
   /// chip anyway makes it a control that does nothing when tapped.
-  bool hasMix(TrackPreference preference) => items.any((i) =>
-      resolveTrack(i.song, preference, TrackFallback.skip) != null);
+  bool hasMix(TrackPreference preference) => items
+      .any((i) => resolveTrack(i.song, preference, TrackFallback.skip) != null);
+
+  /// A mix button belongs to the song on screen, not to its neighbours.
+  bool hasCurrentMix(TrackPreference preference) =>
+      current != null &&
+      resolveTrack(current!.song, preference, TrackFallback.skip) != null;
+
+  /// Replace only the current recording. Queue order, index and songs
+  /// survive a round trip to instrumental and back to the sung take.
+  SongQueue withCurrentMix(TrackPreference preference) {
+    final item = current;
+    if (item == null) return this;
+    final replacement = resolveTrack(item.song, preference, TrackFallback.skip);
+    if (replacement == null || replacement.url == item.url) return this;
+    final updated = [...items];
+    updated[index] = replacement;
+    return copyWith(items: updated);
+  }
 
   SongQueue copyWith({
     List<QueueItem>? items,
@@ -295,8 +311,7 @@ class SongQueue {
       final at = playing == null
           ? 0
           : restored.indexWhere((i) => i.song.id == playing.song.id);
-      return copyWith(
-          items: restored, index: at < 0 ? 0 : at, shuffled: false);
+      return copyWith(items: restored, index: at < 0 ? 0 : at, shuffled: false);
     }
 
     final rest = [...items];

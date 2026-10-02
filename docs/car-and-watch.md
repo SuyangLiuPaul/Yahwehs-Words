@@ -1,3 +1,7 @@
+## Current-song and live companion repair — October 2
+
+[Repair scope and verification](audio-mix-and-companion-repair-2026-10-02.md): now-playing mix selection is per current song, transparent covers have a bright backing, visible Apple Watch uses live messages and foreground refresh, and both watch bridges detect seek discontinuities. Catalogue reselect resumes the same recording. New native packages and physical checks are still required; this is not a claim that existing1.7.3 binaries contain these changes.
+
 ## Latest companion checkpoint — 1.7.3, 2026-10-01
 
 [Current platform delivery and gates](delivery-1.7.3-2026-10-01.md) supersedes the historical build numbers below. The signed iOS1070003 package includes the matching Watch app and granted CarPlay profile; Wear internal20001011 is published.
@@ -27,8 +31,7 @@
   Google Play ID is set via `ORG_GRADLE_PROJECT_playAppId`; GitHub packages
   retain the existing default ID. A watch cannot connect to a phone app
   signed with a different certificate.
-- Phone↔watch metadata is throttled to 15 seconds; item/pause changes send
-  immediately. Neither companion collects health, location, microphone,
+- Background phone↔watch context is throttled to 15 seconds; track/pause/seek changes publish immediately. Reachable Apple Watch receives live messages and requests fresh state on foreground entry. Neither companion collects health, location, microphone,
   contacts or account credentials.
 
 ## Build and distribution

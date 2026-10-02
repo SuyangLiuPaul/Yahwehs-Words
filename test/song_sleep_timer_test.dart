@@ -55,6 +55,9 @@ class _FakeEngine implements SongPlaybackEngine {
   int get attempt => _attempt;
 
   @override
+  Future<void> loadPaused(String url) async {}
+
+  @override
   Future<void> play(String url) {
     _attempt++;
     playCalls.add(url);
@@ -119,8 +122,7 @@ void main() {
   testWidgets(
       '"end of this song" pauses on the natural end and does not '
       'advance the queue — today, before this fix, onComplete always '
-      'calls skipToNext regardless of any armed sleep mode',
-      (tester) async {
+      'calls skipToNext regardless of any armed sleep mode', (tester) async {
     final engine = _FakeEngine();
     final handler = SongAudioHandler(engine: engine);
     await handler.setQueue(queueOf(['s0', 's1']), autoPlay: false);

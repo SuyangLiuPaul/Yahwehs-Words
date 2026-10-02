@@ -37,7 +37,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
     private val pending = mutableMapOf<String, Runnable>()
     private val requestProofs = mutableMapOf<String, Long>()
     private val accent = Color.rgb(84, 199, 245)
-    private val surface = Color.rgb(15, 31, 44)
+    private val surface = Color.rgb(31, 56, 77)
     private val artworkWorker = Executors.newSingleThreadExecutor()
     private var artworkUrl = ""
     private var artworkBitmap: Bitmap? = null
@@ -175,7 +175,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         return view
     }
     private fun artwork(size: Int = 68) {
-        val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(surface,14); contentDescription=null }
+        val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(Color.rgb(232, 245, 255),14); setPadding(dp(3),dp(3),dp(3),dp(3)); contentDescription=null }
         artworkView=image
         content.addView(image,LinearLayout.LayoutParams(dp(size),dp(size)).apply { bottomMargin=dp(8) })
         val raw=state.optString("artwork")
@@ -232,7 +232,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val busy = state.optBoolean("loading")
         val canControl = live && !busy && error.isEmpty() && state.optString("error").isEmpty() && state.optString("id").isNotEmpty()
         playbackControls.forEachIndexed { index, button ->
-            button.isEnabled = canControl && (index == 0 || state.optBoolean("sermon") || state.optBoolean("canSkip"))
+            button.isEnabled = canControl && (index == 0 || state.optBoolean("sermon") || state.optBoolean(if (index == 1) "canPrevious" else "canNext", state.optBoolean("canSkip")))
         }
         val total = state.optLong("duration", 0).coerceAtLeast(0)
         val advance = if (live && state.optBoolean("playing") && !busy && state.optString("error").isEmpty())

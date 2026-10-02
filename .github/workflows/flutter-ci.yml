@@ -416,3 +416,18 @@ jobs:
           name: gitleaks-results
           path: results.sarif
           retention-days: 7
+
+  companion-native:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Watch snapshot and immediate publication rules
+        run: |
+          swiftc -D WATCH_COMPANION_LOGIC_TEST ios/WordsWatch/WordsWatchApp.swift test/native/watch_companion_logic_test.swift -o /tmp/words-watch-logic
+          /tmp/words-watch-logic
+          swiftc -D MEDIA_COMPANION_LOGIC_TEST ios/Runner/WordsMediaCompanion.swift test/native/media_companion_publication_test.swift -o /tmp/words-companion-logic
+          /tmp/words-companion-logic
+      - name: Type-check the watch UI against the installed Apple SDK
+        run: |
+          swiftc -parse-as-library -typecheck -target arm64-apple-watchos9.0-simulator -sdk "$(xcrun --sdk watchsimulator --show-sdk-path)" ios/WordsWatch/WordsWatchApp.swift

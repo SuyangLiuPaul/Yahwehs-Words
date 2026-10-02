@@ -199,6 +199,13 @@ class CarAudioCatalogue {
       final matches = songs.where((s) => s.id == parts[2]).toList();
       if (matches.isEmpty) return;
       final song = matches.first;
+      final player = SongPlayerService.instance;
+      final mix =
+          parts[1] == 'instrumental' ? SongTrack.instrumental : SongTrack.vocal;
+      if (player.isCurrent(song, mix)) {
+        await player.resumeCurrent();
+        return;
+      }
       await SongPlayerService.instance.playQueue(
           songs.where((s) => s.source == song.source).toList(),
           startSongId: song.id,

@@ -452,67 +452,36 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       _player.setLoop(_queue.repeat == RepeatMode.one && !_sleepAtEndOfTrack);
 
   /// Which mix the whole queue plays, changed mid-listen.
-  ///
-  /// The per-song chips in the detail sheet only ever affected one
-  /// song, and a playlist's preference could only be set before
-  /// pressing play — so "I am driving, drop the vocals" meant going
-  /// back and rebuilding the queue. This re-resolves every song in
-  /// place and keeps the one that is playing, carrying the position
-  /// across it: the mixes are the same arrangement, so 1:12 into the
-  /// sung take is 1:12 into the accompaniment.
-  ///
-  /// Songs with no track of the wanted kind follow [fallback] — the
-  /// point of `skip` is that an accompaniment queue never surprises a
-  /// driver with singing.
+  /// Change the current song's recording without replacing its queue.
+  /// Unsupported mixes are a no-op even for non-widget callers. Playlist
+  /// preferences are resolved when the playlist is created, not here.
   Future<void> setTrackPreference(
     TrackPreference preference,
     TrackFallback fallback,
   ) async {
-    if (_queue.isEmpty) return;
+    final current = _queue.current;
+    if (current == null || _loading || !_queue.hasCurrentMix(preference)) {
+      return;
+    }
+    final next = _queue.withCurrentMix(preference);
+    if (identical(next, _queue)) return;
     final wasPlaying = _playing;
     final resumeAt = _position;
-    final currentUrl = _queue.current?.url;
-    final currentSongId = _queue.current?.song.id;
-
-    // The rebuild itself is a pure queue transformation — see
-    // SongQueue.withPreference, which is where its rules are tested.
-    final rebuilt = _queue.withPreference(preference, fallback);
-    if (rebuilt.isEmpty) {
-      // Every song was skipped for want of the wanted mix. Leave the
-      // queue alone rather than stopping the music.
-      _error = 'no-tracks';
-      _broadcast();
-      return;
-    }
-
-    _queue = rebuilt;
-    _preference = preference;
-    _fallback = fallback;
-
-    // Same file still playing → nothing to reload, just republish.
-    if (_queue.current?.url == currentUrl) {
-      await _publishQueue();
-      _publishMediaItem();
-      _broadcast();
-      return;
-    }
-
-    // The position carries across the same SONG only. The mixes are the
-    // same arrangement, so 1:12 into the sung take is 1:12 into the
-    // accompaniment — but a song with no such track was skipped, and
-    // 1:12 into a different song is not where anybody was.
-    final sameSong = _queue.current?.song.id == currentSongId;
-    _resumeAt =
-        sameSong && (wasPlaying || resumeAt > Duration.zero) ? resumeAt : null;
-    await _playCurrent();
+    _queue = next;
+    await _playCurrent(
+        autoPlay: wasPlaying,
+        resumeAt: resumeAt > Duration.zero ? resumeAt : null);
     await _publishQueue();
   }
 
   /// The mix the queue is currently set to, for the UI's highlighting.
-  TrackPreference get preference => _preference;
+  TrackPreference get preference => switch (_queue.current?.kind) {
+        'instrumental' => TrackPreference.instrumental,
+        'accompaniment' => TrackPreference.accompaniment,
+        _ => TrackPreference.vocal,
+      };
   TrackFallback get fallback => _fallback;
-  TrackPreference _preference = TrackPreference.vocal;
-  TrackFallback _fallback = TrackFallback.useVocal;
+  final TrackFallback _fallback = TrackFallback.useVocal;
 
   /// Position to restore once the next track has loaded. Set only when
   /// swapping mixes mid-song.
@@ -590,6 +559,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _position = Duration.zero;
     _duration = Duration.zero;
     _durationUrl = null;
+    _resumeAt = null;
     _publishMediaItem();
     unawaited(_publishQueue());
     _broadcast();
@@ -683,7 +653,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
   // ── Internals ───────────────────────────────────────────────────
 
-  Future<void> _playCurrent() async {
+  Future<void> _playCurrent({bool autoPlay = true, Duration? resumeAt}) async {
     if (_remote != null) useSongs();
     final item = _queue.current;
     if (item == null) return;
@@ -705,6 +675,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // So the play call is issued FIRST, synchronously, before any
     // state updates or notifications — and the future is awaited
     // afterwards. Everything below this line used to happen before it.
+    _resumeAt = resumeAt;
     final resolved = _resolvedUrl(item);
     _preloadedUrl = null;
     // Reset before asking the engine to play: a new file must not
@@ -712,8 +683,11 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     _position = Duration.zero;
     _duration = Duration.zero;
     _durationUrl = item.url;
-    final playing = _player.play(resolved);
+    if (!autoPlay) _playing = false;
+    final playing =
+        autoPlay ? _player.play(resolved) : _player.loadPaused(resolved);
     _currentAttempt = _player.attempt;
+    final attempt = _currentAttempt;
     // Applied per track, not once: the web element keeps `loop` across
     // sources, but the native player's release mode is reset by some
     // platform implementations when a new source is set.
@@ -728,6 +702,8 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
 
     try {
       await playing;
+      if (attempt != _currentAttempt) return;
+      if (!autoPlay) _cancelStallWatchdog();
       _failed.remove(item.song.id);
     } on PlaybackBlockedException catch (e) {
       // The browser refused to START — not a bad track. Handled apart
@@ -920,7 +896,9 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
       artist: s.creditLine ?? s.sourceLabel,
       album: s.album ?? _queue.sourceLabel,
       duration: _itemDuration(item, active: active),
-      artUri: s.artworkUrl == null ? Uri.parse('https://yahwehword.com/icons/Icon-512.png') : Uri.tryParse(s.artworkUrl!),
+      artUri: s.artworkUrl == null
+          ? Uri.parse('https://yahwehword.com/icons/Icon-512.png')
+          : Uri.tryParse(s.artworkUrl!),
       extras: {'songId': s.id, 'kind': item.kind},
     );
   }

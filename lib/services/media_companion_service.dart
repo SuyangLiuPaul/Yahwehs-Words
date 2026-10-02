@@ -20,6 +20,7 @@ class MediaCompanionService {
   static Future<void>? _dailyLoading;
   static final _subscriptions = <StreamSubscription<dynamic>>[];
   static String? _publishedIdentity;
+  static Map<String, dynamic>? _lastEventSample;
   static String _locale = 'en';
   static Map<String, dynamic> _reading = {};
   static String _readingIdentity = '';
@@ -50,6 +51,7 @@ class MediaCompanionService {
     }
     _subscriptions.clear();
     _publishedIdentity = null;
+    _lastEventSample = null;
     void publishChange(dynamic _) {
       final snapshot = _snapshot();
       final identity = jsonEncode({
@@ -62,13 +64,31 @@ class MediaCompanionService {
           'duration',
           'loading',
           'canSkip',
+          'canNext',
+          'canPrevious',
           'playing',
           'error',
           'sermon'
         ])
           key: snapshot[key],
       });
-      if (identity != _publishedIdentity) {
+      final last = _lastEventSample;
+      final now = snapshot['syncedAt'] as int;
+      final elapsed =
+          last == null ? 0 : (now - (last['syncedAt'] as int)) / 1000;
+      final expected = last == null
+          ? 0
+          : (last['position'] as int) +
+              (last['playing'] == true && last['loading'] != true
+                  ? elapsed
+                  : 0);
+      final jumped =
+          last != null && ((snapshot['position'] as int) - expected).abs() > 2;
+      if (identity != _publishedIdentity ||
+          last == null ||
+          elapsed >= 3 ||
+          jumped) {
+        _lastEventSample = snapshot;
         _publishedIdentity = identity;
         unawaited(_publish());
       }
@@ -79,6 +99,7 @@ class MediaCompanionService {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'snapshot':
+          await _loadLocale();
           await _loadDaily();
           return _snapshot();
         case 'children':
@@ -96,6 +117,7 @@ class MediaCompanionService {
               }
           ];
         case 'command':
+          await _loadLocale();
           final args = Map<String, dynamic>.from(call.arguments as Map);
           await _command(args['action'] as String, args['id'] as String?);
           unawaited(_publish());
@@ -146,7 +168,7 @@ class MediaCompanionService {
     final state = h.playbackState.value;
     return {
       'title': item?.title ?? '',
-      'subtitle': item?.artist ?? item?.album ?? '',
+      'subtitle': item?.album ?? item?.artist ?? '',
       'artwork': item?.artUri?.toString() ?? '',
       'locale': locale,
       'id': item?.id ?? '',
@@ -158,6 +180,11 @@ class MediaCompanionService {
       'syncedAt': DateTime.now().millisecondsSinceEpoch,
       'sermon': item?.id.startsWith('car:sermon/') ?? false,
       'canSkip': state.controls.any((c) => c.action.name == 'skipToNext'),
+      'canNext':
+          item?.id.startsWith('car:sermon/') == true || h.songQueue.hasNext,
+      'canPrevious': item?.id.startsWith('car:sermon/') == true ||
+          h.songQueue.hasPrevious ||
+          state.position.inSeconds >= 3,
       'error': state.errorMessage ?? '',
       'reading': _reading,
       'daily': _daily
@@ -166,8 +193,7 @@ class MediaCompanionService {
 
   static Future<void> _publish() async {
     try {
-      _locale =
-          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+      await _loadLocale();
       await _loadDaily();
       await _channel.invokeMethod<void>('state', _snapshot());
     } on MissingPluginException {
@@ -176,6 +202,11 @@ class MediaCompanionService {
     } catch (e) {
       debugPrint('[MediaCompanion] state unavailable: $e');
     }
+  }
+
+  static Future<void> _loadLocale() async {
+    _locale = (await SharedPreferences.getInstance()).getString('locale') ??
+        'zh-Hans';
   }
 
   static Future<void> _loadDaily() async {
