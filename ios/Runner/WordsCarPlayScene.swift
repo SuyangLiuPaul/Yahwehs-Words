@@ -103,10 +103,22 @@ class WordsCarPlayScene: UIResponder, CPTemplateApplicationSceneDelegate, CPNowP
                 self.showError(error)
               } else if controller.topTemplate !== CPNowPlayingTemplate.shared {
                 CPNowPlayingTemplate.shared.upNextTitle = self.text("Playing queue", "播放队列", "播放佇列")
-                controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                if controller.templates.contains(where: { $0 === CPNowPlayingTemplate.shared }) {
+                  controller.pop(to: CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                } else {
+                  controller.pushTemplate(CPNowPlayingTemplate.shared, animated: true, completion: self.presentationFinished)
+                }
               }
             }
-          } else { self?.showFolder(key, title: row["title"] as? String ?? title); complete() }
+          } else {
+            let paging = key.hasPrefix("car:queue-page/") ||
+              (key.hasPrefix("car:playlist/") && (Int(key.split(separator: "/").last ?? "0") ?? 0) > 0)
+            if paging {
+              template.updateSections([])
+              self?.loadFolder(key, title: title, template: template, connection: connection)
+            } else { self?.showFolder(key, title: row["title"] as? String ?? title) }
+            complete()
+          }
         }
         return item
       }

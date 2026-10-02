@@ -244,7 +244,13 @@ class CarAudioCatalogue {
       final player = SongPlayerService.instance;
       final index = player.queue.items.indexWhere((entry) => entry.url == url);
       if (index < 0) {
-        return; // A stale watch row never selects a different track.
+        final locale =
+            (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+        throw StateError(_title(
+            locale,
+            'Queue changed. Refresh and select again.',
+            '队列已更新，请刷新后重新选择。',
+            '佇列已更新，請重新整理後再選擇。'));
       }
       if (index == player.queue.index) {
         await player.resumeCurrent();
