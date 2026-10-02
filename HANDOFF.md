@@ -1,3 +1,9 @@
+## Words media repair delivery — 2026-10-02
+
+Words **1.7.4** fixes recording choices for the current song, preserves queue/position on mix changes, keeps paused loading silent, improves Watch/Wear readability and playback-state publication, and makes car catalogue resume idempotent. Source PR26 and version PR27 passed their matching head CI and merged. Immutable tag `v1.7.4` is `df5ed7beeb6a19892fb859c8399cd921b2c96b82`. Sword stays **1.7.3**; it has no media/watch/car capability.
+
+All six Words websites serve1.7.4. Google phone internal1007004 and Wear internal20001012 are Available to internal testers; Alpha1007004 is saved for submission after the pending1.7.3 review, because sending now would cancel/restart it. Both signed Apple1.7.4/1070004 packages were delivered successfully and are processing (iOS11:12, Mac11:10 Melbourne). Microsoft1.7.4 MSIX is verified and queued until existing1.7.3 certification completes. Physical pairing and some native simulator checks remain open. [Current delivery](docs/delivery-1.7.4-2026-10-02.md), [Microsoft guards](docs/microsoft-followup-1.7.4.md). Older dated checkpoints below are historical.
+
 ## Google phone internal testing corrected — 2026-10-02 Melbourne
 
 Both existing internal phone tracks now serve **1.7.3**: Words1007003, released02:05, and Sword2000010, released02:04. Each release3 visibly reports Available to internal testers. Reused the processed phone bundle and existing three-language Alpha notes; preserved selected tester lists. The prior internal tracks still served Words1.6.32 and Sword1.6.328, so testers enrolled internally did not receive newer Alpha builds. Words Alpha remains in review; Sword Alpha is available. These internal releases do not meet public production qualification. [Current delivery record](docs/delivery-1.7.3-2026-10-01.md).
