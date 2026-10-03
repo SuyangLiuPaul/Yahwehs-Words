@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -54,6 +55,39 @@ class _YoutubeEmbed extends StatefulWidget {
 class _YoutubeEmbedState extends State<_YoutubeEmbed> {
   late final WebViewController _controller;
 
+  /// 2026-10-03, from the owner: some YouTube songs on iPhone "keep
+  /// loading". The wrapper page has no way to say the player never came
+  /// up — a blocked or stalled request leaves YouTube's own spinner on
+  /// screen forever with nothing to tap. The wrapper now reports the
+  /// iframe's `load` event; if it has not arrived in [_loadTimeout], or
+  /// the page itself fails to load, the spinner is replaced by a retry.
+  static const _loadTimeout = Duration(seconds: 15);
+  bool _loaded = false;
+  bool _failed = false;
+  Timer? _watchdog;
+
+  void _armWatchdog() {
+    _watchdog?.cancel();
+    _watchdog = Timer(_loadTimeout, () {
+      if (mounted && !_loaded) setState(() => _failed = true);
+    });
+  }
+
+  void _load() {
+    _loaded = false;
+    _failed = false;
+    _armWatchdog();
+    _controller.loadHtmlString(
+        _wrapperHtml(widget.videoId, widget.startSeconds),
+        baseUrl: 'https://yswords-qat.netlify.app');
+  }
+
+  @override
+  void dispose() {
+    _watchdog?.cancel();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +111,17 @@ class _YoutubeEmbedState extends State<_YoutubeEmbed> {
     _controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFF000000))
+      ..addJavaScriptChannel('YtLoaded', onMessageReceived: (_) {
+        _watchdog?.cancel();
+        if (mounted) setState(() => _loaded = true);
+      })
+      ..setNavigationDelegate(NavigationDelegate(
+        onWebResourceError: (e) {
+          if ((e.isForMainFrame ?? true) && mounted && !_loaded) {
+            setState(() => _failed = true);
+          }
+        },
+      ))
       // v1.4.130 loaded the embed URL as the TOP document and every
       // video failed with "Error 153 — Video player configuration
       // error". 153 is YouTube refusing an embed whose request carries
@@ -86,9 +131,8 @@ class _YoutubeEmbedState extends State<_YoutubeEmbed> {
       // page, and `baseUrl` names an origin we control — the same one
       // the media-proxy fallback uses — which is what the Referer is
       // derived from.
-      ..loadHtmlString(
-          _wrapperHtml(widget.videoId, widget.startSeconds),
-          baseUrl: 'https://yswords-qat.netlify.app');
+      ;
+    _load();
     final platform = _controller.platform;
     if (platform is AndroidWebViewController) {
       platform.setMediaPlaybackRequiresUserGesture(false);
@@ -111,11 +155,51 @@ class _YoutubeEmbedState extends State<_YoutubeEmbed> {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>html,body{margin:0;height:100%;background:#000}
 iframe{border:0;width:100%;height:100%}</style></head><body>
-<iframe src="${youtubeEmbedSrc(id, startSeconds: startSeconds)}"
+<iframe onload="try{YtLoaded.postMessage('1')}catch(e){}" src="${youtubeEmbedSrc(id, startSeconds: startSeconds)}"
  allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write"
  allowfullscreen></iframe></body></html>''';
 
+  static String _lang(BuildContext context) {
+    final l = Localizations.localeOf(context);
+    if (l.languageCode != 'zh') return 'en';
+    final tw = l.scriptCode == 'Hant' ||
+        l.countryCode == 'TW' ||
+        l.countryCode == 'HK';
+    return tw ? 'zh-Hant' : 'zh-Hans';
+  }
+
+  static const _slow = {
+    'zh-Hans': '视频加载太久了',
+    'zh-Hant': '影片載入太久了',
+    'en': 'The video is taking too long to load',
+  };
+  static const _retry = {
+    'zh-Hans': '重试',
+    'zh-Hant': '重試',
+    'en': 'Retry',
+  };
+
   @override
-  Widget build(BuildContext context) =>
-      WebViewWidget(controller: _controller);
+  Widget build(BuildContext context) {
+    final web = WebViewWidget(controller: _controller);
+    if (!_failed) return web;
+    final lang = _lang(context);
+    return Stack(fit: StackFit.expand, children: [
+      web,
+      Container(
+        color: const Color(0xFF000000),
+        alignment: Alignment.center,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(_slow[lang]!,
+              style: const TextStyle(color: Colors.white, fontSize: 14)),
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: () => setState(_load),
+            style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
+            child: Text(_retry[lang]!),
+          ),
+        ]),
+      ),
+    ]);
+  }
 }
