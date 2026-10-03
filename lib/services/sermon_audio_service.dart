@@ -6,7 +6,7 @@ import 'sermon_service.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show PlatformException, rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yahwehs_words/services/error_reporter.dart';
@@ -412,7 +412,19 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
     }
     if (_sermonId == sermonId) {
       if (_playing) {
-        await _player.pause();
+        try {
+          await _player.pause();
+        } on PlatformException catch (e) {
+          // Android's MediaPlayer throws `MEDIA_ERROR_UNKNOWN {what:-38}`
+          // when pause() lands on a player that already left the started
+          // state (reported from /sermons/008 three seconds into
+          // playback). The audio is not playing, which is what the
+          // listener asked for: say so rather than crash.
+          debugPrint('[SermonAudioService] pause failed: $e');
+          ErrorReporter.breadcrumb('sermon.pauseFailed', data: '$e');
+          _playing = false;
+          notifyListeners();
+        }
       } else {
         await MediaFocus.instance.claim(this);
         onRemoteActivation?.call(this);
@@ -426,6 +438,14 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
               data: 'context=resume id=$sermonId');
           _error = 'blocked';
           notifyListeners();
+        } on PlatformException catch (e) {
+          // Same -38 family: the player is in no state to resume. Reload
+          // the part at the place the listener stopped.
+          debugPrint('[SermonAudioService] resume failed, reloading: $e');
+          ErrorReporter.breadcrumb('sermon.resumeFailed', data: '$e');
+          _loading = true;
+          notifyListeners();
+          await _playPart(resumeAt: _position);
         }
       }
       return;
@@ -515,6 +535,17 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
           data: 'context=playPart part=$_partIndex');
       _error = 'blocked';
       _loading = false;
+      notifyListeners();
+    } on PlatformException catch (e) {
+      // The platform player refused the file (Android MediaPlayer -38,
+      // -1004 ...). Show the generic error instead of letting the
+      // exception reach the Zone-level crash reporter.
+      debugPrint('[SermonAudioService] play failed: $e');
+      ErrorReporter.breadcrumb('sermon.playFailed',
+          data: 'part=$_partIndex $e');
+      _error = e.message ?? 'error';
+      _loading = false;
+      _playing = false;
       notifyListeners();
     }
   }

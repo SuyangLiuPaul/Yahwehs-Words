@@ -228,4 +228,21 @@ void main() {
     expect(blocked, hasLength(1));
     expect(blocked.single.data, 'context=resume id=421');
   });
+
+  test('pause hitting Android MediaPlayer -38 does not throw; reads as paused',
+      () async {
+    final engine = FakeSongPlaybackEngine();
+    final svc = SermonAudioService.withEngine(engine);
+    svc.seedForTest('008', const [part]);
+
+    await svc.play('008');
+    engine.emitPlaying(true);
+    await Future<void>.delayed(Duration.zero);
+    expect(svc.isPlaying, isTrue);
+
+    engine.throwPlatformOnPause = true;
+    await svc.play('008'); // toggle -> pause()
+    expect(svc.isPlaying, isFalse);
+    expect(crumbs().any((b) => b.action == 'sermon.pauseFailed'), isTrue);
+  });
 }
