@@ -13,8 +13,8 @@
     ],
     "confidenceCounts": {
       "Definitive": 87,
-      "Strong": 97,
-      "Circumstantial": 41
+      "Strong": 96,
+      "Circumstantial": 42
     },
     "generatedAt": "2026-05-22T22:08:38Z",
     "correctionsFromSword": "2026-09-21, brought over from Yahweh's Sword: the Tel Dan Stele is 但丘石碑 (Tel Dan), not 但以理石碑 (Daniel); an ossuary holds bones, so 骨灰罐/骨灰盒 became 藏骨罐/骸骨箱, the terms this file already used 34 times elsewhere; and 25 academicSources lists lost their mojibake (AmÃ©lie → Amélie). Sword's zh-Hant variant table was NOT taken: it and this file's own s2tw repairs disagree (Sword turns 石製 into 石制), and this file's are the ones pinned by bible_evidence_traditional_test."
@@ -1393,7 +1393,7 @@
         "https://yswords-data.netlify.app/images/evidence/bethlehem_bulla_0.jpg"
       ],
       "academicSources": [
-        "Vainstub, Daniel. \"A Fiscal Bulla from the Reign of Hezekiah.\" IEJ 62 (2012): 160–168.",
+        "Reich, Ronny. \"A Fiscal Bulla from the City of David, Jerusalem.\" Israel Exploration Journal 62.2 (2012): 200–205.",
         "Israel Antiquities Authority. \"First Seal Impression Bearing the Name Bethlehem Found.\" Press Release, 2012."
       ],
       "confidenceLevel": "Definitive",
@@ -4539,9 +4539,9 @@
       "academicSources": [
         "McMillen, S. I. None of These Diseases. Revell, 1984.",
         "Rubin, Jordan. The Maker's Diet. Siloam Press, 2004.",
-        "Ness, Robert B., et al. \"Circumcision and Newborn Blood Coagulation.\" Pediatrics (1999)."
+        "American Academy of Pediatrics, Committee on Fetus and Newborn. \"Controversies Concerning Vitamin K and the Newborn.\" Pediatrics 112 (2003): 191–192."
       ],
-      "confidenceLevel": "Strong",
+      "confidenceLevel": "Circumstantial",
       "icon": "⚕️",
       "title": {
         "en": "Optimal Circumcision Day",
@@ -4549,19 +4549,19 @@
         "zh-Hant": "最佳割禮日期"
       },
       "summary": {
-        "en": "The biblical command for circumcision on the eighth day aligns perfectly with modern medical understanding of blood clotting factors. This timing minimizes bleeding risk for the infant.",
-        "zh-Hans": "圣经中关于在第八天行割礼的命令，与现代医学对血液凝固因子的理解完美契合。这一时间最大限度地降低了婴儿的出血风险。",
-        "zh-Hant": "聖經中關於在第八天行割禮的命令，與現代醫學對血液凝固因子的理解完美契合。這一時間最大限度地降低了嬰兒的出血風險。"
+        "en": "The Bible commands circumcision on the eighth day (Genesis 17:12). A popular argument says this timing matches a peak in a newborn's blood-clotting factors, but current medical evidence does not support that claim, so it is not offered as scientific confirmation of the Bible.",
+        "zh-Hans": "圣经命令在第八天行割礼（创世记17:12）。一种流行的说法认为这个时间恰好对应新生儿凝血因子的峰值，但目前的医学证据并不支持这种说法，因此这里不把它当作圣经得到科学证实的证据。",
+        "zh-Hant": "聖經命令在第八天行割禮（創世記17:12）。一種流行的說法認為這個時間恰好對應新生兒凝血因子的峰值，但目前的醫學證據並不支持這種說法，因此這裡不把它當作聖經得到科學證實的證據。"
       },
       "description": {
-        "en": "The medical significance of the eighth day for circumcision was confirmed in the 20th century with advancements in biochemistry and understanding of vitamin K and prothrombin. It was discovered that vitamin K, essential for blood clotting, is not fully produced by infants until around day 5-7, and prothrombin levels (a crucial clotting factor) peak on the eighth day, reaching 110% of adult normal.\n\nPerforming circumcision on the eighth day ensures that the infant's blood clotting mechanisms are at their optimal level, significantly reducing the risk of hemorrhage. This timing provides a natural window of safety for the procedure, minimizing complications and promoting faster healing.\n\nBefore the discovery of vitamin K and prothrombin, the biblical command might have seemed arbitrary or purely ritualistic. However, modern medical science has revealed a precise physiological reason for this specific timing, demonstrating a remarkable foresight in ancient religious law regarding infant health and safety.",
-        "zh-Hans": "割礼在第八天的医学意义，随着20世纪生物化学和对维生素K及凝血酶原理解的进步而得到证实。研究发现，婴儿在出生后第5-7天才能充分产生对血液凝固至关重要的维生素K，而凝血酶原（一种关键的凝血因子）水平在第八天达到峰值，达到成人正常水平的110%。\n\n在第八天进行割礼，确保了婴儿的血液凝固机制处于最佳水平，显著降低了出血风险。这一时间为手术提供了一个自然的、安全的窗口，最大限度地减少了并发症并促进更快愈合。\n\n在发现维生素K和凝血酶原之前，圣经的命令可能看起来是武断的或纯粹的仪式性。然而，现代医学科学揭示了这一特定时间精确的生理学原因，展示了古代宗教律法在婴儿健康和安全方面的卓越远见。",
-        "zh-Hant": "割禮在第八天的醫學意義，隨著20世紀生物化學和對維生素K及凝血酶原理解的進步而得到證實。研究發現，嬰兒在出生後第5-7天才能充分產生對血液凝固至關重要的維生素K，而凝血酶原（一種關鍵的凝血因子）水平在第八天達到峰值，達到成人正常水平的110%。\n\n在第八天進行割禮，確保了嬰兒的血液凝固機制處於最佳水平，顯著降低了出血風險。這一時間為手術提供了一個自然的、安全的窗口，最大限度地減少了併發症並促進更快癒合。\n\n在發現維生素K和凝血酶原之前，聖經的命令可能看起來是武斷的或純粹的儀式性。然而，現代醫學科學揭示了這一特定時間精確的生理學原因，展示了古代宗教律法在嬰兒健康和安全方面的卓越遠見。"
+        "en": "A frequently repeated argument holds that the eighth day is medically ideal for circumcision because vitamin K and prothrombin supposedly peak then, at '110% of normal'. That figure comes from popular books and apologetic writing, not from current paediatric evidence.\n\nNewborns do have low vitamin K, which is why vitamin K is now routinely given to babies at birth: vitamin K deficiency bleeding can occur at any time in the first weeks of life, not only before the eighth day. Current medical guidance does not identify day 8 as a point of guaranteed clotting safety.\n\nThe commandment in Genesis 17:12 stands on its own as a covenant sign. This entry therefore treats the medical argument as a claim that has been made, not as scientific confirmation of the Bible.",
+        "zh-Hans": "有一种常被重复的论点认为，第八天对割礼来说在医学上是最佳时间，因为维生素K和凝血酶原据说在这一天达到峰值，即“正常值的110%”。这个数字来自通俗读物和护教文章，而不是当前的儿科证据。\n\n新生儿的维生素K确实偏低，所以现在给新生儿常规在出生时补充维生素K：维生素K缺乏性出血可能发生在出生后头几周的任何时候，而不只是在第八天之前。目前的医学指南并没有把第八天认定为凝血绝对安全的时间点。\n\n创世记17:12的诫命本身就是立约的记号，不需要这类医学论证。因此本条目把这一医学论点当作“曾被提出的说法”，而不是圣经得到科学证实的证据。",
+        "zh-Hant": "有一種常被重複的論點認為，第八天對割禮來說在醫學上是最佳時間，因為維生素K和凝血酶原據說在這一天達到峰值，即“正常值的110%”。這個數字來自通俗讀物和護教文章，而不是當前的兒科證據。\n\n新生兒的維生素K確實偏低，所以現在給新生兒常規在出生時補充維生素K：維生素K缺乏性出血可能發生在出生後頭幾周的任何時候，而不只是在第八天之前。目前的醫學指南並沒有把第八天認定為凝血絕對安全的時間點。\n\n創世記17:12的誡命本身就是立約的記號，不需要這類醫學論證。因此本條目把這一醫學論點當作“曾被提出的說法”，而不是聖經得到科學證實的證據。"
       },
       "scripturalCorrelation": {
-        "en": "Genesis 17:12 clearly states the divine command: 'For generations to come every male among you who is eight days old must be circumcised, including those born in your household or bought with money from a foreigner—those who are not your own offspring.' This verse establishes the eighth day as the specific time for the ritual.\n\nThe precise instruction for the eighth day, rather than immediately after birth or later, is medically significant. This timing ensures that the infant's natural clotting factors, particularly prothrombin levels boosted by vitamin K, are at their highest and safest point, minimizing the risk of excessive bleeding during the procedure, a fact confirmed by modern medical science.",
-        "zh-Hans": "创世记 17:12 清楚地阐明了神圣的命令：“你们世世代代的男丁，无论是家里生的，是在你后裔之外用银子从外人买的，生下来第八日，都要受割礼。”这节经文确立了第八天作为行割礼的具体时间。\n\n第八天而非出生后立即或更晚的精确指示，具有医学意义。这一时间确保了婴儿的天然凝血因子，特别是维生素K促进的凝血酶原水平，处于最高和最安全的点，最大限度地降低了手术过程中过度出血的风险，这一事实已由现代医学科学证实。",
-        "zh-Hant": "創世記 17:12 清楚地闡明瞭神聖的命令：“你們世世代代的男丁，無論是家裡生的，是在你後裔之外用銀子從外人買的，生下來第八日，都要受割禮。”這節經文確立了第八天作為行割禮的具體時間。\n\n第八天而非出生後立即或更晚的精確指示，具有醫學意義。這一時間確保了嬰兒的天然凝血因子，特別是維生素K促進的凝血酶原水平，處於最高和最安全的點，最大限度地降低了手術過程中過度出血的風險，這一事實已由現代醫學科學證實。"
+        "en": "Genesis 17:12 clearly states the divine command: 'For generations to come every male among you who is eight days old must be circumcised, including those born in your household or bought with money from a foreigner—those who are not your own offspring.' This verse establishes the eighth day as the specific time for the ritual.\n\nThe command itself is clear. Claims that the eighth day coincides with a peak in clotting factors are not supported by current medical evidence, so they are not offered here as proof of the passage.",
+        "zh-Hans": "创世记 17:12 清楚地阐明了神圣的命令：“你们世世代代的男丁，无论是家里生的，是在你后裔之外用银子从外人买的，生下来第八日，都要受割礼。”这节经文确立了第八天作为行割礼的具体时间。\n\n这条命令本身是清楚的。至于第八天恰逢凝血因子峰值的说法，目前的医学证据并不支持，所以这里不把它当作这段经文的证明。",
+        "zh-Hant": "創世記 17:12 清楚地闡明瞭神聖的命令：“你們世世代代的男丁，無論是家裡生的，是在你後裔之外用銀子從外人買的，生下來第八日，都要受割禮。”這節經文確立了第八天作為行割禮的具體時間。\n\n這條命令本身是清楚的。至於第八天恰逢凝血因子峰值的說法，目前的醫學證據並不支持，所以這裡不把它當作這段經文的證明。"
       }
     },
     {
@@ -5674,7 +5674,7 @@
         "https://yswords-data.netlify.app/images/evidence/nebo_sarsekim_tablet_1.jpg"
       ],
       "academicSources": [
-        "Jursa, Michael. \"Nebo-Sarsekim, der Oberster der Eunuchen.\" NABU 2007/2 (2007): 41–43.",
+        "Jursa, Michael. Note on the Babylonian receipt naming Nabu-sharrussu-ukin, the chief eunuch (Nebo-Sarsekim of Jeremiah 39:3). NABU 2008/5.",
         "Kitchen, Kenneth A. On the Reliability of the Old Testament. Eerdmans, 2003."
       ],
       "confidenceLevel": "Definitive",
@@ -7702,7 +7702,7 @@
         "https://yswords-data.netlify.app/images/evidence/joshua_long_day_3.jpg"
       ],
       "academicSources": [
-        "Humphreys, Colin J. \"The Date of Joshua's Long Day.\" Science and Christian Belief 23 (2011).",
+        "Humphreys, Colin J., and W. Graeme Waddington. \"Solar eclipse of 1207 BC helps to date pharaohs.\" Astronomy & Geophysics 58.5 (2017). (Proposes that the Hebrew of Joshua 10:12-13 describes a solar eclipse; the proposal is disputed.)",
         "Patten, Donald W. The Long Day of Joshua. Pacific Meridian, 1973."
       ],
       "confidenceLevel": "Circumstantial",

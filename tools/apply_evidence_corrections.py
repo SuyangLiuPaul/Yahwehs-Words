@@ -295,6 +295,33 @@ source('sodom_gomorrah_evidence', 'Bunch, Ted E., et al. "Widespread Rampart Des
        'Bunch, Ted E., et al. "A Tunguska sized airburst destroyed Tall el-Hammam a Middle Bronze Age city in the Jordan Valley near the Dead Sea." Scientific Reports 11 (2021), doi:10.1038/s41598-021-97778-3. Retracted 24 April 2025: Retraction Note, Scientific Reports 15, 14291 (2025), doi:10.1038/s41598-025-99265-5.')
 
 
+# ---------------------------------------------------------------- citation fixes (verified 2026-10-04)
+# Bethlehem bulla: IEJ 62.2 (2012) 200-205, "A fiscal bulla from the City of David, Jerusalem", by Ronny Reich
+# (https://cris.haifa.ac.il/en/publications/a-fiscal-bulla-from-the-city-of-david-jerusalem/).
+source('bethlehem_bulla', 'Vainstub, Daniel.',
+       'Reich, Ronny. "A Fiscal Bulla from the City of David, Jerusalem." Israel Exploration Journal 62.2 (2012): 200–205.')
+# Joshua's long day: the Humphreys paper that exists is Humphreys & Waddington 2017 (Astronomy & Geophysics), which proposes
+# a solar eclipse on 30 Oct 1207 BC; the proposal is disputed. The listed 'Science and Christian Belief 23 (2011)' title was not found.
+source('joshua_long_day', 'Humphreys, Colin J.',
+       'Humphreys, Colin J., and W. Graeme Waddington. "Solar eclipse of 1207 BC helps to date pharaohs." Astronomy & Geophysics 58.5 (2017). (Proposes that the Hebrew of Joshua 10:12-13 describes a solar eclipse; the proposal is disputed.)')
+# Nebo-Sarsekim: Jursa's note is NABU 2008/5 (title in the entry was not found).
+source('nebo_sarsekim_tablet', 'Jursa, Michael.',
+       'Jursa, Michael. Note on the Babylonian receipt naming Nabu-sharrussu-ukin, the chief eunuch (Nebo-Sarsekim of Jeremiah 39:3). NABU 2008/5.')
+# Circumcision on day 8: the 'prothrombin 110% on day 8' claim comes from popular books, not current paediatrics.
+meta('circumcision_day_8', 'confidenceLevel', 'Circumstantial')
+setf('circumcision_day_8', 'summary',
+     "The Bible commands circumcision on the eighth day (Genesis 17:12). A popular argument says this timing matches a peak in a newborn's blood-clotting factors, but current medical evidence does not support that claim, so it is not offered as scientific confirmation of the Bible.",
+     "圣经命令在第八天行割礼（创世记17:12）。一种流行的说法认为这个时间恰好对应新生儿凝血因子的峰值，但目前的医学证据并不支持这种说法，因此这里不把它当作圣经得到科学证实的证据。")
+setf('circumcision_day_8', 'description',
+     "A frequently repeated argument holds that the eighth day is medically ideal for circumcision because vitamin K and prothrombin supposedly peak then, at '110% of normal'. That figure comes from popular books and apologetic writing, not from current paediatric evidence.\n\nNewborns do have low vitamin K, which is why vitamin K is now routinely given to babies at birth: vitamin K deficiency bleeding can occur at any time in the first weeks of life, not only before the eighth day. Current medical guidance does not identify day 8 as a point of guaranteed clotting safety.\n\nThe commandment in Genesis 17:12 stands on its own as a covenant sign. This entry therefore treats the medical argument as a claim that has been made, not as scientific confirmation of the Bible.",
+     "有一种常被重复的论点认为，第八天对割礼来说在医学上是最佳时间，因为维生素K和凝血酶原据说在这一天达到峰值，即“正常值的110%”。这个数字来自通俗读物和护教文章，而不是当前的儿科证据。\n\n新生儿的维生素K确实偏低，所以现在给新生儿常规在出生时补充维生素K：维生素K缺乏性出血可能发生在出生后头几周的任何时候，而不只是在第八天之前。目前的医学指南并没有把第八天认定为凝血绝对安全的时间点。\n\n创世记17:12的诫命本身就是立约的记号，不需要这类医学论证。因此本条目把这一医学论点当作“曾被提出的说法”，而不是圣经得到科学证实的证据。")
+para('circumcision_day_8', 'scripturalCorrelation', 'The precise instruction for the eighth day', '第八天而非出生后立即或更晚',
+     "The command itself is clear. Claims that the eighth day coincides with a peak in clotting factors are not supported by current medical evidence, so they are not offered here as proof of the passage.",
+     "这条命令本身是清楚的。至于第八天恰逢凝血因子峰值的说法，目前的医学证据并不支持，所以这里不把它当作这段经文的证明。")
+source('circumcision_day_8', 'Ness, Robert B.',
+       'American Academy of Pediatrics, Committee on Fetus and Newborn. "Controversies Concerning Vitamin K and the Newborn." Pediatrics 112 (2003): 191–192.')
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
