@@ -54,6 +54,10 @@ def setf(id, field, en, zh):
     E.append(dict(kind='set', id=id, field=field, en=en, zh=zh))
 
 
+def sub(id, field, en_old=None, en_new=None, zh_old=None, zh_new=None):
+    E.append(dict(kind='sub', id=id, field=field, en_old=en_old, en_new=en_new, zh_old=zh_old, zh_new=zh_new))
+
+
 def meta(id, field, en, zh=None):
     E.append(dict(kind='meta', id=id, field=field, en=en, zh=zh))
 
@@ -107,6 +111,41 @@ source('ossuary_of_james', 'Shanks, Hershel, and Ben Witherington III.',
        'Shanks, Hershel, and Ben Witherington III. The Brother of Jesus. HarperSanFrancisco, 2003.')
 
 
+# ---------------------------------------------------------------- hezekiah_royal_seal
+# Bulla found in 2009 Ophel wet-sifting (refuse dump beside a 10th-c. BCE royal building), announced Dec 2015;
+# shows a two-winged sun between TWO ankhs; the winged-scarab Hezekiah seals are unprovenanced market pieces.
+# https://library.biblicalarchaeology.org/department/royal-seal-of-king-hezekiah-comes-to-light-in-jerusalem-excavation/
+# https://en.wikipedia.org/wiki/King_Hezekiah_bulla
+meta('hezekiah_royal_seal', 'discoveryDate', '2009 (announced 2015)', '2009年（2015年公布）')
+para('hezekiah_royal_seal', 'description', 'The bulla (a clay seal impression)', '希西家王的泥印',
+     "The bulla (a clay seal impression) of King Hezekiah was found in 2009 by Eilat Mazar's Ophel expedition during wet-sifting of earth from a refuse dump beside a 10th-century BCE royal building at the foot of the Temple Mount's southern wall, together with 33 other bullae; it was announced in December 2015. Its Paleo-Hebrew inscription reads 'Belonging to Hezekiah [son of] Ahaz king of Judah'. The seal dates to the 8th century BCE, the period of Hezekiah's reign, making it a contemporary artifact of the biblical king.",
+     "希西家王的泥印（印章印记）于2009年由埃拉特·马扎尔率领的俄斐勒发掘队在筛洗土壤时发现，出土于圣殿山南墙脚下一座公元前10世纪王室建筑旁的垃圾堆，同时出土的还有另外33枚泥印；2015年12月公布。其古希伯来文铭文为“属于希西家，亚哈斯之子，犹大王”。该印章可追溯到公元前8世纪，即希西家王的统治时期，使其成为这位圣经君王的同期文物。")
+para('hezekiah_royal_seal', 'description', 'The bulla depicts a two-winged sun', '该泥印描绘了一个两翼太阳',
+     "The bulla shows a two-winged sun disc with its wings turned downward, flanked by two ankh signs (symbols of life), above the inscription. Other seal impressions of Hezekiah, known since the 1990s from the antiquities market and so without excavation context, show a winged scarab or a winged sun. This is the first impression of a seal of an Israelite or Judean king found in a scientific excavation, and it comes from the royal quarter beside the Temple Mount.",
+     "该泥印上有一个两翼向下的太阳盘，两侧各有一个安卡符号（生命的象征），其下为铭文。自20世纪90年代起，古董市场上已出现过其他希西家印章的印记，因没有发掘背景，有的刻带翼圣甲虫，有的刻带翼太阳。本品是科学发掘中首次出土的以色列或犹大国王的印章印记，出自圣殿山旁的王室区域。")
+
+# ---------------------------------------------------------------- ketef_hinnom_scrolls
+# Barkay published in Hebrew 1989 and in English 1992 (Tel Aviv 19); West Semitic Research Project reanalysis,
+# Barkay et al., BASOR 334 (2004): date c. 650-587 BCE.  https://madainproject.com/ketef_hinnom_scrolls
+para('ketef_hinnom_scrolls', 'description', 'High-resolution multispectral imaging', '2004年，学者借助高分辨率多光谱成像技术',
+     "In the early 2000s Barkay's team and the West Semitic Research Project re-photographed and re-read the scrolls with advanced imaging. Their study, 'The Amulets from Ketef Hinnom: A New Edition and Evaluation' (Bulletin of the American Schools of Oriental Research 334, 2004), allowed much more of the inscriptions to be read and dated them to about 650–587 BCE. The scrolls are now in the Israel Museum, Jerusalem. Barkay first published the inscriptions in Hebrew in 1989 and in English in 1992.",
+     "21世纪初，巴克莱的团队与西闪研究计划借助先进成像技术重新拍摄并重读了这些银卷。其研究《基特夫·欣嫩的护身符：新版与评估》（《美国东方研究学会学报》334期，2004年）使铭文得以更完整地辨读，并把年代定在约公元前650至587年。银卷现藏于耶路撒冷以色列博物馆。巴克莱于1989年首先用希伯来文、1992年用英文发表了这些铭文。")
+source('ketef_hinnom_scrolls', 'Barkay, Gabriel, et al. "The Amulets from Ketef Hinnom',
+       'Barkay, Gabriel, et al. "The Amulets from Ketef Hinnom: A New Edition and Evaluation." Bulletin of the American Schools of Oriental Research 334 (2004).')
+
+# ---------------------------------------------------------------- khirbet_qeiyafa_ostracon
+# C-14 of olive pits: late 11th-early 10th c. BCE; Hebrew vs Canaanite dispute (Garfinkel's verb 'to do').
+sub('khirbet_qeiyafa_ostracon', 'description',
+    "Radiocarbon dating of olive pits from the same layer confirmed the 10th century date.",
+    "Radiocarbon dating of olive pits from the same context points to the late 11th or early 10th century BCE. Whether the language is Hebrew is disputed: Garfinkel read a verb meaning 'to do' as distinctively Hebrew, while other scholars hold that the text could equally be Canaanite, Phoenician or Moabite.",
+    "同一地层的橄榄核放射性碳测年确认了公元前10世纪的日期。",
+    "同一地层的橄榄核放射性碳测年指向公元前11世纪末或10世纪初。铭文的语言是否为希伯来语仍有争议：加芬克尔把其中一个表示“做”的动词视为希伯来语特有，而另一些学者认为该文本同样可能是迦南语、腓尼基语或摩押语。")
+sub('khirbet_qeiyafa_ostracon', 'description', None, None, "位于犹大与 Philistia 的边界", "位于犹大与非利士地的边界")
+sub('khirbet_qeiyafa_ostracon', 'description', None, None, "在 Philistine 城市中未发现", "在非利士城市中未发现")
+sub('khirbet_qeiyafa_ostracon', 'description', None, None, "区别于附近的 Philistine 遗址", "区别于附近的非利士遗址")
+sub('khirbet_qeiyafa_ostracon', 'description', None, None, "犹大/Philistine边境地区", "犹大/非利士边境地区")
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
@@ -127,6 +166,27 @@ def apply(data):
             else:  # Sword: plain English string
                 if e[f] != c['en']:
                     e[f] = c['en']; changed += 1
+        elif k == 'sub':
+            for lang in ('en', 'zh-Hans', 'zh-Hant'):
+                if lang == 'en':
+                    old, new = c['en_old'], c['en_new']
+                elif lang == 'zh-Hans':
+                    old, new = c['zh_old'], c['zh_new']
+                else:
+                    old = hant(c['zh_old']) if c['zh_old'] else None
+                    new = hant(c['zh_new']) if c['zh_new'] else None
+                if not old:
+                    continue
+                val = e[c['field']]
+                cur = val[lang]
+                if isinstance(cur, list):
+                    cur = '\n\n'.join(cur)
+                if old in cur:
+                    if cur.count(old) != 1:
+                        raise SystemExit('%s.%s[%s]: %r occurs %d times' % (c['id'], c['field'], lang, old, cur.count(old)))
+                    val[lang] = cur.replace(old, new); changed += 1
+                elif new not in cur:
+                    raise SystemExit('%s.%s[%s]: neither old nor new text found: %r' % (c['id'], c['field'], lang, old[:40]))
         elif k == 'source':
             src = e['academicSources']
             idx = next((i for i, s in enumerate(src) if s.startswith(c['old'])), None)
@@ -148,10 +208,17 @@ def apply(data):
                     match = c['match_en'] if lang == 'en' else (c['match_zh'] if lang == 'zh-Hans' else hant(c['match_zh']))
                     paras = cur.split('\n\n')
                     # also accept a paragraph that already holds this correction (any zh-Hant conversion)
-                    starts = {match, new[:8]}
+                    n = 30 if lang == 'en' else 14
+                    starts = {match, new[:n]}
                     if lang == 'zh-Hant':
-                        starts |= {hant(c['zh'], 's2tw')[:8], hant(c['zh'], 's2twp')[:8]}
+                        starts |= {hant(c['zh'], 's2tw')[:n], hant(c['zh'], 's2twp')[:n]}
                     hit = [i for i, p in enumerate(paras) if any(p.startswith(x) for x in starts)]
+                    # zh-Hant wording differs between the repos' existing text (藉助/借助 ...): trust the
+                    # paragraph position found for 简体 when both versions have the same paragraph count.
+                    if lang == 'zh-Hans' and len(hit) == 1:
+                        c['_idx'], c['_n'] = hit[0], len(paras)
+                    elif lang == 'zh-Hant' and len(hit) != 1 and c.get('_n') == len(paras):
+                        hit = [c['_idx']]
                     if len(hit) != 1:
                         if new in paras:
                             continue

@@ -92,7 +92,9 @@ void main() {
     expect(count('髮型'), 1, reason: 'the mushroom hairstyle was swept away');
 
     expect(count('覆活'), 0);
-    expect(count('復活'), 43);
+    // 43 -> 42 on 2026-10-04: the Hezekiah bulla text no longer calls a (not present) scarab a
+    // 'symbol of resurrection' (tools/apply_evidence_corrections.py).
+    expect(count('復活'), 42);
     // 覆 is correct in these and a widened 覆→復 rule would break them.
     expect(count('反覆'), greaterThan(0));
     expect(count('覆蓋'), greaterThan(0));
@@ -135,9 +137,10 @@ void main() {
     // s2twp would also have rewritten these. Converting a glyph is not
     // rewriting; changing a word is, and this file is the Simplified source's
     // wording throughout.
-    // 525 -> 524 on 2026-10-04: the Tall el-Hammam / Isaiah bulla / James ossuary corrections
-    // (tools/apply_evidence_corrections.py) replaced a paragraph that held one more 公元.
-    expect(count('公元'), 524, reason: '公元 was localised to 西元');
+    // 525 -> 526 on 2026-10-04: net effect of the content corrections in
+    // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
+    // Ketef Hinnom, Khirbet Qeiyafa dating), which rewrote paragraphs containing 公元.
+    expect(count('公元'), 526, reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');

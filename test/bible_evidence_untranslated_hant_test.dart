@@ -71,9 +71,9 @@ void main() {
     // titles like 死海古卷 / 但以理石碑 / 希西家水道. Any string here that
     // contains a Simplified-only character means a field regressed, and the
     // companion test catches that directly.
-    // 122 -> 121 on 2026-10-04: the Isaiah bulla discoveryDate is now
-    // '2009年（2018年由伊拉特·馬扎爾發表）', no longer script-neutral.
-    expect(identical, hasLength(121),
+    // 122 -> 120 on 2026-10-04: the Isaiah bulla and Hezekiah bulla discoveryDate fields
+    // ('2009年（2018年由伊拉特·馬扎爾發表）', '2009年（2015年公布）') are no longer script-neutral.
+    expect(identical, hasLength(120),
         reason: 'a zh-Hant field is its Simplified twin again — re-run '
             'tools/repair_untranslated_hant.py');
   });
