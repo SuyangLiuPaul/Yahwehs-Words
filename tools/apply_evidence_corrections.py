@@ -460,6 +460,22 @@ para('jonah_nineveh', 'scripturalCorrelation', 'The description of Nineveh', '#1
      "书中记载了尼尼微的悔改（约拿书3:5-9）。亚述的记录里没有这类事件的痕迹，所以这段记载无法用考古学来检验。尼尼微于公元前612年被毁有充分的记录，那鸿书3:7和西番雅书2:13也预言了这件事，但这符合的是对尼尼微的预言，而不是约拿书。")
 
 
+# ---------------------------------------------------------------- unverifiable direct quotations replaced by paraphrase
+# Jursa: the entry's "first time an individual mentioned by name in Jeremiah ..." quotation could not be found (NABU 2008/5 note).
+sub('nebo_sarsekim_tablet', 'description',
+    "Jursa noted: 'If this is indeed the same individual, it would be the first time an individual mentioned by name in Jeremiah has been confirmed by a contemporary Babylonian source.'",
+    "Jursa suggested that, if the identification is correct, a Babylonian official named in Jeremiah would here be confirmed by a contemporary Babylonian source.",
+    "尤尔萨指出：「如果确实是同一个人，这将是耶利米书中提到的人物首次被当代巴比伦来源所确认。」",
+    "尤尔萨（Jursa）认为，如果这一认定成立，耶利米书中点名的一位巴比伦官员就在当时的巴比伦文献中得到了印证。")
+# Irenaeus, Against Heresies 5.30.3: the quoted wording was not exact; paraphrase (he says the Apocalypse was seen not long ago,
+# towards the end of Domitian's reign).
+sub('john_patmos_cave', 'description',
+    "states John 'saw the apocalyptic vision… almost in our own time, at the end of Domitian's reign.'",
+    "writes that the Apocalypse was seen not long before his own time, towards the end of Domitian's reign.",
+    "陈述约翰「几乎在我们自己的时代，在多米田统治末期」见异象。",
+    "写道，启示录的异象见于离他自己的时代不远之前，约在多米田统治的末期。")
+
+
 drop('bronze_serpent_timna', 'description',
      {'zh-Hans': ['3. **帐幕平行**', '4. **铜蛇独特性**', '罗滕伯格（1972年）写道']})
 

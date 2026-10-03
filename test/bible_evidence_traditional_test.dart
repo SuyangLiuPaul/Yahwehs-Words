@@ -50,8 +50,8 @@ void main() {
   int count(String needle) => needle.allMatches(hant).length;
 
   test('the asset still has the shape the repair was measured against', () {
-    expect(evidences.length, 225);
-    expect(locales.length, 1575);
+    expect(evidences.length, 231);  // 225 -> 231 on 2026-10-04: six new entries (tools/add_evidence_entries.py)
+    expect(locales.length, 1617);  // 231 entries x 7 localised fields
   });
 
   test('no zh-Hant field holds Simplified-only characters', () {
@@ -132,7 +132,7 @@ void main() {
     expect(count('抄本保存'), 5);
     expect(count('儲存'), 9);
     // 83 -> 82 on 2026-10-04: the rewritten Thallus/Rylands/Nazareth paragraphs (tools/apply_evidence_corrections.py).
-    expect(count('保存'), 81);  // 82 -> 81 on 2026-10-04 (Golgotha / house of Peter rewrite)
+    expect(count('保存'), 83);  // 82 -> 81 on 2026-10-04 (Golgotha / house of Peter rewrite)
   });
 
   test('wording was not localised — only glyphs were converted', () {
@@ -143,7 +143,7 @@ void main() {
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
     // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
     // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 536,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
+    expect(count('公元'), 562,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
          reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);

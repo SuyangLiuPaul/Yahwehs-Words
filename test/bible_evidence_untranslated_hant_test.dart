@@ -63,7 +63,7 @@ void main() {
 
   test('no zh-Hant field is its zh-Hans twin unless it is script-neutral', () {
     final fields = hantFields();
-    expect(fields, hasLength(1575));
+    expect(fields, hasLength(1617));  // 1575 -> 1617 on 2026-10-04: six new entries
     final identical =
         fields.where((f) => f[1] != null && f[1] == f[0]).toList();
     // Down from 942. The 122 that remain are strings whose every character is
@@ -108,7 +108,7 @@ void main() {
       walk(entry);
       if (bad) touched++;
     }
-    expect(evidences, hasLength(225));
+    expect(evidences, hasLength(231));  // 225 -> 231 on 2026-10-04: six new entries
     expect(touched, 0);
   });
 

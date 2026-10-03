@@ -95,7 +95,7 @@ void main() {
       final raw = File('assets/bible_evidence.json').readAsStringSync();
       final entries =
           (jsonDecode(raw) as Map<String, dynamic>)['evidences'] as List;
-      expect(entries.length, 225);
+      expect(entries.length, 231);  // 225 -> 231 on 2026-10-04: six new entries
 
       // Measured over the whole corpus rather than spot-checked, so an
       // import that adds a third unresolvable citation moves this number

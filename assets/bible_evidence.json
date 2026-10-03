@@ -4,16 +4,16 @@
     "description": "Archaeological, manuscript, scientific, and historical evidence intersecting with biblical accounts. Migrated from the bible-evidence.netlify.app project (Vite/React/TS) into YsWords; translations inlined for offline use.",
     "license": "Reference data only; images are linked from Wikimedia Commons (PD or CC).",
     "version": 4,
-    "count": 225,
+    "count": 231,
     "categories": [
+      "Manuscripts",
       "Archaeology",
       "History",
-      "Manuscripts",
       "Science"
     ],
     "confidenceCounts": {
-      "Definitive": 86,
-      "Strong": 94,
+      "Definitive": 88,
+      "Strong": 98,
       "Circumstantial": 45
     },
     "generatedAt": "2026-05-22T22:08:38Z",
@@ -5690,9 +5690,9 @@
         "zh-Hant": "大英博物館收藏的一塊巴比倫楔形文字泥版，由邁克爾·尤爾薩於2007年識別，記錄了「太監長拿布-沙魯蘇-烏金」向神廟的捐贈。這與耶利米書39:3列出的在耶路撒冷淪陷時在場的「尼波-撒西金」是同一位官員——提供了聖經具體人物的直接楔形文字確認。"
       },
       "description": {
-        "en": "The Nebo-Sarsekim Tablet (BM 114789) is a small Babylonian cuneiform tablet that had been in the British Museum since the 1920s but was only identified for its biblical significance in 2007 by Assyriologist Michael Jursa of the University of Vienna.\n\nKey content:\n\n(1) The tablet records that 'Nabu-sharrussu-ukin, the chief eunuch' donated gold to the temple of Marduk in Babylon, during the reign of Nebuchadnezzar II.\n\n(2) Jeremiah 39:3 lists officials who 'came and sat in the Middle Gate' when Jerusalem fell: 'Nergal-sharezer of Samgar, Nebo-Sarsekim a chief official, Nergal-sharezer a high official.'\n\n(3) The Babylonian name 'Nabu-sharrussu-ukin' is linguistically equivalent to the Hebrew 'Nebo-Sarsekim' — both meaning 'Nabu, protect the king.'\n\nSignificance:\n\n(4) This is a rare case where a cuneiform tablet names a specific individual also named in the Hebrew Bible who was present at the same historical event (the fall of Jerusalem in 586 BCE).\n\n(5) The tablet predates the biblical account — it was written during Nebuchadnezzar's reign, before or during the events of 586 BCE.\n\n(6) The find demonstrates the historical precision of the Jeremiah narrative, which names multiple Babylonian officials with accurate titles and roles.\n\nJursa noted: 'If this is indeed the same individual, it would be the first time an individual mentioned by name in Jeremiah has been confirmed by a contemporary Babylonian source.'",
-        "zh-Hans": "尼波-撒西金泥版（BM 114789）是一块小型巴比伦楔形文字泥版，自1920年代起就在大英博物馆，但直到2007年才由维也纳大学的亚述学家迈克尔·尤尔萨发现其圣经意义。\n\n关键内容：（1）泥版记录「太监长拿布-沙鲁苏-乌金」在尼布甲尼撒二世统治期间向巴比伦马杜克神庙捐赠黄金。（2）耶利米书39:3列出耶路撒冷沦陷时「来到中门坐下」的官员：「尼甲沙利薛、尼波-撒西金——太监长、尼甲沙利薛——高官。」（3）巴比伦名字「Nabu-sharrussu-ukin」在语言学上等同于希伯来语「Nebo-Sarsekim」——两者都意为「拿布，保护王」。\n\n重要意义：（4）这是楔形文字泥版与希伯来圣经中同一位在场于同一历史事件（公元前586年耶路撒冷沦陷）的罕见案例。（5）泥版早于圣经记载——写于尼布甲尼撒统治期间，在公元前586年事件之前或之中。（6）此发现展示了耶利米叙事的历史精确性，其中以准确的头衔和角色命名了多位巴比伦官员。\n\n尤尔萨指出：「如果确实是同一个人，这将是耶利米书中提到的人物首次被当代巴比伦来源所确认。」",
-        "zh-Hant": "尼波-撒西金泥版（BM 114789）是一塊小型巴比倫楔形文字泥版，自1920年代起就在大英博物館，但直到2007年才由維也納大學的亞述學家邁克爾·尤爾薩發現其聖經意義。\n\n關鍵內容：（1）泥版記錄「太監長拿布-沙魯蘇-烏金」在尼布甲尼撒二世統治期間向巴比倫馬杜克神廟捐贈黃金。（2）耶利米書39:3列出耶路撒冷淪陷時「來到中門坐下」的官員：「尼甲沙利薛、尼波-撒西金——太監長、尼甲沙利薛——高官。」（3）巴比倫名字「Nabu-sharrussu-ukin」在語言學上等同於希伯來語「Nebo-Sarsekim」——兩者都意為「拿布，保護王」。\n\n重要意義：（4）這是楔形文字泥版與希伯來聖經中同一位在場於同一歷史事件（公元前586年耶路撒冷淪陷）的罕見案例。（5）泥版早於聖經記載——寫於尼布甲尼撒統治期間，在公元前586年事件之前或之中。（6）此發現展示了耶利米敘事的歷史精確性，其中以準確的頭銜和角色命名了多位巴比倫官員。\n\n尤爾薩指出：「如果確實是同一個人，這將是耶利米書中提到的人物首次被當代巴比倫來源所確認。」"
+        "en": "The Nebo-Sarsekim Tablet (BM 114789) is a small Babylonian cuneiform tablet that had been in the British Museum since the 1920s but was only identified for its biblical significance in 2007 by Assyriologist Michael Jursa of the University of Vienna.\n\nKey content:\n\n(1) The tablet records that 'Nabu-sharrussu-ukin, the chief eunuch' donated gold to the temple of Marduk in Babylon, during the reign of Nebuchadnezzar II.\n\n(2) Jeremiah 39:3 lists officials who 'came and sat in the Middle Gate' when Jerusalem fell: 'Nergal-sharezer of Samgar, Nebo-Sarsekim a chief official, Nergal-sharezer a high official.'\n\n(3) The Babylonian name 'Nabu-sharrussu-ukin' is linguistically equivalent to the Hebrew 'Nebo-Sarsekim' — both meaning 'Nabu, protect the king.'\n\nSignificance:\n\n(4) This is a rare case where a cuneiform tablet names a specific individual also named in the Hebrew Bible who was present at the same historical event (the fall of Jerusalem in 586 BCE).\n\n(5) The tablet predates the biblical account — it was written during Nebuchadnezzar's reign, before or during the events of 586 BCE.\n\n(6) The find demonstrates the historical precision of the Jeremiah narrative, which names multiple Babylonian officials with accurate titles and roles.\n\nJursa suggested that, if the identification is correct, a Babylonian official named in Jeremiah would here be confirmed by a contemporary Babylonian source.",
+        "zh-Hans": "尼波-撒西金泥版（BM 114789）是一块小型巴比伦楔形文字泥版，自1920年代起就在大英博物馆，但直到2007年才由维也纳大学的亚述学家迈克尔·尤尔萨发现其圣经意义。\n\n关键内容：（1）泥版记录「太监长拿布-沙鲁苏-乌金」在尼布甲尼撒二世统治期间向巴比伦马杜克神庙捐赠黄金。（2）耶利米书39:3列出耶路撒冷沦陷时「来到中门坐下」的官员：「尼甲沙利薛、尼波-撒西金——太监长、尼甲沙利薛——高官。」（3）巴比伦名字「Nabu-sharrussu-ukin」在语言学上等同于希伯来语「Nebo-Sarsekim」——两者都意为「拿布，保护王」。\n\n重要意义：（4）这是楔形文字泥版与希伯来圣经中同一位在场于同一历史事件（公元前586年耶路撒冷沦陷）的罕见案例。（5）泥版早于圣经记载——写于尼布甲尼撒统治期间，在公元前586年事件之前或之中。（6）此发现展示了耶利米叙事的历史精确性，其中以准确的头衔和角色命名了多位巴比伦官员。\n\n尤尔萨（Jursa）认为，如果这一认定成立，耶利米书中点名的一位巴比伦官员就在当时的巴比伦文献中得到了印证。",
+        "zh-Hant": "尼波-撒西金泥版（BM 114789）是一塊小型巴比倫楔形文字泥版，自1920年代起就在大英博物館，但直到2007年才由維也納大學的亞述學家邁克爾·尤爾薩發現其聖經意義。\n\n關鍵內容：（1）泥版記錄「太監長拿布-沙魯蘇-烏金」在尼布甲尼撒二世統治期間向巴比倫馬杜克神廟捐贈黃金。（2）耶利米書39:3列出耶路撒冷淪陷時「來到中門坐下」的官員：「尼甲沙利薛、尼波-撒西金——太監長、尼甲沙利薛——高官。」（3）巴比倫名字「Nabu-sharrussu-ukin」在語言學上等同於希伯來語「Nebo-Sarsekim」——兩者都意為「拿布，保護王」。\n\n重要意義：（4）這是楔形文字泥版與希伯來聖經中同一位在場於同一歷史事件（公元前586年耶路撒冷淪陷）的罕見案例。（5）泥版早於聖經記載——寫於尼布甲尼撒統治期間，在公元前586年事件之前或之中。（6）此發現展示了耶利米敘事的歷史精確性，其中以準確的頭銜和角色命名了多位巴比倫官員。\n\n尤爾薩（Jursa）認為，如果這一認定成立，耶利米書中點名的一位巴比倫官員就在當時的巴比倫文獻中得到了印證。"
       },
       "scripturalCorrelation": {
         "en": "Jeremiah 39:3 lists 'Nebo-Sarsekim a chief official' among Babylonian officials present at Jerusalem's fall in 586 BCE. The cuneiform tablet recording 'Nabu-sharrussu-ukin, the chief eunuch' making a temple donation during Nebuchadnezzar's reign is a direct confirmation of this biblical individual — the same name, same title, same historical period.",
@@ -10875,9 +10875,9 @@
         "zh-Hant": "啟示錄1:9將約翰的異象定位於拔摩島，一個羅馬用於流放的愛琴海小島。啟示錄之洞自至少公元2世紀起受崇敬，1088年被聖約翰修道院（1088年建成）收納——保存了這一考古證實的羅馬時代流放島上約翰異象的傳統洞窟。"
       },
       "description": {
-        "en": "Revelation 1:9 begins: 'I, John, your brother and partner in the tribulation and kingdom and perseverance that are in Jesus, was on the island of Patmos because of the word of God and my testimony about Jesus.' The reference places John's apocalyptic visions on this specific Dodecanese island.\n\nHistorical and archaeological context:\n\n(1) Patmos as Roman exile location: Tacitus (Annals 4.30) and Pliny the Elder (Natural History 4.23) confirm the Aegean islands were regularly used by Rome for exile of political and religious opponents — especially under Domitian (AD 81-96), whose persecution of Christians is attested by Suetonius, Dio Cassius, and Eusebius. The Domitianic dating of Revelation (c. AD 95) places John's exile precisely in this documented persecution.\n\n(2) Irenaeus (Against Heresies 5.30.3, c. AD 180): earliest external attestation, states John 'saw the apocalyptic vision… almost in our own time, at the end of Domitian's reign.' This is less than a century after the composition and is the baseline tradition.\n\n(3) Eusebius (Church History 3.18): confirms John's Patmos exile and return under Nerva's amnesty.\n\n(4) The Cave of the Apocalypse (Spilaion tis Apokalypseos): a grotto on the hillside between the harbor (Skala) and the summit of Patmos, venerated from earliest Christian times as the site where John received the visions. Features include: a crack in the rock wall (traditionally where the 'loud voice like a trumpet' of Revelation 1:10 spoke), a rock shelf identified as John's pillow, and a chapel built over the cave in the 11th century.\n\n(5) Monastery of St. John the Theologian: founded 1088 by Saint Christodoulos under a chrysobull from Byzantine emperor Alexios I Komnenos. The monastery houses early biblical manuscripts (including Codex 1424, a significant Byzantine-text Gospels manuscript), confirming the continuous Christian-scholarly use of the site.\n\n(6) Patmos' harbor archaeology confirms a small but continuously inhabited Roman-era settlement, consistent with a place for isolated exile.",
-        "zh-Hans": "启示录1:9开篇：「我约翰就是你们的弟兄，和你们在耶稣的患难、国度、忍耐里一同有分，为神的道，并为给耶稣作的见证，曾在那名叫拔摩的海岛上。」这一参照将约翰的末世异象定位于十二群岛的这一具体海岛。\n\n历史与考古背景：\n\n（1）拔摩作为罗马流放地：塔西佗（《编年史》4.30）和老普林尼（《自然史》4.23）证实爱琴岛屿经常被罗马用于流放政治和宗教反对者——尤其在多米田（公元81-96年）时期，他对基督徒的逼迫由苏埃托尼乌斯、狄奥·卡西乌斯和优西比乌证实。启示录的多米田定年（公元约95年）将约翰的流放正好置于此有记录的逼迫中。\n\n（2）爱任纽（《驳异端》5.30.3，约公元180年）：最早的外部证据，陈述约翰「几乎在我们自己的时代，在多米田统治末期」见异象。距成书不到一世纪，是基线传统。\n\n（3）优西比乌（《教会史》3.18）：证实约翰的拔摩流放与在涅尔瓦特赦下的返回。\n\n（4）启示录之洞（Spilaion tis Apokalypseos）：拔摩港口（Skala）与山顶之间山坡上的洞窟，自最早的基督徒时代起即被崇敬为约翰领受异象之所。特色包括：岩壁上的裂缝（传统上为启示录1:10「大声音如吹号」所言之处）、被认定为约翰枕头的岩架，以及11世纪建于洞上的礼拜堂。\n\n（5）圣约翰神学家修道院：1088年由圣克里斯托多卢斯在拜占庭皇帝阿列克修斯一世的金玺诏书下创立。修道院藏有早期圣经抄本（包括具重要拜占庭版本的Codex 1424福音书抄本），证实该地连续的基督徒学术使用。\n\n（6）拔摩的港口考古证实罗马时代小而连续居住的聚落，与孤立流放地的定位一致。",
-        "zh-Hant": "啟示錄1:9開篇：「我約翰就是你們的弟兄，和你們在耶穌的患難、國度、忍耐裡一同有分，為神的道，併為給耶穌作的見證，曾在那名叫拔摩的海島上。」這一參照將約翰的末世異象定位於十二群島的這一具體海島。\n\n歷史與考古背景：\n\n（1）拔摩作為羅馬流放地：塔西佗（《編年史》4.30）和老普林尼（《自然史》4.23）證實愛琴島嶼經常被羅馬用於流放政治和宗教反對者——尤其在多米田（公元81-96年）時期，他對基督徒的逼迫由蘇埃託尼烏斯、狄奧·卡西烏斯和優西比烏證實。啟示錄的多米田定年（公元約95年）將約翰的流放正好置於此有記錄的逼迫中。\n\n（2）愛任紐（《駁異端》5.30.3，約公元180年）：最早的外部證據，陳述約翰「幾乎在我們自己的時代，在多米田統治末期」見異象。距成書不到一世紀，是基線傳統。\n\n（3）優西比烏（《教會史》3.18）：證實約翰的拔摩流放與在涅爾瓦特赦下的返回。\n\n（4）啟示錄之洞（Spilaion tis Apokalypseos）：拔摩港口（Skala）與山頂之間山坡上的洞窟，自最早的基督徒時代起即被崇敬為約翰領受異象之所。特色包括：巖壁上的裂縫（傳統上為啟示錄1:10「大聲音如吹號」所言之處）、被認定為約翰枕頭的巖架，以及11世紀建於洞上的禮拜堂。\n\n（5）聖約翰神學家修道院：1088年由聖克里斯托多盧斯在拜占庭皇帝阿列克修斯一世的金璽詔書下創立。修道院藏有早期聖經抄本（包括具重要拜占庭版本的Codex 1424福音書抄本），證實該地連續的基督徒學術使用。\n\n（6）拔摩的港口考古證實羅馬時代小而連續居住的聚落，與孤立流放地的定位一致。"
+        "en": "Revelation 1:9 begins: 'I, John, your brother and partner in the tribulation and kingdom and perseverance that are in Jesus, was on the island of Patmos because of the word of God and my testimony about Jesus.' The reference places John's apocalyptic visions on this specific Dodecanese island.\n\nHistorical and archaeological context:\n\n(1) Patmos as Roman exile location: Tacitus (Annals 4.30) and Pliny the Elder (Natural History 4.23) confirm the Aegean islands were regularly used by Rome for exile of political and religious opponents — especially under Domitian (AD 81-96), whose persecution of Christians is attested by Suetonius, Dio Cassius, and Eusebius. The Domitianic dating of Revelation (c. AD 95) places John's exile precisely in this documented persecution.\n\n(2) Irenaeus (Against Heresies 5.30.3, c. AD 180): earliest external attestation, writes that the Apocalypse was seen not long before his own time, towards the end of Domitian's reign. This is less than a century after the composition and is the baseline tradition.\n\n(3) Eusebius (Church History 3.18): confirms John's Patmos exile and return under Nerva's amnesty.\n\n(4) The Cave of the Apocalypse (Spilaion tis Apokalypseos): a grotto on the hillside between the harbor (Skala) and the summit of Patmos, venerated from earliest Christian times as the site where John received the visions. Features include: a crack in the rock wall (traditionally where the 'loud voice like a trumpet' of Revelation 1:10 spoke), a rock shelf identified as John's pillow, and a chapel built over the cave in the 11th century.\n\n(5) Monastery of St. John the Theologian: founded 1088 by Saint Christodoulos under a chrysobull from Byzantine emperor Alexios I Komnenos. The monastery houses early biblical manuscripts (including Codex 1424, a significant Byzantine-text Gospels manuscript), confirming the continuous Christian-scholarly use of the site.\n\n(6) Patmos' harbor archaeology confirms a small but continuously inhabited Roman-era settlement, consistent with a place for isolated exile.",
+        "zh-Hans": "启示录1:9开篇：「我约翰就是你们的弟兄，和你们在耶稣的患难、国度、忍耐里一同有分，为神的道，并为给耶稣作的见证，曾在那名叫拔摩的海岛上。」这一参照将约翰的末世异象定位于十二群岛的这一具体海岛。\n\n历史与考古背景：\n\n（1）拔摩作为罗马流放地：塔西佗（《编年史》4.30）和老普林尼（《自然史》4.23）证实爱琴岛屿经常被罗马用于流放政治和宗教反对者——尤其在多米田（公元81-96年）时期，他对基督徒的逼迫由苏埃托尼乌斯、狄奥·卡西乌斯和优西比乌证实。启示录的多米田定年（公元约95年）将约翰的流放正好置于此有记录的逼迫中。\n\n（2）爱任纽（《驳异端》5.30.3，约公元180年）：最早的外部证据，写道，启示录的异象见于离他自己的时代不远之前，约在多米田统治的末期。距成书不到一世纪，是基线传统。\n\n（3）优西比乌（《教会史》3.18）：证实约翰的拔摩流放与在涅尔瓦特赦下的返回。\n\n（4）启示录之洞（Spilaion tis Apokalypseos）：拔摩港口（Skala）与山顶之间山坡上的洞窟，自最早的基督徒时代起即被崇敬为约翰领受异象之所。特色包括：岩壁上的裂缝（传统上为启示录1:10「大声音如吹号」所言之处）、被认定为约翰枕头的岩架，以及11世纪建于洞上的礼拜堂。\n\n（5）圣约翰神学家修道院：1088年由圣克里斯托多卢斯在拜占庭皇帝阿列克修斯一世的金玺诏书下创立。修道院藏有早期圣经抄本（包括具重要拜占庭版本的Codex 1424福音书抄本），证实该地连续的基督徒学术使用。\n\n（6）拔摩的港口考古证实罗马时代小而连续居住的聚落，与孤立流放地的定位一致。",
+        "zh-Hant": "啟示錄1:9開篇：「我約翰就是你們的弟兄，和你們在耶穌的患難、國度、忍耐裡一同有分，為神的道，併為給耶穌作的見證，曾在那名叫拔摩的海島上。」這一參照將約翰的末世異象定位於十二群島的這一具體海島。\n\n歷史與考古背景：\n\n（1）拔摩作為羅馬流放地：塔西佗（《編年史》4.30）和老普林尼（《自然史》4.23）證實愛琴島嶼經常被羅馬用於流放政治和宗教反對者——尤其在多米田（公元81-96年）時期，他對基督徒的逼迫由蘇埃託尼烏斯、狄奧·卡西烏斯和優西比烏證實。啟示錄的多米田定年（公元約95年）將約翰的流放正好置於此有記錄的逼迫中。\n\n（2）愛任紐（《駁異端》5.30.3，約公元180年）：最早的外部證據，寫道，啟示錄的異象見於離他自己的時代不遠之前，約在多米田統治的末期。距成書不到一世紀，是基線傳統。\n\n（3）優西比烏（《教會史》3.18）：證實約翰的拔摩流放與在涅爾瓦特赦下的返回。\n\n（4）啟示錄之洞（Spilaion tis Apokalypseos）：拔摩港口（Skala）與山頂之間山坡上的洞窟，自最早的基督徒時代起即被崇敬為約翰領受異象之所。特色包括：巖壁上的裂縫（傳統上為啟示錄1:10「大聲音如吹號」所言之處）、被認定為約翰枕頭的巖架，以及11世紀建於洞上的禮拜堂。\n\n（5）聖約翰神學家修道院：1088年由聖克里斯托多盧斯在拜占庭皇帝阿列克修斯一世的金璽詔書下創立。修道院藏有早期聖經抄本（包括具重要拜占庭版本的Codex 1424福音書抄本），證實該地連續的基督徒學術使用。\n\n（6）拔摩的港口考古證實羅馬時代小而連續居住的聚落，與孤立流放地的定位一致。"
       },
       "scripturalCorrelation": {
         "en": "Revelation 1:9's specific location on Patmos is historically confirmed by Roman-era exile practice (Tacitus, Pliny), Domitianic persecution records (Suetonius, Dio Cassius, Eusebius), and the earliest post-apostolic Christian tradition (Irenaeus c. AD 180). The Cave of the Apocalypse's continuous veneration from early centuries, enshrined in 1088 within the Monastery of St. John, preserves the specific topographic memory of John's visions.\n\nThe visions themselves are prophetic-theological content beyond archaeological verification, but the setting — a real Aegean exile island with documented Roman-era use for this exact purpose, and a continuously venerated cave-sanctuary traceable to early Christian tradition — provides the authentic historical framework of the biblical book.",
@@ -12445,6 +12445,312 @@
         "en": "Isaiah 44:28-45:1 names Cyrus as God's 'shepherd' and 'anointed' who would 'rebuild Jerusalem and lay the foundation of the temple,' written approximately 150 years before Cyrus's birth. Ezra 1:1-4 quotes Cyrus's actual decree of return (538 BCE), which the Cyrus Cylinder confirms in its general religious-tolerance policy. The Tomb of Cyrus stands as the physical resting place of the only Gentile ruler the Hebrew Bible explicitly calls God's anointed — a remarkable convergence of prophecy and post-conquest political reality.",
         "zh-Hans": "以赛亚书44:28—45:1指名居鲁士为神的「牧人」与「受膏者」，预言他将「重建耶路撒冷，奠定殿基」——此预言写于居鲁士出生约150年前。以斯拉记1:1-4引述居鲁士公元前538年颁发的归回诏令，居鲁士圆柱以其宗教宽容政策的总体框架与之印证。居鲁士陵作为希伯来圣经所明指为「神受膏者」之唯一外邦君王的安息之处，构成预言与后世政治实况的非凡相合。",
         "zh-Hant": "以賽亞書44:28—45:1指名居魯士為神的「牧人」與「受膏者」，預言他將「重建耶路撒冷，奠定殿基」——此預言寫於居魯士出生約150年前。以斯拉記1:1-4引述居魯士公元前538年頒發的歸回詔令，居魯士圓柱以其宗教寬容政策的總體框架與之印證。居魯士陵作為希伯來聖經所明指為「神受膏者」之唯一外邦君王的安息之處，構成預言與後世政治實況的非凡相合。"
+      }
+    },
+    {
+      "id": "cave_of_horror_scroll_2021",
+      "category": "Manuscripts",
+      "bibleBooks": [
+        "Zechariah",
+        "Nahum"
+      ],
+      "timeline": {
+        "en": "2nd century CE (Bar Kokhba Revolt, 132–136 CE)",
+        "zh-Hans": "公元2世纪（巴尔·科赫巴起义，公元132—136年）",
+        "zh-Hant": "公元2世紀（巴爾·科赫巴起義，公元132—136年）"
+      },
+      "discoveryDate": {
+        "en": "2021 (announced March 2021)",
+        "zh-Hans": "2021年（2021年3月公布）",
+        "zh-Hant": "2021年（2021年3月公佈）"
+      },
+      "location": {
+        "en": "Cave 8 ('Cave of Horror'), Nahal Hever, Judean Desert; studied by the Israel Antiquities Authority",
+        "zh-Hans": "犹大沙漠拿哈勒·希弗（Nahal Hever）的8号洞（“恐怖洞”）；由以色列文物管理局研究",
+        "zh-Hant": "猶大沙漠拿哈勒·希弗（Nahal Hever）的8號洞（“恐怖洞”）；由以色列文物管理局研究"
+      },
+      "scriptureReference": "Zechariah 8:16-17",
+      "images": [],
+      "academicSources": [
+        "Tov, Emanuel. The Greek Minor Prophets Scroll from Nahal Hever (8HevXIIgr). Discoveries in the Judaean Desert VIII. Oxford: Clarendon Press, 1990.",
+        "Israel Antiquities Authority. Announcement of new Dead Sea Scroll fragments and other finds from the Judean Desert survey, March 2021.",
+        "Biblical Archaeology Society. \"New Scrolls Hidden During Bar Kokhba Revolt Discovered.\" https://www.biblicalarchaeology.org/daily/new-scrolls-hidden-during-bar-kokhba-revolt-discovered/"
+      ],
+      "confidenceLevel": "Definitive",
+      "icon": "📜",
+      "title": {
+        "en": "Cave of Horror Scroll Fragments (Greek Minor Prophets, 2021)",
+        "zh-Hans": "“恐怖洞”经卷残片（希腊文小先知书，2021年）",
+        "zh-Hant": "“恐怖洞”經卷殘片（希臘文小先知書，2021年）"
+      },
+      "summary": {
+        "en": "In March 2021 the Israel Antiquities Authority announced more than twenty new parchment fragments of a Greek scroll of the Minor Prophets, including parts of Zechariah 8 and Nahum 1, found in the 'Cave of Horror' in Nahal Hever, where they had been hidden during the Bar Kokhba Revolt (132–136 CE).",
+        "zh-Hans": "2021年3月，以色列文物管理局公布了二十多片希腊文小先知书经卷的新羊皮纸残片，包括撒迦利亚书8章和那鸿书1章的部分，出自拿哈勒·希弗的“恐怖洞”，是巴尔·科赫巴起义（公元132—136年）期间藏在那里的。",
+        "zh-Hant": "2021年3月，以色列文物管理局公佈了二十多片希臘文小先知書經卷的新羊皮紙殘片，包括撒迦利亞書8章和那鴻書1章的部分，出自拿哈勒·希弗的“恐怖洞”，是巴爾·科赫巴起義（公元132—136年）期間藏在那裡的。"
+      },
+      "description": {
+        "en": "In March 2021 the Israel Antiquities Authority (IAA) announced that exploration of caves in the Judean Desert had recovered dozens of new scroll fragments hidden during the Bar Kokhba Revolt (132–136 CE). Among them were more than twenty pieces of parchment from a Greek scroll of the Minor Prophets, including passages from Zechariah 8:16–17 and Nahum 1:5–6.\n\nThe fragments came from Cave 8 in Nahal Hever, known as the 'Cave of Horror' because of the remains of about forty people found there in the early 1960s, thought to be refugees from the revolt. Yigael Yadin's expedition had already recovered other pieces of the same scroll in 1960–61; those were published by Emanuel Tov in Discoveries in the Judaean Desert VIII (1990).\n\nThe scroll is a Greek translation of the Minor Prophets that differs from the usual Septuagint text; scholars see it as a revision of the older Greek toward the Hebrew text. The divine name is written in Hebrew letters inside the Greek text. The new fragments are the first scroll fragments recovered by excavation in the Judean Desert in more than sixty years.\n\nThe find matters for how the Hebrew prophets were read in Greek in the 2nd century CE and for how the divine name was written in Greek copies. It adds no new book to the Bible, and the fragments contain only a few verses.",
+        "zh-Hans": "2021年3月，以色列文物管理局（IAA）宣布，对犹大沙漠洞穴的勘察找到了数十片在巴尔·科赫巴起义（公元132—136年）期间藏起来的新经卷残片。其中有二十多片羊皮纸属于一卷希腊文小先知书，包括撒迦利亚书8:16—17和那鸿书1:5—6的段落。\n\n这些残片出自拿哈勒·希弗的8号洞，因20世纪60年代初在那里发现约四十人的遗骸（据信是起义的难民）而被称为“恐怖洞”。伊加尔·雅丁的考察队1960至1961年已经在这里找到过同一卷的其他碎片，由以马内利·托夫发表于《犹大沙漠发现》第8卷（1990年）。\n\n这卷经文是小先知书的希腊文译本，与通行的七十士译本不同；学者认为它是把较早的希腊文本向希伯来文本校订的修订本。神的名字在希腊文中用希伯来字母书写。这批新残片是六十多年来在犹大沙漠经发掘取得的第一批经卷残片。\n\n这一发现的意义在于了解公元2世纪希伯来先知书如何被译成希腊文阅读，以及神的名字在希腊文抄本中如何书写。它没有给圣经增加任何新书卷，残片所含的经文也只有寥寥几节。",
+        "zh-Hant": "2021年3月，以色列文物管理局（IAA）宣佈，對猶大沙漠洞穴的勘察找到了數十片在巴爾·科赫巴起義（公元132—136年）期間藏起來的新經卷殘片。其中有二十多片羊皮紙屬於一卷希臘文小先知書，包括撒迦利亞書8:16—17和那鴻書1:5—6的段落。\n\n這些殘片出自拿哈勒·希弗的8號洞，因20世紀60年代初在那裡發現約四十人的遺骸（據信是起義的難民）而被稱為“恐怖洞”。伊加爾·雅丁的考察隊1960至1961年已經在這裡找到過同一卷的其他碎片，由以馬內利·托夫發表於《猶大沙漠發現》第8卷（1990年）。\n\n這卷經文是小先知書的希臘文譯本，與通行的七十士譯本不同；學者認為它是把較早的希臘文本向希伯來文本校訂的修訂本。神的名字在希臘文中用希伯來字母書寫。這批新殘片是六十多年來在猶大沙漠經發掘取得的第一批經卷殘片。\n\n這一發現的意義在於瞭解公元2世紀希伯來先知書如何被譯成希臘文閱讀，以及神的名字在希臘文抄本中如何書寫。它沒有給聖經增加任何新書卷，殘片所含的經文也只有寥寥幾節。"
+      },
+      "scripturalCorrelation": {
+        "en": "Zechariah 8:16-17 reads: 'These are the things you must do: Speak truth to one another, render true and sound judgments in your gates, do not plot evil in your hearts against your neighbor, and do not love to swear falsely, for I hate all these things, declares Yahweh.' Nahum 1:5-6 reads: 'The mountains quake before Him, and the hills melt away; the earth trembles at His presence—the world and all its dwellers. Who can withstand His indignation? Who can endure His burning anger? His wrath is poured out like fire; even rocks are shattered before Him.'\n\nThese verses are among the passages preserved on the new fragments. They are known from the Hebrew and Greek tradition, so the discovery is mainly important for the history of the Greek translation of the Minor Prophets and for the transmission of the biblical text in the 2nd century CE.",
+        "zh-Hans": "撒迦利亚书8:16-17：「你们所当行的是这样：各人与邻舍说话诚实，在城门口按至理判断，使人和睦； 谁都不可心里谋害邻舍，也不可喜爱起假誓，因为这些事都为我所恨恶。这是雅伟说的。」 那鸿书1:5-6：「大山因他震动；小山也都消化。大地在他面前突起；世界和住在其间的，也都如此。 他发忿恨，谁能立得住呢？他发烈怒，谁能当得起呢？他的忿怒如火倾倒；磐石因他崩裂。」\n\n这些经文是新残片上保存下来的段落。它们在希伯来文和希腊文传统中早已为人所知，因此这一发现的重要性主要在于小先知书希腊文译本的历史，以及公元2世纪圣经文本的传承。",
+        "zh-Hant": "撒迦利亞書8:16-17：「你們所當行的是這樣：各人與鄰舍説話誠實，在城門口按至理判斷，使人和睦； 誰都不可心裏謀害鄰舍，也不可喜愛起假誓，因為這些事都為我所恨惡。這是雅偉説的。」」 那鴻書1:5-6：「大山因他震動；小山也都消化。大地在他面前突起；世界和住在其間的，也都如此。 他發忿恨，誰能立得住呢？他發烈怒，誰能當得起呢？他的忿怒如火傾倒；磐石因他崩裂。」\n\n這些經文是新殘片上保存下來的段落。它們在希伯來文和希臘文傳統中早已為人所知，因此這一發現的重要性主要在於小先知書希臘文譯本的歷史，以及公元2世紀聖經文本的傳承。"
+      }
+    },
+    {
+      "id": "lysanias_inscription_abila",
+      "category": "Archaeology",
+      "bibleBooks": [
+        "Luke"
+      ],
+      "timeline": {
+        "en": "Reign of Tiberius (14–37 CE), most likely 14–29 CE",
+        "zh-Hans": "提庇留在位期间（公元14—37年），最可能在公元14—29年",
+        "zh-Hant": "提庇留在位期間（公元14—37年），最可能在公元14—29年"
+      },
+      "discoveryDate": {
+        "en": "Published in the 19th century",
+        "zh-Hans": "19世纪发表",
+        "zh-Hant": "19世紀發表"
+      },
+      "location": {
+        "en": "Abila (modern Suq Wadi Barada), northwest of Damascus, Syria",
+        "zh-Hans": "亚比拉（今叙利亚大马士革西北的苏格瓦迪巴拉达）",
+        "zh-Hant": "亞比拉（今敘利亞大馬士革西北的蘇格瓦迪巴拉達）"
+      },
+      "scriptureReference": "Luke 3:1",
+      "images": [],
+      "academicSources": [
+        "Josephus. Antiquities of the Jews 19.275 and 20.138 (Abila of Lysanias); Antiquities 15.92 (Lysanias of Chalcis).",
+        "Hoehner, Harold W. Herod Antipas. Cambridge University Press, 1972 (discussion of the Lysanias question).",
+        "Wikipedia. \"Lysanias.\" https://en.wikipedia.org/wiki/Lysanias (summary of the Abila inscription and the debate)."
+      ],
+      "confidenceLevel": "Strong",
+      "icon": "🏛️",
+      "title": {
+        "en": "Lysanias Inscription (Abila)",
+        "zh-Hans": "吕撒聂铭文（亚比拉）",
+        "zh-Hant": "呂撒聶銘文（亞比拉）"
+      },
+      "summary": {
+        "en": "A Greek inscription from Abila, near Damascus, from the reign of Tiberius names a 'Lysanias the tetrarch' under whom a freedman, Nymphaios, built a road and other works. It supports Luke 3:1, which names a Lysanias as tetrarch of Abilene.",
+        "zh-Hans": "大马士革附近亚比拉的一块提庇留时期希腊文铭文，提到一位“分封王吕撒聂”，他的被释奴尼姆法欧斯修了一条路和其他工程。这支持了路加福音3:1把一位吕撒聂称为亚比利尼分封王的说法。",
+        "zh-Hant": "大馬士革附近亞比拉的一塊提庇留時期希臘文銘文，提到一位“分封王呂撒聶”，他的被釋奴尼姆法歐斯修了一條路和其他工程。這支持了路加福音3:1把一位呂撒聶稱為亞比利尼分封王的說法。"
+      },
+      "description": {
+        "en": "Luke 3:1 dates the start of John the Baptist's ministry by naming Tiberius, Pontius Pilate, Herod, Philip and 'Lysanias tetrarch of Abilene'. Josephus knows of an earlier Lysanias, king of Chalcis, put to death by Mark Antony around 34 BCE, and some critics have argued that Luke confused the two.\n\nA Greek inscription from Abila, the chief town of Abilene northwest of Damascus, records a dedication 'for the salvation of the August lords and all their household' by Nymphaios, freedman of Lysanias the tetrarch, who built a road and other works. The 'August lords' are taken to be the Emperor Tiberius and his mother Livia, which dates the text between 14 and 29 CE. It shows that a tetrarch named Lysanias was connected with Abilene in the reign of Tiberius, as Luke says.\n\nMost scholars take the inscription as evidence for a second Lysanias, tetrarch of Abilene, in the time of Tiberius, which answers the charge that Luke confused him with the earlier king. A few dispute that reading and relate the inscription to the older Lysanias's family. The stone was recorded long ago, so the question rests on the published copies and on how the text is interpreted.",
+        "zh-Hans": "路加福音3:1用提庇留、本丢·彼拉多、希律、腓力和“亚比利尼分封的王吕撒聂”来标明施洗约翰事工开始的时间。约瑟夫知道有一位更早的吕撒聂，是迦勒基斯的王，约在公元前34年被马可·安东尼处死，有些批评者认为路加把两人弄混了。\n\n亚比拉是亚比利尼的主要城镇，在大马士革西北。那里的一块希腊文铭文记载了一次奉献：“为奥古斯都诸主及其全家的安康”，奉献者是分封王吕撒聂的被释奴尼姆法欧斯，他修了一条路和其他工程。“奥古斯都诸主”被理解为皇帝提庇留和他的母亲利维亚，因此文字的年代在公元14至29年之间。这表明在提庇留时期确有一位名叫吕撒聂的分封王与亚比利尼相连，正如路加所说。\n\n多数学者把这块铭文视为提庇留时期另有一位亚比利尼分封王吕撒聂的证据，这回答了路加把他与更早的那位王混为一谈的指责。少数人不同意这样解读，认为铭文与较早那位吕撒聂的家族有关。这块石头早就有人记录，所以这个问题取决于已发表的抄录本以及对文字的解释。",
+        "zh-Hant": "路加福音3:1用提庇留、本丟·彼拉多、希律、腓力和“亞比利尼分封的王呂撒聶”來標明施洗約翰事工開始的時間。約瑟夫知道有一位更早的呂撒聶，是迦勒基斯的王，約在公元前34年被馬可·安東尼處死，有些批評者認為路加把兩人弄混了。\n\n亞比拉是亞比利尼的主要城鎮，在大馬士革西北。那裡的一塊希臘文銘文記載了一次奉獻：“為奧古斯都諸主及其全家的安康”，奉獻者是分封王呂撒聶的被釋奴尼姆法歐斯，他修了一條路和其他工程。“奧古斯都諸主”被理解為皇帝提庇留和他的母親利維亞，因此文字的年代在公元14至29年之間。這表明在提庇留時期確有一位名叫呂撒聶的分封王與亞比利尼相連，正如路加所說。\n\n多數學者把這塊銘文視為提庇留時期另有一位亞比利尼分封王呂撒聶的證據，這回答了路加把他與更早的那位王混為一談的指責。少數人不同意這樣解讀，認為銘文與較早那位呂撒聶的家族有關。這塊石頭早就有人記錄，所以這個問題取決於已發表的抄錄本以及對文字的解釋。"
+      },
+      "scripturalCorrelation": {
+        "en": "Luke 3:1 reads: 'In the fifteenth year of the reign of Tiberius Caesar, while Pontius Pilate was governor of Judea, Herod tetrarch of Galilee, his brother Philip tetrarch of Ituraea and Trachonitis, and Lysanias tetrarch of Abilene,'\n\nLuke names Lysanias among the rulers around 28–29 CE. The Abila inscription supports the existence of a tetrarch of that name in the reign of Tiberius, which weakens the objection that Luke made a mistake. It is classed as Strong rather than Definitive because the inscription's reading and meaning have been debated.",
+        "zh-Hans": "路加福音3:1：「该撒提庇留在位第十五年，本丢彼拉多作犹太巡抚，希律作加利利分封的王，他兄弟腓力作以士利亚和特拉可尼地方分封的王，吕撒聂作亚比利尼分封的王，」\n\n路加把吕撒聂列在约公元28至29年间的统治者之中。亚比拉铭文支持提庇留时期确有一位同名的分封王，这削弱了“路加弄错了”的反对意见。本条目列为“有力”而非“确证”，是因为铭文的读法和含义仍有讨论。",
+        "zh-Hant": "路加福音3:1：「該撒提庇留在位第十五年，本丟彼拉多作猶太巡撫，希律作加利利分封的王，他兄弟腓力作以士利亞和特拉可尼地方分封的王，呂撒聶作亞比利尼分封的王，」\n\n路加把呂撒聶列在約公元28至29年間的統治者之中。亞比拉銘文支持提庇留時期確有一位同名的分封王，這削弱了“路加弄錯了”的反對意見。本條目列為“有力”而非“確證”，是因為銘文的讀法和含義仍有討論。"
+      }
+    },
+    {
+      "id": "jerusalem_pilgrimage_road",
+      "category": "Archaeology",
+      "bibleBooks": [
+        "John"
+      ],
+      "timeline": {
+        "en": "Early 1st century CE (built about 30 CE or soon after)",
+        "zh-Hans": "公元1世纪初（约公元30年或稍后修建）",
+        "zh-Hant": "公元1世紀初（約公元30年或稍後修建）"
+      },
+      "discoveryDate": {
+        "en": "Excavated by the Israel Antiquities Authority; dating announced 2019",
+        "zh-Hans": "由以色列文物管理局发掘；年代于2019年公布",
+        "zh-Hant": "由以色列文物管理局發掘；年代於2019年公佈"
+      },
+      "location": {
+        "en": "City of David (Silwan), Jerusalem, from the Pool of Siloam toward the Temple Mount",
+        "zh-Hans": "耶路撒冷大卫城（西罗亚），从西罗亚池通往圣殿山",
+        "zh-Hant": "耶路撒冷大衛城（西羅亞），從西羅亞池通往聖殿山"
+      },
+      "scriptureReference": "John 9:7",
+      "images": [],
+      "academicSources": [
+        "National Geographic. \"Road built by biblical villain uncovered in Jerusalem.\" 2019. https://www.nationalgeographic.com/history/2019/10/road-built-biblical-villain-uncovered-jerusalem/",
+        "Uziel, Joe, and colleagues of the Israel Antiquities Authority. Report on the Pilgrimage Road excavation, Tel Aviv: Journal of the Institute of Archaeology of Tel Aviv University (2019).",
+        "Josephus. Jewish War 2.175–177; Antiquities of the Jews 18.60–62 (Pilate and the aqueduct)."
+      ],
+      "confidenceLevel": "Strong",
+      "icon": "🛣️",
+      "title": {
+        "en": "Jerusalem Pilgrimage Road (Siloam to the Temple Mount)",
+        "zh-Hans": "耶路撒冷朝圣之路（从西罗亚池到圣殿山）",
+        "zh-Hant": "耶路撒冷朝聖之路（從西羅亞池到聖殿山）"
+      },
+      "summary": {
+        "en": "A monumental stepped street, more than half a kilometre long and about 8 metres wide, excavated beneath the City of David, led from the Pool of Siloam to the Temple Mount. More than 100 coins sealed under its paving, the latest from about 31 CE, date its construction to the time of Pontius Pilate.",
+        "zh-Hans": "大卫城地下发掘出一条宏伟的台阶街道，长超过半公里，宽约8米，从西罗亚池通往圣殿山。封在铺路石下面的一百多枚钱币，最晚的约为公元31年，把它的修建年代定在本丢·彼拉多时期。",
+        "zh-Hant": "大衛城地下發掘出一條宏偉的臺階街道，長超過半公里，寬約8米，從西羅亞池通往聖殿山。封在鋪路石下面的一百多枚錢幣，最晚的約為公元31年，把它的修建年代定在本丟·彼拉多時期。"
+      },
+      "description": {
+        "en": "Archaeologists of the Israel Antiquities Authority, working in tunnels beneath a neighbourhood just south of the Temple Mount, uncovered a monumental stepped street that ran from the Pool of Siloam up toward the Temple Mount. It was more than a third of a mile long, about 26 feet (8 m) wide and paved with around ten thousand tons of limestone slabs.\n\nMore than 100 coins were found beneath the paving stones, the latest dating to about 31 CE. Donald Ariel, the IAA's coin expert, notes that the most common first-century Jerusalem coins were minted after 40 CE and that none lay under the street, so the street was laid before they appeared, in the time of Pontius Pilate, who governed Judea from about 26/27 CE. Joe Uziel and the excavation team reported this in Tel Aviv: Journal of the Institute of Archaeology in 2019.\n\nJosephus reports that Pilate used sacred funds to build an aqueduct for Jerusalem (War 2.175–177; Antiquities 18.60–62), and the excavators suggest he may also have paid for or planned this street. Other scholars caution that the coins date the street but do not show who ordered it.\n\nThe street linked the Pool of Siloam, where Jesus told the blind man to wash (John 9:7), with the Temple Mount, so it is the kind of road that pilgrims of his day will have used. It is classed as Strong because the dating by coins is solid, while the link to Pilate and to particular Gospel events is interpretation.",
+        "zh-Hans": "以色列文物管理局的考古学家在圣殿山南面一处街区下的隧道里工作，发现了一条宏伟的台阶街道，从西罗亚池向上通往圣殿山。它长超过三分之一英里，宽约26英尺（8米），用大约一万吨石灰岩板铺成。\n\n铺路石下面发现了一百多枚钱币，最晚的约为公元31年。文物管理局的钱币专家唐纳德·阿里尔指出，1世纪耶路撒冷最常见的钱币都是公元40年以后铸造的，而街道下面一枚也没有，所以街道是在这些钱币出现之前、也就是本丢·彼拉多时期铺的，彼拉多约从公元26/27年起任犹太巡抚。约埃·乌齐尔和发掘团队于2019年在《特拉维夫：特拉维夫大学考古学研究所期刊》上报告了这一点。\n\n约瑟夫记载，彼拉多动用圣殿的款项为耶路撒冷修了一条水道（《犹太战记》2.175—177；《犹太古史》18.60—62），发掘者认为他也可能为这条街道出资或主持规划。另一些学者提醒说，钱币只能确定街道的年代，不能说明是谁下令修的。\n\n这条街道把西罗亚池（耶稣叫瞎眼的人去那里洗，约翰福音9:7）与圣殿山连了起来，所以它正是当时的朝圣者会走的那种路。本条目列为“有力”，是因为用钱币断代的依据扎实，而它与彼拉多以及某些福音书事件的联系则属于解释。",
+        "zh-Hant": "以色列文物管理局的考古學家在聖殿山南面一處街區下的隧道里工作，發現了一條宏偉的臺階街道，從西羅亞池向上通往聖殿山。它長超過三分之一英里，寬約26英尺（8米），用大約一萬噸石灰岩板鋪成。\n\n鋪路石下面發現了一百多枚錢幣，最晚的約為公元31年。文物管理局的錢幣專家唐納德·阿里爾指出，1世紀耶路撒冷最常見的錢幣都是公元40年以後鑄造的，而街道下面一枚也沒有，所以街道是在這些錢幣出現之前、也就是本丟·彼拉多時期鋪的，彼拉多約從公元26/27年起任猶太巡撫。約埃·烏齊爾和發掘團隊於2019年在《特拉維夫：特拉維夫大學考古學研究所期刊》上報告了這一點。\n\n約瑟夫記載，彼拉多動用聖殿的款項為耶路撒冷修了一條水道（《猶太戰記》2.175—177；《猶太古史》18.60—62），發掘者認為他也可能為這條街道出資或主持規劃。另一些學者提醒說，錢幣只能確定街道的年代，不能說明是誰下令修的。\n\n這條街道把西羅亞池（耶穌叫瞎眼的人去那裡洗，約翰福音9:7）與聖殿山連了起來，所以它正是當時的朝聖者會走的那種路。本條目列為“有力”，是因為用錢幣斷代的依據紮實，而它與彼拉多以及某些福音書事件的聯繫則屬於解釋。"
+      },
+      "scripturalCorrelation": {
+        "en": "John 9:7 reads: 'Then He told him, \"Go, wash in the Pool of Siloam\" (which means \"Sent\"). So the man went and washed, and came back seeing.'\n\nThe Gospels place Jesus in Jerusalem at pilgrim festivals. The Pilgrimage Road shows the kind of monumental infrastructure that served the crowds who went up to the Temple in his time, and it was built in the same decade in which Luke 3:1 places Pontius Pilate as governor of Judea. It does not mention any person from the Gospels.",
+        "zh-Hans": "约翰福音9:7：「对他说：\"你往西罗亚池子里去洗\"（西罗亚翻出来就是奉差遣）。他去一洗，回头就看见了。」\n\n福音书记载耶稣在朝圣节期到过耶路撒冷。朝圣之路展示了他那个时代为上圣殿的人群而建的宏大基础设施，它修建的年代，正是路加福音3:1所说本丢·彼拉多任犹太巡抚的那十年。它并没有提到福音书中的任何人物。",
+        "zh-Hant": "約翰福音9:7：「對他説：「你往西羅亞池子裏去洗」（西羅亞翻出來就是奉差遣）。他去一洗，回頭就看見了。」\n\n福音書記載耶穌在朝聖節期到過耶路撒冷。朝聖之路展示了他那個時代為上聖殿的人群而建的宏大基礎設施，它修建的年代，正是路加福音3:1所說本丟·彼拉多任猶太巡撫的那十年。它並沒有提到福音書中的任何人物。"
+      }
+    },
+    {
+      "id": "ark_tablet_finkel",
+      "category": "History",
+      "bibleBooks": [
+        "Genesis"
+      ],
+      "timeline": {
+        "en": "Old Babylonian period, about 1850 BCE (Finkel's estimate)",
+        "zh-Hans": "古巴比伦时期，约公元前1850年（芬克尔的估计）",
+        "zh-Hant": "古巴比倫時期，約公元前1850年（芬克爾的估計）"
+      },
+      "discoveryDate": {
+        "en": "Published 2014 (Irving Finkel)",
+        "zh-Hans": "2014年发表（欧文·芬克尔）",
+        "zh-Hant": "2014年發表（歐文·芬克爾）"
+      },
+      "location": {
+        "en": "Studied and published by Irving Finkel of the British Museum",
+        "zh-Hans": "由大英博物馆的欧文·芬克尔研究并发表",
+        "zh-Hant": "由大英博物館的歐文·芬克爾研究並發表"
+      },
+      "scriptureReference": "Genesis 6:14-16",
+      "images": [],
+      "academicSources": [
+        "Finkel, Irving. The Ark Before Noah: Decoding the Story of the Flood. London: Hodder & Stoughton; New York: Nan A. Talese/Doubleday, 2014.",
+        "Archaeology magazine. \"Cuneiform Tablet Tells Giant Ark Story.\" 27 January 2014. https://archaeology.org/news/2014/01/27/140127-ark-cuneiform-translation/"
+      ],
+      "confidenceLevel": "Strong",
+      "icon": "⛵",
+      "title": {
+        "en": "The Ark Tablet (Mesopotamian flood story, 2014)",
+        "zh-Hans": "方舟泥板（美索不达米亚洪水故事，2014年）",
+        "zh-Hant": "方舟泥板（美索不達米亞洪水故事，2014年）"
+      },
+      "summary": {
+        "en": "A cuneiform tablet published in 2014 by Irving Finkel of the British Museum gives instructions for building a large round boat of rope and bitumen to survive a flood sent by the gods. It shows how old and widespread Mesopotamian flood stories were, and how the ark could be imagined differently from Genesis.",
+        "zh-Hans": "大英博物馆的欧文·芬克尔于2014年发表了一块楔形文字泥板，里面有为躲避诸神所降洪水而建造一艘用绳索和沥青制成的大型圆形船的指示。它显示了美索不达米亚洪水故事有多古老、流传多广，也显示方舟可以被想象成与创世记不同的样子。",
+        "zh-Hant": "大英博物館的歐文·芬克爾於2014年發表了一塊楔形文字泥板，裡面有為躲避諸神所降洪水而建造一艘用繩索和瀝青製成的大型圓形船的指示。它顯示了美索不達米亞洪水故事有多古老、流傳多廣，也顯示方舟可以被想象成與創世記不同的樣子。"
+      },
+      "description": {
+        "en": "In 2014 Irving Finkel of the British Museum published a cuneiform tablet from the Old Babylonian period (about 1850 BCE in his estimate) that preserves instructions for building a large boat to survive a flood. The text is a version of the Mesopotamian flood story of the Atrahasis tradition.\n\nUnlike the long rectangular ark of Genesis, the tablet describes a giant circular vessel, a coracle of rope on a wooden frame, waterproofed with two kinds of bitumen. It gives enough measurements for a one-third scale model to be built for a 2014 television documentary.\n\nThe tablet is more than a thousand years older than the Gilgamesh flood tablet in the British Museum (7th century BCE). It shows that Mesopotamian flood stories with a divinely warned boat-builder were told long before the Hebrew Bible reached its present form. Finkel argues that Hebrew scholars would have met such texts during the Babylonian exile; whether the biblical account depends on them is a scholarly proposal, and others read the parallels as independent traditions. The tablet is not evidence that the flood described in Genesis happened, but it documents how the story was told in the ancient Near East.",
+        "zh-Hans": "2014年，大英博物馆的欧文·芬克尔发表了一块古巴比伦时期（据他估计约公元前1850年）的楔形文字泥板，上面保存着为躲避洪水而建造大船的指示。这篇文字是阿特拉哈西斯传统的美索不达米亚洪水故事的一个版本。\n\n与创世记中长方形的方舟不同，泥板描述的是一艘巨大的圆形船，用绳索绑在木架上，涂两种沥青防水。它给出了足够的尺寸，使2014年的一部电视纪录片能造出三分之一比例的模型。\n\n这块泥板比大英博物馆的吉尔伽美什洪水泥板（公元前7世纪）早一千多年。它表明，有神灵警告造船人的美索不达米亚洪水故事，在希伯来圣经成为现在的样子之前很久就在流传。芬克尔认为希伯来学者在巴比伦被掳期间会接触到这类文本；圣经的记载是否依赖它们，只是学界的一种看法，也有人把这些相似之处看作各自独立的传统。这块泥板并不是创世记所述洪水确实发生的证据，但它记录了这个故事在古代近东是怎样讲述的。",
+        "zh-Hant": "2014年，大英博物館的歐文·芬克爾發表了一塊古巴比倫時期（據他估計約公元前1850年）的楔形文字泥板，上面保存著為躲避洪水而建造大船的指示。這篇文字是阿特拉哈西斯傳統的美索不達米亞洪水故事的一個版本。\n\n與創世記中長方形的方舟不同，泥板描述的是一艘巨大的圓形船，用繩索綁在木架上，塗兩種瀝青防水。它給出了足夠的尺寸，使2014年的一部電視紀錄片能造出三分之一比例的模型。\n\n這塊泥板比大英博物館的吉爾伽美什洪水泥板（公元前7世紀）早一千多年。它表明，有神靈警告造船人的美索不達米亞洪水故事，在希伯來聖經成為現在的樣子之前很久就在流傳。芬克爾認為希伯來學者在巴比倫被擄期間會接觸到這類文本；聖經的記載是否依賴它們，只是學界的一種看法，也有人把這些相似之處看作各自獨立的傳統。這塊泥板並不是創世記所述洪水確實發生的證據，但它記錄了這個故事在古代近東是怎樣講述的。"
+      },
+      "scripturalCorrelation": {
+        "en": "Genesis 6:14-16 reads: 'Make for yourself an ark of gopher wood; make rooms in the ark and coat it with pitch inside and out. And this is how you are to build it: The ark is to be 300 cubits long, 50 cubits wide, and 30 cubits high. You are to make a roof for the ark, finish its walls a cubit from the top, place a door in the side of the ark, and build lower, middle, and upper decks.'\n\nGenesis and the Ark Tablet both record a divine instruction to build a vessel sealed with a waterproofing substance, but the shapes and materials differ: the biblical ark is a large rectangular box of gopher wood coated with pitch, while the Ark Tablet's boat is a round coracle of rope and wood coated with bitumen. The parallel is one of motif, not of identical design.",
+        "zh-Hans": "创世记6:14-16：「你要用歌斐木造一只方舟，分一间一间地造，里外抹上松香。 方舟的造法乃是这样：要长三百肘，宽五十肘，高三十肘。 方舟上边要留透光处，高一肘。方舟的门要开在旁边。方舟要分上、中、下三层。」\n\n创世记和方舟泥板都记载了神灵指示建造一只用防水材料封好的船，但形状和材料不同：圣经中的方舟是用歌斐木造的长方形大箱，抹上松香；方舟泥板中的船则是用绳索和木头做成的圆形小艇，涂上沥青。这种相似是母题上的相似，而不是设计相同。",
+        "zh-Hant": "創世記6:14-16：「你要用歌斐木造一隻方舟，分一間一間地造，裏外抹上松香。 方舟的造法乃是這樣：要長三百肘，寬五十肘，高三十肘。 方舟上邊要留透光處，高一肘。方舟的門要開在旁邊。方舟要分上、中、下三層。」\n\n創世記和方舟泥板都記載了神靈指示建造一隻用防水材料封好的船，但形狀和材料不同：聖經中的方舟是用歌斐木造的長方形大箱，抹上松香；方舟泥板中的船則是用繩索和木頭做成的圓形小艇，塗上瀝青。這種相似是母題上的相似，而不是設計相同。"
+      }
+    },
+    {
+      "id": "nazareth_first_century_house",
+      "category": "Archaeology",
+      "bibleBooks": [
+        "Luke"
+      ],
+      "timeline": {
+        "en": "Early Roman period (1st century CE)",
+        "zh-Hans": "早罗马时期（公元1世纪）",
+        "zh-Hant": "早羅馬時期（公元1世紀）"
+      },
+      "discoveryDate": {
+        "en": "2009 (announced December 2009)",
+        "zh-Hans": "2009年（2009年12月公布）",
+        "zh-Hant": "2009年（2009年12月公佈）"
+      },
+      "location": {
+        "en": "Next to the Basilica of the Annunciation, Nazareth, Israel",
+        "zh-Hans": "以色列拿撒勒，天使报喜教堂旁",
+        "zh-Hant": "以色列拿撒勒，天使報喜教堂旁"
+      },
+      "scriptureReference": "Luke 2:39",
+      "images": [],
+      "academicSources": [
+        "Israel Antiquities Authority. Press release on the first-century dwelling found in Nazareth, 21 December 2009.",
+        "NBC News / Associated Press. \"First Jesus-era house found in Nazareth.\" December 2009. https://www.nbcnews.com/id/wbna34511072",
+        "Jewish Virtual Library. \"Excavation Discovers Remains of Building from Time of Jesus.\" https://www.jewishvirtuallibrary.org/excavation-discovers-remains-of-building-from-time-of-jesus"
+      ],
+      "confidenceLevel": "Strong",
+      "icon": "🏠",
+      "title": {
+        "en": "First-Century House in Nazareth (2009)",
+        "zh-Hans": "拿撒勒的1世纪房屋（2009年）",
+        "zh-Hant": "拿撒勒的1世紀房屋（2009年）"
+      },
+      "summary": {
+        "en": "In December 2009 the Israel Antiquities Authority announced the remains of a modest first-century house at Nazareth: two rooms around a courtyard, with a water system that collected rain from the roof. It is the first dwelling of the Jewish village that can be dated to the time of Jesus.",
+        "zh-Hans": "2009年12月，以色列文物管理局公布了拿撒勒一座朴素的1世纪房屋遗迹：两间房围着一个院子，还有一套收集屋顶雨水的供水设施。它是这个犹太村庄中第一座可以确定属于耶稣时代的住宅。",
+        "zh-Hant": "2009年12月，以色列文物管理局公佈了拿撒勒一座樸素的1世紀房屋遺蹟：兩間房圍著一個院子，還有一套收集屋頂雨水的供水設施。它是這個猶太村莊中第一座可以確定屬於耶穌時代的住宅。"
+      },
+      "description": {
+        "en": "The remains were found in a salvage excavation by the Israel Antiquities Authority, directed by Yardenna Alexandre, on the site of a former convent beside the Basilica of the Annunciation, where the International Marian Center of Nazareth was to be built. Workers first noticed signs of the building in the summer of 2009, and by December it was clear that it dated from the time of Jesus.\n\nThe excavators uncovered the walls of a house of two rooms and a courtyard, a hideout, and a water system that appeared to carry rainwater from the roof to the house. The building is small and modest, and Alexandre described it as typical of the dwellings of the Jewish village of Nazareth at that time.\n\nNazareth is not named in the Hebrew Bible or in Josephus, and a few writers have argued that it was insignificant or even absent in Jesus' day. The find shows a small Jewish settlement at Nazareth in the Early Roman period, as the Gospels assume. It cannot be linked to Jesus' family, and nothing in it shows who lived there.",
+        "zh-Hans": "这些遗迹是以色列文物管理局由亚尔登娜·亚历山大（Yardenna Alexandre）主持的抢救性发掘中发现的，地点在天使报喜教堂旁一座旧修道院的原址，那里将要建国际玛利亚中心。2009年夏天工人先注意到这座建筑的迹象，到12月才清楚它属于耶稣时代。\n\n发掘者揭露出一座有两个房间和一个院子的房屋的墙壁、一个藏身处，以及一套似乎把屋顶雨水引到屋里的供水设施。这座建筑小而朴素，亚历山大把它描述为当时犹太村庄拿撒勒典型的住宅。\n\n拿撒勒在希伯来圣经和约瑟夫的著作中都没有出现，少数作者曾认为它在耶稣时代微不足道，甚至并不存在。这一发现表明早罗马时期拿撒勒确有一个小型犹太聚落，正如福音书所设想的。它不能与耶稣的家庭联系起来，其中也没有任何东西表明谁住在那里。",
+        "zh-Hant": "這些遺蹟是以色列文物管理局由亞爾登娜·亞歷山大（Yardenna Alexandre）主持的搶救性發掘中發現的，地點在天使報喜教堂旁一座舊修道院的原址，那裡將要建國際瑪利亞中心。2009年夏天工人先注意到這座建築的跡象，到12月才清楚它屬於耶穌時代。\n\n發掘者揭露出一座有兩個房間和一個院子的房屋的牆壁、一個藏身處，以及一套似乎把屋頂雨水引到屋裡的供水設施。這座建築小而樸素，亞歷山大把它描述為當時猶太村莊拿撒勒典型的住宅。\n\n拿撒勒在希伯來聖經和約瑟夫的著作中都沒有出現，少數作者曾認為它在耶穌時代微不足道，甚至並不存在。這一發現表明早羅馬時期拿撒勒確有一個小型猶太聚落，正如福音書所設想的。它不能與耶穌的家庭聯繫起來，其中也沒有任何東西表明誰住在那裡。"
+      },
+      "scripturalCorrelation": {
+        "en": "Luke 2:39 reads: 'When Jesus parents had done everything required by the Law of the Lord [Yahweh], they returned to Galilee, to their own town of Nazareth.'\n\nLuke 2:39 and Matthew 2:23 place Jesus' family in Nazareth. The 2009 excavation supports the existence of a small Jewish village there in the first century, which the Gospels assume. It says nothing about Jesus' own family, so it is evidence for the setting of the Gospel accounts rather than for any event in them.",
+        "zh-Hans": "路加福音2:39：「约瑟和马利亚照主[雅伟]的律法办完了一切的事，就回加利利，到自己的城拿撒勒去了。」\n\n路加福音2:39和马太福音2:23把耶稣的家安在拿撒勒。2009年的发掘支持了1世纪那里确有一个小型犹太村庄，这正是福音书所设想的背景。它没有说到耶稣自己的家庭，所以它证明的是福音书叙事的背景，而不是其中的任何事件。",
+        "zh-Hant": "路加福音2:39：「約瑟和馬利亞照主[雅偉]的律法辦完了一切的事，就回加利利，到自己的城拿撒勒去了。」\n\n路加福音2:39和馬太福音2:23把耶穌的家安在拿撒勒。2009年的發掘支持了1世紀那裡確有一個小型猶太村莊，這正是福音書所設想的背景。它沒有說到耶穌自己的家庭，所以它證明的是福音書敘事的背景，而不是其中的任何事件。"
+      }
+    },
+    {
+      "id": "theodotus_synagogue_inscription",
+      "category": "Archaeology",
+      "bibleBooks": [
+        "Acts"
+      ],
+      "timeline": {
+        "en": "1st century BCE – 70 CE (before the destruction of Jerusalem)",
+        "zh-Hans": "公元前1世纪至公元70年（耶路撒冷被毁之前）",
+        "zh-Hant": "公元前1世紀至公元70年（耶路撒冷被毀之前）"
+      },
+      "discoveryDate": {
+        "en": "1913 (Raymond Weill)",
+        "zh-Hans": "1913年（雷蒙·韦尔）",
+        "zh-Hant": "1913年（雷蒙·韋爾）"
+      },
+      "location": {
+        "en": "Found in the City of David, Jerusalem; now in the Israel Museum",
+        "zh-Hans": "出土于耶路撒冷大卫城；现藏以色列博物馆",
+        "zh-Hant": "出土於耶路撒冷大衛城；現藏以色列博物館"
+      },
+      "scriptureReference": "Acts 6:9",
+      "images": [],
+      "academicSources": [
+        "Weill, Raymond. La Cité de David: compte rendu des fouilles exécutées à Jérusalem, 1913–1914. Paris: Geuthner, 1920.",
+        "Wikipedia. \"Theodotos inscription.\" https://en.wikipedia.org/wiki/Theodotos_inscription",
+        "Jerusalem Perspective. \"Sidebar: Synagogue Guest House for First-century Pilgrims.\" https://www.jerusalemperspective.com/2396/"
+      ],
+      "confidenceLevel": "Definitive",
+      "icon": "🕍",
+      "title": {
+        "en": "Theodotus Synagogue Inscription",
+        "zh-Hans": "提阿多图会堂铭文",
+        "zh-Hant": "提阿多圖會堂銘文"
+      },
+      "summary": {
+        "en": "A Greek inscription found in Jerusalem in 1913 records that Theodotus, son of Vettenus, a priest and synagogue leader, rebuilt a synagogue for the reading of the Law, with a hostel and baths for visitors from abroad. It is direct evidence of a synagogue in Jerusalem before the destruction of 70 CE.",
+        "zh-Hans": "1913年在耶路撒冷发现的一块希腊文铭文记载，祭司兼会堂领袖、维提努斯之子提阿多图重建了一座会堂，用来诵读律法，并设有供外来客人使用的客舍和浴室。这是公元70年毁城之前耶路撒冷有会堂的直接证据。",
+        "zh-Hant": "1913年在耶路撒冷發現的一塊希臘文銘文記載，祭司兼會堂領袖、維提努斯之子提阿多圖重建了一座會堂，用來誦讀律法，並設有供外來客人使用的客舍和浴室。這是公元70年毀城之前耶路撒冷有會堂的直接證據。"
+      },
+      "description": {
+        "en": "The inscription is a limestone slab about 75 × 41 cm, written in Koine Greek. It was found in December 1913 by Raymond Weill during his excavations on the southeastern Ophel hill, the City of David south of the Temple Mount. It was first kept in the Rockefeller Museum and is now exhibited in the Israel Museum.\n\nIt reads, in translation: Theodotus, son of Vettenus, priest and synagogue leader, son of a synagogue leader, grandson of a synagogue leader, rebuilt this synagogue for the reading of the Law and the teaching of the commandments, and the hostelry, rooms and baths, for the lodging of those who have need from abroad.\n\nThe inscription dates from the 1st century BCE to 70 CE, before the destruction of Jerusalem. The name Vettenus is Roman, which suggests a family of freed slaves or of Roman origin. Acts 6:9 mentions a 'Synagogue of the Freedmen' in Jerusalem, and an identification with Theodotus' synagogue has been suggested, but the inscription does not say so. What it does show is that a priestly family ran a synagogue with lodging for pilgrims in Jerusalem while the Temple still stood.",
+        "zh-Hans": "这块铭文是一块约75×41厘米的石灰岩板，用通用希腊文书写。1913年12月，雷蒙·韦尔在圣殿山以南的大卫城、也就是东南俄斐勒山的发掘中发现了它。它最初存放在洛克菲勒博物馆，现在在以色列博物馆展出。\n\n译文是：提阿多图，维提努斯之子，祭司兼会堂领袖，会堂领袖之子、会堂领袖之孙，重建了这座会堂，用来诵读律法、教导诫命，并建了客舍、房间和浴室，供来自外地有需要的人住宿。\n\n这块铭文的年代在公元前1世纪到公元70年之间，即耶路撒冷被毁之前。维提努斯（Vettenus）是罗马人的名字，说明这是一个被释奴或罗马出身的家族。使徒行传6:9提到耶路撒冷有一座“利百地拿（被释奴）会堂”，有人提出它就是提阿多图的会堂，但铭文本身并没有这样说。它确切表明的是：圣殿尚存的时候，耶路撒冷有一个祭司家族经营着一座为朝圣者提供住宿的会堂。",
+        "zh-Hant": "這塊銘文是一塊約75×41釐米的石灰岩板，用通用希臘文書寫。1913年12月，雷蒙·韋爾在聖殿山以南的大衛城、也就是東南俄斐勒山的發掘中發現了它。它最初存放在洛克菲勒博物館，現在在以色列博物館展出。\n\n譯文是：提阿多圖，維提努斯之子，祭司兼會堂領袖，會堂領袖之子、會堂領袖之孫，重建了這座會堂，用來誦讀律法、教導誡命，並建了客舍、房間和浴室，供來自外地有需要的人住宿。\n\n這塊銘文的年代在公元前1世紀到公元70年之間，即耶路撒冷被毀之前。維提努斯（Vettenus）是羅馬人的名字，說明這是一個被釋奴或羅馬出身的家族。使徒行傳6:9提到耶路撒冷有一座“利百地拿（被釋奴）會堂”，有人提出它就是提阿多圖的會堂，但銘文本身並沒有這樣說。它確切表明的是：聖殿尚存的時候，耶路撒冷有一個祭司家族經營著一座為朝聖者提供住宿的會堂。"
+      },
+      "scripturalCorrelation": {
+        "en": "Acts 6:9 reads: 'But resistance arose from what was called the Synagogue of the Freedmen, including Cyrenians, Alexandrians, and men from the provinces of Cilicia and Asia. They disputed with Stephen,'\n\nActs speaks of synagogues in Jerusalem used by Greek-speaking Jews from the diaspora. The Theodotus inscription shows that such a synagogue existed, with a purpose that matches that description: reading the Law, teaching the commandments and lodging visitors from abroad. Whether it is the same as the 'Synagogue of the Freedmen' is an open suggestion.",
+        "zh-Hans": "使徒行传6:9：「当时有称利百地拿会堂的几个人，并有古利奈、亚力山太、基利家、亚西亚、各处会堂的几个人，都起来和司提反辩论。」\n\n使徒行传提到耶路撒冷有供讲希腊语的外邦散居犹太人使用的会堂。提阿多图铭文表明确有这样的会堂，其用途也与那种描述相合：诵读律法、教导诫命、接待外地来客。至于它是否就是“利百地拿会堂”，只是一种尚无定论的推测。",
+        "zh-Hant": "使徒行傳6:9：「當時有稱利百地拿會堂的幾個人，並有古利奈、亞力山太、基利家、亞西亞、各處會堂的幾個人，都起來和司提反辯論。」\n\n使徒行傳提到耶路撒冷有供講希臘語的外邦散居猶太人使用的會堂。提阿多圖銘文表明確有這樣的會堂，其用途也與那種描述相合：誦讀律法、教導誡命、接待外地來客。至於它是否就是“利百地拿會堂”，只是一種尚無定論的推測。"
       }
     }
   ]
