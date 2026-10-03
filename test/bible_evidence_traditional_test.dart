@@ -132,7 +132,7 @@ void main() {
     expect(count('抄本保存'), 5);
     expect(count('儲存'), 9);
     // 83 -> 82 on 2026-10-04: the rewritten Thallus/Rylands/Nazareth paragraphs (tools/apply_evidence_corrections.py).
-    expect(count('保存'), 82);
+    expect(count('保存'), 81);  // 82 -> 81 on 2026-10-04 (Golgotha / house of Peter rewrite)
   });
 
   test('wording was not localised — only glyphs were converted', () {
@@ -143,7 +143,8 @@ void main() {
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
     // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
     // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 531, reason: '公元 was localised to 西元');
+    expect(count('公元'), 535,  // 531 -> 535 on 2026-10-04 (Golgotha, house of Peter, Capernaum)
+         reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');

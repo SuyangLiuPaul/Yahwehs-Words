@@ -322,6 +322,63 @@ source('circumcision_day_8', 'Ness, Robert B.',
        'American Academy of Pediatrics, Committee on Fetus and Newborn. "Controversies Concerning Vitamin K and the Newborn." Pediatrics 112 (2003): 191–192.')
 
 
+# ---------------------------------------------------------------- golgotha_holy_sepulchre
+# 2016 Edicule restoration (NTUA, A. Moropoulou): mortar dated by OSL (optically stimulated luminescence) in two labs to ~345 CE,
+# other samples ~335 and ~1570 CE (NOT radiocarbon). https://www.nationalgeographic.com/news/2017/11/jesus-tomb-archaeology-jerusalem-christianity-rome/
+# https://www.smithsonianmag.com/smart-news/mortar-found-jesus-tomb-dates-constantine-era-180967345/
+# The zh text claimed Justin, Melito, Origen and Alexander of Jerusalem "unanimously located Golgotha at the present site" — not supported.
+setf('golgotha_holy_sepulchre', 'summary',
+     "Excavations beneath the Church of the Holy Sepulchre show that the site lay outside the 1st-century city walls (compare Hebrews 13:12) and was an abandoned quarry used for rock-cut tombs (compare John 19:41), and optical (OSL) dating of mortar from the Edicule, reported in 2017, points to building work around 345 CE, in the time of Constantine. The identification with Golgotha and the tomb of Jesus remains a tradition, not a proof.",
+     "圣墓教堂之下的发掘表明，该地在公元1世纪位于城墙之外（参希伯来书13:12），是一座废弃的采石场，其中有岩凿墓穴（参约翰福音19:41）；2017年公布的对圣墓小堂灰浆的光释光（OSL）测年，则指向约公元345年君士坦丁时代的建造工程。把这里认定为各各他和耶稣的坟墓，仍属传统，而不是已被证明的事实。")
+para('golgotha_holy_sepulchre', 'description', '#1', '#1',
+     "Archaeology is consistent with the tradition at several points, though it cannot prove it:",
+     "考古发现在几个方面与这一传统相符，但并不能证明它：")
+para('golgotha_holy_sepulchre', 'description', '(4) 2016 Edicule radiocarbon study', '**2016年恢复分析**',
+     "(4) 2016 Edicule restoration: Antonia Moropoulou (National Technical University of Athens) led a team that opened the tomb in October 2016 and took mortar samples from the structures enclosing it. Two laboratories dated the mortar by optically stimulated luminescence (OSL), a method that dates when quartz grains were last exposed to light. The earliest samples gave about 345 CE, which fits the time of Constantine; other samples gave about 335 CE and 1570 CE, the latter matching a documented restoration. This supports building work around the tomb in Constantine's time; it does not date the cutting of the tomb itself.",
+     "**2016年修复**：国立雅典理工大学的安东尼娅·莫罗普卢（Antonia Moropoulou）领导的团队于2016年10月打开了坟墓，并从包围坟墓的结构上采集了灰浆样品。两家实验室用光释光（OSL，测定石英颗粒最后一次见光的时间）法对灰浆测年：最早的样品约为公元345年，与君士坦丁时代相符；其他样品约为公元335年和1570年，后者与有记载的一次修复吻合。这支持了君士坦丁时代在墓周围的建造工程，但并不能确定墓穴本身开凿的年代。")
+source('golgotha_holy_sepulchre', 'Moropoulou, Antonia et al.',
+       'Moropoulou, Antonia et al. "Non-destructive dating of mortars from the Edicule of the Holy Sepulchre." Journal of Archaeological Science 81, 2017. [Citation not independently verified in the 2026 audit; the OSL dating itself is reported by National Geographic (2017) and Smithsonian Magazine (2017).]')
+
+# ---------------------------------------------------------------- house_of_peter
+# Corbo/Loffreda: domus-ecclesia from the end of the 1st c. CE; graffiti are Christian-phase; reading of the name Peter is doubted.
+# https://dig.corps-cmhl.huji.ac.il/rep_church_full/15904 ; https://madainproject.com/house_of_saint_peter
+meta('house_of_peter', 'confidenceLevel', 'Circumstantial')
+setf('house_of_peter', 'summary',
+     "Excavations beneath a Byzantine church at Capernaum revealed a 1st-century house that was later turned into a place of Christian worship, with graffiti that include the name of Jesus. It is traditionally identified as the house of the Apostle Peter mentioned in the Gospels, but the excavators' reading of the name 'Peter' is doubted by other scholars.",
+     "迦百农一座拜占庭教堂下方的发掘揭示了一座1世纪的房屋，后来被改作基督徒的敬拜场所，墙上涂鸦中有耶稣的名字。传统上认为它就是福音书所载使徒彼得的住所，但发掘者对“彼得”这个名字的释读，受到其他学者质疑。")
+para('house_of_peter', 'description', '#1', '#1',
+     "The Franciscan excavators date the first phase of the house to the 1st century BCE and say that from the end of the 1st century CE part of it was turned into a domus-ecclesia (house church): the floor was plastered repeatedly, which is unusual for a home, and cooking pottery disappeared while storage and serving vessels multiplied. In the 4th century the house church was enlarged and walled off from the village, and in the later 5th century everything was demolished and the octagonal church built. The graffiti on the plaster, in Greek, Aramaic, Syriac and Latin, include the name and monogram of Jesus, liturgical formulas such as Amen and Kyrie eleison, and an inscription in Syriac script that appears to refer to the Eucharist. They come from the Christian use of the room, not from an ordinary household, and other scholars find little evidence for the excavators' reading of the name Peter among them.",
+     "方济各会的发掘者把这座房屋的第一阶段定在公元前1世纪，并认为从公元1世纪末起，其中一部分被改作“家庭教会”（domus-ecclesia）：地面被反复抹灰（对住宅来说不寻常），烹饪陶器消失，储藏和盛放器皿增多。4世纪时这座家庭教会被扩建，并用围墙与村庄隔开；5世纪后期整片建筑被拆除，建起了八角形教堂。灰泥墙上用希腊文、亚兰文、叙利亚文和拉丁文写的涂鸦，包括耶稣的名字和圣名字母组合、“阿们”“求主怜悯”等礼仪用语，以及一句似乎涉及圣餐的叙利亚字体铭文。它们出自这个房间被基督徒使用的时期，而不是普通的家庭生活；至于发掘者所读出的“彼得”之名，另一些学者认为证据很少。")
+para('house_of_peter', 'description', '#2', '#2',
+     "The octagonal Byzantine church (a plan typically used to mark a sacred site) built directly over the room, together with a tradition from the 4th century CE identifying the site as the house of Peter, offers circumstantial support for the identification. The site is now under a modern Franciscan church with a glass floor permitting visitors to view the excavations below.",
+     "直接建在这个房间之上的八角形拜占庭教堂（通常用于标记圣地的建筑形制），加上自4世纪以来认定此处为彼得住所的传统，为这一认定提供了间接的支持。遗址上现建有现代方济各会教堂，设有玻璃地板，供访客观看下方的发掘遗迹。")
+para('house_of_peter', 'scripturalCorrelation', '#1', '#1',
+     "The excavated structure at Capernaum lies next to the remains of the ancient synagogue, which fits the spatial relationship described in Mark 1:29. The conversion of the house into a Christian meeting place, which the excavators date from the end of the 1st century CE, is consistent with early veneration of a house associated with Peter, but it does not by itself prove that this was Peter's house.",
+     "迦百农这处发掘出的建筑紧邻古代犹太会堂遗址，与马可福音1:29所描述的空间关系相符。发掘者认为这座房屋自公元1世纪末起被改作基督徒的聚会场所，这与人们很早就崇敬一座与彼得有关的房屋并不矛盾，但这本身并不能证明它就是彼得的家。")
+
+# ---------------------------------------------------------------- capernaum_synagogue
+meta('capernaum_synagogue', 'confidenceLevel', 'Strong')
+setf('capernaum_synagogue', 'summary',
+     "Excavations at Capernaum show a 4th–5th-century white limestone synagogue standing on the remains of a 1st-century basalt structure that the Franciscan excavators identify as an earlier synagogue, plausibly the building in which Jesus taught according to the Gospels, although the dating and the identification are debated.",
+     "迦百农的发掘显示，一座4至5世纪的白色石灰岩犹太会堂建在一座1世纪玄武岩建筑的遗迹之上；方济各会的发掘者把后者认定为更早的会堂，很可能就是福音书所载耶稣在其中教导的那座建筑，但年代和认定都有争议。")
+para('capernaum_synagogue', 'description', '#1', '#1',
+     "The visible white limestone synagogue is dated by its Franciscan excavators to the 4th–5th century CE and is one of the best-preserved ancient synagogues in Israel; scholarly opinion on its date has ranged from the 2nd to the 5th century. Beneath its foundations, excavations in the 1960s–80s revealed the black basalt foundations and a cobble floor of an earlier hall, which the excavators date to the late Second Temple period (1st century BCE–1st century CE) from ceramics, coins and stratigraphy and identify as an earlier synagogue. That the earlier hall is the synagogue of the Gospels is an inference, not a proven fact.",
+     "可见的白色石灰岩犹太会堂，其方济各会发掘者把它定在公元4至5世纪，它是以色列保存最完好的古代犹太会堂之一；学界对其年代的看法曾从2世纪到5世纪不等。在其地基之下，1960至80年代的发掘揭露出一座更早大厅的黑色玄武岩基址和卵石地面；发掘者依据陶器、钱币和地层，把它定在第二圣殿晚期（公元前1世纪至公元1世纪），并认定为更早的会堂。至于这座更早的大厅是否就是福音书所载的会堂，只是一种推断，而非已证明的事实。")
+
+
+# Chinese-only corrections in golgotha_holy_sepulchre (the English text has no counterpart for these claims).
+sub('golgotha_holy_sepulchre', 'description', None, None,
+    "**早期传统（公元2世纪）**：殉道者游斯丁（约150年）、萨迪斯主教米力图（约170年）和俄利根（约235年）都将各各他定位于现今地点。耶路撒冷主教亚历山大（约212年）在就任时前来崇敬。",
+    "**早期传统**：公元2世纪起已有基督徒到耶路撒冷朝圣（例如撒狄主教米力图约在公元170年前后到访过），但现存的君士坦丁时代之前的文献并没有明确指出圣墓教堂所在的地点；把这里与耶稣的坟墓明确联系起来的最早记载，是优西比乌（《君士坦丁传》）对君士坦丁时代发掘的叙述。")
+sub('golgotha_holy_sepulchre', 'description', None, None,
+    "反证明基督徒在公元135年前已持续认定此为圣地。",
+    "有人据此推论基督徒在公元135年之前已把这里视为圣地，但这属于推论。")
+sub('golgotha_holy_sepulchre', 'description', None, None,
+    "优西比乌（《君士坦丁传》3.25-28）亲眼目睹整个过程。",
+    "优西比乌（《君士坦丁传》3.25-28）记述了这一过程。")
+sub('golgotha_holy_sepulchre', 'summary', None, None, None, None) if False else None
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
@@ -396,10 +453,18 @@ def apply(data):
                     if cur != new:
                         val[lang] = new; changed += 1
                 else:
-                    match = c['match_en'] if lang == 'en' else (c['match_zh'] if lang == 'zh-Hans' else hant(c['match_zh']))
+                    match = c['match_en'] if lang == 'en' else (c['match_zh'] if lang == 'zh-Hans' else (c['match_zh'] if c['match_zh'].startswith('#') else hant(c['match_zh'])))
                     paras = cur.split('\n\n')
                     # also accept a paragraph that already holds this correction (any zh-Hant conversion)
                     n = 30 if lang == 'en' else 14
+                    if match.startswith('#'):  # match by paragraph index
+                        i = int(match[1:])
+                        if i >= len(paras):
+                            raise SystemExit('%s.%s[%s]: no paragraph %d' % (c['id'], c['field'], lang, i))
+                        if paras[i] != new:
+                            paras[i] = new
+                            val[lang] = '\n\n'.join(paras); changed += 1
+                        continue
                     starts = {match, new[:n]}
                     if lang == 'zh-Hant':
                         starts |= {hant(c['zh'], 's2tw')[:n], hant(c['zh'], 's2twp')[:n]}
