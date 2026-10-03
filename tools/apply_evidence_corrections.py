@@ -34,13 +34,26 @@ def _config():
 
 CONFIG = None
 
+# opencc s2tw one-to-many mistakes that the repos' tests pin as corrected (see
+# test/bible_evidence_traditional_test.dart and bible_evidence_language_test.dart).
+REPAIRS = [
+    ('髮掘', '發掘'), ('被髮', '被發'), ('騷亂髮', '騷亂發'), ('包括髮', '包括發'), ('覆活', '復活'),
+    ('幹河谷', '乾河谷'), ('石制', '石製'), ('羊皮捲', '羊皮卷'), ('爐灶', '爐竈'),
+    ('馬裡', '馬里'), ('泰勒裡', '泰勒里'), ('瑪裡', '瑪里'), ('胡裡', '胡里'), ('古裡', '古里'),
+    ('弗裡', '弗里'), ('努外裡', '努外里'), ('加布裡', '加布里'), ('哈塔裡', '哈塔里'), ('艾茲裡', '艾茲里'),
+    ('伊斯坦布林', '伊斯坦布爾'),
+]
+
 
 def hant(text, config=None):
     global CONFIG
     if CONFIG is None:
         CONFIG = _config()
     p = subprocess.run(['opencc', '-c', config or CONFIG], input=text, capture_output=True, text=True, check=True)
-    return p.stdout.rstrip('\n')
+    out = p.stdout.rstrip('\n')
+    for a, b in REPAIRS:
+        out = out.replace(a, b)
+    return out
 
 
 E = []  # corrections
@@ -52,6 +65,10 @@ def para(id, field, match_en, match_zh, en, zh):
 
 def setf(id, field, en, zh):
     E.append(dict(kind='set', id=id, field=field, en=en, zh=zh))
+
+
+def append(id, field, en, zh):
+    E.append(dict(kind='append', id=id, field=field, en=en, zh=zh))
 
 
 def sub(id, field, en_old=None, en_new=None, zh_old=None, zh_new=None):
@@ -146,6 +163,54 @@ sub('khirbet_qeiyafa_ostracon', 'description', None, None, "区别于附近的 P
 sub('khirbet_qeiyafa_ostracon', 'description', None, None, "犹大/Philistine边境地区", "犹大/非利士边境地区")
 
 
+# ---------------------------------------------------------------- pool_of_siloam
+# Found autumn 2004, announced 9 Aug 2005; Alexander Jannaeus coins in the plaster; Szanton doubts the mikveh reading;
+# full IAA excavation from 2023 (monumental dam ~800 BCE). https://en.wikipedia.org/wiki/Siloam_Pool ;
+# https://www.biblicalarchaeology.org/daily/ancient-cultures/ancient-israel/rethinking-the-pool-of-siloam/
+meta('pool_of_siloam', 'confidenceLevel', 'Strong')
+setf('pool_of_siloam', 'summary',
+     "Discovered in 2004 during a sewer repair in Jerusalem's City of David, a large stepped Second Temple-era pool matching the Gospel of John's Pool of Siloam was excavated. It is strongly consistent with the account of Jesus healing the blind man, although the pool's exact identification and use are still debated.",
+     "2004年耶路撒冷大卫城一处排水管道修缮工程中，一座与约翰福音所载西罗亚池相符的第二圣殿时期大型踏步式水池被发掘出来。它与耶稣医治瞎眼男子的记载高度吻合，但这座水池的确切身份和用途仍有争论。")
+para('pool_of_siloam', 'description', 'In August 2004', '2004年8月',
+     "In autumn 2004, during routine sewage pipe repairs in Jerusalem's City of David, workers uncovered a series of ancient stone steps (the find was announced in August 2005). Archaeologists Ronny Reich and Eli Shukron excavated the site and revealed a large stepped pool, trapezoidal in plan and about 69 metres (225 ft) wide, with three sets of five broad steps descending into the basin. Reich interpreted it as a ritual pool (mikveh).",
+     "2004年秋，在耶路撒冷大卫城一处例行的排水管道修缮工程中，施工人员掘出了一系列古代石阶（该发现于2005年8月公布）。考古学家荣尼·雷希与埃利·舒克隆主持发掘，揭露出一座大型踏步式水池，平面呈梯形，宽约69米（225英尺），设有三组各五级的宽阔石阶延伸入池中。雷希把它解释为一座礼仪浴池（mikveh）。")
+para('pool_of_siloam', 'description', 'Ceramic, coin, and stratigraphic analysis', '陶片、钱币及地层分析',
+     "Coins of the Hasmonean king Alexander Jannaeus (103–76 BCE) embedded in the plaster lining give the earliest possible date for the pool's construction, and the pool stayed in use until the destruction of Jerusalem in 70 CE. That places its use during Jesus' ministry (c. 28–30 CE). It was fed by Hezekiah's Tunnel from the Gihon Spring, which links the spring, the tunnel and the pool.",
+     "嵌在池壁灰泥层中的哈斯蒙尼王亚历山大·詹乃（公元前103—76年）的钱币，给出了水池建造的最早可能年代；此池一直使用到公元70年耶路撒冷被毁。这意味着它在耶稣传道期间（约公元28至30年）仍在使用。它由希西家水道从基训泉引水，把泉、水道与水池连成一线。")
+append('pool_of_siloam', 'description',
+     "Not every archaeologist accepts the whole picture. Nahshon Szanton of the Israel Antiquities Authority, who leads the full excavation that the IAA and the City of David Foundation began in 2023, has argued that the mikveh identification is almost certainly wrong. The 2023 work has also exposed a monumental dam, reported to be at least 19 metres long and 11 metres high and radiocarbon-dated to about 800 BCE, so the picture of the area keeps changing.",
+     "并非所有考古学家都接受上述全部看法。以色列文物管理局的纳雄·桑通（Nahshon Szanton）主持文物管理局与大卫城基金会自2023年起展开的全面发掘，他认为“礼仪浴池”的认定几乎肯定是错的。2023年的工作还揭露出一座巨大的堤坝，据报道长至少19米、高11米，经放射性碳测年约为公元前800年，因此该地区的整体图景仍在变化。")
+
+# ---------------------------------------------------------------- jericho_walls
+# Bruins & van der Plicht, Radiocarbon 37 (1995): City IV destruction 1562 +/- 38 BCE (18 samples).
+# https://en.wikipedia.org/wiki/Fall_of_Jericho ; https://biblearchaeologyreport.com/2019/05/17/biblical-places-three-ways-to-date-the-destruction-at-jericho/
+para('jericho_walls', 'description', 'Garstang identified a destruction layer', '加斯唐识别出一个毁坏层',
+     "Garstang identified a destruction layer, including collapsed walls and a burn level, that he attributed to the Late Bronze Age (c. 1400 BCE), consistent with his dating of the Exodus and conquest. Kenyon's more rigorous stratigraphic analysis dated that City IV destruction to the Middle Bronze Age (c. 1550 BCE) and found the site largely unoccupied in the Late Bronze Age (c. 1550–1200 BCE), the period in which a conquest under Joshua would fall. That creates the central scholarly problem for this evidence.",
+     "加斯唐识别出一个毁坏层，包括坍塌的城墙和焚烧层，并把它归因于青铜时代晚期（约公元前1400年），与他对出埃及和征服的年代学一致。凯尼恩更严格的地层分析则把这一第四城的毁灭定在青铜时代中期（约公元前1550年），并认为在青铜时代晚期（约公元前1550-1200年），也就是约书亚征服可能发生的时期，该遗址基本无人居住。这就构成了此项证据的核心学术难题。")
+append('jericho_walls', 'description',
+     "In 1995 Hendrik Bruins and Johannes van der Plicht radiocarbon-dated 18 samples from Jericho, including charred grain from the City IV burn layer, and placed the destruction at 1562 ± 38 BCE, which supports Kenyon's Middle Bronze Age date. Wood and other defenders of a destruction around 1400 BCE dispute how the pottery and the radiocarbon evidence are read, so linking this layer to Joshua 6 remains unresolved.",
+     "1995年，亨德里克·布鲁因斯与约翰内斯·范德普利赫特对耶利哥的18个样本（包括第四城焚烧层中的炭化谷粒）作了放射性碳测年，把这次毁灭定在公元前1562年（误差±38年），支持了凯尼恩的青铜时代中期年代。伍德等主张约公元前1400年毁灭的人，则对陶器与放射性碳证据的解读提出异议，因此把这一地层与约书亚记6章联系起来，至今没有定论。")
+source('jericho_walls', 'Bruins, Hendrik J.',
+       'Bruins, Hendrik J., and Johannes van der Plicht. "Tell es-Sultan (Jericho): Radiocarbon Results of Short-Lived Cereal and Multi-Year Charcoal Samples from the End of the Middle Bronze Age." Radiocarbon 37 (1995).')
+
+# ---------------------------------------------------------------- caiaphas_ossuary / house_of_caiaphas
+# Inscribed 'Yehosef bar Qayafa' (long side) and 'Yehosef bar Qafa' (narrow side); identification debated (spelling, no
+# 'priest' title, plain tomb; Puech); Reich: Joseph with the nickname Caiaphas. https://en.wikipedia.org/wiki/Caiaphas_ossuary
+setf('caiaphas_ossuary', 'summary',
+     "A limestone bone box found in Jerusalem in 1990, inscribed 'Joseph son of Caiaphas'. Many scholars identify it as the ossuary of the high priest Joseph Caiaphas who presided at Jesus' trial, but the identification is debated.",
+     "1990年在耶路撒冷发现的石灰岩藏骨罐，上刻「约瑟——该亚法之子」。许多学者认为它是主持耶稣审判的大祭司约瑟·该亚法的藏骨罐，但这一认定仍有争议。")
+para('caiaphas_ossuary', 'description', 'The identification with the biblical high priest', '多数学者，包括发表此发现的荣尼·雷希',
+     "Zvi Greenhut, who excavated the cave, and Ronny Reich, who published the inscriptions, regard the identification with the high priest as probable. Josephus (Antiquities 18.2.2) calls the high priest 'Joseph who was called Caiaphas', and Reich takes 'Caiaphas' to be a nickname or family name. Others are doubtful: the spelling (Qafa or Qayafa), the missing title 'priest' on the ossuary and the plain tomb have led scholars such as Émile Puech to question it. The identification is therefore probable, but not certain.",
+     "挖掘该洞穴的茨维·格林胡特和发表铭文的荣尼·雷希认为，这与大祭司为同一人很有可能。约瑟夫（《犹太古史》18.2.2）称这位大祭司为“又称该亚法的约瑟”，雷希认为“该亚法”是绰号或家族名。另一些学者持怀疑态度：拼写（Qafa 或 Qayafa）、骨罐上没有“祭司”头衔，以及墓室简朴，使埃米尔·普克等学者对此提出质疑。因此这一认定属“很可能”，而非确定。")
+meta('house_of_caiaphas', 'confidenceLevel', 'Strong')
+setf('house_of_caiaphas', 'summary',
+     "A family tomb accidentally exposed by road work in south Jerusalem in 1990, containing twelve ossuaries. One ornate ossuary is inscribed on two sides with variants of 'Joseph son of Caiaphas', a name that many scholars link to the high priest who presided over Jesus' trial.",
+     "1990年耶路撒冷南部修路时意外发掘出的家族墓室，内有十二件骨匣。其中一件华丽的骨匣在两个侧面刻有「约瑟·该亚法之子」的不同写法，许多学者把这一名字与审判耶稣的大祭司联系起来。")
+para('house_of_caiaphas', 'description', 'The ornate ossuary contained', '华丽的骨匣盛装',
+     "The ornate ossuary contained the bones of a man around 60 years old, consistent with the lifetime of Caiaphas, who served as high priest from 18 to 36 CE. Some scholars doubt that it belongs to the Joseph Caiaphas known from Josephus and the Gospels, citing the spelling, the missing title 'priest' and the plain tomb (Caiaphas may also be a family name), while many regard the identification as probable.",
+     "华丽的骨匣盛装一名年约六十岁男性的骸骨，与公元18—36年间任大祭司的该亚法之生平相符。一些学者质疑它是否属于约瑟夫与福音书所记的约瑟·该亚法，理由是拼写、没有“祭司”头衔以及墓室简朴（“该亚法”也可能是家族名）；但许多学者认为这一认定很有可能成立。")
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
@@ -166,6 +231,21 @@ def apply(data):
             else:  # Sword: plain English string
                 if e[f] != c['en']:
                     e[f] = c['en']; changed += 1
+        elif k == 'append':
+            for lang, new in (('en', c['en']), ('zh-Hans', c['zh']), ('zh-Hant', hant(c['zh']))):
+                val = e[c['field']]
+                cur = val[lang]
+                if isinstance(cur, list):
+                    cur = '\n\n'.join(cur)
+                paras = cur.split('\n\n')
+                n = 30 if lang == 'en' else 14
+                if any(p.startswith(new[:n]) for p in paras):
+                    if new not in paras and lang != 'zh-Hant':
+                        paras = [new if p.startswith(new[:n]) else p for p in paras]
+                        val[lang] = '\n\n'.join(paras); changed += 1
+                    continue
+                paras.append(new)
+                val[lang] = '\n\n'.join(paras); changed += 1
         elif k == 'sub':
             for lang in ('en', 'zh-Hans', 'zh-Hant'):
                 if lang == 'en':

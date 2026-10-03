@@ -86,7 +86,8 @@ void main() {
     expect(count('被髮'), 0);
     expect(count('騷亂髮'), 0);
     expect(count('包括髮'), 0);
-    expect(count('被發掘'), 6);
+    // 6 -> 7 on 2026-10-04: one more correct 被發掘 in the new Pool of Siloam / Jericho text.
+    expect(count('被發掘'), 7);
     // …but the two real ones are hair and must NOT have been swept.
     expect(count('頭髮'), 1, reason: 'the hair in Daniel 4:33 was swept away');
     expect(count('髮型'), 1, reason: 'the mushroom hairstyle was swept away');
@@ -137,10 +138,11 @@ void main() {
     // s2twp would also have rewritten these. Converting a glyph is not
     // rewriting; changing a word is, and this file is the Simplified source's
     // wording throughout.
-    // 525 -> 526 on 2026-10-04: net effect of the content corrections in
+    // 525 -> 530 on 2026-10-04: net effect of the content corrections in
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
-    // Ketef Hinnom, Khirbet Qeiyafa dating), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 526, reason: '公元 was localised to 西元');
+    // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas), which rewrote
+    // paragraphs containing 公元.
+    expect(count('公元'), 530, reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');
