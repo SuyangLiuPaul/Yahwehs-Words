@@ -279,6 +279,22 @@ sub('nag_hammadi_codices', 'description',
     "（5）这些抄本表明，除了后来成为新约的那些著作之外，还有许多别的福音书和启示书在流传。早期教会作家用使徒渊源、广泛使用以及与所领受的信仰相符等标准来说明他们为何选定正典书卷；这些标准实际执行得多么一致，学者仍有讨论。")
 
 
+# ---------------------------------------------------------------- sodom_gomorrah_evidence
+# Repeated the retracted Tall el-Hammam airburst paper as evidence (see tall_el_hammam). Excavators' own figures
+# (layer thickness, population, occupation gap) are not independently confirmed, so they are attributed, not asserted.
+setf('sodom_gomorrah_evidence', 'summary',
+     "Tall el-Hammam in Jordan, a large Middle Bronze Age city northeast of the Dead Sea, is proposed by its excavators as biblical Sodom. A 2021 paper claimed a cosmic airburst destroyed it, but the journal retracted that paper in April 2025, and the identification with Sodom remains a minority view.",
+     "约旦的特尔哈曼是死海东北的一座大型青铜时代中期城市，其发掘者提出它就是圣经中的所多玛。2021年有论文主张它毁于宇宙空爆，但期刊已于2025年4月撤回该论文；把它认定为所多玛，至今仍是少数派观点。")
+setf('sodom_gomorrah_evidence', 'description',
+     "The biblical account of Sodom and Gomorrah (Genesis 19:24-28) describes fire and sulfur raining down from heaven on the cities. Tall el-Hammam is a large Bronze Age site in the Jordan Valley northeast of the Dead Sea, excavated since 2005 by a team led by Steven Collins and Phillip Silvia, who identify it with Sodom.\n\nWhat the excavators report is a major fortified city with a palace complex, abandoned around 1650 BCE (Middle Bronze Age II) after a destruction layer containing ash, charred material and debris, with pottery and mudbrick that they interpret as having been heated to very high temperatures, and a long gap in occupation afterwards. These are the excavation team's own claims; the thickness of the layer, the population estimates and the length of the gap have not been independently confirmed.\n\nIn 2021 Scientific Reports published a paper by Ted Bunch and colleagues arguing that a cosmic airburst like the 1908 Tunguska event destroyed the city, citing shocked quartz, melted material and other markers. Other scientists disputed the data, and on 24 April 2025 the journal retracted the paper because its claims were not sufficiently supported by the data. The airburst explanation is therefore not established and cannot be used as evidence for Genesis 19.\n\nThe identification of Tall el-Hammam with Sodom is a minority position, and other sites, including some on the southern shore of the Dead Sea, have been proposed. The Jordan Valley setting does fit the 'cities of the plain' of Genesis 13 and 19, and Genesis 19:28 describes smoke rising from the land like smoke from a furnace, but the evidence cannot show that a destruction at this site is the event behind the narrative.",
+     "圣经关于所多玛和蛾摩拉的记载（创世记19:24-28）描述有火与硫磺从天降在这些城上。特尔哈曼是约旦河谷、死海东北的一处大型青铜时代遗址，自2005年起由史蒂文·柯林斯和菲利普·席尔维亚领导的团队发掘，他们把它认定为所多玛。\n\n发掘者报告的情况是：一座设有宫殿建筑群的大型设防城市，约在公元前1650年（中青铜时代II）被废弃，其前有含灰烬、炭化物和碎片的毁坏层，陶器和泥砖据他们解释曾受极高温加热，此后有很长的无人居住期。这些都是发掘团队自己的说法；毁坏层的厚度、人口估算和空白期的长度都没有得到独立证实。\n\n2021年，《科学报告》发表了特德·邦奇等人的论文，主张与1908年通古斯事件相仿的宇宙空爆摧毁了该城，所举证据包括冲击石英、熔融物等标志。其他科学家对数据提出异议，期刊于2025年4月24日以“其主张没有得到数据的充分支持”为由撤回了该论文。因此，空爆说并未确立，也不能用作创世记19章的证据。\n\n把特尔哈曼认定为所多玛是少数派观点，死海南岸的一些遗址也曾被提为候选。约旦河谷的位置确实符合创世记13章和19章的“平原诸城”，创世记19:28也描述烟气从地上腾起，如同烧窑的烟；但现有证据无法表明这处遗址的毁坏就是叙事背后的事件。")
+setf('sodom_gomorrah_evidence', 'scripturalCorrelation',
+     "Genesis 19:24-28 describes fire and sulfur from heaven falling on Sodom and Gomorrah, and Abraham seeing smoke rising from the land like smoke from a furnace. The Jordan Valley setting of Tall el-Hammam fits the 'cities of the plain' of Genesis 13 and 19, but the 2021 airburst paper that was used to link its destruction with the narrative was retracted in 2025, so the evidence for a destruction that matches Genesis 19 is not established.",
+     "创世记19:24-28描述有火与硫磺从天降在所多玛和蛾摩拉上，亚伯拉罕看见烟气从地上腾起，如同烧窑的烟。特尔哈曼所在的约旦河谷符合创世记13章和19章的“平原诸城”，但曾被用来把它的毁坏与这段叙事联系起来的2021年空爆论文已于2025年被撤回，因此与创世记19章相符的毁坏证据并未确立。")
+source('sodom_gomorrah_evidence', 'Bunch, Ted E., et al. "Widespread Rampart Destruction."',
+       'Bunch, Ted E., et al. "A Tunguska sized airburst destroyed Tall el-Hammam a Middle Bronze Age city in the Jordan Valley near the Dead Sea." Scientific Reports 11 (2021), doi:10.1038/s41598-021-97778-3. Retracted 24 April 2025: Retraction Note, Scientific Reports 15, 14291 (2025), doi:10.1038/s41598-025-99265-5.')
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
