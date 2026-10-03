@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart' show PlatformException;
+
 import 'package:yahwehs_words/services/playback/song_playback_engine.dart';
 
 /// A hand-written fake of the engine seam — no audio plugin, no
@@ -139,7 +141,16 @@ class FakeSongPlaybackEngine implements SongPlaybackEngine {
   }
 
   @override
-  Future<void> pause() => Future.value();
+  Future<void> pause() {
+    if (throwPlatformOnPause) {
+      throw PlatformException(
+          code: 'AndroidAudioError', message: 'MEDIA_ERROR_UNKNOWN {what:-38}');
+    }
+    return Future.value();
+  }
+
+  /// Android's MediaPlayer `-38`: pause() on a player not in started state.
+  bool throwPlatformOnPause = false;
   @override
   Future<void> stop() => Future.value();
 
