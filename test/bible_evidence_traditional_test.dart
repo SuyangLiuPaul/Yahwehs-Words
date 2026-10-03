@@ -131,18 +131,19 @@ void main() {
     // 2 were already spelled 保存 before the repair; 3 were restored to it.
     expect(count('抄本保存'), 5);
     expect(count('儲存'), 9);
-    expect(count('保存'), 83);
+    // 83 -> 82 on 2026-10-04: the rewritten Thallus/Rylands/Nazareth paragraphs (tools/apply_evidence_corrections.py).
+    expect(count('保存'), 82);
   });
 
   test('wording was not localised — only glyphs were converted', () {
     // s2twp would also have rewritten these. Converting a glyph is not
     // rewriting; changing a word is, and this file is the Simplified source's
     // wording throughout.
-    // 525 -> 530 on 2026-10-04: net effect of the content corrections in
+    // 525 -> 533 on 2026-10-04: net effect of the content corrections in
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
-    // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas), which rewrote
-    // paragraphs containing 公元.
-    expect(count('公元'), 530, reason: '公元 was localised to 西元');
+    // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
+    // Nazareth Inscription), which rewrote paragraphs containing 公元.
+    expect(count('公元'), 533, reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');

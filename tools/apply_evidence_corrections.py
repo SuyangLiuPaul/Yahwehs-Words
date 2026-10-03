@@ -211,6 +211,74 @@ para('house_of_caiaphas', 'description', 'The ornate ossuary contained', '华丽
      "华丽的骨匣盛装一名年约六十岁男性的骸骨，与公元18—36年间任大祭司的该亚法之生平相符。一些学者质疑它是否属于约瑟夫与福音书所记的约瑟·该亚法，理由是拼写、没有“祭司”头衔以及墓室简朴（“该亚法”也可能是家族名）；但许多学者认为这一认定很有可能成立。")
 
 
+# ---------------------------------------------------------------- rylands_papyrus (P52)
+# Date rests on palaeography alone: usually early-mid 2nd c. (traditionally c.125 CE), possibly late 1st-early 3rd c.
+# Nongbri, "The Use and Abuse of P52", Harvard Theological Review 98 (2005). https://en.wikipedia.org/wiki/Rylands_Library_Papyrus_P52
+meta('rylands_papyrus', 'confidenceLevel', 'Strong')
+setf('rylands_papyrus', 'summary',
+     "This small papyrus fragment, acquired in 1920, is generally accepted as the earliest surviving fragment of a New Testament text. Handwriting dates it to the early or mid 2nd century CE (traditionally about 125 CE). It contains verses from John's Gospel, showing that the Gospel was being copied and read in Egypt by the 2nd century.",
+     "这份于1920年购得的小型纸莎草残片，被普遍认为是现存最早的新约经文残片。依笔迹，它被定在公元2世纪早期或中期（传统上约为公元125年）。它包含约翰福音的经文，表明该福音书至迟在2世纪已在埃及被抄写和阅读。")
+para('rylands_papyrus', 'description', 'The Rylands Papyrus P52', '赖兰纸莎草残片P52',
+     "The Rylands Papyrus P52, also known as the St John Fragment, was acquired by the John Rylands Library in Manchester in 1920 from a collection of papyri purchased on the Egyptian antiquities market. It was first identified and published by C.H. Roberts in 1935. Its date rests on palaeography alone (the study of ancient handwriting): it is usually placed in the early to mid 2nd century CE, traditionally about 125 CE, and it is generally accepted as the earliest surviving fragment of a New Testament text. Brent Nongbri has argued that handwriting cannot fix so precise a date and that the possible range extends into the 3rd century.",
+     "赖兰纸莎草残片P52，亦称圣约翰残片，于1920年由曼彻斯特的约翰·赖兰图书馆从埃及文物市场购得的一批纸莎草文献中获得。它由C.H.罗伯茨于1935年首次鉴定并发表。它的年代仅凭古文字学（对古代手稿笔迹的研究）判断：通常被定在公元2世纪早期至中期，传统上约为公元125年，并被普遍认为是现存最早的新约经文残片。布伦特·农布里（Brent Nongbri）指出，仅凭笔迹无法确定如此精确的年代，可能的范围可延伸到3世纪。")
+para('rylands_papyrus', 'description', 'The definitive dating of P52', 'P52的明确年代测定',
+     "Even allowing for the uncertainty of palaeographic dating, P52 matters for New Testament textual criticism. It is early evidence that the Gospel of John was being copied and read in Egypt, and it weighs against theories of a much later date of composition for that Gospel.",
+     "即使考虑到笔迹断代的不确定性，P52对新约文本批判学仍很重要。它是约翰福音已在埃及被抄写和阅读的早期证据，也不利于认为该福音书成书晚得多的理论。")
+source('rylands_papyrus', 'Nongbri, Brent.',
+       'Nongbri, Brent. "The Use and Abuse of P52: Papyrological Pitfalls in the Dating of the Fourth Gospel." Harvard Theological Review 98 (2005).')
+
+# ---------------------------------------------------------------- thallus_fragment
+# Known only via Syncellus quoting Africanus; Africanus objected that an eclipse is impossible at Passover; Thallus's date
+# and whether he referred to the crucifixion darkness are disputed. https://en.wikipedia.org/wiki/Thallus_(historian)
+setf('thallus_fragment', 'summary',
+     "A passage preserved by the 9th-century chronicler Syncellus, quoting Julius Africanus, says a historian named Thallus called 'this darkness', which Africanus takes to be the darkness at Jesus' death, an eclipse of the sun. Who Thallus was, when he wrote and whether he meant the crucifixion are all uncertain, so this is weak, circumstantial evidence.",
+     "9世纪编年史家辛塞鲁斯保存的一段话引用尤利乌斯·阿非利加努斯的说法：一位名叫塔勒斯的历史学家把“这黑暗”称为日食，阿非利加努斯认为那指的是耶稣受难时的黑暗。塔勒斯是谁、写于何时、是否指受难，都不确定，因此这只是薄弱的间接证据。")
+para('thallus_fragment', 'description', 'The "Thallus fragment"', '“塔勒斯残篇”',
+     "The \"Thallus fragment\" is not a physical discovery but a citation from a lost work by a historian named Thallus. His \"Histories\" covered the history of the Mediterranean world; when he wrote is uncertain, and most scholars place it around the middle of the 1st century CE (about 52 CE). The fragment survives only in the 9th-century chronicler George Syncellus, who quotes the Christian historian Julius Africanus (writing about 221 CE). Africanus says that Thallus, in the third book of his Histories, calls \"this darkness\" an eclipse of the sun, and Africanus understands it to be the darkness at Jesus' death.",
+     "“塔勒斯残篇”并非实物发现，而是对一位名叫塔勒斯的历史学家失传著作的引用。他的《历史》涵盖地中海世界的历史；他写于何时并不确定，多数学者把它定在公元1世纪中叶（约公元52年）。该残篇只保存在9世纪编年史家乔治·辛塞鲁斯的著作里，他引用了基督教历史学家尤利乌斯·阿非利加努斯（约公元221年撰写）的话。阿非利加努斯说，塔勒斯在他《历史》第三卷中把“这黑暗”称为日食，而阿非利加努斯理解那就是耶稣受难时的黑暗。")
+para('thallus_fragment', 'description', "Thallus's original work is lost", '塔勒斯的原始著作已失传',
+     "Thallus's original work is lost, and we know of this reference only through Africanus and Syncellus. Africanus himself objected that Thallus's explanation was without reason, because a solar eclipse cannot happen at Passover, when the moon is full. Thallus's identity and date are not secure, and some scholars think that the link with the crucifixion darkness is an inference by Africanus or Syncellus rather than Thallus's own statement.",
+     "塔勒斯的原始著作已失传，我们只能通过阿非利加努斯和辛塞鲁斯得知这一记载。阿非利加努斯本人就反对塔勒斯的说法，认为这没有道理，因为逾越节时是满月，不可能发生日食。塔勒斯的身份和年代并不确定，一些学者认为，把它与受难时的黑暗联系起来，是阿非利加努斯或辛塞鲁斯的推断，而不是塔勒斯自己的说法。")
+para('thallus_fragment', 'description', 'The significance of this fragment', '这一残篇的重要性',
+     "If Thallus did refer to the darkness at Jesus' death, it would be an early non-Christian attempt to explain it naturally, and would at least show that such a darkness was being discussed. But the evidence is thin and indirect, so it is classed as circumstantial: it is not an independent eyewitness record, and it does not confirm the Gospel account.",
+     "如果塔勒斯确实提到了耶稣受难时的黑暗，那将是早期非基督徒用自然原因解释它的一次尝试，至少说明当时有人在讨论这样的黑暗。但证据单薄而且是间接的，所以只列为间接证据：它不是独立的目击记录，也不能证实福音书的记载。")
+para('thallus_fragment', 'scripturalCorrelation', 'This biblical account of a widespread darkness', '圣经中对普遍黑暗的记载',
+     "The Gospel account of a widespread darkness is what Africanus connects with Thallus's remark. Because the fragment survives only at second hand, and the words attributed to Thallus ('this darkness') do not name Jesus, it lends the Gospel description only weak, indirect support.",
+     "福音书所记的大范围黑暗，正是阿非利加努斯与塔勒斯那句话联系起来的内容。由于该残篇只是转述，而且归于塔勒斯名下的话（“这黑暗”）并没有提到耶稣，它只能为福音书的描述提供薄弱而间接的支持。")
+
+# ---------------------------------------------------------------- nazareth_inscription
+# 2020 isotope study (Harper, McCormick, Hamilton, Peiffert, Michels, Engel), J. Archaeological Science: Reports,
+# doi:10.1016/j.jasrep.2020.102228: marble from the upper quarry of Kos; edict proposed as Augustan, after the desecration
+# of the tomb of the Kos tyrant Nikias c. 20 BCE. https://en.wikipedia.org/wiki/Nazareth_Inscription ;
+# https://www.smithsonianmag.com/smart-news/new-analysis-refutes-nazareth-inscriptions-ties-jesus-death-180974485/
+meta('nazareth_inscription', 'confidenceLevel', 'Circumstantial')
+setf('nazareth_inscription', 'summary',
+     "A marble slab bearing a Greek imperial edict that threatens capital punishment for tomb violation. It reached Paris in 1878 as 'sent from Nazareth', but a 2020 isotope study traced its marble to the Greek island of Kos, and the old suggestion that it answered reports of Jesus' resurrection is now in serious doubt.",
+     "一块刻有希腊文帝国敕令的大理石板，以死刑威胁毁坏坟墓的行为。它在1878年以“自拿撒勒寄出”的名义到达巴黎，但2020年的同位素研究把它的大理石追溯到希腊的科斯岛，而它曾被认为是回应耶稣复活传闻的旧说，现在受到严重质疑。")
+para('nazareth_inscription', 'description', 'The Nazareth Inscription is a marble tablet', '拿撒勒铭文是一块',
+     "The Nazareth Inscription is a marble tablet bearing a Greek text, acquired by the collector Wilhelm Fröhner in 1878, with a note that it was sent from Nazareth, and published by Franz Cumont in 1930 after it entered the Bibliothèque nationale de France. The inscription measures about 37 × 60 cm. The note shows where it was shipped from, not necessarily where it was found, and its true findspot is unknown.",
+     "拿撒勒铭文是一块刻有希腊文的大理石碑，收藏家威廉·弗勒纳于1878年获得，并附有注明“自拿撒勒寄出”的记录；它进入法国国家图书馆后，由弗朗茨·库蒙于1930年发表。铭文尺寸约37×60厘米。那条记录只说明它从哪里寄出，不一定是它的出土地，其真正的出土地点不详。")
+para('nazareth_inscription', 'description', 'A 2020 geochemical study', '2020年一项',
+     "In 2020 Kyle Harper, Michael McCormick and colleagues published a stable-isotope study (Journal of Archaeological Science: Reports) that traced the marble to the upper quarry of the Greek island of Kos, not to Galilee. They proposed that the edict was issued by Augustus after the grave of the Kos tyrant Nikias was desecrated, about 20 BCE. On the lettering, earlier scholars dated the text to the first half of the 1st century CE; Cumont thought of Augustus, others of Claudius (41–54 CE). The text never mentions Jesus, so the link with him was only ever a suggestion.",
+     "2020年，凯尔·哈珀、迈克尔·麦科密克等人发表了一项稳定同位素研究（《考古科学杂志：报告》），把这块大理石追溯到希腊科斯岛的上采石场，而不是加利利。他们提出，该敕令是奥古斯都在科斯岛僭主尼基亚斯的坟墓遭亵渎（约公元前20年）之后颁布的。此前学者依字体把文本定在公元1世纪上半叶；库蒙认为是奥古斯都，另一些人认为是克劳狄乌斯（公元41—54年）。文本从未提到耶稣，所以它与耶稣的联系始终只是一种推测。")
+para('nazareth_inscription', 'scripturalCorrelation', 'If the Nazareth Inscription does originate', '如果拿撒勒铭文确实源自拿撒勒',
+     "Some New Testament scholars suggested that the edict could be an imperial reaction to the claim that Jesus' body had been stolen. That is now hard to maintain: the text never mentions Jesus, the findspot is unknown, and the marble came from Kos. The inscription remains of interest for Roman attitudes to tomb violation in the eastern Mediterranean, but it is not evidence for the resurrection narrative.",
+     "一些新约学者曾提出，这份敕令可能是帝国对“耶稣的遗体被偷走”之说的反应。现在这一点很难成立：文本从未提到耶稣，出土地点不明，大理石又来自科斯岛。这块铭文仍有助于了解罗马对东地中海坟墓被毁行为的态度，但它不是复活记载的证据。")
+source('nazareth_inscription', 'Clarysse, Willy, and Mark Depauw.',
+       'Harper, Kyle, Michael McCormick, Matthew Hamilton, Chantal Peiffert, Raymond Michels, and Michael Engel. "Establishing the provenance of the Nazareth Inscription: Using stable isotopes to resolve a historic controversy and trace ancient marble production." Journal of Archaeological Science: Reports (2020), doi:10.1016/j.jasrep.2020.102228.')
+
+# ---------------------------------------------------------------- nag_hammadi_codices
+# The Gospel of Mary is not among the Nag Hammadi codices (Berlin Codex / Oxyrhynchus); the Gospel of Truth is.
+setf('nag_hammadi_codices', 'summary',
+     "Thirteen leather-bound codices discovered at Nag Hammadi, Egypt in 1945 contain over 50 texts, including Gnostic gospels (Thomas, Philip, Truth) and numerous other writings. They are not canonical, and they illuminate the diverse religious landscape of early Christianity, in which the New Testament writings circulated alongside many others.",
+     "1945年在埃及拿戈哈马迪发现的13部皮革装订抄本包含50多份文本，其中有诺斯替福音书（多马福音、腓力福音、真理福音）和许多其他著作。它们不属正典，却展现了早期基督教多元的宗教环境：新约各书当时与许多别的著作一起流传。")
+sub('nag_hammadi_codices', 'description',
+    "(5) The codices confirm that the early Church's selection of canonical texts was not arbitrary but reflected genuine criteria of apostolic authorship, widespread use, and theological consistency with Hebrew Scripture.",
+    "(5) The codices show that many other gospels and revelations circulated alongside the writings that became the New Testament. Early church writers explained their choice of canonical books by criteria such as apostolic connection, wide use and agreement with the faith they had received; scholars debate how consistently those criteria worked.",
+    "（5）抄本确认早期教会选择正典文本并非随意，而是反映了使徒作者身份、广泛使用和与希伯来圣经神学一致性的真正标准。",
+    "（5）这些抄本表明，除了后来成为新约的那些著作之外，还有许多别的福音书和启示书在流传。早期教会作家用使徒渊源、广泛使用以及与所领受的信仰相符等标准来说明他们为何选定正典书卷；这些标准实际执行得多么一致，学者仍有讨论。")
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
