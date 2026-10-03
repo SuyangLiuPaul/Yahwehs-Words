@@ -408,7 +408,7 @@ void main() {
     // printed variant glyphs (牠 銲 啣 …) are not imported. Also 历代志下
     // 10:6 回覆 → 回复 (his suggestion in the 用字 table).
     'assets/cuvs-yhwh.json':
-        '790ff6d0e2f174e8eea25bd94a79aff42397bf9956a02ed9b03b53dfe8e691b0',
+        'dc1e2c1edaabff538abba4a7b1e0e313bd83d7d26f57dd7e24f2e723b8f4479c',
     // (previous, 2026-09-18) 72b394bd01bfd97ac9c6feaf82dcaaef15fdb6f8a30ea767b2af0794f63dd47a
     // 2026-09-14 — five over-conversions undone, against the published
     // Traditional 和合本 at 信望愛 (bible.fhl.net, VERSION4=unv).

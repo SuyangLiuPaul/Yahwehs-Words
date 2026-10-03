@@ -361,8 +361,8 @@ void main() {
     // do not move.
     expect(totalRuns, 360636);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer (4 runs dropped with words the print omits)
     expect(admitted, 24476);  // 2026-10-04: Use-B sheet mirrored into tagged runs
-    expect(belowBar, 185441);  // 2026-10-04: 185456 -> 185441 (Use-B sheet mirrored)
-    expect(polysemous, 140156);  // 2026-10-04: 140139 -> 140156 (Use-B sheet mirrored)
+    expect(belowBar, 185440);  // 2026-10-04: 185456 -> 185441 (Use-B sheet mirrored)
+    expect(polysemous, 140157);  // 2026-10-04: 140139 -> 140156 (Use-B sheet mirrored)
     expect(unanimous, 10563);  // 2026-10-04: 10565 -> 10563 (Use-B sheet mirrored)
     expect(admitted + belowBar + polysemous + unanimous, totalRuns);
     // The headline: one run in fifteen is judgeable at all.

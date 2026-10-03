@@ -29,6 +29,18 @@ def ks(text):
     return ''.join(c for c in MARK.sub('', NOTE.sub('', text)) if c not in PUN)
 
 
+def style_of(text):
+    """How a tagged file is serialised: (indent or None, trailing newline)."""
+    obj = json.loads(text)
+    for indent in (None, 2, 1, 4):
+        seps = (',', ':') if indent is None else None
+        out = json.dumps(obj, ensure_ascii=False, indent=indent, separators=seps)
+        for nl in ('', '\n'):
+            if out + nl == text:
+                return indent, nl
+    sys.exit('unrecognised tagged file formatting')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('old')
@@ -44,7 +56,7 @@ def main():
     byname = {}
     for f in files:
         byname[f.stem] = f
-    data, touched, skipped, done = {}, set(), [], 0
+    data, touched, skipped, done, styles = {}, set(), [], 0, {}
     # map book index -> file by reading each file's first key? files are keyed "ch:vs" only,
     # so use canonical order of the file stems.
     CANON = ['genesis', 'exodus', 'leviticus', 'numbers', 'deuteronomy', 'joshua', 'judges', 'ruth', '1_samuel', '2_samuel', '1_kings', '2_kings', '1_chronicles', '2_chronicles', 'ezra', 'nehemiah', 'esther', 'job', 'psalms', 'proverbs', 'ecclesiastes', 'song_of_solomon', 'isaiah', 'jeremiah', 'lamentations', 'ezekiel', 'daniel', 'hosea', 'joel', 'amos', 'obadiah', 'jonah', 'micah', 'nahum', 'habakkuk', 'zephaniah', 'haggai', 'zechariah', 'malachi', 'matthew', 'mark', 'luke', 'john', 'acts', 'romans', '1_corinthians', '2_corinthians', 'galatians', 'ephesians', 'philippians', 'colossians', '1_thessalonians', '2_thessalonians', '1_timothy', '2_timothy', 'titus', 'philemon', 'hebrews', 'james', '1_peter', '2_peter', '1_john', '2_john', '3_john', 'jude', 'revelation']
@@ -55,7 +67,9 @@ def main():
         b, ch, vs = int(vid[:3]) - 1, int(vid[3:6]), int(vid[6:])
         stem = CANON[b]
         if stem not in data:
-            data[stem] = json.load(open(byname[stem]))
+            txt = open(byname[stem], encoding='utf-8').read()
+            styles[stem] = style_of(txt)
+            data[stem] = json.loads(txt)
         runs = data[stem].get(f'{ch}:{vs}')
         if not runs:
             skipped.append((vid, 'no tagged verse')); continue
@@ -104,7 +118,14 @@ def main():
             print('  DROPPED run(s)', vid, [(r['s']) for r in dropped])
         for r, w in zip(runs, new_w):
             r['w'] = w
-        data[stem][f'{ch}:{vs}'] = [r for r in runs if r['w']]
+        out = []
+        for r in runs:
+            if r['w'] and not any('\u3400' <= c <= '\u9fff' for c in r['w']) and r.get('s') and out:
+                out[-1]['w'] += r['w']      # only punctuation is left: it joins the word before
+                continue
+            if r['w']:
+                out.append(r)
+        data[stem][f'{ch}:{vs}'] = out
         touched.add(stem)
         done += 1
     print(f'changed reading verses {len(changed)}; tagged edited {done}; skipped {len(skipped)}')
@@ -112,7 +133,9 @@ def main():
         print('  SKIP', vid, why)
     if a.write:
         for stem in touched:
-            byname[stem].write_text(json.dumps(data[stem], ensure_ascii=False, indent=None, separators=(',', ':')), encoding='utf-8')
+            indent, nl = styles[stem]
+            seps = (',', ':') if indent is None else None
+            byname[stem].write_text(json.dumps(data[stem], ensure_ascii=False, indent=indent, separators=seps) + nl, encoding='utf-8')
             print('WROTE', byname[stem])
 
 
