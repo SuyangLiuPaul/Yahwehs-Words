@@ -379,6 +379,23 @@ sub('golgotha_holy_sepulchre', 'description', None, None,
 sub('golgotha_holy_sepulchre', 'summary', None, None, None, None) if False else None
 
 
+# ---------------------------------------------------------------- transfiguration_mount_tabor
+# zh said "Bagatti excavations 1921-24" (those years are Barluzzi's building of the present church), "Arculf, 6th-century" pilgrim
+# (Arculf is 7th c.), "martyr Origen". Verified: Barluzzi built the church 1921-24 on Byzantine (5th/6th c.) and Crusader ruins; the
+# Piacenza pilgrim (c.570) saw three basilicas. https://custodia.org/en/sanctuaries/mount-tabor
+setf('transfiguration_mount_tabor', 'summary',
+     "Mount Tabor in Lower Galilee, identified as the transfiguration site by Origen, Cyril of Jerusalem (c. 348 CE) and Jerome, preserves Byzantine and Crusader church remains and has kept Christian veneration for over 1,600 years.",
+     "下加利利的他泊山被俄利根、耶路撒冷的区利罗（约公元348年）和耶柔米认定为耶稣变像之地，保存着拜占庭和十字军时期的教堂遗迹，基督徒的崇敬延续了1600多年。")
+para('transfiguration_mount_tabor', 'description', 'Origen (3rd century CE)', '#1',
+     "Origen (3rd century CE) is the earliest extant witness to this identification. Cyril of Jerusalem (Catechetical Lectures 12.16, c. 348 CE) explicitly names Tabor as the transfiguration mountain, and Jerome, writing from Bethlehem, likewise confirms the tradition. Byzantine churches stood on the summit: an anonymous pilgrim from Piacenza (c. 570 CE) saw three basilicas there, which tradition linked to Peter's proposal to build 'three tents' (Matthew 17:4), and 20th-century excavations by Bellarmino Bagatti documented Byzantine foundations.",
+     "俄利根（3世纪）是这一认定现存最早的见证。耶路撒冷的区利罗（《教理讲授》12.16，约公元348年）明确点名他泊山为变像之山，在伯利恒写作的耶柔米同样确认了这一传统。山顶曾有拜占庭教堂：一位来自皮亚琴察的匿名朝圣者（约公元570年）在那里看到三座大教堂，传统把它们与彼得提议搭“三座棚”（马太福音17:4）联系起来；20世纪贝拉米诺·巴加蒂（Bellarmino Bagatti）的发掘也记录了拜占庭时期的地基。")
+para('transfiguration_mount_tabor', 'description', 'The Crusaders rebuilt', '#2',
+     "The Crusaders rebuilt the monastic complex in the 12th century, and the present Franciscan Church of the Transfiguration (built 1921–24 by the architect Antonio Barluzzi) stands on Byzantine and Crusader ruins. The summit's flat plateau (approximately 1 km × 400 m) accommodates the narrative requirement of a 'high mountain' apart from settled areas.",
+     "十字军在12世纪重建了修道院建筑群；现今的方济各会变像教堂（1921至1924年由建筑师安东尼奥·巴卢齐建造）坐落在拜占庭和十字军时期的废墟之上。山顶平坦的高地（约1公里×400米）符合叙事中远离居民点的“高山”。")
+sub('transfiguration_mount_tabor', 'scripturalCorrelation', None, None,
+    "4世纪拜占庭、十字军和现代方济各会三层教堂遗迹", "拜占庭、十字军和现代方济各会三层教堂遗迹")
+
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0

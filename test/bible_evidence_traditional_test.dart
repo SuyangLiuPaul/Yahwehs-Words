@@ -87,7 +87,7 @@ void main() {
     expect(count('騷亂髮'), 0);
     expect(count('包括髮'), 0);
     // 6 -> 7 on 2026-10-04: one more correct 被發掘 in the new Pool of Siloam / Jericho text.
-    expect(count('被發掘'), 7);
+    expect(count('被發掘'), 6);  // 7 -> 6 on 2026-10-04 (Transfiguration paragraph rewritten)
     // …but the two real ones are hair and must NOT have been swept.
     expect(count('頭髮'), 1, reason: 'the hair in Daniel 4:33 was swept away');
     expect(count('髮型'), 1, reason: 'the mushroom hairstyle was swept away');
@@ -143,7 +143,7 @@ void main() {
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
     // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
     // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 535,  // 531 -> 535 on 2026-10-04 (Golgotha, house of Peter, Capernaum)
+    expect(count('公元'), 538,  // 531 -> 538 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration)
          reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
