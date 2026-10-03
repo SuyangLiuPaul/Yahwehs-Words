@@ -318,7 +318,7 @@ void main() {
     // `dating.refs` lists into the family tree and seven events into
     // the timeline. None of them is out of canon — the assertion below
     // is unchanged and passes.
-    expect(parsedCount, 60548);
+    expect(parsedCount, 60558);  // 60548 -> 60558 on 2026-10-04: one citation in each of ten new evidence entries
     expect(outOfCanon, isEmpty,
         reason: 'a reference here would have rendered as a live tap '
             'target to scripture that does not exist, on every one of '

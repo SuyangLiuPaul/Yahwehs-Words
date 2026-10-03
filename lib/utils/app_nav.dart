@@ -7,9 +7,7 @@ import 'package:yahwehs_words/utils/route_paths.dart'
 
 @visibleForTesting
 bool isGetRoutable(String name) =>
-    RegExp(r'^[\x21-\x7E]+$').hasMatch(name) &&
-    !name.contains('%') &&
-    !name.contains('#');
+    RegExp(r'^[\x21-\x7E]+$').hasMatch(name) && !name.contains('#');
 
 /// Canonical page-push helper — every `Get.to(...)` in the app should
 /// route through here instead of specifying its own transition/duration/

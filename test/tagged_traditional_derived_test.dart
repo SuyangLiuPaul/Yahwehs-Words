@@ -202,7 +202,7 @@ void main() {
     // rewritten to `以利加拿都以雙分給哈拿` — the reading asset's own word
     // order, same characters, `s`/`i`/`g` untouched — so the two agree
     // again and the verse re-qualifies for this check.
-    expect(verified, 27312);
+    expect(verified, 27317);  // 27312 -> 27317 on 2026-10-04 (Raymond "Use B" sheet; tagged layer mirrored)
   });
 
   test('only the characters changed — every run boundary, number, implied '
@@ -244,7 +244,7 @@ void main() {
     // had been excluding bring their own 826 tagged runs back with them.
     // This is the source layer's run count over the derived verses, so
     // it moves with the verse count and not on its own.
-    expect(runs, 367514);
+    expect(runs, 367510);  // 367514 -> 367510 on 2026-10-04: two numbered runs dropped with the words the print omits (使徒行傳 23:35 也, 24:23 要)
   });
 
   test('the 3 skipped verses are exactly the ones with no positional '

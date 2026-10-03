@@ -86,17 +86,21 @@ void main() {
     expect(zhHans['044025018'], contains('我所意料的那等恶事'));
   });
 
-  test('帖撒羅尼迦前書 5:19 keeps 銷滅 — a hapax that is CORRECT', () {
+  test('帖撒羅尼迦前書 5:19 reads 消滅 since 2026-10-04 (publisher: print)', () {
+    // Was pinned as the hapax 銷滅, which the 1919 transcription reads.
+    // Pastor Raymond's "Use B" sheet rules for the 信望爱 printing, which
+    // reads 消滅; applied by tools/apply_rr_reply_2026_10_04.py and mirrored
+    // into the tagged layer.
     // 1 occurrence against 43 of 消滅, and the print reads 銷滅. Any future
     // sweep that normalises rare spellings towards common ones fails here,
     // which is the entire point of pinning it.
-    expect(zhHant['052005019'], '不要銷滅聖靈的感動；');
-    expect(zhHans['052005019'], '不要销灭圣灵的感动；');
+    expect(zhHant['052005019'], '不要消滅聖靈的感動；');
+    expect(zhHans['052005019'], '不要消灭圣灵的感动；');
 
     final thess = json.decode(
             File('assets/tagged/cuvs-yhwh/1_thessalonians.json').readAsStringSync())
         as Map<String, dynamic>;
     final runs = (thess['5:19'] as List).cast<Map<String, dynamic>>();
-    expect(runs.map((r) => r['w'] as String).join(), contains('销灭'));
+    expect(runs.map((r) => r['w'] as String).join(), contains('消灭'));
   });
 }

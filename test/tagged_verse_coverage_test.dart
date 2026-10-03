@@ -166,7 +166,7 @@ void main() {
     // run was itself corrected to the repaired reading text's word order
     // (以利加拿都以雙分給哈拿), so it leaves this list — same class of
     // regression as 士師記 15:13, second occurrence. Retightened.
-    const known = 179;
+    const known = 172;  // 179 -> 172 on 2026-10-04 (tagged layer mirrored with the "Use B" sheet)
 
     final reading = <String, Map<String, String>>{};
     final rows =

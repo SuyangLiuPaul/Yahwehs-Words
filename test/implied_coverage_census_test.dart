@@ -270,9 +270,10 @@ void main() {
     //
     // 180 -> 179 (2026-09-14): 撒母耳記上 1:7's tagged run is corrected —
     // see the file header — and the verse re-enters the rendered set.
-    expect(droppedCoverage, 179,
+    expect(droppedCoverage, 172,  // 179 -> 172 on 2026-10-04
+        
         reason: 'pinned independently by tagged_verse_coverage_test.dart');
-    expect(renderedVerses, 30923);
+    expect(renderedVerses, 30930);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer
   });
 
   test('22,696 verses gain a line; 305,457 runs gain nothing', () {
@@ -303,12 +304,12 @@ void main() {
     // with the verse. runsThatGain moves 59,732 -> 59,733 (+1) and
     // runsThatGainNothing 305,457 -> 305,467 (+10); 1 + 10 = 11, measured
     // over the actual rendered set.
-    expect(renderedRuns, 365200);
-    expect(runsThatGain, 59733);
-    expect(runsThatGainNothing, 305467);
+    expect(renderedRuns, 365291);
+    expect(runsThatGain, 59744);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer
+    expect(runsThatGainNothing, 305547);  // 2026-10-04
     expect(runsThatGain + runsThatGainNothing, renderedRuns,
         reason: 'every rendered run is in exactly one bucket');
-    expect(versesThatGain, 22697);
+    expect(versesThatGain, 22703);  // 2026-10-04: 22697 -> 22703 (Use-B sheet mirrored)
     // 73.4% of rendered verses, 16.4% of rendered runs — unmoved to a
     // tenth of a percent, same as the last move: a denominator growing
     // by 1 out of ~31,000 does not touch the proportions.
@@ -339,8 +340,8 @@ void main() {
     //
     // 39,568 -> 39,569 over 21,249 -> 21,250 (2026-09-14): 撒母耳記上 1:7
     // re-enters and brings its pairs back.
-    expect(newlyReachable.length, 39569);
-    expect(versesNewlyReachable.length, 21250);
+    expect(newlyReachable.length, 39581);
+    expect(versesNewlyReachable.length, 21256);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer
     // 約翰福音 3:5, the verse the whole argument was conducted over: the
     // span repair promoted 神 to G2316 θεός and 的国。 to G932 βασιλεία,
     // which left G3588 ὁ reachable nowhere. It is reachable again.
@@ -357,7 +358,7 @@ void main() {
     // 6,031 -> 6,032 (2026-09-13, fifth thaw): one more multi-chip run,
     // net, among the 86 that moved with the six repaired verses. The
     // ceiling still did not move.
-    expect(runsWithSeveralChips, 6032);
+    expect(runsWithSeveralChips, 6033);
   });
 
   test('no number in the shipped corpus is a dead end', () {

@@ -398,8 +398,18 @@ void main() {
     // tools/apply_cuv_tr_rr_2026_09_18.py; every row it could not place
     // is printed, and none of them was left holding a character he ruled
     // against.
+    // 2026-10-04, the NINTH thaw, again the publisher's own ruling: Pastor
+    // Raymond returned our single-point comparison sheet with "Use B"
+    // (the printed 和合本) for every row he did not mark A. Applied by
+    // tools/apply_rr_reply_2026_10_04.py, which only edits a place where
+    // the live printed text (bible.fhl.net unv) agrees with his sheet; the
+    // rows where they disagree, and the ones that turn on a footnote, are
+    // printed and left alone. 简体 gets wording/spelling changes only —
+    // printed variant glyphs (牠 銲 啣 …) are not imported. Also 历代志下
+    // 10:6 回覆 → 回复 (his suggestion in the 用字 table).
     'assets/cuvs-yhwh.json':
-        '72b394bd01bfd97ac9c6feaf82dcaaef15fdb6f8a30ea767b2af0794f63dd47a',
+        '790ff6d0e2f174e8eea25bd94a79aff42397bf9956a02ed9b03b53dfe8e691b0',
+    // (previous, 2026-09-18) 72b394bd01bfd97ac9c6feaf82dcaaef15fdb6f8a30ea767b2af0794f63dd47a
     // 2026-09-14 — five over-conversions undone, against the published
     // Traditional 和合本 at 信望愛 (bible.fhl.net, VERSION4=unv).
     //
@@ -490,8 +500,10 @@ void main() {
     // 2026-09-18, the eighth thaw: see the note above the simplified pin.
     // The same day, 秸 → 稭 at 出埃及記 15:7 and 約書亞記 2:6, the two his
     // list never named, by his principle (owner: 「按照他的做」).
+    // 2026-10-04, the ninth thaw: same sheet, same tool, 繁體 side.
     'assets/cuvs-yhwh-tr.json':
-        'b8000bc08832a6516ace238e796ac22f59ff39501e9c07e707c3a1d136ce4589',
+        '97ea77863923dc81fdd4bb39c056aeaf023a180430256a9692b51c42844b09b7',
+    // (previous, 2026-09-18) b8000bc08832a6516ace238e796ac22f59ff39501e9c07e707c3a1d136ce4589
   };
 
   frozen.forEach((path, expected) {

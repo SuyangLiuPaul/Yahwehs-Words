@@ -193,7 +193,7 @@ void main() {
       expect(hits(kjv, kjvText, 'faith'), 339);
       expect(hits(kjv, kjvText, 'for the'), 2029);
       expect(hits(kjv, kjvText, 'love'), 573);
-      expect(hits(cuvs, cuvsText, '爱'), 822);
+      expect(hits(cuvs, cuvsText, '爱'), 823);  // 822 -> 823 on 2026-10-04: 哥林多後書 7:15 reads 爱 (his "Use B" sheet)
       expect(hits(cuvs, cuvsText, '这诫命'), 4);
       expect(hits(cuvs, cuvsText, '神'), 3995);
     });
@@ -222,7 +222,7 @@ void main() {
       // 彼得, and the order is what the labels report.
       expect(byKind(cuvs, cuvsText, '磯法'),
           {FuzzyMatch.script: 9, FuzzyMatch.synonym: 175});
-      expect(byKind(cuvs, cuvsText, '愛'), {FuzzyMatch.script: 822});
+      expect(byKind(cuvs, cuvsText, '愛'), {FuzzyMatch.script: 823});
       // 2026-09-09: the synonym rung went 540 → 541, and the script
       // rung did not move. 基督 is in 543 search keys now rather than
       // 542, because 使徒行传 8:37 — a textual variant this edition

@@ -13,7 +13,9 @@ void main() {
       () {
     expect(isGetRoutable('/maps/illus_dore_gustavedorécrucifixi'), isFalse);
     expect(isGetRoutable('/maps/a b'), isFalse);
-    expect(isGetRoutable('/maps/a%20b'), isFalse);
+    // Percent-encoded ids are routable: songSubPagePath relies on it ('cdc%3Ad0180').
+    expect(isGetRoutable('/songs/cdc%3Ad0180/score'), isTrue);
+    expect(isGetRoutable('/maps/a#b'), isFalse);
     expect(isGetRoutable('/maps/exodus-route'), isTrue);
     expect(isGetRoutable('/evidence?book=John&chapter=3'), isTrue);
   });

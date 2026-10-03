@@ -42,8 +42,9 @@ void main() {
     '007012007': ['作以色列的士师六年', '作以色列的士師六年'],
     '010005017': ['非利士众人就上来寻索', '非利士眾人就上來尋索'],
     '023023001': ['因为推罗变为荒场', '因為推羅變為荒場'],
-    // 2026-09-14: 悅 → 悦 with the move to Hong Kong forms.
-    '017006007': ['王所喜悦尊荣的人', '王所喜悦尊榮的人'],
+    // 2026-10-04: 以斯帖記 6:7 left this list. Pastor Raymond's "Use B" sheet
+    // rules for the printing (bible.fhl.net unv: 「王所喜悅尊榮的，」), which
+    // omits the 人 the earlier pass had restored. His ruling; flagged to him.
     // 2026-09-09: the publisher's current text sets a pause mark between
     // the two clauses — 「又把你們犧牲的糞，抹在你們的臉上」 — so a literal
     // that spans the 糞 cannot match any more. What this row is for is

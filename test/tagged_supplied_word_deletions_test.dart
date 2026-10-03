@@ -147,52 +147,33 @@ void main() {
     expect(empty, 12);
   });
 
-  test('the publisher put the four words back, so all four now fall back to '
-      'the plain line — and the word is the only difference', () {
-    // Was: "all four still reach the word-tap sheet, and now read exactly".
-    // That held while the reading assets read short. They do not any more:
-    // the publisher's current text prints all four words, so each of these
-    // four tagged lines is now one word SHORT of the reader's verse instead
-    // of one word long.
-    //
-    // Both halves below matter and they say different things.
-    //
-    //   `coversVerse` is false   — the sheet does not print a line that is
-    //       missing a word of the reader's verse. It falls back to plain
-    //       text, exactly as it does for any untagged verse. Asserted so
-    //       that nobody reads the four green tests above and concludes the
-    //       sheet is still showing a tagged line here.
-    //   the word is the ONLY difference   — the reader's verse with that one
-    //       word taken out IS the tagged line, ideograph for ideograph. This
-    //       is what keeps the state above from drifting into a lost clause
-    //       while still looking like the same known case.
+  test('since 2026-10-04 the four words are out of the reading text again, '
+      'so the tagged line covers the verse', () {
+    // The publisher put these four words back in September (see git history
+    // of this test). Pastor Raymond's "Use B" sheet of 2026-10-04 rules for
+    // the printing, which omits all four — 士師記 15:2 我請求你, 15:5 葡萄園,
+    // 15:18 現在, 撒母耳記下 21:2 大 — so tools/apply_rr_reply_2026_10_04.py
+    // removed them and the tagged runs, which never had them, agree again.
+    // Flagged to him as a case where his sheet reverses his own restoration.
     String ideographs(String s) => String.fromCharCodes(
         s.codeUnits.where((u) => u >= 0x3400 && u <= 0x9fff));
-    // slug|ref : (verse id, the reader's phrase, the corpus's phrase)
-    const cases = <String, List<String>>{
-      'judges|15:2': ['007015002', '吗我请求你', '吗你'],
-      'judges|15:5': ['007015005', '并葡萄园橄榄园', '并橄榄园'],
-      'judges|15:18': ['007015018', '拯救现在岂可', '拯救岂可'],
-      '2_samuel|21:2': ['010021002', '大发热心', '发热心'],
+    const cases = <String, String>{
+      'judges|15:2': '007015002',
+      'judges|15:5': '007015005',
+      'judges|15:18': '007015018',
+      '2_samuel|21:2': '010021002',
     };
     for (final entry in cases.entries) {
       final parts = entry.key.split('|');
-      final shown = sanitizeForSearch(reading[entry.value[0]]!);
+      final shown = sanitizeForSearch(reading[entry.value]!);
       final taggedRuns = (tagged(parts[0])[parts[1]] as List)
           .map((r) => TaggedRun.fromJson(r as Map<String, dynamic>))
           .toList(growable: false);
-      expect(TaggedTextService.coversVerse(taggedRuns, shown), isFalse,
-          reason: '${entry.key}: the corpus does not carry the word the '
-              'publisher restored, so the guard must hide the tagged line '
-              'rather than print a verse with a word missing');
-      expect(ideographs(shown), contains(entry.value[1]),
-          reason: '${entry.key}: the reader\'s verse should carry the '
-              'restored word');
-      expect(
-          ideographs(taggedRuns.map((r) => r.text).join()),
-          ideographs(shown).replaceFirst(entry.value[1], entry.value[2]),
-          reason: '${entry.key}: the tagged line must be the reader\'s verse '
-              'with exactly that one word missing and nothing else');
+      expect(TaggedTextService.coversVerse(taggedRuns, shown), isTrue,
+          reason: entry.key);
+      expect(ideographs(taggedRuns.map((r) => r.text).join()),
+          ideographs(shown),
+          reason: '${entry.key}: the tagged line is the reader\'s verse');
     }
   });
 }
