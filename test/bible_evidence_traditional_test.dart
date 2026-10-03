@@ -143,7 +143,7 @@ void main() {
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
     // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
     // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 538,  // 531 -> 538 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration)
+    expect(count('公元'), 536,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
          reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);

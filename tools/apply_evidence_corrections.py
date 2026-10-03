@@ -71,6 +71,11 @@ def append(id, field, en, zh):
     E.append(dict(kind='append', id=id, field=field, en=en, zh=zh))
 
 
+def drop(id, field, lang_prefixes):
+    """Remove paragraphs that start with a given prefix: {'zh-Hans': [prefix, ...], 'en': [...]}."""
+    E.append(dict(kind='drop', id=id, field=field, lang_prefixes=lang_prefixes))
+
+
 def sub(id, field, en_old=None, en_new=None, zh_old=None, zh_new=None):
     E.append(dict(kind='sub', id=id, field=field, en_old=en_old, en_new=en_new, zh_old=zh_old, zh_new=zh_new))
 
@@ -396,6 +401,68 @@ sub('transfiguration_mount_tabor', 'scripturalCorrelation', None, None,
     "4世纪拜占庭、十字军和现代方济各会三层教堂遗迹", "拜占庭、十字军和现代方济各会三层教堂遗迹")
 
 
+# ---------------------------------------------------------------- bronze_serpent_timna
+# Removed: an invented-looking Rothenberg quote ("shocking coincidence or proof of the truth of the biblical text"), the claim that the
+# gilded snake is unique in the Near East (serpent figures are known from other Canaanite sites), "precisely the right place and
+# period", "Solomon's era precisely", and the unreconciled 1969/1974 dates. Verified: Hathor temple Site 200 (Seti I) reused as a
+# desert tent-shrine; copper snake with gilded head found in it. https://madainproject.com/hathor_shrine_(timna)
+meta('bronze_serpent_timna', 'confidenceLevel', 'Circumstantial')
+meta('bronze_serpent_timna', 'discoveryDate', "Beno Rothenberg's Timna excavations (1959–1990), Site 200", '贝诺·罗滕伯格的提姆纳发掘（1959—1990年），Site 200')
+setf('bronze_serpent_timna', 'summary',
+     "At Timna in the southern Arabah, Beno Rothenberg excavated an Egyptian temple of Hathor (Site 200) that was later reused as a desert tent-shrine, and recovered a small copper snake with a gilded head. It is an interesting parallel to the bronze serpent of Numbers 21:8-9 and 2 Kings 18:4, but snake figures are known from other Canaanite sites, and it is not evidence for the Numbers episode.",
+     "在阿拉伯谷南部的提姆纳，贝诺·罗滕伯格发掘了一座埃及哈托尔神庙（Site 200），它后来被改作沙漠中的帐幕式神庙，其中出土了一条头部镀金的小铜蛇。它与民数记21:8-9和列王纪下18:4所记的铜蛇有趣地相似，但迦南其他遗址也有蛇形器物出土，它并不是民数记那段记载的证据。")
+para('bronze_serpent_timna', 'description', 'From 1959-1990', '#1',
+     "From 1959 to 1990 Beno Rothenberg directed the Arabah Expedition at Timna Valley (southern Negev), a copper-mining district exploited first by Egyptians and then by local peoples, whom Rothenberg identified as Midianites on the basis of a painted pottery known as Qurayya ware. At Site 200 he excavated a small Egyptian temple of Hathor, the goddess of miners, founded in the reign of Seti I.",
+     "从1959到1990年，贝诺·罗滕伯格主持阿拉瓦考察队在提姆纳谷（内盖夫南部）发掘；那里是一个铜矿区，先由埃及人开采，后来由当地人群开采，罗滕伯格根据一种称为库赖亚（Qurayya）的彩陶，把这些当地人认定为米甸人。在Site 200，他发掘了一座小型埃及神庙，供奉矿工的女神哈托尔，始建于塞提一世时期。")
+para('bronze_serpent_timna', 'description', '(1) The Hathor Temple', '#2',
+     "After the Egyptians withdrew (around the middle of the 12th century BCE) the temple was reused as a desert tent-shrine: post-holes, decayed cloth and copper rings from curtains were found along two walls. In the shrine's inner niche Rothenberg's team found a small copper snake with a gilded head, together with a hoard of metal objects.",
+     "埃及人撤出之后（约公元前12世纪中叶），这座神庙被改作沙漠中的帐幕式神庙：沿着两面墙发现了柱洞、腐朽的织物，以及悬挂帷幕用的铜环。在神庙内部的壁龛里，罗滕伯格的团队发现了一条头部镀金的小铜蛇，同时出土的还有一批金属器物。")
+para('bronze_serpent_timna', 'description', '(2) The Bronze Serpent', '#3',
+     "The snake is a small cultic object from the shrine's reuse phase. Snake figures are known from other Canaanite sites too, so it is not unique, and nothing links it to the object Moses made.",
+     "这条蛇是该神庙改建时期的一件小型祭仪器物。迦南其他遗址也出土过蛇形器物，所以它并不独一无二，也没有任何东西把它与摩西所造的那条铜蛇联系起来。")
+para('bronze_serpent_timna', 'description', '(3) Archaeological context', '#4',
+     "Erez Ben-Yosef's renewed excavations (since 2013) at Timna Site 34 ('Slaves' Hill') show that copper production there flourished in the 11th–10th centuries BCE, and he dates its peak to the 10th century BCE. How the people who used the Timna shrine relate to the biblical Midianites is debated.",
+     "埃雷兹·本-约瑟夫自2013年起在提姆纳Site 34（“奴隶之丘”）重新展开的发掘表明，当地铜的生产在公元前11至10世纪兴盛，他把其高峰定在公元前10世纪。使用提姆纳神庙的人群与圣经中的米甸人是什么关系，仍有争论。")
+para('bronze_serpent_timna', 'description', '(4) 2 Kings 18:4', '#5',
+     "2 Kings 18:4 records King Hezekiah destroying the bronze serpent (Nehushtan) that had become an object of worship. The Timna snake has no known connection with it.",
+     "列王纪下18:4记载希西家王毁掉了已成为崇拜对象的铜蛇（Nehushtan）。提姆纳的这条蛇与它没有任何已知的联系。")
+para('bronze_serpent_timna', 'scripturalCorrelation', 'Numbers 21:8-9 specifies', '#0',
+     "Numbers 21:8-9 describes a bronze serpent raised on a pole. The Timna snake is a small copper figure with a gilded head from an Egyptian temple reused as a tent-shrine in the 12th century BCE, in the same broad region as the wilderness traditions. It shows that serpent figures belonged to the cult of the area, but it does not identify or confirm the object in Numbers.",
+     "民数记21:8-9描述了挂在杆子上的铜蛇。提姆纳的这条蛇是一件头部镀金的小型铜像，出自公元前12世纪被改作帐幕式神庙的埃及神庙，所在的大致区域与旷野传统相同。它说明蛇形器物属于当地的祭仪，但并不能确认或证实民数记中所说的那件器物。")
+para('bronze_serpent_timna', 'scripturalCorrelation', 'Midianites were Moses', '#1',
+     "The Midianites appear as Moses's in-laws (Exodus 2–3; Numbers 10:29) and later as opponents (Numbers 25; 31), so a link between a Midianite shrine and the story is imaginable, but the identification of the Timna shrine's users as Midianites rests on Rothenberg's interpretation of the pottery.",
+     "米甸人在圣经中先是摩西的姻亲（出埃及记2—3章；民数记10:29），后来成了对手（民数记25、31章），因此把一座米甸神庙与这段故事联系起来是可以想象的，但把提姆纳神庙的使用者认定为米甸人，依据的是罗滕伯格对陶器的解释。因此，提姆纳的发现至多只提供一种文化上的类比。本条目列为间接证据，是因为它既不能确定摩西的那条铜蛇，也不能表明民数记所述的事件曾经发生。")
+para('bronze_serpent_timna', 'scripturalCorrelation', 'The discovery does not identify', '#2',
+     "The Timna find therefore offers a cultural parallel at most. It is classed as circumstantial because it neither identifies Moses' serpent nor shows that the Numbers episode took place.",
+     None)
+
+# ---------------------------------------------------------------- jonah_nineveh
+# Removed: "monotheistic-leaning worship of Nabu" under Adad-nirari III, "repentance fits the reform period", "confirming ... repentance
+# ... exactly", "90 km district", and "abandonment confirmed by no Persian-period settlement". Nineveh fell 612 BCE (Fall of Nineveh Chronicle).
+meta('jonah_nineveh', 'confidenceLevel', 'Circumstantial')
+setf('jonah_nineveh', 'summary',
+     "Austen Henry Layard's excavations from 1847 at Tell Kuyunjik uncovered the Assyrian capital Nineveh, including Sennacherib's 'Palace Without Rival', and Hormuzd Rassam later recovered much of Ashurbanipal's library of some 30,000 tablets. This confirms that Nineveh was a vast capital that fell in 612 BCE, but it does not by itself confirm the events of the book of Jonah.",
+     "奥斯丁·亨利·莱亚德自1847年起在库云吉克废丘的发掘，揭示了亚述首都尼尼微，包括西拿基立的“无与伦比之宫”；后来霍尔穆兹·拉萨姆又找回了亚述巴尼拔图书馆约3万块泥板中的大部分。这证实了尼尼微是一座巨大的首都，并于公元前612年陷落，但本身并不能证实约拿书中所记的事件。")
+para('jonah_nineveh', 'description', 'For centuries, critical scholars', '#0',
+     "For a long time critics treated the book of Jonah's description of Nineveh as 'an exceedingly great city, a three days' journey in breadth' (Jonah 3:3) as exaggeration. Excavations at Tell Kuyunjik and Tell Nebi Yunus (near modern Mosul, Iraq), begun by Austen Henry Layard in 1847, show that Nineveh was in fact one of the largest cities of its age. Some interpreters read the 'three days' journey' as including the surrounding Assyrian heartland (Khorsabad, Nimrud and their districts), but the phrase is difficult and is understood in different ways.",
+     "很长时间里，批评学者把约拿书对尼尼微“极大的城，有三日的路程”（约拿书3:3）的描述视为夸张。奥斯丁·亨利·莱亚德自1847年起在库云吉克废丘和尼比尤努斯废丘（靠近现代伊拉克摩苏尔）的发掘表明，尼尼微确实是当时最大的城市之一。有些解经者把“三日的路程”理解为包括周围的亚述腹地（霍尔萨巴德、尼姆鲁德及其辖区），但这个短语很难解，学者有不同的理解。")
+para('jonah_nineveh', 'description', "The city's inner wall alone", '#1',
+     "The city's inner wall encloses about 1,800 acres and runs for nearly 12 km. Layard's discoveries included Sennacherib's 'Palace Without Rival' with its Lachish reliefs, and Hormuzd Rassam's excavations (1853) recovered much of Ashurbanipal's library of some 30,000 cuneiform tablets, the most important literary find of the ancient Near East.",
+     "该城的内城墙围出约1,800英亩的面积，周长近12公里。莱亚德的发现包括西拿基立的“无与伦比之宫”及其拉吉浮雕；霍尔穆兹·拉萨姆的发掘（1853年）找回了亚述巴尼拔图书馆约3万块楔形文字泥板中的大部分，这是古代近东最重要的文献发现。")
+para('jonah_nineveh', 'description', 'Assyrian records from the reign', '#2',
+     "Nineveh fell to the Medes and Babylonians in 612 BCE, as the Babylonian Chronicle records, which fits the prophecies of Nahum and Zephaniah against the city. A few scholars have tried to connect a Nabu-centred religious emphasis under Adad-nirari III (c. 810–783 BCE) with the mission of Jonah, but that is speculative, and the Assyrian records do not mention Jonah or a repentance of Nineveh.",
+     "尼尼微于公元前612年陷落于玛代人和巴比伦人之手，巴比伦编年史对此有记载，这与那鸿书和西番雅书对该城的预言相符。少数学者试图把阿达德-尼拉里三世（约公元前810—783年）治下以那布（Nabu）为中心的宗教倾向与约拿的使命联系起来，但那只是推测，亚述记录并没有提到约拿，也没有提到尼尼微的悔改。")
+para('jonah_nineveh', 'scripturalCorrelation', "Jonah 3:3 describes Nineveh", '#0',
+     "Jonah 3:3 describes Nineveh as 'an exceedingly great city, three days' journey in breadth'. The excavated city was very large for its day, which is consistent with the description, although the exact meaning of the 'three days' journey' is uncertain.",
+     "约拿书3:3把尼尼微描述为“极大的城，有三日的路程”。出土的这座城在当时规模很大，与这一描述并不矛盾，但“三日的路程”的确切含义并不确定。")
+para('jonah_nineveh', 'scripturalCorrelation', 'The description of Nineveh', '#1',
+     "The book describes Nineveh's repentance (Jonah 3:5-9). The Assyrian records contain no trace of such an event, so the account cannot be tested archaeologically. Nineveh's destruction in 612 BCE is well documented and was foretold in Nahum 3:7 and Zephaniah 2:13, but that fits the prophecies against Nineveh rather than the book of Jonah.",
+     "书中记载了尼尼微的悔改（约拿书3:5-9）。亚述的记录里没有这类事件的痕迹，所以这段记载无法用考古学来检验。尼尼微于公元前612年被毁有充分的记录，那鸿书3:7和西番雅书2:13也预言了这件事，但这符合的是对尼尼微的预言，而不是约拿书。")
+
+
+drop('bronze_serpent_timna', 'description',
+     {'zh-Hans': ['3. **帐幕平行**', '4. **铜蛇独特性**', '罗滕伯格（1972年）写道']})
+
 def apply(data):
     by = {e['id']: e for e in data['evidences']}
     changed = 0
@@ -416,6 +483,19 @@ def apply(data):
             else:  # Sword: plain English string
                 if e[f] != c['en']:
                     e[f] = c['en']; changed += 1
+        elif k == 'drop':
+            for lang, prefixes in c['lang_prefixes'].items():
+                langs = [lang] if lang != 'zh-Hans' else ['zh-Hans', 'zh-Hant']
+                for lg in langs:
+                    val = e[c['field']]
+                    cur = val[lg]
+                    if isinstance(cur, list):
+                        cur = '\n\n'.join(cur)
+                    paras = cur.split('\n\n')
+                    pf = [hant(x) if lg == 'zh-Hant' else x for x in prefixes]
+                    keep = [p for p in paras if not any(p.startswith(x) for x in pf)]
+                    if len(keep) != len(paras):
+                        val[lg] = '\n\n'.join(keep); changed += 1
         elif k == 'append':
             for lang, new in (('en', c['en']), ('zh-Hans', c['zh']), ('zh-Hant', hant(c['zh']))):
                 val = e[c['field']]
@@ -461,7 +541,9 @@ def apply(data):
             elif src[idx] != c['new']:
                 src[idx] = c['new']; changed += 1
         else:
-            for lang, new in (('en', c['en']), ('zh-Hans', c['zh']), ('zh-Hant', hant(c['zh']))):
+            for lang, new in (('en', c['en']), ('zh-Hans', c['zh']), ('zh-Hant', hant(c['zh']) if c['zh'] else None)):
+                if new is None:
+                    continue
                 val = e[c['field']]
                 cur = val[lang]
                 if isinstance(cur, list):
