@@ -12,9 +12,9 @@
       "Science"
     ],
     "confidenceCounts": {
-      "Definitive": 80,
-      "Strong": 90,
-      "Circumstantial": 39
+      "Definitive": 90,
+      "Strong": 95,
+      "Circumstantial": 40
     },
     "generatedAt": "2026-05-22T22:08:38Z",
     "correctionsFromSword": "2026-09-21, brought over from Yahweh's Sword: the Tel Dan Stele is 但丘石碑 (Tel Dan), not 但以理石碑 (Daniel); an ossuary holds bones, so 骨灰罐/骨灰盒 became 藏骨罐/骸骨箱, the terms this file already used 34 times elsewhere; and 25 academicSources lists lost their mojibake (AmÃ©lie → Amélie). Sword's zh-Hant variant table was NOT taken: it and this file's own s2tw repairs disagree (Sword turns 石製 into 石制), and this file's are the ones pinned by bible_evidence_traditional_test."
@@ -1287,7 +1287,7 @@
         "https://yswords-data.netlify.app/images/evidence/tall_el_hammam_1.png"
       ],
       "academicSources": [
-        "Collins, Steven, et al. \"A Tall el-Hammam Cosmic Airburst Event.\" Scientific Reports 11 (2021).",
+        "Bunch, Ted E., et al. \"A Tunguska sized airburst destroyed Tall el-Hammam a Middle Bronze Age city in the Jordan Valley near the Dead Sea.\" Scientific Reports 11 (2021), doi:10.1038/s41598-021-97778-3. Retracted 24 April 2025: Retraction Note, Scientific Reports 15, 14291 (2025), doi:10.1038/s41598-025-99265-5.",
         "Collins, Steven. Discovering the City of Sodom. Howard Books, 2013.",
         "Silvia, Phillip J. \"The Middle Bronze Age Civilization-Ending Destruction of the Middle Ghor.\" NEAS (2015)."
       ],
@@ -1299,19 +1299,19 @@
         "zh-Hant": "特爾哈曼宇宙空爆"
       },
       "summary": {
-        "en": "Excavations at Tall el-Hammam in Jordan's southern Ghor plain have revealed evidence of a catastrophic cosmic airburst event circa 1650 BCE that instantaneously destroyed a prosperous Bronze Age city — proposed by some researchers as a candidate for the biblical Sodom.",
-        "zh-Hans": "约旦南部戈尔平原特尔哈曼遗址的考古发掘揭示了约公元前1650年一场灾难性宇宙空爆事件瞬间摧毁了一座繁华的青铜时代城市——部分研究者提出其为圣经所载所多玛的候选遗址。",
-        "zh-Hant": "約旦南部戈爾平原特爾哈曼遺址的考古發掘揭示了約公元前1650年一場災難性宇宙空爆事件瞬間摧毀了一座繁華的青銅時代城市——部分研究者提出其為聖經所載所多瑪的候選遺址。"
+        "en": "Excavations at Tall el-Hammam in Jordan's southern Ghor plain show a large Middle Bronze Age city abandoned around 1650 BCE. A 2021 paper claimed a cosmic airburst destroyed it, but Scientific Reports retracted that paper in April 2025, and identifying the site with biblical Sodom remains a minority position.",
+        "zh-Hans": "约旦南部戈尔平原的特尔哈曼遗址显示，一座大型青铜时代中期城市在约公元前1650年前后被废弃。2021年有论文主张该城毁于宇宙空爆，但《科学报告》已于2025年4月撤回该论文；将该遗址认定为圣经中的所多玛，仍属少数派观点。",
+        "zh-Hant": "約旦南部戈爾平原的特爾哈曼遺址顯示，一座大型青銅時代中期城市在約公元前1650年前後被廢棄。2021年有論文主張該城毀於宇宙空爆，但《科學報告》已於2025年4月撤回該論文；將該遺址認定為聖經中的所多瑪，仍屬少數派觀點。"
       },
       "description": {
-        "en": "Tall el-Hammam is a large Bronze Age site excavated since 2005 by a team led by Steven Collins and Phillip Silvia in the Kikkar (plain) of Jordan, northeast of the Dead Sea. The site shows continuous occupation from the Chalcolithic through the Middle Bronze Age, followed by an abrupt and total abandonment around 1650 BCE.\n\nA landmark 2021 paper in Scientific Reports by Phillip Silvia, Allen West, Ted Bunch, and fourteen co-authors presented evidence for a cosmic airburst event that destroyed the site. Physical evidence includes: shocked quartz; melt glass with compositions requiring temperatures above 1,200°C; platinum anomalies indicative of extraterrestrial impact; zircon crystals indicating temperatures exceeding 1,600°C; and building materials fused and vitrified in ways inconsistent with ordinary fires. The destruction layer contained pulverized mudbrick debris and evidence of extreme thermal event across a wide area.\n\nThe proposed identification of Tall el-Hammam with Sodom remains a minority scholarly position. The site does fit geographical descriptions in Genesis 13 and 19 (northeast of the Dead Sea, in the Kikkar), and its abrupt Middle Bronze Age destruction is physically extraordinary. Critics note that the Genesis narrative's chronological setting is disputed and that other sites have been proposed.",
-        "zh-Hans": "特尔哈曼是自2005年以来由史蒂文·柯林斯和菲利普·席尔维亚率领的团队在约旦死海东北的基卡尔（平原）地区发掘的大型青铜时代遗址。该遗址显示从铜石并用时代到青铜时代中期的持续居住，之后在约公元前1650年突然被完全废弃。\n\n菲利普·席尔维亚、艾伦·韦斯特、特德·邦奇等十四位合著者2021年发表在《科学报告》上的里程碑论文，提出了摧毁该遗址的宇宙空爆证据。物理证据包括：冲击石英；成分需要超过1200°C高温的熔融玻璃；指示地外撞击的铂异常；指示超过1600°C高温的锆石晶体；以及以与普通火灾不符的方式熔化和玻璃化的建筑材料。毁坏层中含有粉碎的泥砖碎屑和大范围极端热事件的证据。\n\n将特尔哈曼认定为所多玛仍是少数派学术立场。该遗址确实符合创世记13章和19章的地理描述（死海东北，在基卡尔），其中青铜时代中期的突然毁灭在物理上极为罕见。批评者指出创世记叙事的年代学背景尚有争议，其他遗址也已被提出为候选。",
-        "zh-Hant": "特爾哈曼是自2005年以來由史蒂文·柯林斯和菲利普·席爾維亞率領的團隊在約旦死海東北的基卡爾（平原）地區發掘的大型青銅時代遺址。該遺址顯示從銅石並用時代到青銅時代中期的持續居住，之後在約公元前1650年突然被完全廢棄。\n\n菲利普·席爾維亞、艾倫·韋斯特、特德·邦奇等十四位合著者2021年發表在《科學報告》上的里程碑論文，提出了摧毀該遺址的宇宙空爆證據。物理證據包括：衝擊石英；成分需要超過1200°C高溫的熔融玻璃；指示地外撞擊的鉑異常；指示超過1600°C高溫的鋯石晶體；以及以與普通火災不符的方式熔化和玻璃化的建築材料。毀壞層中含有粉碎的泥磚碎屑和大範圍極端熱事件的證據。\n\n將特爾哈曼認定為所多瑪仍是少數派學術立場。該遺址確實符合創世記13章和19章的地理描述（死海東北，在基卡爾），其中青銅時代中期的突然毀滅在物理上極為罕見。批評者指出創世記敘事的年代學背景尚有爭議，其他遺址也已被提出為候選。"
+        "en": "Tall el-Hammam is a large Bronze Age site excavated since 2005 by a team led by Steven Collins and Phillip Silvia in the Kikkar (plain) of Jordan, northeast of the Dead Sea. The site shows continuous occupation from the Chalcolithic through the Middle Bronze Age, followed by an abrupt and total abandonment around 1650 BCE.\n\nIn September 2021 Scientific Reports published a paper led by Ted Bunch, with Phillip Silvia, Allen West and other co-authors, arguing that a Tunguska-sized cosmic airburst destroyed the city; it cited shocked quartz, melt glass, platinum-group anomalies and zircon evidence. Other scientists criticised the work at once, the journal attached an editor's note in 2023, and on 24 April 2025 it retracted the paper. The retraction note cites errors in methodology and in the analysis and interpretation of the mineralogical and geochemical data, and an unsupported comparison with the 1908 Tunguska event, and concludes that the airburst claim is not sufficiently supported by the data. The airburst explanation should therefore not be treated as established evidence.\n\nThe proposed identification of Tall el-Hammam with Sodom remains a minority scholarly position. The site does fit geographical descriptions in Genesis 13 and 19 (northeast of the Dead Sea, in the Kikkar), and its abrupt Middle Bronze Age destruction is physically extraordinary. Critics note that the Genesis narrative's chronological setting is disputed and that other sites have been proposed.",
+        "zh-Hans": "特尔哈曼是自2005年以来由史蒂文·柯林斯和菲利普·席尔维亚率领的团队在约旦死海东北的基卡尔（平原）地区发掘的大型青铜时代遗址。该遗址显示从铜石并用时代到青铜时代中期的持续居住，之后在约公元前1650年突然被完全废弃。\n\n2021年9月，《科学报告》发表了一篇由特德·邦奇牵头、菲利普·席尔维亚、艾伦·韦斯特等人合著的论文，主张一次相当于通古斯规模的宇宙空爆摧毁了该城，所举证据包括冲击石英、熔融玻璃、铂族元素异常和锆石。其他科学家随即提出批评，期刊在2023年加上编辑说明，并于2025年4月24日撤回了该论文。撤稿声明指出其在方法、矿物学与地球化学数据的分析和解释上存在错误，并且与1908年通古斯事件的比较缺乏依据，结论是“空爆摧毁该城”的说法没有得到数据的充分支持。因此，空爆说不应被当作已确立的证据。\n\n将特尔哈曼认定为所多玛仍是少数派学术立场。该遗址确实符合创世记13章和19章的地理描述（死海东北，在基卡尔），其中青铜时代中期的突然毁灭在物理上极为罕见。批评者指出创世记叙事的年代学背景尚有争议，其他遗址也已被提出为候选。",
+        "zh-Hant": "特爾哈曼是自2005年以來由史蒂文·柯林斯和菲利普·席爾維亞率領的團隊在約旦死海東北的基卡爾（平原）地區發掘的大型青銅時代遺址。該遺址顯示從銅石並用時代到青銅時代中期的持續居住，之後在約公元前1650年突然被完全廢棄。\n\n2021年9月，《科學報告》發表了一篇由特德·邦奇牽頭、菲利普·席爾維亞、艾倫·韋斯特等人合著的論文，主張一次相當於通古斯規模的宇宙空爆摧毀了該城，所舉證據包括衝擊石英、熔融玻璃、鉑族元素異常和鋯石。其他科學家隨即提出批評，期刊在2023年加上編輯說明，並於2025年4月24日撤回了該論文。撤稿聲明指出其在方法、礦物學與地球化學數據的分析和解釋上存在錯誤，並且與1908年通古斯事件的比較缺乏依據，結論是“空爆摧毀該城”的說法沒有得到數據的充分支持。因此，空爆說不應被當作已確立的證據。\n\n將特爾哈曼認定為所多瑪仍是少數派學術立場。該遺址確實符合創世記13章和19章的地理描述（死海東北，在基卡爾），其中青銅時代中期的突然毀滅在物理上極為罕見。批評者指出創世記敘事的年代學背景尚有爭議，其他遺址也已被提出為候選。"
       },
       "scripturalCorrelation": {
-        "en": "Genesis 19:24–25 records: 'Then the LORD rained down burning sulfur on Sodom and Gomorrah — from the LORD out of the heavens. Thus he overthrew those cities and the entire plain, destroying all those living in the cities — and also the vegetation in the land.' Genesis 13:10 describes the region as 'well watered, like the garden of the LORD,' before the destruction.\n\nThe Tall el-Hammam airburst evidence is categorized as Circumstantial because the identification with Sodom is not proven and the scholarly debate continues. However, the physical evidence of an extraordinary thermal catastrophe obliterating a prosperous city in the Jordan Valley circa 1650 BCE is scientifically documented. If the site is Sodom, the scientific evidence describes a mechanism — cosmic airburst — consistent with the sudden, catastrophic, fire-from-above destruction the text describes. The 500–700 year abandonment of the region following the destruction is also consistent with the biblical statement that the area became a waste.",
-        "zh-Hans": "创世记19:24-25记载：「当时，雅伟将硫磺与火从天上雅伟那里降与所多玛和蛾摩拉，把那些城和全平原，并城里所有的居民，连地上生长的，都毁灭了。」创世记13:10描述该地区在毁灭前「如同雅伟的园子」般滋润。\n\n特尔哈曼空爆证据被列为「间接」等级，因为与所多玛的认定尚未证实，学术争论仍在继续。然而，约公元前1650年一场极端热灾瞬间抹去约旦河谷一座繁华城市的物理证据，已有科学文献记载。如果该遗址即为所多玛，科学证据所描述的机制——宇宙空爆——与文本所载的突然、灾难性、来自天上的烈火毁灭一致。毁灭后该地区长达500-700年的荒废，也与圣经所述该地区变为荒场吻合。",
-        "zh-Hant": "創世記19:24-25記載：「當時，雅偉將硫磺與火從天上雅偉那裡降與所多瑪和蛾摩拉，把那些城和全平原，並城裡所有的居民，連地上生長的，都毀滅了。」創世記13:10描述該地區在毀滅前「如同雅偉的園子」般滋潤。\n\n特爾哈曼空爆證據被列為「間接」等級，因為與所多瑪的認定尚未證實，學術爭論仍在繼續。然而，約公元前1650年一場極端熱災瞬間抹去約旦河谷一座繁華城市的物理證據，已有科學文獻記載。如果該遺址即為所多瑪，科學證據所描述的機制——宇宙空爆——與文本所載的突然、災難性、來自天上的烈火毀滅一致。毀滅後該地區長達500-700年的荒廢，也與聖經所述該地區變為荒場吻合。"
+        "en": "Genesis 19:24–25 records: 'Then the LORD rained down burning sulfur on Sodom and Gomorrah — from the LORD out of the heavens. Thus he overthrew those cities and the entire plain, destroying all those living in the cities — and also the vegetation in the land.' Genesis 13:10 describes the region as 'well watered, like the garden of the LORD,' before the destruction.\n\nThis entry is categorized as Circumstantial because the identification of Tall el-Hammam with Sodom is not proven, and because the 2021 airburst paper that was used to support a 'fire from heaven' reading was retracted by Scientific Reports in April 2025. What remains is a large Middle Bronze Age city in the Kikkar of the Jordan that fits the geographical setting of Genesis 13 and 19. Whether it is Sodom, and what ended its occupation, are still debated, and other sites, including some on the southern shore of the Dead Sea, have been proposed.",
+        "zh-Hans": "创世记19:24-25记载：「当时，雅伟将硫磺与火从天上雅伟那里降与所多玛和蛾摩拉，把那些城和全平原，并城里所有的居民，连地上生长的，都毁灭了。」创世记13:10描述该地区在毁灭前「如同雅伟的园子」般滋润。\n\n本条目列为“间接”等级，一是因为将特尔哈曼认定为所多玛尚未得到证实，二是因为曾被用来支持“天上降火”解读的2021年空爆论文已于2025年4月被《科学报告》撤回。目前留下的只是约旦基卡尔地区一座符合创世记13章和19章地理背景的青铜时代中期大城。它是否就是所多玛、其居住为何终止，仍有争论，死海南岸的一些遗址也曾被提出为候选。",
+        "zh-Hant": "創世記19:24-25記載：「當時，雅偉將硫磺與火從天上雅偉那裡降與所多瑪和蛾摩拉，把那些城和全平原，並城裡所有的居民，連地上生長的，都毀滅了。」創世記13:10描述該地區在毀滅前「如同雅偉的園子」般滋潤。\n\n本條目列為“間接”等級，一是因為將特爾哈曼認定為所多瑪尚未得到證實，二是因為曾被用來支持“天上降火”解讀的2021年空爆論文已於2025年4月被《科學報告》撤回。目前留下的只是約旦基卡爾地區一座符合創世記13章和19章地理背景的青銅時代中期大城。它是否就是所多瑪、其居住為何終止，仍有爭論，死海南岸的一些遺址也曾被提出為候選。"
       }
     },
     {
@@ -5017,9 +5017,9 @@
         "zh-Hant": "2002（公佈）"
       },
       "location": {
-        "en": "Royal Ontario Museum, Toronto (on loan)",
-        "zh-Hans": "安大略皇家博物馆，多伦多（暂借）",
-        "zh-Hant": "安大略皇家博物館，多倫多（暫借）"
+        "en": "Israel; privately held by collector Oded Golan (returned to him after a 2013 Supreme Court ruling; exhibited at the Royal Ontario Museum, Toronto, in 2002)",
+        "zh-Hans": "以色列；由收藏家奥德·戈兰私人持有（2013年最高法院裁决后发还给他；2002年曾在多伦多皇家安大略博物馆展出）",
+        "zh-Hant": "以色列；由收藏家奧德·戈蘭私人持有（2013年最高法院裁決後發還給他；2002年曾在多倫多皇家安大略博物館展出）"
       },
       "scriptureReference": "Acts 12:17",
       "images": [
@@ -5042,9 +5042,9 @@
         "zh-Hant": "一個刻有“雅各，約瑟的兒子，耶穌的兄弟”銘文的骸骨箱浮出水面，可能與耶穌的兄弟雅各有關。儘管其真實性存在爭議，但它代表了一項重要的考古發現。"
       },
       "description": {
-        "en": "The 'James Ossuary' came to public attention in 2002 when it was published by André Lemaire. It is a limestone burial box dating to the 1st century CE. Its inscription, 'James, son of Joseph, brother of Jesus,' immediately sparked immense interest due to its potential connection to James, the brother of Jesus of Nazareth, mentioned in the New Testament.\n\nIf fully authenticated, the ossuary would be the earliest archaeological artifact directly referencing Jesus of Nazareth. However, its provenance is disputed, and the inscription's authenticity, particularly the 'brother of Jesus' part, has been subject to intense debate and legal proceedings, with some scholars believing it to be a forgery or an alteration added to an otherwise authentic ossuary.\n\nThe Israel Antiquities Authority initially declared the inscription a forgery in 2003, leading to a high-profile trial. While the court did not definitively rule on the authenticity of the inscription, it acquitted the defendants of forgery charges, leaving the academic community divided. Despite the controversy, it remains a significant artifact that continues to fuel discussions about early Christian archaeology and the historical Jesus.",
-        "zh-Hans": "“雅各骸骨箱”于2002年由安德烈·勒梅尔公布后引起了公众关注。它是一个可追溯到公元1世纪的石灰石骸骨箱。其铭文“雅各，约瑟的儿子，耶稣的兄弟”因其可能与新约圣经中提及的拿撒勒人耶稣的兄弟雅各有关而立即引起了巨大兴趣。\n\n如果完全被证实，这个骸骨箱将是直接提及拿撒勒人耶稣的最早考古文物。然而，其来源存在争议，铭文的真实性，特别是“耶稣的兄弟”部分，一直受到激烈的辩论和法律诉讼，一些学者认为它是伪造的，或是在一个真实的骸骨箱上添加的改动。\n\n以色列文物管理局最初在2003年宣布该铭文为伪造，导致了一场备受瞩目的审判。尽管法院未能就铭文的真实性作出明确裁决，但它宣告被告伪造罪名不成立，使得学术界对此意见不一。尽管存在争议，它仍然是一件重要的文物，继续引发关于早期基督教考古学和历史上的耶稣的讨论。",
-        "zh-Hant": "“雅各骸骨箱”於2002年由安德烈·勒梅爾公佈後引起了公眾關注。它是一個可追溯到公元1世紀的石灰石骸骨箱。其銘文“雅各，約瑟的兒子，耶穌的兄弟”因其可能與新約聖經中提及的拿撒勒人耶穌的兄弟雅各有關而立即引起了巨大興趣。\n\n如果完全被證實，這個骸骨箱將是直接提及拿撒勒人耶穌的最早考古文物。然而，其來源存在爭議，銘文的真實性，特別是“耶穌的兄弟”部分，一直受到激烈的辯論和法律訴訟，一些學者認為它是偽造的，或是在一個真實的骸骨箱上添加的改動。\n\n以色列文物管理局最初在2003年宣佈該銘文為偽造，導致了一場備受矚目的審判。儘管法院未能就銘文的真實性作出明確裁決，但它宣告被告偽造罪名不成立，使得學術界對此意見不一。儘管存在爭議，它仍然是一件重要的文物，繼續引發關於早期基督教考古學和歷史上的耶穌的討論。"
+        "en": "The 'James Ossuary' came to public attention in 2002 when it was published by André Lemaire. It is a limestone burial box dating to the 1st century CE. Its inscription, 'James, son of Joseph, brother of Jesus,' immediately sparked immense interest due to its potential connection to James, the brother of Jesus of Nazareth, mentioned in the New Testament.\n\nIf fully authenticated, the ossuary would be the earliest archaeological artifact directly referencing Jesus of Nazareth. However, its provenance is disputed, and the inscription's authenticity, particularly the 'brother of Jesus' part, has been subject to intense debate and legal proceedings, with some scholars believing it to be a forgery or an alteration added to an otherwise authentic ossuary.\n\nThe Israel Antiquities Authority declared the inscription a forgery in 2003, and the collector Oded Golan was tried in Jerusalem. In March 2012 Judge Aharon Farkash acquitted him of forging the inscription, stating that the acquittal did not mean the inscription is authentic or was written 2,000 years ago, only that forgery had not been proven beyond a reasonable doubt. Golan was convicted of a lesser charge of illegal trading in antiquities. In 2013 the Supreme Court ordered the ossuary returned to him. The ossuary has no excavated provenance and scholarly opinion remains divided.",
+        "zh-Hans": "“雅各骸骨箱”于2002年由安德烈·勒梅尔公布后引起了公众关注。它是一个可追溯到公元1世纪的石灰石骸骨箱。其铭文“雅各，约瑟的儿子，耶稣的兄弟”因其可能与新约圣经中提及的拿撒勒人耶稣的兄弟雅各有关而立即引起了巨大兴趣。\n\n如果完全被证实，这个骸骨箱将是直接提及拿撒勒人耶稣的最早考古文物。然而，其来源存在争议，铭文的真实性，特别是“耶稣的兄弟”部分，一直受到激烈的辩论和法律诉讼，一些学者认为它是伪造的，或是在一个真实的骸骨箱上添加的改动。\n\n以色列文物管理局于2003年宣布该铭文为伪造，收藏家奥德·戈兰因此在耶路撒冷受审。2012年3月，法官阿哈龙·法尔卡什判决他伪造铭文的罪名不成立，并指出这一判决并不表示铭文是真的、也不表示它写于两千年前，只表示伪造未能在排除合理怀疑的程度上得到证明。戈兰另被以非法买卖古物的较轻罪名定罪。2013年最高法院裁定把骸骨箱发还给他。该骸骨箱没有科学发掘的出土背景，学界意见至今仍然分歧。",
+        "zh-Hant": "“雅各骸骨箱”於2002年由安德烈·勒梅爾公佈後引起了公眾關注。它是一個可追溯到公元1世紀的石灰石骸骨箱。其銘文“雅各，約瑟的兒子，耶穌的兄弟”因其可能與新約聖經中提及的拿撒勒人耶穌的兄弟雅各有關而立即引起了巨大興趣。\n\n如果完全被證實，這個骸骨箱將是直接提及拿撒勒人耶穌的最早考古文物。然而，其來源存在爭議，銘文的真實性，特別是“耶穌的兄弟”部分，一直受到激烈的辯論和法律訴訟，一些學者認為它是偽造的，或是在一個真實的骸骨箱上添加的改動。\n\n以色列文物管理局於2003年宣佈該銘文為偽造，收藏家奧德·戈蘭因此在耶路撒冷受審。2012年3月，法官阿哈龍·法爾卡什判決他偽造銘文的罪名不成立，並指出這一判決並不表示銘文是真的、也不表示它寫於兩千年前，只表示偽造未能在排除合理懷疑的程度上得到證明。戈蘭另被以非法買賣古物的較輕罪名定罪。2013年最高法院裁定把骸骨箱發還給他。該骸骨箱沒有科學發掘的出土背景，學界意見至今仍然分歧。"
       },
       "scripturalCorrelation": {
         "en": "Acts 12:17 mentions James: 'But motioning to them with his hand to be silent, he described to them how the Lord had brought him out of the prison. And he said, 'Tell these things to James and to the brothers.' Then he departed and went to another place.' This refers to James, a prominent leader in the early Jerusalem church, often identified as the brother of Jesus.\n\nGalatians 1:19 also states, 'But I saw none of the other apostles except James the Lord’s brother.' The ossuary's inscription, if authentic, would provide an extra-biblical archaeological reference to this significant figure, connecting the biblical narrative to a tangible artifact from the 1st century CE, albeit with ongoing scholarly debate regarding its full authenticity.",
@@ -12011,9 +12011,9 @@
         "zh-Hant": "西元前8世紀末"
       },
       "discoveryDate": {
-        "en": "2018 (Eilat Mazar)",
-        "zh-Hans": "2018年（Eilat Mazar）",
-        "zh-Hant": "2018年（Eilat Mazar）"
+        "en": "2009 (published 2018, Eilat Mazar)",
+        "zh-Hans": "2009年（2018年由伊拉特·马扎尔发表）",
+        "zh-Hant": "2009年（2018年由伊拉特·馬扎爾發表）"
       },
       "location": {
         "en": "Ophel, Jerusalem",
@@ -12027,7 +12027,7 @@
       "academicSources": [
         "Mazar, E. 'Is This the Prophet Isaiah's Signature?' Biblical Archaeology Review 44.2/3 (2018)."
       ],
-      "confidenceLevel": "Strong",
+      "confidenceLevel": "Circumstantial",
       "icon": "🪧",
       "title": {
         "en": "Possible Isaiah Bulla — Seal Impression Near the Hezekiah Bulla",
@@ -12035,19 +12035,19 @@
         "zh-Hant": "疑似以賽亞封泥——與希西家封泥相鄰出土"
       },
       "summary": {
-        "en": "Damaged clay bulla excavated by Eilat Mazar at the Ophel in 2018, reading 'Yesha'yahu [n]vy' — possibly 'Isaiah the prophet' — found just three metres from a confirmed bulla of King Hezekiah.",
-        "zh-Hans": "2018年伊拉特·马扎尔在俄斐勒发掘的破损封泥，铭文为「Yesha'yahu [n]vy」——或可释作「先知以赛亚」——出土位置距已确认的希西家王封泥仅三米。",
-        "zh-Hant": "2018年伊拉特·馬扎爾在俄斐勒發掘的破損封泥，銘文為「Yesha'yahu [n]vy」——或可釋作「先知以賽亞」——出土位置距已確認的希西家王封泥僅三米。"
+        "en": "A damaged clay bulla found in 2009 on the Ophel in Jerusalem and published by Eilat Mazar in 2018 reads 'Belonging to Isaiah' followed by the letters nby. Mazar proposed 'Isaiah the prophet', but the reading and the identification are disputed.",
+        "zh-Hans": "2009年在耶路撒冷俄斐勒出土、由伊拉特·马扎尔于2018年发表的破损封泥，铭文为“属于以赛亚”，其后接字母 nby。马扎尔主张可读作“先知以赛亚”，但这一释读及其认定尚有争议。",
+        "zh-Hant": "2009年在耶路撒冷俄斐勒出土、由伊拉特·馬扎爾於2018年發表的破損封泥，銘文為“屬於以賽亞”，其後接字母 nby。馬扎爾主張可讀作“先知以賽亞”，但這一釋讀及其認定尚有爭議。"
       },
       "description": {
-        "en": "The bulla is fragmentary and the final letter of the second word is missing or unclear. Two readings compete: 'lyšʿyhw nvy' ('Belonging to Isaiah the prophet,' if the missing aleph is restored) or 'lyšʿyhw nvy[h]' (a personal name plus a placename or family name). Eilat Mazar (1956-2021), the Hebrew University archaeologist who led the Ophel excavation, argued strongly for the first reading.\n\nIts proximity to the bulla of King Hezekiah — discovered in the same closed locus, in 2009, by the same expedition — makes the case unusually compelling: King Hezekiah and the prophet Isaiah are paired throughout 2 Kings 19-20 and Isaiah 36-39, and to find their seal impressions in the same room of the same destruction stratum is, at minimum, a remarkable coincidence.",
-        "zh-Hans": "该封泥已残缺，第二个词末字母缺失或模糊。学界存在两种释读：「lyšʿyhw nvy」（若补回缺失的辅音א，可作「属先知以赛亚」）或「lyšʿyhw nvy[h]」（人名 + 地名／家族名）。希伯来大学的伊拉特·马扎尔（1956—2021）作为俄斐勒发掘领队，强烈主张前一释读。\n\n本品与已确认的希西家王封泥（同一封闭遗址，由同一考察队2009年发现）相距不足三米。希西家与先知以赛亚在列王纪下19—20章及以赛亚书36—39章中始终并列出现；二人封泥见于同一毁坏地层的同一房间，至少属高度引人注目的巧合。",
-        "zh-Hant": "該封泥已殘缺，第二個詞末字母缺失或模糊。學界存在兩種釋讀：「lyšʿyhw nvy」（若補回缺失的輔音א，可作「屬先知以賽亞」）或「lyšʿyhw nvy[h]」（人名 + 地名／家族名）。希伯來大學的伊拉特·馬扎爾（1956—2021）作為俄斐勒發掘領隊，強烈主張前一釋讀。\n\n本品與已確認的希西家王封泥（同一封閉遺址，由同一考察隊2009年發現）相距不足三米。希西家與先知以賽亞在列王紀下19—20章及以賽亞書36—39章中始終並列出現；二人封泥見於同一毀壞地層的同一房間，至少屬高度引人注目的巧合。"
+        "en": "The bulla is fragmentary, and the end of the second word is damaged. It is a clay seal impression in three registers: the second reads lyšʿyh[w] ('Belonging to Isaiah') and the third preserves the letters nby. Eilat Mazar (1956–2021), who directed the Ophel excavation, argued that with a restored aleph this is nby[ʾ], 'prophet'. Critics, notably Christopher Rollston, note that no aleph is legible, that the definite article ('the prophet') that would be expected is missing, that Isaiah was a common name, and that the bulla gives no patronymic ('son of Amoz'). On that view nby may be a personal name or a gentilic, and identifying the owner with the biblical prophet is speculative. The bulla was found in 2009 and Mazar published it in Biblical Archaeology Review in February 2018.\n\nIt was found about three metres from the bulla of King Hezekiah, in the same destruction layer and by the same expedition. Hezekiah and Isaiah are paired throughout 2 Kings 19–20 and Isaiah 36–39, which makes the find suggestive, but proximity alone cannot settle a damaged inscription.",
+        "zh-Hans": "该封泥已残缺，第二个词的末尾受损。它是一枚分为三栏的泥封印：第二栏为 lyšʿyh[w]（“属于以赛亚”），第三栏保留了字母 nby。主持俄斐勒发掘的伊拉特·马扎尔（1956—2021）主张，补回缺失的字母 aleph 后可读作 nby[ʾ]，即“先知”。批评者（尤以克里斯托弗·罗尔斯顿为代表）指出：没有一个清晰可辨的 aleph；应有的定冠词（“那位先知”）也没有；以赛亚是常见人名；封泥上也没有父名（“亚摩斯的儿子”）。照这种看法，nby 可能是人名或出身地名，把印主认定为圣经中的先知只是推测。该封泥于2009年出土，马扎尔于2018年2月在《圣经考古评论》上发表。\n\n它出土于距希西家王封泥约三米处，同属一个毁坏地层，由同一考察队发现。希西家与以赛亚在列王纪下19—20章和以赛亚书36—39章中始终并列出现，这使该发现颇具启发，但仅凭位置接近，无法确定一段受损的铭文。",
+        "zh-Hant": "該封泥已殘缺，第二個詞的末尾受損。它是一枚分為三欄的泥封印：第二欄為 lyšʿyh[w]（“屬於以賽亞”），第三欄保留了字母 nby。主持俄斐勒發掘的伊拉特·馬扎爾（1956—2021）主張，補回缺失的字母 aleph 後可讀作 nby[ʾ]，即“先知”。批評者（尤以克里斯托弗·羅爾斯頓為代表）指出：沒有一個清晰可辨的 aleph；應有的定冠詞（“那位先知”）也沒有；以賽亞是常見人名；封泥上也沒有父名（“亞摩斯的兒子”）。照這種看法，nby 可能是人名或出身地名，把印主認定為聖經中的先知只是推測。該封泥於2009年出土，馬扎爾於2018年2月在《聖經考古評論》上發表。\n\n它出土於距希西家王封泥約三米處，同屬一個毀壞地層，由同一考察隊發現。希西家與以賽亞在列王紀下19—20章和以賽亞書36—39章中始終並列出現，這使該發現頗具啟發，但僅憑位置接近，無法確定一段受損的銘文。"
       },
       "scripturalCorrelation": {
-        "en": "2 Kings 19:1-7 records King Hezekiah sending messengers to Isaiah the prophet during the Assyrian siege; the king and the prophet collaborate throughout chapters 19-20. If the 'prophet' reading of the bulla is accurate, this is the closest physical link to a named Hebrew prophet ever found — a 'signature' from the very prophetic ministry that produced the most-quoted prophetic book in the New Testament.",
-        "zh-Hans": "列王纪下19:1-7记载，亚述围城之际希西家王差人请先知以赛亚求问神；二人在第19—20章中通力协作。若「先知」之读法成立，本封泥即为迄今所发现与某位具名希伯来先知最直接的实物联系——来自圣经中被新约引用次数最多的那卷先知书的作者亲笔的「签名」。",
-        "zh-Hant": "列王紀下19:1-7記載，亞述圍城之際希西家王差人請先知以賽亞求問神；二人在第19—20章中通力協作。若「先知」之讀法成立，本封泥即為迄今所發現與某位具名希伯來先知最直接的實物聯繫——來自聖經中被新約引用次數最多的那卷先知書的作者親筆的「簽名」。"
+        "en": "2 Kings 19:1-7 records King Hezekiah sending messengers to Isaiah the prophet during the Assyrian siege; the king and the prophet collaborate throughout chapters 19-20. If the 'prophet' reading of the bulla were confirmed, it would be a rare physical link to a named Hebrew prophet. The damaged inscription does not allow that to be established, so the bulla is best treated as a suggestive possibility, not proof.",
+        "zh-Hans": "列王纪下19:1-7记载，亚述围城之际希西家王差人去见先知以赛亚；二人在第19—20章中通力协作。若“先知”的读法得到证实，这将是与一位具名希伯来先知之间罕见的实物联系。但受损的铭文无法确立这一点，因此这枚封泥最好被看作一种有启发性的可能，而不是证据。",
+        "zh-Hant": "列王紀下19:1-7記載，亞述圍城之際希西家王差人去見先知以賽亞；二人在第19—20章中通力協作。若“先知”的讀法得到證實，這將是與一位具名希伯來先知之間罕見的實物聯繫。但受損的銘文無法確立這一點，因此這枚封泥最好被看作一種有啟發性的可能，而不是證據。"
       }
     },
     {

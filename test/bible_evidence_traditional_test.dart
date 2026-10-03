@@ -135,7 +135,9 @@ void main() {
     // s2twp would also have rewritten these. Converting a glyph is not
     // rewriting; changing a word is, and this file is the Simplified source's
     // wording throughout.
-    expect(count('公元'), 525, reason: '公元 was localised to 西元');
+    // 525 -> 524 on 2026-10-04: the Tall el-Hammam / Isaiah bulla / James ossuary corrections
+    // (tools/apply_evidence_corrections.py) replaced a paragraph that held one more 公元.
+    expect(count('公元'), 524, reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');
