@@ -82,7 +82,8 @@ void main() {
     // beside it already said. That is the growth this file's doc comment
     // calls the sanctioned direction; nothing was re-converted.
     const edition = <String, int>{
-      '為': 1976,
+      '為': 1975, // 1976 until 2026-10-03: G3056 now follows Eagle's View (−2 為 with the
+      // removed 「第二位格」 wording), and its footnote quoting it adds 1 (行為)
       '群': 196,
       '眾': 202,
       '著': 427,
