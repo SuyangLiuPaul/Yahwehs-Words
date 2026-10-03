@@ -259,6 +259,123 @@ entry(
     ],
 )
 
+# ============================================================================ 7. Mount Ebal lead object (disputed)
+entry(
+    id='mount_ebal_lead_object', category='Archaeology', icon='⚠️', confidence='Circumstantial',
+    books=['Deuteronomy'], ref='Deuteronomy 27:13',
+    timeline=('Claimed about 1200 BCE (Late Bronze / Early Iron Age); the date and the reading are disputed', '发掘者主张约公元前1200年（青铜时代晚期/铁器时代早期）；年代和释读都有争议'),
+    discovered=('Found December 2019; announced March 2022', '2019年12月发现；2022年3月公布'),
+    location=('Mount Ebal, near Nablus, West Bank', '西岸地区纳布卢斯附近的以巴路山（Mount Ebal）'),
+    title=('Mount Ebal Lead Object (disputed "curse tablet")', '以巴路山铅片（有争议的“咒诅泥板”）'),
+    summary=("A tiny folded lead sheet found in 2019 on Mount Ebal was announced in 2022 as carrying a curse in early Hebrew, which would be the oldest Hebrew writing. Most scholars who have examined the claim reject the reading and say the object bears no writing, so it is not evidence.",
+             '2019年在以巴路山发现的一小片折叠的铅片，于2022年被宣布刻有早期希伯来文的咒诅，若属实将是最古老的希伯来文字。大多数检验过这一说法的学者否定这种释读，认为这件东西上根本没有文字，所以它不能算作证据。'),
+    description=[
+        ("In March 2022 a team led by Scott Stripling (Associates for Biblical Research) announced a small folded lead sheet, about 2 cm × 2 cm, found in December 2019 during wet-sifting of excavation debris from Mount Ebal near Nablus. Using tomographic scans, Pieter van der Veen and Gershon Galil proposed that it carries a curse beginning 'cursed by the god YHW', dated to about 1200 BCE, which would make it the oldest known Hebrew inscription.",
+         '2022年3月，由斯科特·斯特里普林（《圣经研究会》）领导的团队宣布发现了一小片折叠的铅片，约2厘米×2厘米，是2019年12月在对纳布卢斯附近以巴路山的发掘土石进行湿筛时找到的。彼得·范德费恩（Pieter van der Veen）和格尔松·加利尔（Gershon Galil）借助断层扫描，提出上面刻有以“被神YHW咒诅”开头的诅咒，年代约为公元前1200年，这将使它成为已知最古老的希伯来文铭文。'),
+        ("The claim was publicised before peer review and has been strongly criticised. Three articles in the Israel Exploration Journal in late 2023 argued against it: Christopher Rollston and Aren Maeir found no writing at all, only random bumps and scratches that do not match the published drawings, and Amihai Mazar suggested the object is a fishing net sinker. Commentators have almost all rejected the proposed reading.",
+         '这一说法在经同行评审之前就已公开，并受到强烈批评。2023年底，《以色列考古学刊》上有三篇文章反驳：克里斯托弗·罗尔斯顿和阿伦·迈尔认为上面根本没有文字，只有杂乱的凸起和划痕，与已发表的摹绘并不吻合；阿米海·马扎尔则认为这件东西是渔网的坠子。评论者几乎都否定了所提出的释读。'),
+        ("Because the proposed reading and date are rejected by most specialists, this entry is included for completeness and classed as Circumstantial. It should not be cited as evidence for the covenant ceremony of Deuteronomy 27 or for early use of the divine name.",
+         '由于大多数专家否定了所提出的释读和年代，本条目只是为了完整而收入，并列为“间接”等级。它不应被引用为申命记27章立约仪式的证据，也不应被引用为神的名字很早就被使用的证据。'),
+    ],
+    correlation=(
+        [(5, 27, 13, 13, 'Deuteronomy 27:13', '申命记27:13')],
+        ("Deuteronomy 27 places the pronouncing of curses on Mount Ebal, and the proposal that the lead sheet is a curse tablet from the site was meant to connect it with that tradition. Because the reading is rejected by most scholars, the connection is not supported by the object.",
+         '申命记27章把宣布咒诅的仪式安排在以巴路山，而“这片铅片是出自该地的咒诅泥板”的提法，本意是要把它与这一传统联系起来。由于大多数学者否定了这种释读，这件东西并不能支持这种联系。')),
+    sources=[
+        'Wikipedia. "Mount Ebal lead object." https://en.wikipedia.org/wiki/Mount_Ebal_lead_object',
+        'Times of Israel. "New academic articles heap fresh doubt on Mount Ebal curse tablet interpretation." https://www.timesofisrael.com/new-academic-articles-heap-fresh-doubt-on-mount-ebal-curse-tablet-interpretation/',
+        'Critical responses by Christopher Rollston, Aren Maeir and Amihai Mazar, Israel Exploration Journal (2023).',
+    ],
+)
+
+# ============================================================================ 8. Samaria ostraca
+entry(
+    id='samaria_ostraca', category='Archaeology', icon='🏺', confidence='Strong',
+    books=['Amos'], ref='Amos 6:4-6',
+    timeline=('Second quarter of the 8th century BCE (reign of Jeroboam II)', '公元前8世纪第二个二十五年（耶罗波安二世时期）'),
+    discovered=('1910 (George Reisner, Harvard expedition)', '1910年（乔治·赖斯纳，哈佛考察队）'),
+    location=('Found at Samaria; now in the Istanbul Archaeology Museums', '出土于撒玛利亚；现藏伊斯坦布尔考古博物馆'),
+    title=('Samaria Ostraca', '撒玛利亚陶片文书'),
+    summary=("About a hundred inscribed potsherds from the royal acropolis of Samaria, 63 of them legible dockets, record shipments of wine and olive oil to the capital of the northern kingdom in the 8th century BCE. They give a rare look at Israel's administration and its mixture of Yahweh and Baal names.",
+             '撒玛利亚王家卫城出土了约一百片刻字陶片，其中63片可读，是公元前8世纪运往北国首都的酒和橄榄油的货单。它们让人难得一见以色列的行政管理，以及人名中耶和华名与巴力名并存的情形。'),
+    description=[
+        ("The ostraca were found in 1910 by George Reisner's Harvard expedition at Samaria, in a floor level of the royal palace area. They are short dockets written in ink on pottery in Paleo-Hebrew script by professional scribes, in a northern Hebrew dialect. The context and the script date them to the second quarter of the 8th century BCE, in the reign of Jeroboam II (about 786–746 BCE).",
+         '这些陶片是1910年由乔治·赖斯纳率领的哈佛考察队在撒玛利亚王宫区的一个地面层中发现的。它们是用墨水写在陶器上的简短货单，由专业书吏用古希伯来字体书写，语言是北方希伯来语方言。出土背景和字体把它们的年代定在公元前8世纪第二个二十五年，即耶罗波安二世（约公元前786—746年）时期。'),
+        ("The dockets record deliveries of aged wine and refined olive oil, giving the year of an unnamed king (most often years 9 and 10, generally taken as Jeroboam II), the place or clan it came from, and the person it was for. The places cluster within about 5–12 km of Samaria, in the territory of the clans of Manasseh named in the Bible (Abiezer, Helek, Shemida, Asriel, Hoglah, Noah).",
+         '这些货单记录了陈酒和精炼橄榄油的送达，写明某位未具名的王的年份（多为第9年和第10年，一般认为是耶罗波安二世）、来源的地点或宗族，以及收货的人。这些地点集中在撒玛利亚周围约5至12公里的范围内，也就是圣经所记玛拿西各宗族的领地（亚比以谢、希勒、示米大、亚斯列、何拉、挪阿）。'),
+        ("Personal names on the ostraca include names built on the divine name Yahweh, spelled with the ending -yw in the north, and names built on Baal. They show that both were in use in 8th-century Israel, which matches the prophets' complaints about Baal worship. The ostraca say nothing about any biblical person.",
+         '陶片上的人名既有以神的名字雅伟构成的（在北方拼作词尾 -yw），也有以巴力构成的。这表明公元前8世纪的以色列两者并用，与先知对敬拜巴力的责备相合。陶片没有提到任何圣经人物。'),
+    ],
+    correlation=(
+        [(30, 6, 4, 6, 'Amos 6:4-6', '阿摩司书6:4-6')],
+        ("Amos, who prophesied in the reign of Jeroboam II, condemns the leaders of Samaria for their luxury, including drinking wine by the bowlful and anointing themselves with the finest oils. The Samaria ostraca show wine and refined oil being delivered to the capital in that very period, so they document the economy that Amos describes, although they do not mention Amos or his words.",
+         '阿摩司在耶罗波安二世时期作先知，他谴责撒玛利亚的领袖奢侈无度，包括用大碗喝酒、用上等的油抹身。撒玛利亚陶片显示正是在那个时期有酒和精炼的油被送往首都，所以它们记录了阿摩司所描述的那种经济状况，尽管它们并没有提到阿摩司或他的话。')),
+    sources=[
+        'Reisner, George A., Clarence S. Fisher and David G. Lyon. Harvard Excavations at Samaria 1908–1910. Harvard University Press, 1924.',
+        'Wikipedia. "Samaria Ostraca." https://en.wikipedia.org/wiki/Samaria_Ostraca',
+        'Biblical Archaeology Society / Bible Odyssey. "The Samaria Ostraca." https://www.bibleodyssey.org/places/related-articles/the-samaria-ostraca/',
+    ],
+)
+
+# ============================================================================ 9. Egyptian execration texts naming Jerusalem
+entry(
+    id='execration_texts_jerusalem', category='History', icon='🏺', confidence='Strong',
+    books=['Genesis'], ref='Genesis 14:18',
+    timeline=('About 1850–1800 BCE (Egyptian Middle Kingdom)', '约公元前1850—1800年（埃及中王国时期）'),
+    discovered=('Berlin bowls published 1926 (Kurt Sethe); Brussels figurines 1940 (Georges Posener)', '柏林陶碗1926年发表（库尔特·塞特）；布鲁塞尔小像1940年发表（乔治·波塞内）'),
+    location=('Egyptian Museum, Berlin; Royal Museums of Art and History, Brussels', '柏林埃及博物馆；布鲁塞尔皇家艺术与历史博物馆'),
+    title=('Egyptian Execration Texts (earliest mention of Jerusalem)', '埃及咒诅文本（耶路撒冷的最早记载）'),
+    summary=("Egyptian curse texts written on bowls and figurines around 1850–1800 BCE list Canaanite cities and rulers, among them 'Rushalimum', which is Jerusalem. They are the earliest known mention of the city and show it was already a city-state with its own rulers long before David.",
+             '公元前1850至1800年前后写在陶碗和小像上的埃及咒诅文本，列出了迦南的城市及其统治者，其中有“鲁沙利穆”（Rushalimum），就是耶路撒冷。这是已知对这座城市的最早记载，表明早在大卫之前很久，它就已经是有自己统治者的城邦。'),
+    description=[
+        ("Egyptian priests wrote the names of cities, rulers and peoples that might rebel against Egypt on pottery bowls and clay figurines, then smashed them in a magical ritual meant to curse the named enemies; hence the name 'execration texts'. Three series survive from the Middle Kingdom: bowls from the fortress of Mirgissa in Nubia (about 1870 BCE), bowls now in Berlin (about 1850 BCE) and figurines from Saqqara (about 1800 BCE), with another set of figurines in Brussels.",
+         '埃及祭司把可能反叛埃及的城市、统治者和民族的名字写在陶碗和泥塑小像上，然后在一场咒术仪式中把它们打碎，以咒诅被点名的敌人，因此称为“咒诅文本”。中王国时期留下三组：努比亚米尔吉萨要塞的陶碗（约公元前1870年）、现藏柏林的陶碗（约公元前1850年）和萨卡拉的小像（约公元前1800年），布鲁塞尔还有另一批小像。'),
+        ("In these texts Jerusalem appears as Rushalimum, with the names of its rulers (read as Shas'an and Y'qar'am). This is the earliest known mention of Jerusalem, about eight hundred years before David captured the city. It shows that Jerusalem was already a place of political importance, and that its name is very old.",
+         '在这些文本中，耶路撒冷写作鲁沙利穆（Rushalimum），并写有其统治者的名字（读作 Shas\'an 和 Y\'qar\'am）。这是已知对耶路撒冷的最早记载，比大卫攻取该城早大约八百年。它表明耶路撒冷当时已是有政治分量的地方，而且它的名字非常古老。'),
+        ("The texts do not mention the Bible, Melchizedek or any biblical person. Genesis 14:18 speaks of Melchizedek, king of Salem, and Psalm 76:2 uses Salem as another name for Jerusalem, so the execration texts show that a city of this name and a line of local kings existed in the right region and period. The identification of Salem with Jerusalem rests on the Psalm, not on the texts.",
+         '这些文本没有提到圣经、麦基洗德或任何圣经人物。创世记14:18提到撒冷王麦基洗德，诗篇76:2又把撒冷用作耶路撒冷的别名，所以咒诅文本表明，在相应的地区和时代确有这个名字的城市和一系列本地王。把撒冷认定为耶路撒冷，依据的是诗篇，而不是这些文本。'),
+    ],
+    correlation=(
+        [(1, 14, 18, 18, 'Genesis 14:18', '创世记14:18'), (19, 76, 2, 2, 'Psalm 76:2', '诗篇76:2')],
+        ("Genesis 14 describes Salem as a city with its own king in Abraham's time. The execration texts show that Jerusalem was a city-state with rulers around 1850–1800 BCE, which is the general period in which Abraham is usually placed. They are not proof of the Genesis story, but they show that the setting it describes was historically possible.",
+         '创世记14章描述亚伯拉罕的时代有一座有自己王的撒冷城。咒诅文本表明，约公元前1850至1800年，也就是通常安放亚伯拉罕的大致时期，耶路撒冷是一个有统治者的城邦。它们不是创世记故事的证明，但表明这个故事所描述的背景在历史上是可能的。')),
+    sources=[
+        'Sethe, Kurt. Die Ächtung feindlicher Fürsten, Völker und Dinge auf altägyptischen Tongefäßscherben des Mittleren Reiches. Berlin, 1926.',
+        'Posener, Georges. Princes et pays d\'Asie et de Nubie: Textes hiératiques sur des figurines d\'envoûtement du Moyen Empire. Brussels, 1940.',
+        'Encyclopaedia Judaica, "Jerusalem: Early History / Execration Texts." https://www.jewishvirtuallibrary.org/jsource/judaica/ejud_0002_0011_0_10087.html',
+    ],
+)
+
+# ============================================================================ 10. Sergius Paulus inscriptions
+entry(
+    id='sergius_paulus_inscriptions', category='Archaeology', icon='🪧', confidence='Circumstantial',
+    books=['Acts'], ref='Acts 13:7',
+    timeline=('1st century CE (about 46–47 CE)', '公元1世纪（约公元46—47年）'),
+    discovered=('19th century (Soloi inscription, Cyprus; Tiber boundary stone, Rome, 1887)', '19世纪（塞浦路斯索罗伊铭文；1887年罗马台伯河界石）'),
+    location=('Soloi, Cyprus (inscription); Rome (boundary stone)', '塞浦路斯索罗伊（铭文）；罗马（界石）'),
+    title=('Sergius Paulus Inscriptions (Cyprus and Rome)', '士求·保罗铭文（塞浦路斯与罗马）'),
+    summary=("An inscription from Soloi in Cyprus mentions a proconsul Paulus, and a boundary stone at Rome records a Sergius Paulus among the curators of the Tiber in 47 CE. Acts 13:7 names Sergius Paulus as proconsul of Cyprus. The link is plausible but uncertain.",
+             '塞浦路斯索罗伊的一块铭文提到一位方伯保罗，罗马的一块界石则记载公元47年台伯河管理官中有一位士求·保罗。使徒行传13:7称士求·保罗是塞浦路斯的方伯。这种联系是可能的，但并不确定。'),
+    description=[
+        ("Acts 13:7 says that on Cyprus Paul and Barnabas met the proconsul Sergius Paulus, a man of intelligence who wanted to hear the word of God. Luke's title 'proconsul' fits Cyprus, which had been a senatorial province governed by proconsuls since 22 BCE.",
+         '使徒行传13:7记载，保罗和巴拿巴在塞浦路斯遇见方伯士求·保罗，他是个通达人，想要听神的道。路加用“方伯（总督）”这个称号是恰当的，因为塞浦路斯自公元前22年起是由方伯治理的元老院行省。'),
+        ("A Greek inscription found in the 19th century at Soloi on the north coast of Cyprus (by Luigi Palma di Cesnola) mentions a proconsul Paulus. It was first dated to the middle of the 1st century CE, but the epigrapher Terence Mitford thought it could be considerably later. A boundary stone of the emperor Claudius found at Rome in 1887 records the appointment of curators of the banks of the Tiber in 47 CE, and a Sergius Paulus is among them, which would fit a man who served on Cyprus and then returned to Rome.",
+         '19世纪（由路易吉·帕尔马·迪·切斯诺拉发现）在塞浦路斯北岸的索罗伊出土了一块希腊文铭文，提到一位方伯保罗。它最初被定在公元1世纪中叶，但铭文学家特伦斯·米特福德认为它可能晚得多。1887年在罗马发现的一块克劳狄皇帝时期的界石，记载了公元47年任命台伯河两岸管理官的事，其中有一位士求·保罗，这与一个先在塞浦路斯任职、后来回到罗马的人相符。'),
+        ("The identification with the Sergius Paulus of Acts is uncertain. The name Paulus was common, the Soloi inscription gives only 'Paulus', and one scholar calls the identification at best a conjecture. The evidence therefore shows that a Roman senator of this name was active at the right time, and that Luke used the right title, but it does not prove that he is the man in Acts.",
+         '把他与使徒行传中的士求·保罗等同起来并不确定。保罗（Paulus）是常见的名字，索罗伊铭文只写了“保罗”，有学者称这种认定至多只是推测。因此这些证据只表明，在相应的时间确有一位同名的罗马元老活跃着，路加用的称号也是对的，但并不能证明他就是使徒行传中的那个人。'),
+    ],
+    correlation=(
+        [(44, 13, 7, 7, 'Acts 13:7', '使徒行传13:7')],
+        ("Acts presents Sergius Paulus as a historical Roman official on Cyprus in the mid-40s CE. The inscriptions show a Paulus as proconsul of Cyprus and a Sergius Paulus holding office at Rome in 47 CE, which is consistent with Luke's account. It is classed as Circumstantial because the identification of the man in the inscriptions with the man in Acts is not secure.",
+         '使徒行传把士求·保罗描述为公元40年代中期塞浦路斯的一位罗马官员。铭文显示有一位保罗曾任塞浦路斯方伯，一位士求·保罗在公元47年于罗马任职，这与路加的记载相符。本条目列为“间接”等级，是因为铭文中的那个人与使徒行传中的那个人是否等同，尚无把握。')),
+    sources=[
+        'Wikipedia. "Sergius Paulus." https://en.wikipedia.org/wiki/Sergius_Paulus (summary of the Soloi and Tiber inscriptions and the debate).',
+        'Biblical Archaeology Report. "Sergius Paulus: An Archaeological Biography." 15 November 2019. https://biblearchaeologyreport.com/2019/11/15/sergius-paulus-an-archaeological-biography/',
+        'Mitford, Terence B. "Roman Cyprus." In Aufstieg und Niedergang der römischen Welt II.7.2 (1980) (on the Soloi inscription).',
+    ],
+)
+
+
 
 def build(e, words_schema):
     def tri(en, zh):

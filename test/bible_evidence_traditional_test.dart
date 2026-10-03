@@ -50,8 +50,8 @@ void main() {
   int count(String needle) => needle.allMatches(hant).length;
 
   test('the asset still has the shape the repair was measured against', () {
-    expect(evidences.length, 231);  // 225 -> 231 on 2026-10-04: six new entries (tools/add_evidence_entries.py)
-    expect(locales.length, 1617);  // 231 entries x 7 localised fields
+    expect(evidences.length, 235);  // 225 -> 231 -> 235 on 2026-10-04: ten new entries (tools/add_evidence_entries.py)
+    expect(locales.length, 1645);  // 235 entries x 7 localised fields
   });
 
   test('no zh-Hant field holds Simplified-only characters', () {
@@ -121,7 +121,7 @@ void main() {
     // Istanbul, wrecked by s2twp's 布爾→布林 rule, which exists for "Boolean".
     expect(count('伊斯坦布林'), 0,
         reason: 'Istanbul is spelled "Boolean" again');
-    expect(count('伊斯坦布爾'), 7);
+    expect(count('伊斯坦布爾'), 8);  // 7 -> 8 on 2026-10-04: samaria_ostraca (now in Istanbul)
 
     // 保存 (preserved) had been turned into 儲存 (stored) in five manuscript
     // descriptions. The nine remaining 儲存 are the real word — each one's
@@ -143,7 +143,7 @@ void main() {
     // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
     // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
     // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
-    expect(count('公元'), 562,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
+    expect(count('公元'), 583,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
          reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
