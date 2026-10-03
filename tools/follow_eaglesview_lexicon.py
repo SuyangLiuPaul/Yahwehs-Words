@@ -53,13 +53,13 @@ GREEK_EDITS = [
      '3) 在约翰福音中, 是指神的话; 基督耶稣与神联合的智慧和能力;\n'
      '   他在宇宙中创造和治理的职事; 是世上物质和道德生命力的起因;\n'
      '   是为了人类的救恩而穿上人类本性, 在耶稣的形体里的弥赛亚;\n'
-     '   是神性中的第二位格, 并从他的话和行为中显着地的表明出来.',
+     '   是神性中的第二位格, 并从他的话和行为中显著地的表明出来.',
      '3) 在约翰福音中, 是指神的话'),
     ('G3056', 'defZhTw',
      '3) 在約翰福音中, 是指神的話; 基督耶穌與神聯合的智慧和能力;\n'
      '   他在宇宙中創造和治理的職事; 是世上物質和道德生命力的起因;\n'
      '   是爲了人類的救恩而穿上人類本性, 在耶穌的形體裏的彌賽亞;\n'
-     '   是神性中的第二位格, 並從他的話和行爲中顯着地的表明出來.',
+     '   是神性中的第二位格, 並從他的話和行為中顯著地的表明出來.',
      '3) 在約翰福音中, 是指神的話'),
     ('G2424', 'glossZh', '耶稣, 上帝的儿子, 人类的救主, 上帝道成肉身', '耶稣, 上帝的儿子, 人类的救主'),
     ('G2424', 'glossZhTw', '耶穌, 上帝的兒子, 人類的救主, 上帝道成肉身', '耶穌, 上帝的兒子, 人類的救主'),
@@ -98,8 +98,8 @@ EN_FOOTNOTES = {
 ZH_FOOTNOTES = {  # (simplified, traditional)
     'G2316': ('※ EagleView 版本：通行的释义大纲在“2) 神性”之下另有“三位一体；2a) 上帝天父，三位一体的第一位；2b) 基督，三位一体的第二位；2c) 圣灵，三位一体的第三位”，EagleView 版本未列。',
               '※ EagleView 版本：通行的釋義大綱在「2) 神性」之下另有「三位一體；2a) 上帝天父，三位一體的第一位；2b) 基督，三位一體的第二位；2c) 聖靈，三位一體的第三位」，EagleView 版本未列。'),
-    'G3056': ('※ EagleView 版本：通行的释义大纲第 3 项另有“基督耶稣与神联合的智慧和能力……是神性中的第二位格，并从他的话和行为中显着地的表明出来”，EagleView 版本只作“在约翰福音中，是指神的话”。',
-              '※ EagleView 版本：通行的釋義大綱第 3 項另有「基督耶穌與神聯合的智慧和能力……是神性中的第二位格，並從他的話和行爲中顯着地的表明出來」，EagleView 版本只作「在約翰福音中，是指神的話」。'),
+    'G3056': ('※ EagleView 版本：通行的释义大纲第 3 项另有“基督耶稣与神联合的智慧和能力……是神性中的第二位格，并从他的话和行为中显著地的表明出来”，EagleView 版本只作“在约翰福音中，是指神的话”。',
+              '※ EagleView 版本：通行的釋義大綱第 3 項另有「基督耶穌與神聯合的智慧和能力……是神性中的第二位格，並從他的話和行為中顯著地的表明出來」，EagleView 版本只作「在約翰福音中，是指神的話」。'),
     'G2424': ('※ EagleView 版本：通行的释义大纲第 1 项作“耶稣, 上帝的儿子, 人类的救主, 上帝道成肉身”，EagleView 版本无“上帝道成肉身”。',
               '※ EagleView 版本：通行的釋義大綱第 1 項作「耶穌, 上帝的兒子, 人類的救主, 上帝道成肉身」，EagleView 版本無「上帝道成肉身」。'),
 }
@@ -162,26 +162,29 @@ def main():
     thayer_en = json.load(open(THAYER_EN, encoding='utf-8'))
     for sid, note in EN_FOOTNOTES.items():
         cur = thayer_en['entries'][sid]
-        if EN_NOTE_MARK in cur:
+        want = cur.split('\n\n' + EN_NOTE_MARK)[0].rstrip() + '\n\n' + note
+        if cur == want:
             print('already  en-note %s' % sid)
         else:
-            thayer_en['entries'][sid] = cur.rstrip() + '\n\n' + note
+            thayer_en['entries'][sid] = want
             print('applied  en-note %s' % sid)
     for sid, (simp, trad) in ZH_FOOTNOTES.items():
         for field, text in (('defZh', simp), ('defZhTw', trad)):
             cur = greek[sid][field]
-            if ZH_NOTE_MARK in cur:
+            body = cur.split('\n' + ZH_NOTE_MARK)[0].rstrip()
+            want = body + '\n' + text
+            if cur == want:
                 print('already  zh-note %s.%s' % (sid, field))
             else:
-                greek[sid][field] = cur.rstrip() + '\n' + text
+                greek[sid][field] = want
                 print('applied  zh-note %s.%s' % (sid, field))
-        if thayer is None:
-            pass
-        elif any(x.startswith(ZH_NOTE_MARK) for x in thayer[sid]['s']):
-            print('already  zh-note thayer %s' % sid)
-        else:
-            thayer[sid]['s'].append(simp)
-            print('applied  zh-note thayer %s' % sid)
+        if thayer is not None:
+            lst = [x for x in thayer[sid]['s'] if not x.startswith(ZH_NOTE_MARK)] + [simp]
+            if thayer[sid]['s'] == lst:
+                print('already  zh-note thayer %s' % sid)
+            else:
+                thayer[sid]['s'] = lst
+                print('applied  zh-note thayer %s' % sid)
     if bad:
         raise SystemExit('REFUSING TO WRITE: go and read the entry')
     if not write:
