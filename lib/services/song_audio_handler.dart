@@ -6,6 +6,7 @@ import 'car_audio_catalogue.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PlatformException;
 
 import 'package:yahwehs_words/models/song.dart';
 import 'package:yahwehs_words/models/song_queue.dart';
@@ -221,7 +222,29 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   Future<void> pauseSongForFocus() {
     _resumeAfterInterruption = false;
     _cancelStallWatchdog();
-    return _player.pause();
+    return _safePause();
+  }
+
+  /// Android's MediaPlayer throws `MEDIA_ERROR_UNKNOWN {what:-38}` when
+  /// pause() or start() lands on a player that already left the started
+  /// state (reported against /sermons/008 on 1.6.32). The audio is not
+  /// playing, which is what a pause asks for, so say nothing; a resume
+  /// reloads the track at the place it stopped.
+  Future<void> _safePause() async {
+    try {
+      await _player.pause();
+    } on PlatformException catch (e) {
+      debugPrint('[SongAudioHandler] pause failed: $e');
+    }
+  }
+
+  Future<void> _safeResume() async {
+    try {
+      await _player.resume();
+    } on PlatformException catch (e) {
+      debugPrint('[SongAudioHandler] resume failed, reloading: $e');
+      await _playCurrent(resumeAt: _position);
+    }
   }
 
   void useSongs() {
@@ -620,7 +643,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     if (_durationUrl != currentItem!.url) {
       await _playCurrent(resumeAt: _position);
     } else {
-      await _player.resume();
+      await _safeResume();
     }
   }
 
@@ -631,7 +654,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // A user pause is not a stall; the watchdog would otherwise fire
     // on a track paused within 20s of starting.
     _cancelStallWatchdog();
-    return _player.pause();
+    return _safePause();
   }
 
   @override
