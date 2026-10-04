@@ -444,20 +444,20 @@ List<InlineSpan> buildVerseContentSpans({
                 '${superscriptNumber(noteSink.length)}',
             style: markerStyle,
             tint: markerTint,
-            raise: settings.fontSize * 0.3,
+            raise: settings.fontSize * 0.04,
           );
           lastPart = part;
           continue;
         }
-        // 2026-10-04: 「top aligned」 — the marker is lifted to the top of
-        // the line (a WidgetSpan, so it can be shifted off the baseline;
+        // 2026-10-04: 「top aligned」 then 「middle align好看些 还有点gap」 — the
+        // marker is centred on the line, with no padding around it (a WidgetSpan, so it can be shifted off the baseline;
         // a TextSpan cannot). [NoteMarkerSpan] carries its own text for
         // the range collapse and for the tests.
         spans.add(NoteMarkerSpan(
           marker: superscriptNumber(noteSink.length),
           style: markerStyle,
           tint: markerTint,
-          raise: settings.fontSize * 0.3,
+          raise: settings.fontSize * 0.04,
         ));
         lastPart = part;
         continue;
@@ -556,8 +556,7 @@ class NoteMarkerSpan extends WidgetSpan {
     required Color? tint,
     required double raise,
   }) : super(
-          alignment: PlaceholderAlignment.aboveBaseline,
-          baseline: TextBaseline.alphabetic,
+          alignment: PlaceholderAlignment.middle,
           child: Transform.translate(
             offset: Offset(0, -raise),
             child: DecoratedBox(
@@ -566,7 +565,7 @@ class NoteMarkerSpan extends WidgetSpan {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1),
+                padding: EdgeInsets.zero,
                 child: Text(marker, style: style),
               ),
             ),
