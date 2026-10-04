@@ -438,14 +438,23 @@ List<InlineSpan> buildVerseContentSpans({
         }
         spans.add(TextSpan(
           text: superscriptNumber(noteSink.length),
+          // 2026-10-04: 「可以明显点吗 颜色 bold之类」 — the marker is bold, a
+          // little larger, and tinted, so it reads as a mark in the prose.
           style: TextStyle(
-            fontSize: settings.fontSize * 0.75,
+            fontSize: settings.fontSize * 0.85,
+            fontWeight: FontWeight.w800,
             fontFamily: settings.fontFamily,
             fontFamilyFallback: kCjkFontFallback,
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimaryContainer
                 : Theme.of(context).colorScheme.primary,
-            backgroundColor: spanBgColor,
+            backgroundColor: spanBgColor ??
+                (isSelected
+                    ? null
+                    : Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.12)),
           ),
         ));
         lastPart = part;

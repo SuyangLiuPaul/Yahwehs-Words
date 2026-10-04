@@ -212,7 +212,8 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
                 padding: EdgeInsets.only(right: fs * 0.45, bottom: fs * 0.12),
                 child: Text(
                   superscriptNumber(i + 1),
-                  style: style.copyWith(color: scheme.primary),
+                  style: style.copyWith(
+                      color: scheme.primary, fontWeight: FontWeight.w800),
                 ),
               ),
               Padding(
