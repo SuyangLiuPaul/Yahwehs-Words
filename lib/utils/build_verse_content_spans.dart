@@ -5,7 +5,7 @@ import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/constants/text_patterns.dart';
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/widgets/verse_notes_block.dart'
-    show superscriptNumber, isNoteMarkerText;
+    show superscriptNumber;
 import 'package:yahwehs_words/utils/font_catalog.dart' show kCjkFontFallback;
 
 /// Builds InlineSpan list for a single verse (number + text with annotations).
@@ -425,37 +425,39 @@ List<InlineSpan> buildVerseContentSpans({
         // at the end of a verse constantly. A run only happens where the
         // notes share a position, so the range loses nothing.
         final previous = spans.isEmpty ? null : spans.last;
-        if (previous is TextSpan &&
-            previous.text != null &&
-            isNoteMarkerText(previous.text!)) {
-          spans[spans.length - 1] = TextSpan(
-            text: '${_markerStart(previous.text!)}\u2060⁻\u2060'
+        final markerStyle = TextStyle(
+          fontSize: settings.fontSize * 0.85,
+          fontWeight: FontWeight.w800,
+          fontFamily: settings.fontFamily,
+          fontFamilyFallback: kCjkFontFallback,
+          color: isSelected
+              ? Theme.of(context).colorScheme.onPrimaryContainer
+              : Theme.of(context).colorScheme.primary,
+        );
+        final markerTint = spanBgColor ??
+            (isSelected
+                ? null
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.12));
+        if (previous is NoteMarkerSpan) {
+          spans[spans.length - 1] = NoteMarkerSpan(
+            marker: '${_markerStart(previous.marker)}\u2060⁻\u2060'
                 '${superscriptNumber(noteSink.length)}',
-            style: previous.style,
+            style: markerStyle,
+            tint: markerTint,
+            raise: settings.fontSize * 0.3,
           );
           lastPart = part;
           continue;
         }
-        spans.add(TextSpan(
-          text: superscriptNumber(noteSink.length),
-          // 2026-10-04: 「可以明显点吗 颜色 bold之类」 — the marker is bold, a
-          // little larger, and tinted, so it reads as a mark in the prose.
-          style: TextStyle(
-            fontSize: settings.fontSize * 0.85,
-            fontWeight: FontWeight.w800,
-            fontFamily: settings.fontFamily,
-            fontFamilyFallback: kCjkFontFallback,
-            color: isSelected
-                ? Theme.of(context).colorScheme.onPrimaryContainer
-                : Theme.of(context).colorScheme.primary,
-            backgroundColor: spanBgColor ??
-                (isSelected
-                    ? null
-                    : Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.12)),
-          ),
+        // 2026-10-04: 「top aligned」 — the marker is lifted to the top of
+        // the line (a WidgetSpan, so it can be shifted off the baseline;
+        // a TextSpan cannot). [NoteMarkerSpan] carries its own text for
+        // the range collapse and for the tests.
+        spans.add(NoteMarkerSpan(
+          marker: superscriptNumber(noteSink.length),
+          style: markerStyle,
+          tint: markerTint,
+          raise: settings.fontSize * 0.3,
         ));
         lastPart = part;
         continue;
@@ -543,3 +545,33 @@ List<InlineSpan> buildVerseContentSpans({
 
 /// The first number of a marker that may already be a range.
 String _markerStart(String text) => text.split('\u2060').first;
+
+/// A footnote marker lifted off the baseline. Its [marker] text is what the
+/// collapse-to-range logic and the tests read; `toPlainText` sees only a
+/// placeholder, which is correct for copy — notes are never copied.
+class NoteMarkerSpan extends WidgetSpan {
+  NoteMarkerSpan({
+    required this.marker,
+    required TextStyle style,
+    required Color? tint,
+    required double raise,
+  }) : super(
+          alignment: PlaceholderAlignment.aboveBaseline,
+          baseline: TextBaseline.alphabetic,
+          child: Transform.translate(
+            offset: Offset(0, -raise),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: tint,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                child: Text(marker, style: style),
+              ),
+            ),
+          ),
+        );
+
+  final String marker;
+}
