@@ -1,6 +1,10 @@
 import '../widgets/play_update_banner.dart';
 import 'package:yahwehs_words/constants/learning_visibility.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
+import 'package:yahwehs_words/pages/study_principles_page.dart';
+import 'package:yahwehs_words/pages/study_promises_page.dart';
+import 'package:yahwehs_words/pages/study_testaments_page.dart';
+import 'package:yahwehs_words/widgets/study_widgets.dart' show studyL;
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'package:flutter/material.dart';
@@ -982,6 +986,48 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () => pushPage(const PassionWheelPage(),
                       routeName: kPassionWheelPath)),
             ],
+            // 2026-10-05: the Bible-first study pages are no longer
+            // hidden (「两个app都上，不用hidden了」).
+            const SizedBox(height: 8),
+            _FeaturedCard(
+                icon: Icons.account_tree_outlined,
+                title: studyL(locale, 'Bible principles', '圣经原则', '聖經原則'),
+                subtitle: studyL(
+                    locale,
+                    'Principles from the Bible text · related sermons linked',
+                    '从圣经经文整理的原则 · 相关讲道可点开',
+                    '從聖經經文整理的原則 · 相關講道可點開'),
+                scheme: scheme,
+                settings: settings,
+                onTap: () => pushPage(const StudyPrinciplesPage(),
+                    routeName: kStudyPrinciplesPath)),
+            const SizedBox(height: 8),
+            _FeaturedCard(
+                icon: Icons.handshake_outlined,
+                title: studyL(locale, 'Promises of God', '神的应许', '神的應許'),
+                subtitle: studyL(
+                    locale,
+                    'Every promise the Bible makes · fulfilled, being fulfilled, or not yet',
+                    '圣经里的应许 · 已应验、正在应验、尚未应验',
+                    '聖經裡的應許 · 已應驗、正在應驗、尚未應驗'),
+                scheme: scheme,
+                settings: settings,
+                onTap: () => pushPage(const StudyPromisesPage(),
+                    routeName: kStudyPromisesPath)),
+            const SizedBox(height: 8),
+            _FeaturedCard(
+                icon: Icons.compare_arrows,
+                title: studyL(locale, 'New Testament and Old Testament',
+                    '新约与旧约的对应', '新約與舊約的對應'),
+                subtitle: studyL(
+                    locale,
+                    'Where the New Testament quotes the Old, side by side',
+                    '新约引用旧约之处 · 两边经文并列',
+                    '新約引用舊約之處 · 兩邊經文並列'),
+                scheme: scheme,
+                settings: settings,
+                onTap: () => pushPage(const StudyTestamentsPage(),
+                    routeName: kStudyTestamentsPath)),
             if (kShowNewLearningPages) ...[
               const SizedBox(height: 8),
               _FeaturedCard(

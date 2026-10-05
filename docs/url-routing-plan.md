@@ -165,9 +165,9 @@ accept the parameter that would make it so (documented per-row).
 | `ChronologyChartPage` | `/chronology` | none | — | yes — the same page as `/timeline` opened on its chronology-chart view; a separate class because a route here is keyed by page class (see its doc comment in `bible_timeline_page.dart`), and a Featured destination has to be addressable |
 | `PassionWheelPage` | `/passion-wheel` | none | — | yes — Gospel time study wheel |
 | `BiblePrinciplesPage` | `/bible-principles` | none | — | yes — source-linked sermon principles |
-| `StudyPrinciplesPage` | `/study/principles` | none | — | yes — hidden research page (URL only, no link anywhere): principles of the Bible, Bible first |
-| `StudyPromisesPage` | `/study/promises` | none | — | yes — hidden research page (URL only, no link anywhere): promises of God, fulfilled or not, Bible first |
-| `StudyTestamentsPage` | `/study/testaments` | none | — | yes — hidden research page (URL only, no link anywhere): New Testament quotations of, allusions to and types from the Old Testament |
+| `StudyPrinciplesPage` | `/study/principles` | none | — | yes — linked from Home: principles of the Bible, Bible first |
+| `StudyPromisesPage` | `/study/promises` | none | — | yes — linked from Home: promises of God, fulfilled or not, Bible first |
+| `StudyTestamentsPage` | `/study/testaments` | none | — | yes — linked from Home: New Testament quotations of, allusions to and types from the Old Testament |
 | `WorldHistoryWheelPage` | `/world-history-wheel` | none | — | yes — namespaced Sword world-history data |
 | `MisconceptionsPage` | `/misconceptions` | none | — | yes for the list; **individual entries are not a separate page today** (§2) — out of scope until/unless a `MisconceptionDetailPage` is split out |
 | `FeedbackPage` | `/feedback` | none | — | yes |

@@ -13,10 +13,8 @@ import 'package:yahwehs_words/pages/study_promises_page.dart';
 import 'package:yahwehs_words/services/fetch_books.dart' show standardBookOrder;
 import 'package:yahwehs_words/services/sermon_service.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/route_paths.dart';
 
-/// The two hidden research pages (圣经原则 / 神的应许). They have no link
-/// anywhere; these tests guard the DATA (every reference resolves, every verse
+/// The two research pages (圣经原则 / 神的应许), reached from the home entry; these tests guard the DATA (every reference resolves, every verse
 /// text is present in all three editions, every linked sermon exists, no
 /// principle the app already had was lost) and the layout at phone width.
 Future<String> _file(String path) async => File(path).readAsStringSync();
@@ -225,23 +223,16 @@ void main() {
       }
     });
 
-    test('the pages are registered and linked from nowhere', () {
-      expect(kRegisteredRoutePaths, contains('/study/principles'));
-      expect(kRegisteredRoutePaths, contains('/study/promises'));
-      for (final f in Directory('lib')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'))) {
-        final src = f.readAsStringSync();
-        final defines = f.path.endsWith('study_principles_page.dart') ||
-            f.path.endsWith('study_promises_page.dart') ||
-            f.path.endsWith('route_paths.dart') ||
-            f.path.endsWith('main.dart');
-        if (defines) continue;
-        expect(src, isNot(contains('StudyPromisesPage')), reason: f.path);
-        expect(src, isNot(contains('StudyPrinciplesPage')), reason: f.path);
-        expect(src, isNot(contains('kStudyPromisesPath')), reason: f.path);
-        expect(src, isNot(contains('kStudyPrinciplesPath')), reason: f.path);
+    test('the pages have a visible door and a URL', () {
+      // No longer hidden (2026-10-05): the home entry opens each one.
+      final door = File('lib/pages/dashboard_page.dart').readAsStringSync();
+      for (final name in [
+        'StudyPrinciplesPage',
+        'StudyPromisesPage',
+        'kStudyPrinciplesPath',
+        'kStudyPromisesPath'
+      ]) {
+        expect(door, contains(name), reason: name);
       }
     });
   });

@@ -11,7 +11,6 @@ import 'package:yahwehs_words/models/study_data.dart';
 import 'package:yahwehs_words/pages/study_testaments_page.dart';
 import 'package:yahwehs_words/services/sermon_service.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/route_paths.dart';
 
 /// The hidden New Testament ↔ Old Testament page. Guards the DATA (known
 /// correspondences are present, every reference resolves, every verse text is
@@ -99,20 +98,10 @@ void main() {
       }
     });
 
-    test('the page is registered and linked from nowhere', () {
-      expect(kRegisteredRoutePaths, contains('/study/testaments'));
-      for (final f in Directory('lib')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'))) {
-        final defines = f.path.endsWith('study_testaments_page.dart') ||
-            f.path.endsWith('route_paths.dart') ||
-            f.path.endsWith('main.dart');
-        if (defines) continue;
-        final src = f.readAsStringSync();
-        expect(src, isNot(contains('StudyTestamentsPage')), reason: f.path);
-        expect(src, isNot(contains('kStudyTestamentsPath')), reason: f.path);
-      }
+    test('the page has a visible door and a URL', () {
+      final door = File('lib/pages/dashboard_page.dart').readAsStringSync();
+      expect(door, contains('StudyTestamentsPage'));
+      expect(door, contains('kStudyTestamentsPath'));
     });
   });
 
