@@ -28,6 +28,8 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
   String _query = '';
   String? _status; // null = all
   String? _cond;
+  String? _book;
+  int? _chapter;
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
     bool keep(StudyPromise p) =>
         (_status == null || p.status == _status) &&
         (_cond == null || p.cond == _cond) &&
+        studyInPassage(p.chapters, _book, _chapter) &&
         p.matches(_query, locale);
     final shown = d.promises.where(keep).toList();
     return ListView(
@@ -124,6 +127,16 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
                       '搜索应许或经文', '搜尋應許或經文'),
                   border: const OutlineInputBorder()),
               onChanged: (v) => setState(() => _query = v)),
+          const SizedBox(height: 10),
+          StudyPassageFilter(
+              available: {for (final p in d.promises) ...p.chapters},
+              book: _book,
+              chapter: _chapter,
+              locale: locale,
+              onChanged: (b, c) => setState(() {
+                    _book = b;
+                    _chapter = c;
+                  })),
           const SizedBox(height: 10),
           Wrap(spacing: 8, runSpacing: 4, children: [
             for (final c in ['unconditional', 'conditional', 'mixed'])

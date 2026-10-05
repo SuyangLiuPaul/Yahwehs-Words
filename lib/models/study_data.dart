@@ -75,6 +75,23 @@ class StudyLabel {
       StudyText.from(j['label']), StudyText.from(j['note'] ?? const {}));
 }
 
+/// "Isaiah 55:7-9" -> (book: "Isaiah", chapter: 55). Null when it does not parse.
+({String book, int chapter})? studyParseRef(String ref) {
+  final m = RegExp(r'^(.+?)\s+(\d+):').firstMatch(ref.trim());
+  if (m == null) return null;
+  return (book: m.group(1)!, chapter: int.parse(m.group(2)!));
+}
+
+/// Every (book, chapter) a list of references touches.
+Set<(String, int)> studyChaptersOf(Iterable<String> refs) {
+  final out = <(String, int)>{};
+  for (final r in refs) {
+    final p = studyParseRef(r);
+    if (p != null) out.add((p.book, p.chapter));
+  }
+  return out;
+}
+
 List<StudySermon> _sermons(Object? j) => [
       for (final s in (j as List))
         StudySermon.fromJson(s as Map<String, dynamic>)
@@ -128,6 +145,10 @@ class StudyPromise {
         sermons: _sermons(j['sermons']),
       );
 
+  /// Books and chapters this promise cites (the promise itself and where the
+  /// Bible reports its fulfilment): used by the book / chapter filter.
+  Set<(String, int)> get chapters => studyChaptersOf([...refs, ...fulfilRefs]);
+
   bool matches(String q, String locale) =>
       title.matches(q, locale) ||
       fulfil.matches(q, locale) ||
@@ -170,6 +191,10 @@ class StudyPrinciple {
         sermons: _sermons(j['sermons']),
         sources: _sources(j['sources']),
       );
+
+  /// Books and chapters this principle cites: used by the book / chapter filter.
+  Set<(String, int)> get chapters =>
+      studyChaptersOf([...verses, ...verseBlocks.map((v) => v.ref)]);
 
   bool matches(String q, String locale) =>
       title.matches(q, locale) ||

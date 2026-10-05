@@ -3,10 +3,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yahwehs_words/models/sermon.dart';
 import 'package:yahwehs_words/models/study_data.dart';
 import 'package:yahwehs_words/pages/sermon_detail_page.dart';
+import 'package:yahwehs_words/services/fetch_books.dart' show standardBookOrder;
 import 'package:yahwehs_words/services/sermon_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/passage_localizer.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
+import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
 import 'package:yahwehs_words/widgets/verse_popup_sheet.dart';
 
 String studyL(String locale, String en, String hs, String ht) =>
@@ -325,4 +327,88 @@ class StudyHeader extends StatelessWidget {
       ]),
     );
   }
+}
+
+/// Book / chapter filter shared by both pages. [available] is every
+/// (book, chapter) cited by the entries; the chapter menu appears once a book
+/// is chosen and lists only the chapters that have an entry.
+class StudyPassageFilter extends StatelessWidget {
+  final Set<(String, int)> available;
+  final String? book;
+  final int? chapter;
+  final String locale;
+  final void Function(String? book, int? chapter) onChanged;
+  const StudyPassageFilter({
+    super.key,
+    required this.available,
+    required this.book,
+    required this.chapter,
+    required this.locale,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final books = [
+      for (final b in standardBookOrder)
+        if (available.any((e) => e.$1 == b)) b
+    ];
+    final chapters = book == null
+        ? <int>[]
+        : ([for (final e in available) if (e.$1 == book) e.$2]..sort());
+    return Wrap(spacing: 10, runSpacing: 8, children: [
+      SizedBox(
+        width: 190,
+        child: DropdownButtonFormField<String?>(
+          key: const ValueKey('study.book'),
+          isExpanded: true,
+          initialValue: book,
+          decoration: InputDecoration(
+              labelText: studyL(locale, 'Book', '按经卷', '按經卷'),
+              isDense: true,
+              border: const OutlineInputBorder()),
+          items: [
+            DropdownMenuItem<String?>(
+                value: null,
+                child: Text(studyL(locale, 'All books', '全部经卷', '全部經卷'))),
+            for (final b in books)
+              DropdownMenuItem<String?>(
+                  value: b,
+                  child: Text(localeAwareBookName(b, locale),
+                      overflow: TextOverflow.ellipsis)),
+          ],
+          onChanged: (v) => onChanged(v, null),
+        ),
+      ),
+      if (book != null)
+        SizedBox(
+          width: 150,
+          child: DropdownButtonFormField<int?>(
+            key: const ValueKey('study.chapter'),
+            isExpanded: true,
+            initialValue: chapter,
+            decoration: InputDecoration(
+                labelText: studyL(locale, 'Chapter', '按章', '按章'),
+                isDense: true,
+                border: const OutlineInputBorder()),
+            items: [
+              DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text(studyL(locale, 'All chapters', '全部章', '全部章'))),
+              for (final c in chapters)
+                DropdownMenuItem<int?>(
+                    value: c,
+                    child: Text(studyL(locale, 'Chapter $c', '第 $c 章', '第 $c 章'))),
+            ],
+            onChanged: (v) => onChanged(book, v),
+          ),
+        ),
+    ]);
+  }
+}
+
+/// True when [chapters] has an entry in [book] (and in [chapter], if set).
+bool studyInPassage(Set<(String, int)> chapters, String? book, int? chapter) {
+  if (book == null) return true;
+  return chapters.any((e) => e.$1 == book && (chapter == null || e.$2 == chapter));
 }

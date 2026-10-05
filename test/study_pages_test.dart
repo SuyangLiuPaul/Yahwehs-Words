@@ -10,6 +10,7 @@ import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/study_data.dart';
 import 'package:yahwehs_words/pages/study_principles_page.dart';
 import 'package:yahwehs_words/pages/study_promises_page.dart';
+import 'package:yahwehs_words/services/fetch_books.dart' show standardBookOrder;
 import 'package:yahwehs_words/services/sermon_service.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/route_paths.dart';
@@ -48,10 +49,10 @@ void main() {
       sermonIds = {for (final s in idx) (s as Map)['id'] as String};
     });
 
-    test('sizes: 100+ principles in 9 groups, 100+ promises in 10 groups', () {
-      expect(principles.principles.length, greaterThanOrEqualTo(100));
-      expect(principles.categories, hasLength(9));
-      expect(promises.promises.length, greaterThanOrEqualTo(100));
+    test('sizes: 190+ principles in 12 groups, 220+ promises in 10 groups', () {
+      expect(principles.principles.length, greaterThanOrEqualTo(190));
+      expect(principles.categories, hasLength(12));
+      expect(promises.promises.length, greaterThanOrEqualTo(220));
       expect(promises.groups, hasLength(10));
       final ids = principles.principles.map((p) => p.id).toList();
       expect(ids.toSet().length, ids.length, reason: 'duplicate principle id');
@@ -101,6 +102,52 @@ void main() {
       }
       expect(blocks, greaterThan(300));
       expect(differs, greaterThan(blocks * 0.9));
+    });
+
+    test('every verse of the app Bible that uses the word 应许 is covered', () {
+      // Verses where the word is a HUMAN promise (not God's) are listed on
+      // purpose; everything else must be cited by some promise entry.
+      const human = {
+        '005023023', // Deut 23:23 a vow
+        '011001024', // 1 Kgs 1:24 Adonijah
+        '015010019', // Ezra 10:19
+        '016005012', // Neh 5:12
+        '016005013', // Neh 5:13
+        '017004007', // Esth 4:7 Haman
+        '040014007', // Matt 14:7 Herod
+        '041014011', // Mark 14:11 Judas' pay
+        '047009005', // 2 Cor 9:5 the collection
+        '061002019', // 2 Pet 2:19 false teachers
+      };
+      final covered = <String>{};
+      for (final p in promises.promises) {
+        for (final r in [...p.refs, ...p.fulfilRefs]) {
+          final m = RegExp(r'^(.+?)\s+(\d+):(\d+)(?:-(\d+))?$').firstMatch(r);
+          if (m == null) continue;
+          final b = standardBookOrder.indexOf(m.group(1)!) + 1;
+          final ch = int.parse(m.group(2)!);
+          final a = int.parse(m.group(3)!);
+          final z = int.parse(m.group(4) ?? m.group(3)!);
+          for (var v = a; v <= z; v++) {
+            covered.add(
+                '${b.toString().padLeft(3, '0')}${ch.toString().padLeft(3, '0')}${v.toString().padLeft(3, '0')}');
+          }
+        }
+      }
+      final bible = jsonDecode(File('assets/cuvs-yhwh.json').readAsStringSync())
+          as List;
+      var withWord = 0;
+      final missing = <String>[];
+      for (final v in bible) {
+        final text = ((v as Map)['text'] as String)
+            .replaceAll(RegExp(r'<note:[^>]*>'), '');
+        if (!text.contains('应许')) continue;
+        withWord++;
+        final id = v['id'] as String;
+        if (!covered.contains(id) && !human.contains(id)) missing.add(id);
+      }
+      expect(withWord, greaterThan(190));
+      expect(missing, isEmpty);
     });
 
     test('every linked sermon exists', () {
@@ -270,6 +317,43 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('study.search')), '洪水');
     await tester.pump();
     expect(find.byKey(const ValueKey('promise.noah-flood')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('promises: filter by book and chapter', (tester) async {
+    final d = await StudyData.loadPromises(loader: _file);
+    final total = d.promises.length;
+    final inIsaiah =
+        d.promises.where((p) => p.chapters.any((e) => e.$1 == 'Isaiah')).length;
+    expect(inIsaiah, greaterThan(5));
+    expect(inIsaiah, lessThan(total));
+    await mount(tester, const StudyPromisesPage(loader: _file));
+    // The menu is long and lazily built; drive the dropdown through its callback.
+    tester
+        .widget<DropdownButtonFormField<String?>>(
+            find.byKey(const ValueKey('study.book')))
+        .onChanged!('Isaiah');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('显示 $inIsaiah / $total'), findsOneWidget);
+    // chapter menu is now offered
+    expect(find.byKey(const ValueKey('study.chapter')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('principles: filter by book', (tester) async {
+    final d = await StudyData.loadPrinciples(loader: _file);
+    final total = d.principles.length;
+    final inRomans =
+        d.principles.where((p) => p.chapters.any((e) => e.$1 == 'Romans')).length;
+    expect(inRomans, greaterThan(5));
+    await mount(tester, const StudyPrinciplesPage(loader: _file));
+    // The menu is long and lazily built; drive the dropdown through its callback.
+    tester
+        .widget<DropdownButtonFormField<String?>>(
+            find.byKey(const ValueKey('study.book')))
+        .onChanged!('Romans');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('显示 $inRomans / $total'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

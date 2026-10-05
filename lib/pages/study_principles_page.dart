@@ -26,6 +26,8 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
   late Future<StudyPrinciples> _future;
   String _query = '';
   String? _cat; // null = all
+  String? _book;
+  int? _chapter;
 
   @override
   void initState() {
@@ -58,7 +60,9 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
           final d = snap.data!;
           final shown = d.principles
               .where((p) =>
-                  (_cat == null || p.cat == _cat) && p.matches(_query, locale))
+                  (_cat == null || p.cat == _cat) &&
+                  studyInPassage(p.chapters, _book, _chapter) &&
+                  p.matches(_query, locale))
               .toList();
           final counts = <String, int>{};
           for (final p in d.principles) {
@@ -88,6 +92,16 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
                             '搜尋原則、經文或講道編號'),
                         border: const OutlineInputBorder()),
                     onChanged: (v) => setState(() => _query = v)),
+                const SizedBox(height: 10),
+                StudyPassageFilter(
+                    available: {for (final p in d.principles) ...p.chapters},
+                    book: _book,
+                    chapter: _chapter,
+                    locale: locale,
+                    onChanged: (b, c) => setState(() {
+                          _book = b;
+                          _chapter = c;
+                        })),
                 const SizedBox(height: 10),
                 Wrap(spacing: 8, runSpacing: 4, children: [
                   for (final (id, name) in d.categories)
