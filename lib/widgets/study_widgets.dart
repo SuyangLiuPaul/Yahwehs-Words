@@ -46,6 +46,23 @@ Color studyVerdictColor(String verdict, Brightness b) {
 String studyVerdictGlyph(String verdict) =>
     verdict == 'agree' ? '✔' : (verdict == 'qualify' ? '◐' : '⇄');
 
+/// Status / verdict keys (✔ ∞ ◐ ✘ ⇄) are drawn as icons: the web build ships
+/// no font for those code points and shows empty boxes.
+IconData studyGlyphIcon(String g) {
+  switch (g) {
+    case '✔':
+      return Icons.check_circle_rounded;
+    case '∞':
+      return Icons.all_inclusive_rounded;
+    case '◐':
+      return Icons.contrast_rounded;
+    case '⇄':
+      return Icons.swap_horiz_rounded;
+    default:
+      return Icons.hourglass_empty_rounded;
+  }
+}
+
 /// A small rounded label with a tinted background.
 class StudyBadge extends StatelessWidget {
   final String text;
@@ -64,9 +81,7 @@ class StudyBadge extends StatelessWidget {
           border: Border.all(color: color.withValues(alpha: 0.45))),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (glyph != null) ...[
-          Text(glyph!,
-              style: TextStyle(
-                  color: color, fontSize: 13, fontWeight: FontWeight.w800)),
+          Icon(studyGlyphIcon(glyph!), size: 15, color: color),
           const SizedBox(width: 5),
         ],
         Flexible(

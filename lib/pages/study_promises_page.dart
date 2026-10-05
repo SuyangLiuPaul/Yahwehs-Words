@@ -45,7 +45,7 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
           leading: const LocalizedBackButton(),
           actions: const [LanguageSwitcherButton(alwaysVisible: true)],
           title: Text(studyL(locale, 'Promises of God', '神的应许', '神的應許')),
-          bottom: TabBar(tabs: [
+          bottom: TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
             Tab(text: studyL(locale, 'Promises', '应许目录', '應許目錄')),
             Tab(text: studyL(locale, 'Sermons vs Bible', '讲道对照', '講道對照')),
             Tab(text: studyL(locale, 'About', '说明', '說明')),
