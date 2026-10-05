@@ -395,9 +395,9 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(_l(
                         locale,
-                        'Source: owner-supplied 福音电台 diagram (fydt.org). Modern times are approximate; the original image is attached above.',
-                        '来源：你提供的福音电台参考图（fydt.org）。现代钟点为近似或估计，原图附件见上方。',
-                        '來源：你提供的福音電台參考圖（fydt.org）。現代鐘點為近似或估計，原圖附件見上方。'))),
+                        'Source: reference diagram by 福音电台 (fydt.org). Modern times are approximate; the original image is attached above.',
+                        '来源：福音电台（fydt.org）参考图。现代钟点为近似或估计，原图附件见上方。',
+                        '來源：福音電台（fydt.org）參考圖。現代鐘點為近似或估計，原圖附件見上方。'))),
             ])));
   }
 

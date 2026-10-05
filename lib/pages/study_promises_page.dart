@@ -228,9 +228,9 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
               '每条应许的状态，首先依据圣经自己的记载判断；圣经内部同时有“已应验”和“还有未得”的说法时，条目会如实写明。',
               '每條應許的狀態，首先依據聖經自己的記載判斷；聖經內部同時有“已應驗”和“還有未得”的說法時，條目會如實寫明。'),
           bullet(
-              'History notes name the source I opened (below). History can say whether an event happened; it cannot decide theology. Where traditions read a passage differently, the page says so and does not pick a side.',
-              '“与现实历史的关系”只列我打开读过的来源（见下）。历史能说明事件有没有发生，不能代替神学判断；传统之间读法不同的地方，本页注明，不替任何一方裁决。',
-              '“與現實歷史的關係”只列我打開讀過的來源（見下）。歷史能說明事件有沒有發生，不能代替神學判斷；傳統之間讀法不同的地方，本頁註明，不替任何一方裁決。'),
+              'History notes name their sources (below). History can say whether an event happened; it cannot decide theology. Where traditions read a passage differently, the page says so and does not pick a side.',
+              '“与现实历史的关系”列出所依据的来源（见下）。历史能说明事件有没有发生，不能代替神学判断；传统之间读法不同的地方，本页注明，不替任何一方裁决。',
+              '“與現實歷史的關係”列出所依據的來源（見下）。歷史能說明事件有沒有發生，不能代替神學判斷；傳統之間讀法不同的地方，本頁註明，不替任何一方裁決。'),
           bullet(
               'Related sermons are links only. They are not the basis of any entry.',
               '相关讲道只是链接，不是任何一条的依据。',
@@ -240,7 +240,7 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
               '说明文字以中文写成；英文界面只有标题和经文是英文。',
               '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
           StudyLabel2(
-              studyL(locale, 'Sources opened', '外部资料（我实际打开的）', '外部資料（我實際打開的）')),
+              studyL(locale, 'Sources', '外部资料', '外部資料')),
           for (final s in _allSources(d)) StudySourceLink(source: s, locale: locale),
         ]);
   }

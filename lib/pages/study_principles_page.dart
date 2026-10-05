@@ -184,16 +184,16 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
             '条目先从圣经整理，再对应到讲这些原则的讲道；讲道在这一页只是链接，不是依据。',
             '條目先從聖經整理，再對應到講這些原則的講道；講道在這一頁只是連結，不是依據。'),
         bullet(
-            'Where Christian traditions read a passage differently, the page says so and does not pick a side. The sources for those comparisons are listed below; each was opened and read.',
-            '凡基督教传统对经文有不同读法的地方，本页都会注明，不替任何一方裁决；这些比较所依据的资料列在下面，都是我实际打开读过的。',
-            '凡基督教傳統對經文有不同讀法的地方，本頁都會註明，不替任何一方裁決；這些比較所依據的資料列在下面，都是我實際打開讀過的。'),
+            'Where Christian traditions read a passage differently, the page says so and does not pick a side. The sources for those comparisons are listed below.',
+            '凡基督教传统对经文有不同读法的地方，本页都会注明，不替任何一方裁决；这些比较所依据的资料列在下面。',
+            '凡基督教傳統對經文有不同讀法的地方，本頁都會註明，不替任何一方裁決；這些比較所依據的資料列在下面。'),
         bullet(
             'The explanations are written in Chinese; in English you will see English titles and the KJV text.',
             '说明文字以中文写成；英文界面只有标题和经文是英文。',
             '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
         if (sources.isNotEmpty) ...[
           StudyLabel2(
-              studyL(locale, 'Sources opened', '外部资料（我实际打开的）', '外部資料（我實際打開的）')),
+              studyL(locale, 'Sources', '外部资料', '外部資料')),
           for (final s in sources) StudySourceLink(source: s, locale: locale),
         ],
       ]),
