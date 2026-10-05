@@ -1,0 +1,2683 @@
+{
+ "_meta": {
+  "generated": "2026-10-05",
+  "method": "Every Bible reference resolves in the app’s own text; every sermon quote was verified verbatim against the zh-CN sermon text; history notes name an opened source. Traditional-Chinese strings are converted from the Simplified ones with OpenCC (s2tw).",
+  "note": "Research: Pastor Eric H. H. Chang’s sermons compared with the Bible. See docs/讲道与圣经对照研究-圣经原则与神的应许-2026-10-05.docx"
+ },
+ "status": {
+  "✔": {
+   "label": {
+    "zh-Hans": "已应验",
+    "zh-Hant": "已應驗",
+    "en": "Fulfilled"
+   },
+   "note": {
+    "zh-Hans": "圣经内或历史上有明确的应验记载",
+    "zh-Hant": "聖經內或歷史上有明確的應驗記載"
+   }
+  },
+  "∞": {
+   "label": {
+    "zh-Hans": "持续应验中",
+    "zh-Hant": "持續應驗中",
+    "en": "Being fulfilled"
+   },
+   "note": {
+    "zh-Hans": "已经开始并持续到今天，个人是否经历取决于条件",
+    "zh-Hant": "已經開始並持續到今天，個人是否經歷取決於條件"
+   }
+  },
+  "◐": {
+   "label": {
+    "zh-Hans": "部分应验 / 解释有分歧",
+    "zh-Hant": "部分應驗 / 解釋有分歧",
+    "en": "Partly fulfilled / interpretations differ"
+   },
+   "note": {
+    "zh-Hans": "一部分已经发生，一部分未完成，或解经传统意见不同",
+    "zh-Hant": "一部分已經發生，一部分未完成，或解經傳統意見不同"
+   }
+  },
+  "✘": {
+   "label": {
+    "zh-Hans": "尚未应验",
+    "zh-Hant": "尚未應驗",
+    "en": "Not yet fulfilled"
+   },
+   "note": {
+    "zh-Hans": "按多数解释，仍在将来",
+    "zh-Hant": "按多數解釋，仍在將來"
+   }
+  }
+ },
+ "groups": [
+  {
+   "id": "G1",
+   "name": {
+    "zh-Hans": "一、创造与挪亚：对全人类的应许",
+    "zh-Hant": "一、創造與挪亞：對全人類的應許",
+    "en": "1. Creation and Noah: promises to all humanity"
+   }
+  },
+  {
+   "id": "G2",
+   "name": {
+    "zh-Hans": "二、亚伯拉罕之约",
+    "zh-Hant": "二、亞伯拉罕之約",
+    "en": "2. The Abrahamic covenant"
+   }
+  },
+  {
+   "id": "G3",
+   "name": {
+    "zh-Hans": "三、摩西之约：有条件的祝福与咒诅",
+    "zh-Hant": "三、摩西之約：有條件的祝福與咒詛",
+    "en": "3. The Mosaic covenant: conditional blessing and curse"
+   }
+  },
+  {
+   "id": "G4",
+   "name": {
+    "zh-Hans": "四、大卫之约",
+    "zh-Hant": "四、大衛之約",
+    "en": "4. The Davidic covenant"
+   }
+  },
+  {
+   "id": "G5",
+   "name": {
+    "zh-Hans": "五、弥赛亚的应许：旧约说，新约说“应验了”",
+    "zh-Hant": "五、彌賽亞的應許：舊約說，新約說“應驗了”",
+    "en": "5. Messianic promises: the Old Testament says, the New says \"fulfilled\""
+   }
+  },
+  {
+   "id": "G6",
+   "name": {
+    "zh-Hans": "六、新约与圣灵",
+    "zh-Hant": "六、新約與聖靈",
+    "en": "6. The new covenant and the Spirit"
+   }
+  },
+  {
+   "id": "G7",
+   "name": {
+    "zh-Hans": "七、以色列与列国的将来",
+    "zh-Hant": "七、以色列與列國的將來",
+    "en": "7. Israel and the nations in the future"
+   }
+  },
+  {
+   "id": "G8",
+   "name": {
+    "zh-Hans": "八、对信徒个人的应许",
+    "zh-Hant": "八、對信徒個人的應許",
+    "en": "8. Promises to individual believers"
+   }
+  },
+  {
+   "id": "G9",
+   "name": {
+    "zh-Hans": "九、末后的应许",
+    "zh-Hant": "九、末後的應許",
+    "en": "9. Promises about the end"
+   }
+  },
+  {
+   "id": "G10",
+   "name": {
+    "zh-Hans": "十、容易被误用的“应许”：对象与语境",
+    "zh-Hant": "十、容易被誤用的“應許”：對象與語境",
+    "en": "10. Often-misused \"promises\": audience and context"
+   }
+  }
+ ],
+ "promises": [
+  {
+   "id": "noah-flood",
+   "group": "G1",
+   "title": {
+    "zh-Hans": "不再有洪水毁灭全地",
+    "zh-Hant": "不再有洪水毀滅全地",
+    "en": "No more flood over all the earth"
+   },
+   "refs": [
+    "Genesis 9:11",
+    "Genesis 9:15"
+   ],
+   "who": {
+    "zh-Hans": "挪亚与一切有血肉的活物",
+    "zh-Hant": "挪亞與一切有血肉的活物"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "经文没有附带任何条件；神“记念”自己所立的约（9:15）。",
+    "zh-Hant": "經文沒有附帶任何條件；神“記念”自己所立的約（9:15）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "至今圣经没有再记载全地性的洪水；以赛亚书54:9-10 把这个约当作“神的慈爱必不离开”的比方。",
+    "zh-Hant": "至今聖經沒有再記載全地性的洪水；以賽亞書54:9-10 把這個約當作“神的慈愛必不離開”的比方。"
+   },
+   "fulfilRefs": [
+    "Isaiah 54:9-10"
+   ],
+   "history": {
+    "zh-Hans": "这是对全人类的应许，历史上无法“检验”，只能说：与应许相符的是圣经此后没有再记载全球性洪水。",
+    "zh-Hant": "這是對全人類的應許，歷史上無法“檢驗”，只能說：與應許相符的是聖經此後沒有再記載全球性洪水。"
+   },
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "seasons",
+   "group": "G1",
+   "title": {
+    "zh-Hans": "四时昼夜永不停息",
+    "zh-Hant": "四時晝夜永不停息",
+    "en": "Seasons and day and night will not cease"
+   },
+   "refs": [
+    "Genesis 8:22"
+   ],
+   "who": {
+    "zh-Hans": "全地",
+    "zh-Hant": "全地"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“地还存留的时候”——应许有期限，随这个世界的终结而终结。",
+    "zh-Hant": "“地還存留的時候”——應許有期限，隨這個世界的終結而終結。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "耶利米书31:35-37 把“日月星辰的定例”与以色列不被弃绝并列，作为神信实的保证。",
+    "zh-Hant": "耶利米書31:35-37 把“日月星辰的定例”與以色列不被棄絕並列，作為神信實的保證。"
+   },
+   "fulfilRefs": [
+    "Jeremiah 31:35-37"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "abraham-nation",
+   "group": "G2",
+   "title": {
+    "zh-Hans": "成为大国、得大名",
+    "zh-Hant": "成為大國、得大名",
+    "en": "A great nation and a great name"
+   },
+   "refs": [
+    "Genesis 12:1-3"
+   ],
+   "who": {
+    "zh-Hans": "亚伯拉罕",
+    "zh-Hant": "亞伯拉罕"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "以“离开本地、本族、父家”的顺服开始（12:1）；后来的重申里写着“因为你听从了我的话”（创22:18）。",
+    "zh-Hant": "以“離開本地、本族、父家”的順服開始（12:1）；後來的重申裡寫著“因為你聽從了我的話”（創22:18）。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "摩西说“你们今日像天上的星那样多”（申1:10）；所罗门时代，“犹大人和以色列人如同海边的沙那样多”（王上4:20）。",
+    "zh-Hant": "摩西說“你們今日像天上的星那樣多”（申1:10）；所羅門時代，“猶大人和以色列人如同海邊的沙那樣多”（王上4:20）。"
+   },
+   "fulfilRefs": [
+    "Deuteronomy 1:10",
+    "1 Kings 4:20-21",
+    "Hebrews 11:12"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "abraham-seed",
+   "group": "G2",
+   "title": {
+    "zh-Hans": "后裔如天上的星、海边的沙",
+    "zh-Hant": "後裔如天上的星、海邊的沙",
+    "en": "Offspring like the stars and the sand"
+   },
+   "refs": [
+    "Genesis 15:5",
+    "Genesis 22:17-18"
+   ],
+   "who": {
+    "zh-Hans": "亚伯拉罕及他的后裔",
+    "zh-Hant": "亞伯拉罕及他的後裔"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "创15 是神单方面立约（15:17：“冒烟的炉并烧着的火把从那些肉块中经过”）；创22:18 加上“因为你听从了我的话”。",
+    "zh-Hant": "創15 是神單方面立約（15:17：“冒煙的爐並燒著的火把從那些肉塊中經過”）；創22:18 加上“因為你聽從了我的話”。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "应许后裔时亚伯拉罕尚无子嗣（徒7:5）；以撒的出生是第一步应验（创21:1-2）；希伯来书11:12 说“从一个仿佛已死的人就生出子孙”。",
+    "zh-Hant": "應許後裔時亞伯拉罕尚無子嗣（徒7:5）；以撒的出生是第一步應驗（創21:1-2）；希伯來書11:12 說“從一個彷彿已死的人就生出子孫”。"
+   },
+   "fulfilRefs": [
+    "Acts 7:5",
+    "Genesis 21:1-2",
+    "Hebrews 11:12"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "363",
+     "quote": {
+      "zh-Hans": "满心相信神所应许的必能做成",
+      "zh-Hant": "滿心相信神所應許的必能做成"
+     },
+     "title": {
+      "zh-Hans": "借信心得以完全",
+      "zh-Hant": "借信心得以完全"
+     }
+    },
+    {
+     "id": "fy-nm26",
+     "quote": {
+      "zh-Hans": "亚伯拉罕相信神，尽管在人看来神的应许是不可能实现的",
+      "zh-Hant": "亞伯拉罕相信神，儘管在人看來神的應許是不可能實現的"
+     },
+     "title": {
+      "zh-Hans": "救恩与完全密不可分",
+      "zh-Hant": "救恩與完全密不可分"
+     }
+    }
+   ]
+  },
+  {
+   "id": "abraham-exodus",
+   "group": "G2",
+   "title": {
+    "zh-Hans": "后裔寄居异地受苦，之后带着财物出来",
+    "zh-Hant": "後裔寄居異地受苦，之後帶著財物出來",
+    "en": "Sojourn, then exodus with great possessions"
+   },
+   "refs": [
+    "Genesis 15:13-14"
+   ],
+   "who": {
+    "zh-Hans": "亚伯拉罕的后裔",
+    "zh-Hant": "亞伯拉罕的後裔"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "这是对将来的预告，没有附带条件。",
+    "zh-Hant": "這是對將來的預告，沒有附帶條件。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "出埃及记12:40-41 记载“正满了四百三十年的那一天”以色列人出了埃及。（创15:13 说“四百年”，通常被理解为约数；两处数字不同，不影响应验的方向。）",
+    "zh-Hant": "出埃及記12:40-41 記載“正滿了四百三十年的那一天”以色列人出了埃及。（創15:13 說“四百年”，通常被理解為約數；兩處數字不同，不影響應驗的方向。）"
+   },
+   "fulfilRefs": [
+    "Exodus 12:40-41"
+   ],
+   "history": {
+    "zh-Hans": "出埃及事件的历史性，是学界讨论的题目，本资料没有核查；这里只说明圣经内部的应验记载。",
+    "zh-Hant": "出埃及事件的歷史性，是學界討論的題目，本資料沒有核查；這裡只說明聖經內部的應驗記載。"
+   },
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "abraham-land",
+   "group": "G2",
+   "title": {
+    "zh-Hans": "把迦南地赐给他的后裔永远为业",
+    "zh-Hant": "把迦南地賜給他的後裔永遠為業",
+    "en": "The land of Canaan as an everlasting possession"
+   },
+   "refs": [
+    "Genesis 15:17-18",
+    "Genesis 17:8"
+   ],
+   "who": {
+    "zh-Hans": "亚伯拉罕的后裔",
+    "zh-Hant": "亞伯拉罕的後裔"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "立约本身是单方面的（创15）；但在地上的居留，摩西与约书亚反复把它与遵行约挂钩（申28；书23:12-16）。",
+    "zh-Hant": "立約本身是單方面的（創15）；但在地上的居留，摩西與約書亞反覆把它與遵行約掛鉤（申28；書23:12-16）。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "约书亚记21:43-45 说“一句也没有落空，都应验了”；列王纪上4:21 记载所罗门“从大河到非利士地，直到埃及的边界”；尼希米记9:8 说神“应验了你的话”。但约书亚记13:1 说“还有许多未得之地”，士师记1:27-28 和约书亚记15:63 记载仍有居民没有被赶出。",
+    "zh-Hant": "約書亞記21:43-45 說“一句也沒有落空，都應驗了”；列王紀上4:21 記載所羅門“從大河到非利士地，直到埃及的邊界”；尼希米記9:8 說神“應驗了你的話”。但約書亞記13:1 說“還有許多未得之地”，士師記1:27-28 和約書亞記15:63 記載仍有居民沒有被趕出。"
+   },
+   "fulfilRefs": [
+    "Joshua 21:43-45",
+    "Joshua 13:1",
+    "1 Kings 4:20-21",
+    "Nehemiah 9:7-8",
+    "Judges 1:27-28",
+    "Joshua 15:63"
+   ],
+   "history": {
+    "zh-Hans": "后来北国（主前722年）和南国（主前587/586年）先后被掳，主后70、135年之后犹太人被逐出耶路撒冷；今天这块土地的归属涉及复杂的政治争议，**本资料不对现代政治主张作判断**，只指出圣经内部同时有“应验了”和“还有未得之地”两种说法。",
+    "zh-Hant": "後來北國（主前722年）和南國（主前587/586年）先後被擄，主後70、135年之後猶太人被逐出耶路撒冷；今天這塊土地的歸屬涉及複雜的政治爭議，**本資料不對現代政治主張作判斷**，只指出聖經內部同時有“應驗了”和“還有未得之地”兩種說法。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Siege of Jerusalem (587 BC)”",
+      "zh-Hant": "維基百科 “Siege of Jerusalem (587 BC)”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(587_BC)"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Bar Kokhba revolt”",
+      "zh-Hant": "維基百科 “Bar Kokhba revolt”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Bar_Kokhba_revolt"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Jewish diaspora”",
+      "zh-Hant": "維基百科 “Jewish diaspora”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Jewish_diaspora"
+    }
+   ],
+   "sermons": [
+    {
+     "id": "219",
+     "quote": {
+      "zh-Hans": "神对以色列人的应许都是物质的应许",
+      "zh-Hant": "神對以色列人的應許都是物質的應許"
+     },
+     "title": {
+      "zh-Hans": "被圣灵引导",
+      "zh-Hant": "被聖靈引導"
+     }
+    }
+   ]
+  },
+  {
+   "id": "abraham-nations",
+   "group": "G2",
+   "title": {
+    "zh-Hans": "地上万族都要因你（的后裔）得福",
+    "zh-Hant": "地上萬族都要因你（的後裔）得福",
+    "en": "All families of the earth blessed"
+   },
+   "refs": [
+    "Genesis 12:3",
+    "Genesis 22:18"
+   ],
+   "who": {
+    "zh-Hans": "万族万国",
+    "zh-Hant": "萬族萬國"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "经文把它说成神的目的；个人如何领受福，在新约里与“信”相连（加3:8-9）。",
+    "zh-Hant": "經文把它說成神的目的；個人如何領受福，在新約裡與“信”相連（加3:8-9）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "保罗说这是“预先传给亚伯拉罕的福音”，“后裔”指基督（加3:8，16）；彼得对犹太人说“地上万族都要因你的后裔得福”（徒3:25）；福音已经传到外邦人（弗3:6）。",
+    "zh-Hant": "保羅說這是“預先傳給亞伯拉罕的福音”，“後裔”指基督（加3:8，16）；彼得對猶太人說“地上萬族都要因你的後裔得福”（徒3:25）；福音已經傳到外邦人（弗3:6）。"
+   },
+   "fulfilRefs": [
+    "Galatians 3:8",
+    "Galatians 3:16",
+    "Acts 3:25",
+    "Ephesians 3:6"
+   ],
+   "history": {
+    "zh-Hans": "皮尤研究中心的统计：2020年全球基督徒约23亿，占世界人口的28.8%，在120个国家和地区占多数。这与“万族”的方向一致，但**人数不是神学意义上的“应验证明”**。",
+    "zh-Hant": "皮尤研究中心的統計：2020年全球基督徒約23億，佔世界人口的28.8%，在120個國家和地區佔多數。這與“萬族”的方向一致，但**人數不是神學意義上的“應驗證明”**。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "皮尤研究中心《2010-2020年全球宗教格局的变化》(2025)",
+      "zh-Hant": "皮尤研究中心《2010-2020年全球宗教格局的變化》(2025)"
+     },
+     "url": "https://www.pewresearch.org/religion/2025/06/09/how-the-global-religious-landscape-changed-from-2010-to-2020/"
+    }
+   ],
+   "sermons": []
+  },
+  {
+   "id": "mosaic-blessing",
+   "group": "G3",
+   "title": {
+    "zh-Hans": "遵行→蒙福；不遵行→咒诅",
+    "zh-Hant": "遵行→蒙福；不遵行→咒詛",
+    "en": "Obey and be blessed; disobey and be cursed"
+   },
+   "refs": [
+    "Deuteronomy 28:1-2",
+    "Deuteronomy 28:15",
+    "Leviticus 26:3-4",
+    "Leviticus 26:14-15"
+   ],
+   "who": {
+    "zh-Hans": "以色列民族",
+    "zh-Hant": "以色列民族"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "整个应许的格式就是“你若……就……”。",
+    "zh-Hant": "整個應許的格式就是“你若……就……”。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "约书亚晚年说：福气“没有一句落空”，并警告“怎样……临到你们，也必照样使各样祸患临到你们”（书23:14-16）。后来的历史两面都发生了：所罗门时代的繁荣；北国、南国的被掳（王下17:6-7；25:21）。",
+    "zh-Hant": "約書亞晚年說：福氣“沒有一句落空”，並警告“怎樣……臨到你們，也必照樣使各樣禍患臨到你們”（書23:14-16）。後來的歷史兩面都發生了：所羅門時代的繁榮；北國、南國的被擄（王下17:6-7；25:21）。"
+   },
+   "fulfilRefs": [
+    "Joshua 23:14-16",
+    "2 Kings 17:6-7",
+    "2 Kings 25:21"
+   ],
+   "history": {
+    "zh-Hans": "主前587/586年耶路撒冷被毁、居民被掳至巴比伦，有多重来源：圣经、考古（城被火烧、城墙被拆）。",
+    "zh-Hant": "主前587/586年耶路撒冷被毀、居民被擄至巴比倫，有多重來源：聖經、考古（城被火燒、城牆被拆）。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Siege of Jerusalem (587 BC)”",
+      "zh-Hant": "維基百科 “Siege of Jerusalem (587 BC)”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(587_BC)"
+    }
+   ],
+   "sermons": [
+    {
+     "id": "204",
+     "quote": {
+      "zh-Hans": "这就是蒙福的条件",
+      "zh-Hant": "這就是蒙福的條件"
+     },
+     "title": {
+      "zh-Hans": "只有一件事是必需的",
+      "zh-Hant": "只有一件事是必需的"
+     }
+    }
+   ]
+  },
+  {
+   "id": "mosaic-return",
+   "group": "G3",
+   "title": {
+    "zh-Hans": "被掳后悔改，神必招聚回来",
+    "zh-Hant": "被擄後悔改，神必招聚回來",
+    "en": "After exile, repent and God will gather you"
+   },
+   "refs": [
+    "Deuteronomy 30:1-5"
+   ],
+   "who": {
+    "zh-Hans": "被分散的以色列人",
+    "zh-Hant": "被分散的以色列人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“你和你的子孙若尽心尽性归向雅伟”。",
+    "zh-Hant": "“你和你的子孫若盡心儘性歸向雅偉”。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "七十年后古列元年的诏令（拉1:1；代下36:22-23；耶29:10；但9:2）是第一次归回。申命记30:4 所说“从分散你到的万民中……招聚回来”是否已全部实现，是解经上的一个分歧点（见第七组）。",
+    "zh-Hant": "七十年後古列元年的詔令（拉1:1；代下36:22-23；耶29:10；但9:2）是第一次歸回。申命記30:4 所說“從分散你到的萬民中……招聚回來”是否已全部實現，是解經上的一個分歧點（見第七組）。"
+   },
+   "fulfilRefs": [
+    "Ezra 1:1",
+    "2 Chronicles 36:22-23",
+    "Jeremiah 29:10",
+    "Daniel 9:2"
+   ],
+   "history": {
+    "zh-Hans": "古列圆柱（约主前539-538年）只提到美索不达米亚的神庙，没有提到犹太人，所以不能直接当作拉1章的证据；但与古列让被掳之民回乡的一般政策并不矛盾。",
+    "zh-Hant": "古列圓柱（約主前539-538年）只提到美索不達米亞的神廟，沒有提到猶太人，所以不能直接當作拉1章的證據；但與古列讓被擄之民回鄉的一般政策並不矛盾。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Cyrus Cylinder”",
+      "zh-Hant": "維基百科 “Cyrus Cylinder”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Cyrus_Cylinder"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Jewish diaspora”",
+      "zh-Hant": "維基百科 “Jewish diaspora”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Jewish_diaspora"
+    }
+   ],
+   "sermons": []
+  },
+  {
+   "id": "kingdom-priests",
+   "group": "G3",
+   "title": {
+    "zh-Hans": "作“祭司的国度，圣洁的国民”",
+    "zh-Hant": "作“祭司的國度，聖潔的國民”",
+    "en": "A kingdom of priests"
+   },
+   "refs": [
+    "Exodus 19:5-6"
+   ],
+   "who": {
+    "zh-Hans": "以色列（有条件）",
+    "zh-Hant": "以色列（有條件）"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“你们若实在听从我的话，遵守我的约”。",
+    "zh-Hant": "“你們若實在聽從我的話，遵守我的約”。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "彼得把这句话直接用在信徒身上：“你们是被拣选的族类，是有君尊的祭司，是圣洁的国度”（彼前2:9）。",
+    "zh-Hant": "彼得把這句話直接用在信徒身上：“你們是被揀選的族類，是有君尊的祭司，是聖潔的國度”（彼前2:9）。"
+   },
+   "fulfilRefs": [
+    "1 Peter 2:9"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "davidic",
+   "group": "G4",
+   "title": {
+    "zh-Hans": "大卫的后裔、国位坚立直到永远",
+    "zh-Hant": "大衛的後裔、國位堅立直到永遠",
+    "en": "David’s house and throne forever"
+   },
+   "refs": [
+    "2 Samuel 7:12-16"
+   ],
+   "who": {
+    "zh-Hans": "大卫与他的家",
+    "zh-Hant": "大衛與他的家"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "无条件的一面：犯罪必受管教，“但我的慈爱仍不离开他”（撒下7:14-15；诗89:30-34）。有条件的一面：“你的子孙若谨慎自己的行为……就不断人坐以色列的国位”（王上2:4；9:4-9）。",
+    "zh-Hant": "無條件的一面：犯罪必受管教，“但我的慈愛仍不離開他”（撒下7:14-15；詩89:30-34）。有條件的一面：“你的子孫若謹慎自己的行為……就不斷人坐以色列的國位”（王上2:4；9:4-9）。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "所罗门建殿被看作第一步应验（王上8:20）。新约把应许的最终应验指向耶稣：加百列说“主神要把他祖大卫的位给他……他的国也没有穷尽”（路1:32-33）；保罗说“神已经照着所应许的，为以色列人立了一位救主，就是耶稣”（徒13:22-23）。彼得说大卫“晓得神曾向他起誓，要从他的后裔中立一位坐在他的宝座上”（徒2:29-31）。",
+    "zh-Hant": "所羅門建殿被看作第一步應驗（王上8:20）。新約把應許的最終應驗指向耶穌：加百列說“主神要把他祖大衛的位給他……他的國也沒有窮盡”（路1:32-33）；保羅說“神已經照著所應許的，為以色列人立了一位救主，就是耶穌”（徒13:22-23）。彼得說大衛“曉得神曾向他起誓，要從他的後裔中立一位坐在他的寶座上”（徒2:29-31）。"
+   },
+   "fulfilRefs": [
+    "1 Kings 8:20",
+    "Luke 1:32-33",
+    "Acts 13:22-23",
+    "Acts 2:29-31",
+    "1 Kings 2:4",
+    "1 Kings 9:4-9",
+    "Psalms 89:30-34"
+   ],
+   "history": {
+    "zh-Hans": "大卫王室作为历史存在，有圣经以外的证据：特拉但石碑（主前9世纪，亚兰文）有“大卫家的王”一语，被多数学者接受，少数学者对读法有异议。南国王室在主前587/586年终止了王位；基督“坐宝座”的完全显现，按多数解释仍在将来。",
+    "zh-Hant": "大衛王室作為歷史存在，有聖經以外的證據：特拉但石碑（主前9世紀，亞蘭文）有“大衛家的王”一語，被多數學者接受，少數學者對讀法有異議。南國王室在主前587/586年終止了王位；基督“坐寶座”的完全顯現，按多數解釋仍在將來。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Tel Dan Stele”",
+      "zh-Hant": "維基百科 “Tel Dan Stele”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Tel_Dan_Stele"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Siege of Jerusalem (587 BC)”",
+      "zh-Hant": "維基百科 “Siege of Jerusalem (587 BC)”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(587_BC)"
+    }
+   ],
+   "sermons": []
+  },
+  {
+   "id": "virgin",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "童女怀孕生子，名叫以马内利",
+    "zh-Hant": "童女懷孕生子，名叫以馬內利",
+    "en": "A virgin will conceive (Immanuel)"
+   },
+   "refs": [
+    "Isaiah 7:14"
+   ],
+   "who": {
+    "zh-Hans": "大卫家",
+    "zh-Hant": "大衛家"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许，无条件。",
+    "zh-Hant": "預言性應許，無條件。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "马太明说“这一切的事成就是要应验主借先知所说的话”。",
+    "zh-Hant": "馬太明說“這一切的事成就是要應驗主借先知所說的話”。"
+   },
+   "fulfilRefs": [
+    "Matthew 1:22-23"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "bethlehem",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "掌权者要从伯利恒出来",
+    "zh-Hant": "掌權者要從伯利恆出來",
+    "en": "The ruler will come from Bethlehem"
+   },
+   "refs": [
+    "Micah 5:2"
+   ],
+   "who": {
+    "zh-Hans": "以色列",
+    "zh-Hant": "以色列"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许。",
+    "zh-Hant": "預言性應許。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "祭司长和文士回答希律：“在犹太的伯利恒。因为有先知记着说……”",
+    "zh-Hant": "祭司長和文士回答希律：“在猶太的伯利恆。因為有先知記著說……”"
+   },
+   "fulfilRefs": [
+    "Matthew 2:5-6"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "donkey",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "王谦和地骑着驴来",
+    "zh-Hant": "王謙和地騎著驢來",
+    "en": "The king comes riding a donkey"
+   },
+   "refs": [
+    "Zechariah 9:9"
+   ],
+   "who": {
+    "zh-Hans": "锡安的民",
+    "zh-Hant": "錫安的民"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许。",
+    "zh-Hant": "預言性應許。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "马太记载耶稣进耶路撒冷时“这事成就是要应验先知的话”。",
+    "zh-Hant": "馬太記載耶穌進耶路撒冷時“這事成就是要應驗先知的話”。"
+   },
+   "fulfilRefs": [
+    "Matthew 21:4-5"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "resurrection-ps16",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "圣者不见朽坏（复活）",
+    "zh-Hant": "聖者不見朽壞（復活）",
+    "en": "The Holy One will not see decay (resurrection)"
+   },
+   "refs": [
+    "Psalms 16:10"
+   ],
+   "who": {
+    "zh-Hans": "弥赛亚",
+    "zh-Hant": "彌賽亞"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许。",
+    "zh-Hant": "預言性應許。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "彼得在五旬节引用，说大卫“就预先看明这事，讲论基督复活”；保罗在彼西底的安提阿说“就是那应许祖宗的话，神已经向我们这作儿女的应验，叫耶稣复活了”。",
+    "zh-Hant": "彼得在五旬節引用，說大衛“就預先看明這事，講論基督復活”；保羅在彼西底的安提阿說“就是那應許祖宗的話，神已經向我們這作兒女的應驗，叫耶穌復活了”。"
+   },
+   "fulfilRefs": [
+    "Acts 2:27",
+    "Acts 2:29-31",
+    "Acts 13:32-33"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "369",
+     "quote": {
+      "zh-Hans": "除非我们理解复活是神的一个应许，并且它是我们必须凭信心抓住的一个应许，复活对你来说在属灵上将没有任何意义",
+      "zh-Hant": "除非我們理解復活是神的一個應許，並且它是我們必須憑信心抓住的一個應許，復活對你來說在屬靈上將沒有任何意義"
+     },
+     "title": {
+      "zh-Hans": "信心的意义（第1部分）",
+      "zh-Hant": "信心的意義（第1部分）"
+     }
+    }
+   ]
+  },
+  {
+   "id": "suffering-servant",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "因他受的鞭伤，我们得医治",
+    "zh-Hant": "因他受的鞭傷，我們得醫治",
+    "en": "By his wounds we are healed"
+   },
+   "refs": [
+    "Isaiah 53:5"
+   ],
+   "who": {
+    "zh-Hans": "神的子民",
+    "zh-Hant": "神的子民"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许；个人如何得益，在新约里与信相连。",
+    "zh-Hant": "預言性應許；個人如何得益，在新約裡與信相連。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "彼得说：“他被挂在木头上，亲身担当了我们的罪……因他受的鞭伤，你们便得了医治。”",
+    "zh-Hant": "彼得說：“他被掛在木頭上，親身擔當了我們的罪……因他受的鞭傷，你們便得了醫治。”"
+   },
+   "fulfilRefs": [
+    "1 Peter 2:24"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "isa61",
+   "group": "G5",
+   "title": {
+    "zh-Hans": "受膏者报告好消息、被掳的得释放",
+    "zh-Hant": "受膏者報告好消息、被擄的得釋放",
+    "en": "The anointed one proclaims good news"
+   },
+   "refs": [
+    "Isaiah 61:1-2"
+   ],
+   "who": {
+    "zh-Hans": "受膏者",
+    "zh-Hant": "受膏者"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "预言性应许。",
+    "zh-Hant": "預言性應許。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "耶稣在拿撒勒会堂读这一段，说“今天这经应验在你们耳中了”（路4:18-21）。值得注意的是：路加记载的引文在“神悦纳人的禧年”处止住，**没有读以赛亚书61:2 后半句“神报仇的日子”**（路4:19），所以“报仇的日子”这一部分，按多数解释仍在将来。",
+    "zh-Hant": "耶穌在拿撒勒會堂讀這一段，說“今天這經應驗在你們耳中了”（路4:18-21）。值得注意的是：路加記載的引文在“神悅納人的禧年”處止住，**沒有讀以賽亞書61:2 後半句“神報仇的日子”**（路4:19），所以“報仇的日子”這一部分，按多數解釋仍在將來。"
+   },
+   "fulfilRefs": [
+    "Luke 4:18-21",
+    "Luke 4:19"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "new-covenant",
+   "group": "G6",
+   "title": {
+    "zh-Hans": "新约：律法写在心上，罪被赦免",
+    "zh-Hant": "新約：律法寫在心上，罪被赦免",
+    "en": "The new covenant: law on the heart, sins forgiven"
+   },
+   "refs": [
+    "Jeremiah 31:31-34"
+   ],
+   "who": {
+    "zh-Hans": "以色列家和犹大家（新约里延伸到信徒）",
+    "zh-Hant": "以色列家和猶大家（新約裡延伸到信徒）"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "是神单方面的应许（“我要……”）；个人参与的方式，新约里是信与承认。",
+    "zh-Hant": "是神單方面的應許（“我要……”）；個人參與的方式，新約裡是信與承認。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "耶稣设立圣餐时说“这杯是用我血所立的新约”（路22:20）；希伯来书8:8-13 完整引用耶利米书31章，并说耶稣是“更美之约的中保，这约原是凭更美之应许立的”（来8:6）；保罗说信徒是“基督的信”，“写在心版上”（林后3:3）。其中“他们不用各人教导自己的乡邻”（来8:11）一句，今天教会仍需要彼此教导，所以完全的应验仍在将来。",
+    "zh-Hant": "耶穌設立聖餐時說“這杯是用我血所立的新約”（路22:20）；希伯來書8:8-13 完整引用耶利米書31章，並說耶穌是“更美之約的中保，這約原是憑更美之應許立的”（來8:6）；保羅說信徒是“基督的信”，“寫在心版上”（林後3:3）。其中“他們不用各人教導自己的鄉鄰”（來8:11）一句，今天教會仍需要彼此教導，所以完全的應驗仍在將來。"
+   },
+   "fulfilRefs": [
+    "Luke 22:20",
+    "Hebrews 8:6",
+    "Hebrews 8:8-13",
+    "2 Corinthians 3:3"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "219",
+     "quote": {
+      "zh-Hans": "神对我们的应许是属灵的",
+      "zh-Hant": "神對我們的應許是屬靈的"
+     },
+     "title": {
+      "zh-Hans": "被圣灵引导",
+      "zh-Hant": "被聖靈引導"
+     }
+    }
+   ]
+  },
+  {
+   "id": "new-heart",
+   "group": "G6",
+   "title": {
+    "zh-Hans": "赐新心、新灵，使人顺从",
+    "zh-Hant": "賜新心、新靈，使人順從",
+    "en": "A new heart and a new spirit"
+   },
+   "refs": [
+    "Ezekiel 36:26-27"
+   ],
+   "who": {
+    "zh-Hans": "以色列（新约里延伸到信徒）",
+    "zh-Hant": "以色列（新約裡延伸到信徒）"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“我要……”的应许。",
+    "zh-Hant": "“我要……”的應許。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "新约把圣灵的内住看作这个应许的开始应验（见下一条）。",
+    "zh-Hant": "新約把聖靈的內住看作這個應許的開始應驗（見下一條）。"
+   },
+   "fulfilRefs": [
+    "2 Corinthians 3:3"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "spirit",
+   "group": "G6",
+   "title": {
+    "zh-Hans": "圣灵的浇灌",
+    "zh-Hant": "聖靈的澆灌",
+    "en": "The outpouring of the Spirit"
+   },
+   "refs": [
+    "Joel 2:28-29",
+    "Luke 24:49",
+    "Acts 1:4-5"
+   ],
+   "who": {
+    "zh-Hans": "凡有血气的",
+    "zh-Hant": "凡有血氣的"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "五旬节之前，耶稣吩咐门徒“等候”（徒1:4）；彼得说“悔改……受洗……必领受所赐的圣灵”（徒2:38）；保罗称之为“所应许的圣灵”（弗1:13；加3:14）。",
+    "zh-Hant": "五旬節之前，耶穌吩咐門徒“等候”（徒1:4）；彼得說“悔改……受洗……必領受所賜的聖靈”（徒2:38）；保羅稱之為“所應許的聖靈”（弗1:13；加3:14）。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "彼得在五旬节说“这正是先知约珥所说的”（徒2:16-18）。徒2:39：“这应许是给你们和你们的儿女，并一切在远方的人。”",
+    "zh-Hant": "彼得在五旬節說“這正是先知約珥所說的”（徒2:16-18）。徒2:39：“這應許是給你們和你們的兒女，並一切在遠方的人。”"
+   },
+   "fulfilRefs": [
+    "Acts 2:16-18",
+    "Acts 2:38",
+    "Acts 2:39",
+    "Ephesians 1:13",
+    "Galatians 3:14"
+   ],
+   "history": {
+    "zh-Hans": "约珥书2章还有关于日月变色等征兆的部分，没有被彼得的引用涵盖，按多数解释属于将来。",
+    "zh-Hant": "約珥書2章還有關於日月變色等徵兆的部分，沒有被彼得的引用涵蓋，按多數解釋屬於將來。"
+   },
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "return-70",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "七十年后回归",
+    "zh-Hant": "七十年後迴歸",
+    "en": "Return after seventy years"
+   },
+   "refs": [
+    "Jeremiah 29:10",
+    "Jeremiah 25:11-12"
+   ],
+   "who": {
+    "zh-Hans": "被掳到巴比伦的犹大人",
+    "zh-Hant": "被擄到巴比倫的猶大人"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "有明确的时间。",
+    "zh-Hant": "有明確的時間。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "“波斯王古列元年，雅伟为要应验借耶利米口所说的话，就激动波斯王古列的心”（拉1:1）。",
+    "zh-Hant": "“波斯王古列元年，雅偉為要應驗借耶利米口所說的話，就激動波斯王古列的心”（拉1:1）。"
+   },
+   "fulfilRefs": [
+    "Ezra 1:1",
+    "Daniel 9:2"
+   ],
+   "history": {
+    "zh-Hans": "巴比伦毁耶路撒冷（主前587/586年）、古列诏令（主前538年前后）有多重来源；古列圆柱本身没有提到犹太人。",
+    "zh-Hant": "巴比倫毀耶路撒冷（主前587/586年）、古列詔令（主前538年前後）有多重來源；古列圓柱本身沒有提到猶太人。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Siege of Jerusalem (587 BC)”",
+      "zh-Hant": "維基百科 “Siege of Jerusalem (587 BC)”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(587_BC)"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Cyrus Cylinder”",
+      "zh-Hant": "維基百科 “Cyrus Cylinder”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Cyrus_Cylinder"
+    }
+   ],
+   "sermons": []
+  },
+  {
+   "id": "second-gathering",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "“二次”招聚以色列人归回本地",
+    "zh-Hant": "“二次”招聚以色列人歸回本地",
+    "en": "A \"second\" regathering of Israel"
+   },
+   "refs": [
+    "Isaiah 11:11-12",
+    "Ezekiel 37:21-22"
+   ],
+   "who": {
+    "zh-Hans": "以色列人",
+    "zh-Hant": "以色列人"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“我要……”的应许。",
+    "zh-Hant": "“我要……”的應許。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "解经传统分歧：有人认为以赛亚书11:11 的“二次”已在近代开始应验，有人认为它指古列之后的归回，或属于末后。",
+    "zh-Hant": "解經傳統分歧：有人認為以賽亞書11:11 的“二次”已在近代開始應驗，有人認為它指古列之後的歸回，或屬於末後。"
+   },
+   "fulfilRefs": [],
+   "history": {
+    "zh-Hans": "1948年5月14日以色列国宣布成立（本-古里安）。**这是历史事实**；把它认定为以赛亚书11章或以西结书37章的应验，是**解释**，不是历史事实，各传统意见不同（见“Olivet discourse”条里对类似推算的记述）。",
+    "zh-Hant": "1948年5月14日以色列國宣佈成立（本-古裡安）。**這是歷史事實**；把它認定為以賽亞書11章或以西結書37章的應驗，是**解釋**，不是歷史事實，各傳統意見不同（見“Olivet discourse”條裡對類似推算的記述）。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Israeli Declaration of Independence”",
+      "zh-Hant": "維基百科 “Israeli Declaration of Independence”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Israeli_Declaration_of_Independence"
+    },
+    {
+     "name": {
+      "zh-Hans": "维基百科 “Olivet discourse”",
+      "zh-Hant": "維基百科 “Olivet discourse”"
+     },
+     "url": "https://en.wikipedia.org/wiki/Olivet_discourse"
+    }
+   ],
+   "sermons": [
+    {
+     "id": "421",
+     "quote": {
+      "zh-Hans": "我们看到以色列在1948年经过两千年再次建立",
+      "zh-Hant": "我們看到以色列在1948年經過兩千年再次建立"
+     },
+     "title": {
+      "zh-Hans": "主的再来及其先兆事件",
+      "zh-Hant": "主的再來及其先兆事件"
+     }
+    }
+   ]
+  },
+  {
+   "id": "all-israel",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "“以色列全家都要得救”",
+    "zh-Hant": "“以色列全家都要得救”",
+    "en": "\"All Israel will be saved\""
+   },
+   "refs": [
+    "Romans 11:25-26",
+    "Romans 11:29"
+   ],
+   "who": {
+    "zh-Hans": "以色列",
+    "zh-Hant": "以色列"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“神的恩赐和选召是没有后悔的”（罗11:29）。",
+    "zh-Hant": "“神的恩賜和選召是沒有後悔的”（羅11:29）。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "“等到外邦人的数目添满了，于是以色列全家都要得救”——“外邦人的数目”是否已满，并没有明说。",
+    "zh-Hant": "“等到外邦人的數目添滿了，於是以色列全家都要得救”——“外邦人的數目”是否已滿，並沒有明說。"
+   },
+   "fulfilRefs": [],
+   "history": {
+    "zh-Hans": "学界对罗11:26“以色列”的理解主要有三种（Merkle，JETS 2000）：（1）一切蒙拣选的人，不论犹太人外邦人（加尔文、耶利米亚斯、巴特、赖特）；（2）作为一个民族的以色列，将来会大规模归信；（3）历代所有蒙拣选的犹太人。道格拉斯·穆称这一句是“罗马书9-11章解释的风暴中心”。",
+    "zh-Hant": "學界對羅11:26“以色列”的理解主要有三種（Merkle，JETS 2000）：（1）一切蒙揀選的人，不論猶太人外邦人（加爾文、耶利米亞斯、巴特、賴特）；（2）作為一個民族的以色列，將來會大規模歸信；（3）歷代所有蒙揀選的猶太人。道格拉斯·穆稱這一句是“羅馬書9-11章解釋的風暴中心”。"
+   },
+   "sources": [
+    {
+     "name": {
+      "zh-Hans": "Ben L. Merkle,“Romans 11 and the Future of Ethnic Israel”,JETS 43/4 (2000) 709-721",
+      "zh-Hant": "Ben L. Merkle,“Romans 11 and the Future of Ethnic Israel”,JETS 43/4 (2000) 709-721"
+     },
+     "url": "https://etsjets.org/wp-content/uploads/2010/06/files_JETS-PDFs_43_43-4_43-4-pp709-721_JETS.pdf"
+    }
+   ],
+   "sermons": [
+    {
+     "id": "143",
+     "quote": {
+      "zh-Hans": "那就是保罗在罗马书11:26中所说的应验",
+      "zh-Hant": "那就是保羅在羅馬書11:26中所說的應驗"
+     },
+     "title": {
+      "zh-Hans": "邪恶的度量",
+      "zh-Hant": "邪惡的度量"
+     }
+    },
+    {
+     "id": "241",
+     "quote": {
+      "zh-Hans": "外邦人的时代正在快速过去",
+      "zh-Hant": "外邦人的時代正在快速過去"
+     },
+     "title": {
+      "zh-Hans": "敌基督：对教会的审判",
+      "zh-Hant": "敵基督：對教會的審判"
+     }
+    }
+   ]
+  },
+  {
+   "id": "nations-peace",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "万民流归锡安山，刀打成犁头",
+    "zh-Hant": "萬民流歸錫安山，刀打成犁頭",
+    "en": "Nations stream to Zion; swords into plowshares"
+   },
+   "refs": [
+    "Isaiah 2:2-4"
+   ],
+   "who": {
+    "zh-Hans": "万国",
+    "zh-Hant": "萬國"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“末后的日子”。",
+    "zh-Hant": "“末後的日子”。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "按多数解释属于将来（千禧年或新天新地）。",
+    "zh-Hant": "按多數解釋屬於將來（千禧年或新天新地）。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "peaceable",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "豺狼与羊羔同居",
+    "zh-Hant": "豺狼與羊羔同居",
+    "en": "The wolf will live with the lamb"
+   },
+   "refs": [
+    "Isaiah 11:6-9"
+   ],
+   "who": {
+    "zh-Hans": "全地",
+    "zh-Hant": "全地"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“认识雅伟的知识要充满遍地”。",
+    "zh-Hant": "“認識雅偉的知識要充滿遍地”。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "按多数解释属于将来。有些解经传统把这些画面读作属灵的比喻。",
+    "zh-Hant": "按多數解釋屬於將來。有些解經傳統把這些畫面讀作屬靈的比喻。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "gentiles-included",
+   "group": "G7",
+   "title": {
+    "zh-Hans": "外邦人同为后嗣、同蒙应许",
+    "zh-Hant": "外邦人同為後嗣、同蒙應許",
+    "en": "Gentiles are fellow heirs of the promise"
+   },
+   "refs": [
+    "Ephesians 3:6",
+    "Galatians 3:29",
+    "Romans 4:13"
+   ],
+   "who": {
+    "zh-Hans": "信的外邦人",
+    "zh-Hant": "信的外邦人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“因信”（罗4:13）；“既属乎基督”（加3:29）。",
+    "zh-Hant": "“因信”（羅4:13）；“既屬乎基督”（加3:29）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "以弗所书2:12 说外邦人从前“在所应许的诸约上是局外人”；3:6 说现在“同蒙应许”。罗马书9:4 说“应许”本来是以色列人的，15:8 说基督是来“证实所应许列祖的话”。",
+    "zh-Hant": "以弗所書2:12 說外邦人從前“在所應許的諸約上是局外人”；3:6 說現在“同蒙應許”。羅馬書9:4 說“應許”本來是以色列人的，15:8 說基督是來“證實所應許列祖的話”。"
+   },
+   "fulfilRefs": [
+    "Ephesians 2:12",
+    "Romans 9:4",
+    "Romans 15:8"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "fy-rms09-01",
+     "quote": {
+      "zh-Hans": "神的话是绝对不会落空的",
+      "zh-Hant": "神的話是絕對不會落空的"
+     },
+     "title": {
+      "zh-Hans": "罗马书纵览9章(1)",
+      "zh-Hant": "羅馬書縱覽9章(1)"
+     }
+    }
+   ]
+  },
+  {
+   "id": "forgive",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "认罪、离弃罪，神必赦免",
+    "zh-Hant": "認罪、離棄罪，神必赦免",
+    "en": "Confess and repent: God forgives"
+   },
+   "refs": [
+    "1 John 1:9",
+    "Isaiah 55:7"
+   ],
+   "who": {
+    "zh-Hans": "悔改的人",
+    "zh-Hant": "悔改的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“我们若认自己的罪”“恶人当离弃自己的道路”。",
+    "zh-Hant": "“我們若認自己的罪”“惡人當離棄自己的道路”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "耶稣的血“为你们流出来”（路22:20）；教会每天的经历。",
+    "zh-Hant": "耶穌的血“為你們流出來”（路22:20）；教會每天的經歷。"
+   },
+   "fulfilRefs": [
+    "Luke 22:20"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "203",
+     "quote": {
+      "zh-Hans": "神会白白地饶恕你的罪",
+      "zh-Hant": "神會白白地饒恕你的罪"
+     },
+     "title": {
+      "zh-Hans": "手扶犁头的人",
+      "zh-Hant": "手扶犁頭的人"
+     }
+    }
+   ]
+  },
+  {
+   "id": "eternal-life",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "永生",
+    "zh-Hant": "永生",
+    "en": "Eternal life"
+   },
+   "refs": [
+    "1 John 2:25",
+    "Titus 1:2"
+   ],
+   "who": {
+    "zh-Hans": "信的人",
+    "zh-Hant": "信的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "常在子里面（约一2:24-25），“忍耐”到底（来10:36）。",
+    "zh-Hant": "常在子裡面（約一2:24-25），“忍耐”到底（來10:36）。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "永生被说成已经开始（现在拥有），完全的得着在复活之时。",
+    "zh-Hant": "永生被說成已經開始（現在擁有），完全的得著在復活之時。"
+   },
+   "fulfilRefs": [
+    "Hebrews 10:36"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "paraclete",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "保惠师（圣灵）永远与你们同在",
+    "zh-Hant": "保惠師（聖靈）永遠與你們同在",
+    "en": "The Helper will be with you forever"
+   },
+   "refs": [
+    "John 14:16-17"
+   ],
+   "who": {
+    "zh-Hans": "耶稣的门徒",
+    "zh-Hant": "耶穌的門徒"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "接着的经文说“爱我的，就必遵守我的道”（约14:23）。",
+    "zh-Hant": "接著的經文說“愛我的，就必遵守我的道”（約14:23）。"
+   },
+   "status": "✔",
+   "fulfil": {
+    "zh-Hans": "五旬节（徒2章）。",
+    "zh-Hant": "五旬節（徒2章）。"
+   },
+   "fulfilRefs": [
+    "Acts 2:38"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "presence",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "“我总不撇下你，也不丢弃你”",
+    "zh-Hant": "“我總不撇下你，也不丟棄你”",
+    "en": "\"I will never leave you nor forsake you\""
+   },
+   "refs": [
+    "Matthew 28:20",
+    "Hebrews 13:5"
+   ],
+   "who": {
+    "zh-Hans": "受差遣的门徒；信徒",
+    "zh-Hant": "受差遣的門徒；信徒"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "太28:20 的“常与你们同在”接在“凡我所吩咐你们的，都教训他们遵守”之后。",
+    "zh-Hant": "太28:20 的“常與你們同在”接在“凡我所吩咐你們的，都教訓他們遵守”之後。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "持续的应许。",
+    "zh-Hant": "持續的應許。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "provision",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "一切所需用的都充足；先求他的国，这些东西都要加给你们",
+    "zh-Hant": "一切所需用的都充足；先求他的國，這些東西都要加給你們",
+    "en": "All your needs supplied; seek first the kingdom"
+   },
+   "refs": [
+    "Philippians 4:19",
+    "Matthew 6:33"
+   ],
+   "who": {
+    "zh-Hans": "信徒（腓立比教会曾供应保罗）",
+    "zh-Hant": "信徒（腓立比教會曾供應保羅）"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“先求他的国和他的义”（太6:33）。",
+    "zh-Hant": "“先求他的國和他的義”（太6:33）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "持续的应许；但“所需用”与“所想要”不同；保罗自己学会“或饱足，或饥饿”都知足（腓4:11-13）。",
+    "zh-Hant": "持續的應許；但“所需用”與“所想要”不同；保羅自己學會“或飽足，或飢餓”都知足（腓4:11-13）。"
+   },
+   "fulfilRefs": [
+    "Philippians 4:11-13"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "036",
+     "quote": {
+      "zh-Hans": "祂从来没有一次让我失望",
+      "zh-Hant": "祂從來沒有一次讓我失望"
+     },
+     "title": {
+      "zh-Hans": "不要在地上积攒财宝（上）",
+      "zh-Hant": "不要在地上積攢財寶（上）"
+     }
+    }
+   ]
+  },
+  {
+   "id": "prayer",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "祷告蒙应允",
+    "zh-Hant": "禱告蒙應允",
+    "en": "Answered prayer"
+   },
+   "refs": [
+    "Matthew 7:7-8",
+    "John 15:7",
+    "1 John 5:14-15",
+    "James 1:5-7"
+   ],
+   "who": {
+    "zh-Hans": "信徒",
+    "zh-Hant": "信徒"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“你们若常在我里面，我的话也常在你们里面”；“照他的旨意求”；“只要凭着信心求，一点不疑惑”。",
+    "zh-Hant": "“你們若常在我裡面，我的話也常在你們裡面”；“照他的旨意求”；“只要憑著信心求，一點不疑惑”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "持续的应许；每一处都附着条件。",
+    "zh-Hant": "持續的應許；每一處都附著條件。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "fy-sm34",
+     "quote": {
+      "zh-Hans": "应许并非无条件，随便什么人都给",
+      "zh-Hant": "應許並非無條件，隨便什麼人都給"
+     },
+     "title": {
+      "zh-Hans": "愿意人怎样待你，你也要怎样待人",
+      "zh-Hant": "願意人怎樣待你，你也要怎樣待人"
+     }
+    }
+   ]
+  },
+  {
+   "id": "way-out",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "试探总有出路，不会过于所能受",
+    "zh-Hant": "試探總有出路，不會過於所能受",
+    "en": "Temptation always has a way out"
+   },
+   "refs": [
+    "1 Corinthians 10:13"
+   ],
+   "who": {
+    "zh-Hans": "信徒",
+    "zh-Hant": "信徒"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“神是信实的”。",
+    "zh-Hant": "“神是信實的”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "持续的应许。",
+    "zh-Hant": "持續的應許。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "all-things",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "万事互相效力，叫爱神的人得益处",
+    "zh-Hant": "萬事互相效力，叫愛神的人得益處",
+    "en": "All things work together for good"
+   },
+   "refs": [
+    "Romans 8:28"
+   ],
+   "who": {
+    "zh-Hans": "爱神的人，按他旨意被召的人",
+    "zh-Hant": "愛神的人，按他旨意被召的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“爱神的人”“按他旨意被召的人”。",
+    "zh-Hant": "“愛神的人”“按他旨意被召的人”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "持续的应许。",
+    "zh-Hant": "持續的應許。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "complete-work",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "那在你们心里动了善工的，必成全这工",
+    "zh-Hant": "那在你們心裡動了善工的，必成全這工",
+    "en": "He who began a good work will complete it"
+   },
+   "refs": [
+    "Philippians 1:6"
+   ],
+   "who": {
+    "zh-Hans": "腓立比的信徒",
+    "zh-Hant": "腓立比的信徒"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "这是改革宗“圣徒坚忍”和其他传统解释分歧的一处（见第二部分命题）。",
+    "zh-Hant": "這是改革宗“聖徒堅忍”和其他傳統解釋分歧的一處（見第二部分命題）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "“直到耶稣基督的日子”。",
+    "zh-Hant": "“直到耶穌基督的日子”。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "overcomers",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "得胜者的赏赐",
+    "zh-Hant": "得勝者的賞賜",
+    "en": "Rewards for the one who overcomes"
+   },
+   "refs": [
+    "Revelation 2:7",
+    "Revelation 2:10",
+    "Revelation 3:21"
+   ],
+   "who": {
+    "zh-Hans": "七个教会中“得胜的”",
+    "zh-Hant": "七個教會中“得勝的”"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“得胜的”“务要至死忠心”。",
+    "zh-Hant": "“得勝的”“務要至死忠心”。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "赏赐在将来赐下。",
+    "zh-Hant": "賞賜在將來賜下。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "hundredfold",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "为我和福音撇下的，今世得百倍，并且要受逼迫",
+    "zh-Hant": "為我和福音撇下的，今世得百倍，並且要受逼迫",
+    "en": "A hundredfold now — with persecutions"
+   },
+   "refs": [
+    "Mark 10:29-30",
+    "Matthew 19:29"
+   ],
+   "who": {
+    "zh-Hans": "为耶稣和福音撇下一切的人",
+    "zh-Hant": "為耶穌和福音撇下一切的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“为我和福音”。",
+    "zh-Hant": "“為我和福音”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "马可福音的版本里明说“并且要受逼迫”，应许里同时有祝福与苦难。",
+    "zh-Hant": "馬可福音的版本里明說“並且要受逼迫”，應許裡同時有祝福與苦難。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "tribulation",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "“在世上，你们有苦难”——被应许的逼迫",
+    "zh-Hant": "“在世上，你們有苦難”——被應許的逼迫",
+    "en": "\"In the world you will have trouble\""
+   },
+   "refs": [
+    "John 16:33",
+    "2 Timothy 3:12"
+   ],
+   "who": {
+    "zh-Hans": "跟随耶稣的人",
+    "zh-Hant": "跟隨耶穌的人"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "耶稣“预先告诉”门徒。",
+    "zh-Hant": "耶穌“預先告訴”門徒。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "圣经里的“应许”并不都是舒适的：耶稣也预先说明苦难。",
+    "zh-Hant": "聖經裡的“應許”並不都是舒適的：耶穌也預先說明苦難。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "fy-bp05",
+     "quote": {
+      "zh-Hans": "他却不会因此而免去我们遭遇困难和试炼",
+      "zh-Hant": "他卻不會因此而免去我們遭遇困難和試煉"
+     },
+     "title": {
+      "zh-Hans": "洗礼后的试探 (上)",
+      "zh-Hant": "洗禮後的試探 (上)"
+     }
+    }
+   ]
+  },
+  {
+   "id": "rest",
+   "group": "G8",
+   "title": {
+    "zh-Hans": "进入神安息的应许",
+    "zh-Hant": "進入神安息的應許",
+    "en": "The promise of entering his rest"
+   },
+   "refs": [
+    "Hebrews 4:1"
+   ],
+   "who": {
+    "zh-Hans": "信徒",
+    "zh-Hant": "信徒"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "旷野一代“不能进入安息，是因为不信的缘故”（来3:18-19）。",
+    "zh-Hant": "曠野一代“不能進入安息，是因為不信的緣故”（來3:18-19）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "应许“蒙留下”，但“当畏惧，免得……赶不上”。",
+    "zh-Hant": "應許“蒙留下”，但“當畏懼，免得……趕不上”。"
+   },
+   "fulfilRefs": [
+    "Hebrews 3:18-19",
+    "Hebrews 6:11-12"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "219",
+     "quote": {
+      "zh-Hans": "从来没有人不经过可怕、令人恐惧的旷野就能到达应许之地",
+      "zh-Hant": "從來沒有人不經過可怕、令人恐懼的曠野就能到達應許之地"
+     },
+     "title": {
+      "zh-Hans": "被圣灵引导",
+      "zh-Hant": "被聖靈引導"
+     }
+    }
+   ]
+  },
+  {
+   "id": "return-christ",
+   "group": "G9",
+   "title": {
+    "zh-Hans": "主再来",
+    "zh-Hant": "主再來",
+    "en": "The Lord’s return"
+   },
+   "refs": [
+    "Acts 1:11",
+    "John 14:2-3"
+   ],
+   "who": {
+    "zh-Hans": "门徒与信徒",
+    "zh-Hant": "門徒與信徒"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "有人嘲笑：“主要降临的应许在哪里呢？”（彼后3:4）。",
+    "zh-Hant": "有人嘲笑：“主要降臨的應許在哪裡呢？”（彼後3:4）。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "彼得的回答：“主所应许的尚未成就，有人以为他是耽延，其实不是耽延，乃是宽容你们，不愿有一人沉沦，乃愿人人都悔改。”（彼后3:9）",
+    "zh-Hant": "彼得的回答：“主所應許的尚未成就，有人以為他是耽延，其實不是耽延，乃是寬容你們，不願有一人沉淪，乃願人人都悔改。”（彼後3:9）"
+   },
+   "fulfilRefs": [
+    "2 Peter 3:4",
+    "2 Peter 3:9"
+   ],
+   "history": {
+    "zh-Hans": "这是教会两千年来仍在等候的应许；任何“某年某月”的推算，历史上都没有成真。",
+    "zh-Hant": "這是教會兩千年來仍在等候的應許；任何“某年某月”的推算，歷史上都沒有成真。"
+   },
+   "sources": [],
+   "sermons": [
+    {
+     "id": "EC010",
+     "quote": {
+      "zh-Hans": "试图预测耶稣回来的确切日期是错误的",
+      "zh-Hant": "試圖預測耶穌回來的確切日期是錯誤的"
+     },
+     "title": {
+      "zh-Hans": "如何理解关于末世的预言",
+      "zh-Hant": "如何理解關於末世的預言"
+     }
+    }
+   ]
+  },
+  {
+   "id": "resurrection-believers",
+   "group": "G9",
+   "title": {
+    "zh-Hans": "信徒复活、改变",
+    "zh-Hant": "信徒復活、改變",
+    "en": "Resurrection and transformation of believers"
+   },
+   "refs": [
+    "1 Corinthians 15:51-52",
+    "1 Thessalonians 4:16-17"
+   ],
+   "who": {
+    "zh-Hans": "在基督里的人",
+    "zh-Hant": "在基督裡的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“在基督里死了的人”。",
+    "zh-Hant": "“在基督裡死了的人”。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "在主再来之时。",
+    "zh-Hant": "在主再來之時。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "new-heavens",
+   "group": "G9",
+   "title": {
+    "zh-Hans": "新天新地，神与人同住",
+    "zh-Hant": "新天新地，神與人同住",
+    "en": "A new heaven and a new earth"
+   },
+   "refs": [
+    "2 Peter 3:13",
+    "Revelation 21:1-4",
+    "Hebrews 12:26"
+   ],
+   "who": {
+    "zh-Hans": "全造物与信徒",
+    "zh-Hant": "全造物與信徒"
+   },
+   "cond": "unconditional",
+   "condText": {
+    "zh-Hans": "“我们照他的应许，盼望新天新地”（彼后3:13）。",
+    "zh-Hant": "“我們照他的應許，盼望新天新地”（彼後3:13）。"
+   },
+   "status": "✘",
+   "fulfil": {
+    "zh-Hans": "启示录21章的画面：“神要擦去他们一切的眼泪；不再有死亡……”",
+    "zh-Hant": "啟示錄21章的畫面：“神要擦去他們一切的眼淚；不再有死亡……”"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "jer2911",
+   "group": "G10",
+   "title": {
+    "zh-Hans": "“我知道我向你们所怀的意念，是赐平安的意念”（耶29:11）",
+    "zh-Hant": "“我知道我向你們所懷的意念，是賜平安的意念”（耶29:11）",
+    "en": "\"Plans for peace\" (Jer 29:11)"
+   },
+   "refs": [
+    "Jeremiah 29:11-14"
+   ],
+   "who": {
+    "zh-Hans": "被掳到巴比伦的犹大人",
+    "zh-Hant": "被擄到巴比倫的猶大人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "紧接着是“你们要呼求我……专心寻求我”（29:12-13）。",
+    "zh-Hant": "緊接著是“你們要呼求我……專心尋求我”（29:12-13）。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "上一节（29:10）限定了时间：“为巴比伦所定的七十年满了以后”。把它直接当作对每个人的“人生计划”应许，是脱离语境的用法；但它显示的神的性情（愿意赐平安、愿意被寻见）有普遍意义。",
+    "zh-Hant": "上一節（29:10）限定了時間：“為巴比倫所定的七十年滿了以後”。把它直接當作對每個人的“人生計劃”應許，是脫離語境的用法；但它顯示的神的性情（願意賜平安、願意被尋見）有普遍意義。"
+   },
+   "fulfilRefs": [
+    "Jeremiah 29:10"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "423",
+     "quote": {
+      "zh-Hans": "如果你引用一个应许却不引用附在那个应许上的条件，那你就做了一件虚假的事",
+      "zh-Hant": "如果你引用一個應許卻不引用附在那個應許上的條件，那你就做了一件虛假的事"
+     },
+     "title": {
+      "zh-Hans": "新生命",
+      "zh-Hant": "新生命"
+     }
+    }
+   ]
+  },
+  {
+   "id": "ps91",
+   "group": "G10",
+   "title": {
+    "zh-Hans": "“他要为你吩咐他的使者……免得你的脚碰在石头上”（诗91:11-12）",
+    "zh-Hant": "“他要為你吩咐他的使者……免得你的腳碰在石頭上”（詩91:11-12）",
+    "en": "\"He will command his angels\" (Ps 91)"
+   },
+   "refs": [
+    "Psalms 91:9-12",
+    "Matthew 4:5-7"
+   ],
+   "who": {
+    "zh-Hans": "“以至高者为居所”的人",
+    "zh-Hant": "“以至高者為居所”的人"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“雅伟是我的避难所；你已将至高者当你的居所”（91:9）。",
+    "zh-Hant": "“雅偉是我的避難所；你已將至高者當你的居所”（91:9）。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "魔鬼在旷野引用这一段，耶稣回答“不可试探主你的神”：应许不能被用来强迫神按我们的想法行事。",
+    "zh-Hant": "魔鬼在曠野引用這一段，耶穌回答“不可試探主你的神”：應許不能被用來強迫神按我們的想法行事。"
+   },
+   "fulfilRefs": [
+    "Matthew 4:5-7"
+   ],
+   "history": null,
+   "sources": [],
+   "sermons": [
+    {
+     "id": "EC018",
+     "quote": {
+      "zh-Hans": "一个普遍的应许不一定适用于一个具体情况",
+      "zh-Hant": "一個普遍的應許不一定適用於一個具體情況"
+     },
+     "title": {
+      "zh-Hans": "神国度的异象（1）",
+      "zh-Hant": "神國度的異象（1）"
+     }
+    }
+   ]
+  },
+  {
+   "id": "phil413",
+   "group": "G10",
+   "title": {
+    "zh-Hans": "“我靠着那加给我力量的，凡事都能做”（腓4:13）",
+    "zh-Hant": "“我靠著那加給我力量的，凡事都能做”（腓4:13）",
+    "en": "\"I can do all things\" (Phil 4:13)"
+   },
+   "refs": [
+    "Philippians 4:11-13"
+   ],
+   "who": {
+    "zh-Hans": "保罗；语境是“无论什么景况都可以知足”",
+    "zh-Hant": "保羅；語境是“無論什麼景況都可以知足”"
+   },
+   "cond": "mixed",
+   "condText": {
+    "zh-Hans": "上文是学会知足的“秘诀”。",
+    "zh-Hant": "上文是學會知足的“秘訣”。"
+   },
+   "status": "∞",
+   "fulfil": {
+    "zh-Hans": "“凡事”在语境里是“或饱足，或饥饿；或有余，或缺乏”，不是“任何成就”。",
+    "zh-Hant": "“凡事”在語境裡是“或飽足，或飢餓；或有餘，或缺乏”，不是“任何成就”。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "mal310",
+   "group": "G10",
+   "title": {
+    "zh-Hans": "“将当纳的十分之一全然送入仓库……倾福与你们”（玛3:10）",
+    "zh-Hant": "“將當納的十分之一全然送入倉庫……傾福與你們”（瑪3:10）",
+    "en": "\"Bring the full tithe\" (Mal 3:10)"
+   },
+   "refs": [
+    "Malachi 3:10"
+   ],
+   "who": {
+    "zh-Hans": "当时的以色列民族",
+    "zh-Hant": "當時的以色列民族"
+   },
+   "cond": "conditional",
+   "condText": {
+    "zh-Hans": "“将当纳的十分之一全然送入仓库”。",
+    "zh-Hant": "“將當納的十分之一全然送入倉庫”。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "原文是对以色列民族的契约语言；用在今天个人，需要谨慎。",
+    "zh-Hant": "原文是對以色列民族的契約語言；用在今天個人，需要謹慎。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  },
+  {
+   "id": "prov226",
+   "group": "G10",
+   "title": {
+    "zh-Hans": "“教养孩童，使他走当行的道，就是到老他也不偏离”（箴22:6）",
+    "zh-Hant": "“教養孩童，使他走當行的道，就是到老他也不偏離”（箴22:6）",
+    "en": "\"Train up a child\" (Prov 22:6)"
+   },
+   "refs": [
+    "Proverbs 22:6"
+   ],
+   "who": {
+    "zh-Hans": "一般性的智慧话",
+    "zh-Hant": "一般性的智慧話"
+   },
+   "cond": "none",
+   "condText": {
+    "zh-Hans": "箴言多是“原则/规律”，不是对个人的“应许”。",
+    "zh-Hant": "箴言多是“原則/規律”，不是對個人的“應許”。"
+   },
+   "status": "◐",
+   "fulfil": {
+    "zh-Hans": "一般规律，有例外；应当与“应许”分开看。",
+    "zh-Hant": "一般規律，有例外；應當與“應許”分開看。"
+   },
+   "fulfilRefs": [],
+   "history": null,
+   "sources": [],
+   "sermons": []
+  }
+ ],
+ "propositions": [
+  {
+   "id": "no-unconditional",
+   "n": 1,
+   "title": {
+    "zh-Hans": "“圣经中神的应许没有一个是无条件的”",
+    "zh-Hant": "“聖經中神的應許沒有一個是無條件的”",
+    "en": "\"No promise of God in the Bible is unconditional\""
+   },
+   "sermons": [
+    {
+     "id": "070",
+     "quote": {
+      "zh-Hans": "圣经中神的应许没有一个是无条件的。如果你不履行条件，应许将归于无效",
+      "zh-Hant": "聖經中神的應許沒有一個是無條件的。如果你不履行條件，應許將歸於無效"
+     },
+     "title": {
+      "zh-Hans": "要么作神的殿，要么作彼列的房屋",
+      "zh-Hant": "要麼作神的殿，要麼作彼列的房屋"
+     }
+    },
+    {
+     "id": "423",
+     "quote": {
+      "zh-Hans": "圣经中没有无条件的应许",
+      "zh-Hant": "聖經中沒有無條件的應許"
+     },
+     "title": {
+      "zh-Hans": "新生命",
+      "zh-Hant": "新生命"
+     }
+    },
+    {
+     "id": "fy-mt62",
+     "quote": {
+      "zh-Hans": "神的应许都是有条件的",
+      "zh-Hant": "神的應許都是有條件的"
+     },
+     "title": {
+      "zh-Hans": "神的殿还是巴力的殿",
+      "zh-Hant": "神的殿還是巴力的殿"
+     }
+    },
+    {
+     "id": "359",
+     "quote": {
+      "zh-Hans": "没有人无条件地承受应许",
+      "zh-Hant": "沒有人無條件地承受應許"
+     },
+     "title": {
+      "zh-Hans": "完全与确据的关系（第1部分）",
+      "zh-Hant": "完全與確據的關係（第1部分）"
+     }
+    }
+   ],
+   "verses": [
+    "1 Samuel 2:30",
+    "Joshua 23:14-16",
+    "Hebrews 3:18-19",
+    "Hebrews 4:1",
+    "Psalms 91:9-12",
+    "Genesis 9:11",
+    "Genesis 15:17-18",
+    "2 Samuel 7:14-16",
+    "Jeremiah 31:35-37",
+    "Romans 11:29",
+    "Hebrews 6:17-18"
+   ],
+   "points": [
+    {
+     "zh-Hans": "实践用意是对的，经文支持充分：撒上2:30 神收回对以利家的应许；来3:18-19、4:1：应许“蒙留下”，却“当畏惧，免得……赶不上”。不能把应许当作不管怎样都生效的保险单。",
+     "zh-Hant": "實踐用意是對的，經文支持充分：撒上2:30 神收回對以利家的應許；來3:18-19、4:1：應許“蒙留下”，卻“當畏懼，免得……趕不上”。不能把應許當作不管怎樣都生效的保險單。"
+    },
+    {
+     "zh-Hans": "但“没有一个”过强：挪亚之约（创9:11）、亚伯拉罕之约的立约方式（创15:17，只有神经过）、大卫之约“我的慈爱仍不离开他”（撒下7:14-15）、罗11:29“神的恩赐和选召是没有后悔的”、来6:17-18。",
+     "zh-Hant": "但“沒有一個”過強：挪亞之約（創9:11）、亞伯拉罕之約的立約方式（創15:17，只有神經過）、大衛之約“我的慈愛仍不離開他”（撒下7:14-15）、羅11:29“神的恩賜和選召是沒有後悔的”、來6:17-18。"
+    },
+    {
+     "zh-Hans": "较稳妥的区分：神的承诺是否可靠（可靠）；个人是否领受（取决于信与顺服）。讲道143、241 讲以色列的将来，用的正是“神的应许不会落空”，所以“没有一个是无条件的”更像是对个人领受说的。",
+     "zh-Hant": "較穩妥的區分：神的承諾是否可靠（可靠）；個人是否領受（取決於信與順服）。講道143、241 講以色列的將來，用的正是“神的應許不會落空”，所以“沒有一個是無條件的”更像是對個人領受說的。"
+    }
+   ],
+   "verdict": "qualify",
+   "verdictNote": {
+    "zh-Hans": "个人领受层面：经文支持充分；“没有一个”的全称说法：有张力。",
+    "zh-Hant": "個人領受層面：經文支持充分；“沒有一個”的全稱說法：有張力。"
+   }
+  },
+  {
+   "id": "general-vs-particular",
+   "n": 2,
+   "title": {
+    "zh-Hans": "一个普遍的应许，不一定适用于一个具体情况",
+    "zh-Hant": "一個普遍的應許，不一定適用於一個具體情況",
+    "en": "A general promise does not necessarily apply to a specific situation"
+   },
+   "sermons": [
+    {
+     "id": "EC018",
+     "quote": {
+      "zh-Hans": "一个普遍的应许不一定适用于一个具体情况",
+      "zh-Hant": "一個普遍的應許不一定適用於一個具體情況"
+     },
+     "title": {
+      "zh-Hans": "神国度的异象（1）",
+      "zh-Hant": "神國度的異象（1）"
+     }
+    },
+    {
+     "id": "EC018",
+     "quote": {
+      "zh-Hans": "我们这里有一种基督教——只要应许，却不要条件",
+      "zh-Hant": "我們這裡有一種基督教——只要應許，卻不要條件"
+     },
+     "title": {
+      "zh-Hans": "神国度的异象（1）",
+      "zh-Hant": "神國度的異象（1）"
+     }
+    },
+    {
+     "id": "EC018",
+     "quote": {
+      "zh-Hans": "除非你完全委身于行神的旨意，那么每一个应许都是给你的",
+      "zh-Hant": "除非你完全委身於行神的旨意，那麼每一個應許都是給你的"
+     },
+     "title": {
+      "zh-Hans": "神国度的异象（1）",
+      "zh-Hant": "神國度的異象（1）"
+     }
+    }
+   ],
+   "verses": [
+    "Psalms 91:9-12",
+    "Matthew 4:5-7",
+    "Romans 9:4",
+    "Jeremiah 29:11-14"
+   ],
+   "points": [
+    {
+     "zh-Hans": "核心论点相符：魔鬼引诗91:11-12，耶稣回答“不可试探主你的神”（太4:5-7）；诗91:9 本身有前提“你已将至高者当你的居所”。",
+     "zh-Hant": "核心論點相符：魔鬼引詩91:11-12，耶穌回答“不可試探主你的神”（太4:5-7）；詩91:9 本身有前提“你已將至高者當你的居所”。"
+    },
+    {
+     "zh-Hans": "“永远不要碰关于应许的书”是修辞性夸大，宜读作警告，不是教义。",
+     "zh-Hant": "“永遠不要碰關於應許的書”是修辭性誇大，宜讀作警告，不是教義。"
+    },
+    {
+     "zh-Hans": "“只要你完全委身，每一个应许都是给你的”有张力：罗9:4 说应许是以色列人的；耶29:11 是对被掳犹大人说的。判断是否适用，要看对象，不只看条件。",
+     "zh-Hant": "“只要你完全委身，每一個應許都是給你的”有張力：羅9:4 說應許是以色列人的；耶29:11 是對被擄猶大人說的。判斷是否適用，要看對象，不只看條件。"
+    }
+   ],
+   "verdict": "agree",
+   "verdictNote": {
+    "zh-Hans": "核心论点相符；“每一个应许都是给你的”有张力。",
+    "zh-Hant": "核心論點相符；“每一個應許都是給你的”有張力。"
+   }
+  },
+  {
+   "id": "faith-promise",
+   "n": 3,
+   "title": {
+    "zh-Hans": "信心就是抓住应许；应许与未来、盼望相连",
+    "zh-Hant": "信心就是抓住應許；應許與未來、盼望相連",
+    "en": "Faith grasps the promise; promise is tied to the future and to hope"
+   },
+   "sermons": [
+    {
+     "id": "363",
+     "quote": {
+      "zh-Hans": "信心的第三个具体特征，是它总是与应许有关，而应许总是与未来有关",
+      "zh-Hant": "信心的第三個具體特徵，是它總是與應許有關，而應許總是與未來有關"
+     },
+     "title": {
+      "zh-Hans": "借信心得以完全",
+      "zh-Hant": "借信心得以完全"
+     }
+    },
+    {
+     "id": "fy-nm26",
+     "quote": {
+      "zh-Hans": "你对神的信心是建立在神的信实和应许上的",
+      "zh-Hant": "你對神的信心是建立在神的信實和應許上的"
+     },
+     "title": {
+      "zh-Hans": "救恩与完全密不可分",
+      "zh-Hant": "救恩與完全密不可分"
+     }
+    },
+    {
+     "id": "369",
+     "quote": {
+      "zh-Hans": "没有应许，就没有盼望",
+      "zh-Hant": "沒有應許，就沒有盼望"
+     },
+     "title": {
+      "zh-Hans": "信心的意义（第1部分）",
+      "zh-Hant": "信心的意義（第1部分）"
+     }
+    }
+   ],
+   "verses": [
+    "Romans 4:20-21",
+    "Hebrews 11:13",
+    "Hebrews 11:39-40",
+    "Hebrews 10:23",
+    "Hebrews 10:36"
+   ],
+   "points": [
+    {
+     "zh-Hans": "与罗4:19-21 完全一致；来10:23“那应许我们的是信实的”。",
+     "zh-Hant": "與羅4:19-21 完全一致；來10:23“那應許我們的是信實的”。"
+    },
+    {
+     "zh-Hans": "需要补充：未来不等于“我活着时就会看见”。来11:13、39 说古人“并没有得着所应许的”。信心仰望的应许可能超过一个人的一生。",
+     "zh-Hant": "需要補充：未來不等於“我活著時就會看見”。來11:13、39 說古人“並沒有得著所應許的”。信心仰望的應許可能超過一個人的一生。"
+    }
+   ],
+   "verdict": "agree",
+   "verdictNote": {
+    "zh-Hans": "相符；“未来”的时间尺度需补充。",
+    "zh-Hant": "相符；“未來”的時間尺度需補充。"
+   }
+  },
+  {
+   "id": "resurrection-promise",
+   "n": 4,
+   "title": {
+    "zh-Hans": "复活是神给我们的一个应许",
+    "zh-Hant": "復活是神給我們的一個應許",
+    "en": "The resurrection is a promise God gives us"
+   },
+   "sermons": [
+    {
+     "id": "369",
+     "quote": {
+      "zh-Hans": "除非我们理解复活是神的一个应许，并且它是我们必须凭信心抓住的一个应许，复活对你来说在属灵上将没有任何意义",
+      "zh-Hant": "除非我們理解復活是神的一個應許，並且它是我們必須憑信心抓住的一個應許，復活對你來說在屬靈上將沒有任何意義"
+     },
+     "title": {
+      "zh-Hans": "信心的意义（第1部分）",
+      "zh-Hant": "信心的意義（第1部分）"
+     }
+    }
+   ],
+   "verses": [
+    "Acts 13:32-33",
+    "Acts 26:6",
+    "Romans 4:24-25"
+   ],
+   "points": [
+    {
+     "zh-Hans": "徒13:32-33 直接把耶稣的复活称为“那应许祖宗的话，神已经向我们……应验”。",
+     "zh-Hant": "徒13:32-33 直接把耶穌的復活稱為“那應許祖宗的話，神已經向我們……應驗”。"
+    },
+    {
+     "zh-Hans": "应用到个人，需要罗4:24-25 的连接：这话“也是为我们将来得称义的人写的”。",
+     "zh-Hant": "應用到個人，需要羅4:24-25 的連接：這話“也是為我們將來得稱義的人寫的”。"
+    }
+   ],
+   "verdict": "agree",
+   "verdictNote": {
+    "zh-Hans": "相符。",
+    "zh-Hant": "相符。"
+   }
+  },
+  {
+   "id": "material-spiritual",
+   "n": 5,
+   "title": {
+    "zh-Hans": "“以色列的应许都是物质的，我们的应许是属灵的”",
+    "zh-Hant": "“以色列的應許都是物質的，我們的應許是屬靈的”",
+    "en": "\"Israel’s promises were material; ours are spiritual\""
+   },
+   "sermons": [
+    {
+     "id": "219",
+     "quote": {
+      "zh-Hans": "神对以色列人的应许都是物质的应许：长寿、流奶与蜜之地——这些都是物质的应许。神对我们的应许是属灵的",
+      "zh-Hant": "神對以色列人的應許都是物質的應許：長壽、流奶與蜜之地——這些都是物質的應許。神對我們的應許是屬靈的"
+     },
+     "title": {
+      "zh-Hans": "被圣灵引导",
+      "zh-Hant": "被聖靈引導"
+     }
+    }
+   ],
+   "verses": [
+    "Hebrews 8:6",
+    "2 Peter 1:4",
+    "Jeremiah 31:33",
+    "Ezekiel 36:26-27",
+    "Philippians 4:19",
+    "Mark 10:29-30",
+    "Romans 9:4"
+   ],
+   "points": [
+    {
+     "zh-Hans": "有经文支持的一面：来8:6“更美之应许”；彼后1:4“又宝贵又极大的应许……与神的性情有分”。",
+     "zh-Hant": "有經文支持的一面：來8:6“更美之應許”；彼後1:4“又寶貴又極大的應許……與神的性情有分”。"
+    },
+    {
+     "zh-Hans": "但“都是物质的”过于绝对：旧约也有属灵的应许（耶31:33-34；结36:26-27；创12:3）；新约也有物质的一面（腓4:19；可10:29-30）。",
+     "zh-Hant": "但“都是物質的”過於絕對：舊約也有屬靈的應許（耶31:33-34；結36:26-27；創12:3）；新約也有物質的一面（腓4:19；可10:29-30）。"
+    }
+   ],
+   "verdict": "qualify",
+   "verdictNote": {
+    "zh-Hans": "强调点大体相符；“都是物质/都是属灵”的两分有张力。",
+    "zh-Hant": "強調點大體相符；“都是物質/都是屬靈”的兩分有張力。"
+   }
+  },
+  {
+   "id": "promise-limited",
+   "n": 6,
+   "title": {
+    "zh-Hans": "应许会因为缺乏信心而被限制或收回",
+    "zh-Hant": "應許會因為缺乏信心而被限制或收回",
+    "en": "A promise can be limited or withdrawn for lack of faith"
+   },
+   "sermons": [
+    {
+     "id": "201",
+     "quote": {
+      "zh-Hans": "应许不得不被收回、撤消，因为没有信心来领受那得胜",
+      "zh-Hant": "應許不得不被收回、撤消，因為沒有信心來領受那得勝"
+     },
+     "title": {
+      "zh-Hans": "得胜的信心",
+      "zh-Hant": "得勝的信心"
+     }
+    }
+   ],
+   "verses": [
+    "2 Kings 13:17-19",
+    "1 Samuel 2:30",
+    "1 Kings 9:6-7",
+    "Jeremiah 18:9-10"
+   ],
+   "points": [
+    {
+     "zh-Hans": "王下13:17-19：王只打地三次，以利沙说“现在只能打败亚兰人三次”。经文说的是应许被限制在王所回应的程度，而不是“收回”。",
+     "zh-Hant": "王下13:17-19：王只打地三次，以利沙說“現在只能打敗亞蘭人三次”。經文說的是應許被限制在王所回應的程度，而不是“收回”。"
+    },
+    {
+     "zh-Hans": "撒上2:30 才是明确的收回；耶18:9-10 是一般性的说明。方向与经文一致。",
+     "zh-Hant": "撒上2:30 才是明確的收回；耶18:9-10 是一般性的說明。方向與經文一致。"
+    }
+   ],
+   "verdict": "agree",
+   "verdictNote": {
+    "zh-Hans": "相符（“收回”宜改为“限制”）。",
+    "zh-Hant": "相符（“收回”宜改為“限制”）。"
+   }
+  },
+  {
+   "id": "israel-future",
+   "n": 7,
+   "title": {
+    "zh-Hans": "外邦人的日期、以色列的将来与1948年",
+    "zh-Hant": "外邦人的日期、以色列的將來與1948年",
+    "en": "The times of the Gentiles, Israel’s future and 1948"
+   },
+   "sermons": [
+    {
+     "id": "143",
+     "quote": {
+      "zh-Hans": "犹太人将被遗弃一段时间",
+      "zh-Hant": "猶太人將被遺棄一段時間"
+     },
+     "title": {
+      "zh-Hans": "邪恶的度量",
+      "zh-Hant": "邪惡的度量"
+     }
+    },
+    {
+     "id": "143",
+     "quote": {
+      "zh-Hans": "那就是保罗在罗马书11:26中所说的应验",
+      "zh-Hant": "那就是保羅在羅馬書11:26中所說的應驗"
+     },
+     "title": {
+      "zh-Hans": "邪恶的度量",
+      "zh-Hant": "邪惡的度量"
+     }
+    },
+    {
+     "id": "241",
+     "quote": {
+      "zh-Hans": "外邦人的时代正在快速过去",
+      "zh-Hant": "外邦人的時代正在快速過去"
+     },
+     "title": {
+      "zh-Hans": "敌基督：对教会的审判",
+      "zh-Hant": "敵基督：對教會的審判"
+     }
+    },
+    {
+     "id": "421",
+     "quote": {
+      "zh-Hans": "我们看到以色列在1948年经过两千年再次建立。那棵似乎在冬天枯死了的无花果树又开花了",
+      "zh-Hant": "我們看到以色列在1948年經過兩千年再次建立。那棵似乎在冬天枯死了的無花果樹又開花了"
+     },
+     "title": {
+      "zh-Hans": "主的再来及其先兆事件",
+      "zh-Hant": "主的再來及其先兆事件"
+     }
+    }
+   ],
+   "verses": [
+    "Luke 21:24",
+    "Romans 11:25-26",
+    "Romans 11:29",
+    "Matthew 24:32-34"
+   ],
+   "points": [
+    {
+     "zh-Hans": "罗11:26 的主要解释有三种（Merkle，JETS 2000）：①一切蒙拣选的人（加尔文、耶利米亚斯、巴特、赖特）；②作为民族的以色列将来归信；③历代蒙拣选的犹太人。讲道143 的四阶段对应第②种。",
+     "zh-Hant": "羅11:26 的主要解釋有三種（Merkle，JETS 2000）：①一切蒙揀選的人（加爾文、耶利米亞斯、巴特、賴特）；②作為民族的以色列將來歸信；③歷代蒙揀選的猶太人。講道143 的四階段對應第②種。"
+    },
+    {
+     "zh-Hans": "1948年5月14日以色列建国是历史事实；但太24:32 并没有说无花果树就是以色列，那是一部分未来派的解释（一位倡导者曾据此推算约1988年，没有成真）。",
+     "zh-Hant": "1948年5月14日以色列建國是歷史事實；但太24:32 並沒有說無花果樹就是以色列，那是一部分未來派的解釋（一位倡導者曾據此推算約1988年，沒有成真）。"
+    }
+   ],
+   "verdict": "tradition",
+   "verdictNote": {
+    "zh-Hans": "罗11:26 的理解：存在传统分歧；以1948年作“无花果树”的确认：超出经文。",
+    "zh-Hant": "羅11:26 的理解：存在傳統分歧；以1948年作“無花果樹”的確認：超出經文。"
+   }
+  },
+  {
+   "id": "word-not-failed",
+   "n": 8,
+   "title": {
+    "zh-Hans": "“神的话没有落空”与“从以色列生的不都是以色列人”",
+    "zh-Hant": "“神的話沒有落空”與“從以色列生的不都是以色列人”",
+    "en": "\"God’s word has not failed\" (Romans 9)"
+   },
+   "sermons": [
+    {
+     "id": "fy-rms09-01",
+     "quote": {
+      "zh-Hans": "神的话是绝对不会落空的",
+      "zh-Hant": "神的話是絕對不會落空的"
+     },
+     "title": {
+      "zh-Hans": "罗马书纵览9章(1)",
+      "zh-Hant": "羅馬書縱覽9章(1)"
+     }
+    }
+   ],
+   "verses": [
+    "Romans 9:4",
+    "Romans 9:8",
+    "Ephesians 2:12"
+   ],
+   "points": [
+    {
+     "zh-Hans": "这篇讲道是机器转写加AI校对的文本，可靠程度较低，只引用一句。",
+     "zh-Hant": "這篇講道是機器轉寫加AI校對的文本，可靠程度較低，只引用一句。"
+    },
+    {
+     "zh-Hans": "强调应许不因以色列人大多失去救恩而落空，与罗9:4-8 上下文一致。由此引出的“选民也可能失去救恩”，属于改革宗与其他传统之间的争论。",
+     "zh-Hant": "強調應許不因以色列人大多失去救恩而落空，與羅9:4-8 上下文一致。由此引出的“選民也可能失去救恩”，屬於改革宗與其他傳統之間的爭論。"
+    }
+   ],
+   "verdict": "tradition",
+   "verdictNote": {
+    "zh-Hans": "神的话不落空：相符；由此引出的救恩论结论：存在传统分歧。",
+    "zh-Hant": "神的話不落空：相符；由此引出的救恩論結論：存在傳統分歧。"
+   }
+  },
+  {
+   "id": "delay",
+   "n": 9,
+   "title": {
+    "zh-Hans": "“主所应许的尚未成就”——神的宽容与耽延",
+    "zh-Hant": "“主所應許的尚未成就”——神的寬容與耽延",
+    "en": "\"The Lord’s promise is not yet fulfilled\" — God’s patience"
+   },
+   "sermons": [
+    {
+     "id": "073",
+     "quote": {
+      "zh-Hans": "主所应许的尚未成就，有人以为他是耽延，其实不是耽延，乃是宽容你们，不愿有一人沉沦，乃愿人人都悔改",
+      "zh-Hant": "主所應許的尚未成就，有人以為他是耽延，其實不是耽延，乃是寬容你們，不願有一人沉淪，乃願人人都悔改"
+     },
+     "title": {
+      "zh-Hans": "比喻的目的：从救恩的观点看",
+      "zh-Hant": "比喻的目的：從救恩的觀點看"
+     }
+    }
+   ],
+   "verses": [
+    "2 Peter 3:4",
+    "2 Peter 3:9",
+    "Matthew 24:36"
+   ],
+   "points": [
+    {
+     "zh-Hans": "讲道直接引彼后3:9，与经文逐字一致。EC010 用同一原理说明为什么不应预测主再来的日期。",
+     "zh-Hant": "講道直接引彼後3:9，與經文逐字一致。EC010 用同一原理說明為什麼不應預測主再來的日期。"
+    },
+    {
+     "zh-Hans": "历史也一致：历代推算主再来日期的说法，没有一个成真（包括 EC010 提到的“大概2005年左右”）。",
+     "zh-Hant": "歷史也一致：歷代推算主再來日期的說法，沒有一個成真（包括 EC010 提到的“大概2005年左右”）。"
+    }
+   ],
+   "verdict": "agree",
+   "verdictNote": {
+    "zh-Hans": "相符。",
+    "zh-Hant": "相符。"
+   }
+  }
+ ],
+ "verdicts": {
+  "agree": {
+   "label": {
+    "zh-Hans": "相符",
+    "zh-Hant": "相符",
+    "en": "Agrees with Scripture"
+   },
+   "note": {
+    "zh-Hans": "经文有明确支持",
+    "zh-Hant": "經文有明確支持"
+   }
+  },
+  "qualify": {
+   "label": {
+    "zh-Hans": "大体相符，需补充",
+    "zh-Hant": "大體相符，需補充",
+    "en": "Largely agrees; needs qualification"
+   },
+   "note": {
+    "zh-Hans": "方向对，但有重要的限定",
+    "zh-Hant": "方向對，但有重要的限定"
+   }
+  },
+  "tradition": {
+   "label": {
+    "zh-Hans": "存在传统分歧",
+    "zh-Hant": "存在傳統分歧",
+    "en": "Real disagreement among traditions"
+   },
+   "note": {
+    "zh-Hans": "教会传统之间的真实争论，不是“圣经对讲道”",
+    "zh-Hant": "教會傳統之間的真實爭論，不是“聖經對講道”"
+   }
+  }
+ },
+ "conds": {
+  "unconditional": {
+   "label": {
+    "zh-Hans": "无条件",
+    "zh-Hant": "無條件",
+    "en": "Unconditional"
+   }
+  },
+  "conditional": {
+   "label": {
+    "zh-Hans": "有条件",
+    "zh-Hant": "有條件",
+    "en": "Conditional"
+   }
+  },
+  "mixed": {
+   "label": {
+    "zh-Hans": "兼有",
+    "zh-Hant": "兼有",
+    "en": "Both"
+   }
+  },
+  "none": {
+   "label": {
+    "zh-Hans": "—",
+    "zh-Hant": "—",
+    "en": "n/a"
+   }
+  }
+ },
+ "sources": [
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Tel Dan Stele”",
+    "zh-Hant": "維基百科 “Tel Dan Stele”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Tel_Dan_Stele"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Siege of Jerusalem (587 BC)”",
+    "zh-Hant": "維基百科 “Siege of Jerusalem (587 BC)”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(587_BC)"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Siege of Jerusalem (70 CE)”",
+    "zh-Hant": "維基百科 “Siege of Jerusalem (70 CE)”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(70_CE)"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Bar Kokhba revolt”",
+    "zh-Hant": "維基百科 “Bar Kokhba revolt”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Bar_Kokhba_revolt"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Cyrus Cylinder”",
+    "zh-Hant": "維基百科 “Cyrus Cylinder”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Cyrus_Cylinder"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Jewish diaspora”",
+    "zh-Hant": "維基百科 “Jewish diaspora”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Jewish_diaspora"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Israeli Declaration of Independence”",
+    "zh-Hant": "維基百科 “Israeli Declaration of Independence”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Israeli_Declaration_of_Independence"
+  },
+  {
+   "name": {
+    "zh-Hans": "维基百科 “Olivet discourse”",
+    "zh-Hant": "維基百科 “Olivet discourse”"
+   },
+   "url": "https://en.wikipedia.org/wiki/Olivet_discourse"
+  },
+  {
+   "name": {
+    "zh-Hans": "皮尤研究中心《2010-2020年全球宗教格局的变化》(2025)",
+    "zh-Hant": "皮尤研究中心《2010-2020年全球宗教格局的變化》(2025)"
+   },
+   "url": "https://www.pewresearch.org/religion/2025/06/09/how-the-global-religious-landscape-changed-from-2010-to-2020/"
+  },
+  {
+   "name": {
+    "zh-Hans": "Ben L. Merkle,“Romans 11 and the Future of Ethnic Israel”,JETS 43/4 (2000) 709-721",
+    "zh-Hant": "Ben L. Merkle,“Romans 11 and the Future of Ethnic Israel”,JETS 43/4 (2000) 709-721"
+   },
+   "url": "https://etsjets.org/wp-content/uploads/2010/06/files_JETS-PDFs_43_43-4_43-4-pp709-721_JETS.pdf"
+  }
+ ]
+}

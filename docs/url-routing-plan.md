@@ -165,6 +165,8 @@ accept the parameter that would make it so (documented per-row).
 | `ChronologyChartPage` | `/chronology` | none | — | yes — the same page as `/timeline` opened on its chronology-chart view; a separate class because a route here is keyed by page class (see its doc comment in `bible_timeline_page.dart`), and a Featured destination has to be addressable |
 | `PassionWheelPage` | `/passion-wheel` | none | — | yes — Gospel time study wheel |
 | `BiblePrinciplesPage` | `/bible-principles` | none | — | yes — source-linked sermon principles |
+| `StudyPrinciplesPage` | `/study/principles` | none | — | yes — hidden research page (URL only, no link anywhere): sermon principles compared with the Bible |
+| `StudyPromisesPage` | `/study/promises` | none | — | yes — hidden research page (URL only, no link anywhere): promises of God, fulfilled or not, vs sermons and history |
 | `WorldHistoryWheelPage` | `/world-history-wheel` | none | — | yes — namespaced Sword world-history data |
 | `MisconceptionsPage` | `/misconceptions` | none | — | yes for the list; **individual entries are not a separate page today** (§2) — out of scope until/unless a `MisconceptionDetailPage` is split out |
 | `FeedbackPage` | `/feedback` | none | — | yes |

@@ -2,6 +2,8 @@ import 'package:yahwehs_words/services/media_companion_service.dart';
 import 'package:yahwehs_words/services/watch_reading_snapshot.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
+import 'package:yahwehs_words/pages/study_principles_page.dart';
+import 'package:yahwehs_words/pages/study_promises_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart'
@@ -308,6 +310,20 @@ final List<GetPage> _registeredGetPages = [
   GetPage(
     name: '/bible-principles',
     page: () => const BiblePrinciplesPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/study/principles',
+    page: () => const StudyPrinciplesPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/study/promises',
+    page: () => const StudyPromisesPage(),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,
