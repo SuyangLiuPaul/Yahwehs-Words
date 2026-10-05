@@ -203,6 +203,87 @@ class StudyPrinciple {
       sermons.any((s) => s.id == q.trim());
 }
 
+/// One Old Testament passage a New Testament verse quotes or alludes to.
+class StudyOtRef {
+  final String ref; // full English
+  final String type; // quote | paraphrase | allusion
+  final List<String> srcs; // LEB / NET
+  final StudyVerse block;
+  const StudyOtRef(this.ref, this.type, this.srcs, this.block);
+  factory StudyOtRef.fromJson(Map<String, dynamic> j) => StudyOtRef(
+      j['ref'] as String,
+      j['type'] as String,
+      (j['srcs'] as List).cast<String>(),
+      StudyVerse.fromJson(j['block'] as Map<String, dynamic>));
+}
+
+/// A New Testament verse (or run of verses) and the Old Testament it cites.
+class StudyCorrespondence {
+  final String id, nt, main;
+  final String? formula; // fulfil | written | null
+  final StudyVerse ntBlock;
+  final List<StudyOtRef> ot;
+  const StudyCorrespondence(
+      this.id, this.nt, this.main, this.formula, this.ntBlock, this.ot);
+  factory StudyCorrespondence.fromJson(Map<String, dynamic> j) =>
+      StudyCorrespondence(
+          j['id'] as String,
+          j['nt'] as String,
+          j['main'] as String,
+          j['formula'] as String?,
+          StudyVerse.fromJson(j['ntBlock'] as Map<String, dynamic>),
+          [
+            for (final o in (j['ot'] as List))
+              StudyOtRef.fromJson(o as Map<String, dynamic>)
+          ]);
+
+  Set<(String, int)> get ntChapters => studyChaptersOf([nt]);
+  Set<(String, int)> get otChapters => studyChaptersOf(ot.map((o) => o.ref));
+
+  bool matches(String q, String locale) {
+    final n = q.trim().toLowerCase();
+    if (n.isEmpty) return true;
+    return nt.toLowerCase().contains(n) ||
+        ot.any((o) => o.ref.toLowerCase().contains(n)) ||
+        ntBlock.text.matches(n, locale) ||
+        ot.any((o) => o.block.text.matches(n, locale));
+  }
+}
+
+/// A place where the New Testament itself calls an Old Testament person,
+/// event or institution a type / shadow / example / allegory.
+class StudyTypology {
+  final String id;
+  final StudyText title, word, says;
+  final List<String> ot, nt;
+  final List<StudyVerse> otBlocks, ntBlocks;
+  const StudyTypology(this.id, this.title, this.word, this.says, this.ot,
+      this.nt, this.otBlocks, this.ntBlocks);
+  factory StudyTypology.fromJson(Map<String, dynamic> j) => StudyTypology(
+      j['id'] as String,
+      StudyText.from(j['title']),
+      StudyText.from(j['word']),
+      StudyText.from(j['says']),
+      (j['ot'] as List).cast<String>(),
+      (j['nt'] as List).cast<String>(),
+      _verses(j['otBlocks']),
+      _verses(j['ntBlocks']));
+}
+
+/// A New Testament verse with Old Testament passages cross-referenced both ways.
+class StudyRelated {
+  final String nt;
+  final List<String> ot;
+  const StudyRelated(this.nt, this.ot);
+}
+
+class StudyTestaments {
+  final List<StudyCorrespondence> entries;
+  final List<StudyTypology> typology;
+  final List<StudyRelated> related;
+  const StudyTestaments(this.entries, this.typology, this.related);
+}
+
 class StudyPromises {
   final Map<String, StudyLabel> status, conds;
   final List<(String, StudyText)> groups;
@@ -239,6 +320,22 @@ class StudyData {
           StudyPromise.fromJson(p as Map<String, dynamic>)
       ],
     );
+  }
+
+  static Future<StudyTestaments> loadTestaments(
+      {Future<String> Function(String)? loader}) async {
+    final j = jsonDecode(await (loader ?? rootBundle.loadString)(
+        'assets/study_testaments.json')) as Map<String, dynamic>;
+    return StudyTestaments([
+      for (final e in (j['entries'] as List))
+        StudyCorrespondence.fromJson(e as Map<String, dynamic>)
+    ], [
+      for (final t in (j['typology'] as List))
+        StudyTypology.fromJson(t as Map<String, dynamic>)
+    ], [
+      for (final r in (j['related'] as List))
+        StudyRelated((r as List)[0] as String, (r[1] as List).cast<String>())
+    ]);
   }
 
   static Future<StudyPrinciples> loadPrinciples(

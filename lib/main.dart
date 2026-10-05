@@ -4,6 +4,7 @@ import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/study_principles_page.dart';
 import 'package:yahwehs_words/pages/study_promises_page.dart';
+import 'package:yahwehs_words/pages/study_testaments_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart'
@@ -324,6 +325,13 @@ final List<GetPage> _registeredGetPages = [
   GetPage(
     name: '/study/promises',
     page: () => const StudyPromisesPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/study/testaments',
+    page: () => const StudyTestamentsPage(),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,

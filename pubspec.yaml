@@ -194,6 +194,7 @@ flutter:
     - assets/bible_principles.json
     - assets/study_principles.json
     - assets/study_promises.json
+    - assets/study_testaments.json
     - assets/world_chart/
     # 2026-09-09: the changelog the app shows, generated from the
     # release commits by `tools/build_changelog.py`. Bundled rather

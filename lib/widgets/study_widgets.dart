@@ -338,8 +338,12 @@ class StudyPassageFilter extends StatelessWidget {
   final int? chapter;
   final String locale;
   final void Function(String? book, int? chapter) onChanged;
+  final String keyPrefix;
+  final String label;
   const StudyPassageFilter({
     super.key,
+    this.keyPrefix = 'study',
+    this.label = '',
     required this.available,
     required this.book,
     required this.chapter,
@@ -360,11 +364,11 @@ class StudyPassageFilter extends StatelessWidget {
       SizedBox(
         width: 190,
         child: DropdownButtonFormField<String?>(
-          key: const ValueKey('study.book'),
+          key: ValueKey('$keyPrefix.book'),
           isExpanded: true,
           initialValue: book,
           decoration: InputDecoration(
-              labelText: studyL(locale, 'Book', '按经卷', '按經卷'),
+              labelText: label.isNotEmpty ? label : studyL(locale, 'Book', '按经卷', '按經卷'),
               isDense: true,
               border: const OutlineInputBorder()),
           items: [
@@ -384,7 +388,7 @@ class StudyPassageFilter extends StatelessWidget {
         SizedBox(
           width: 150,
           child: DropdownButtonFormField<int?>(
-            key: const ValueKey('study.chapter'),
+            key: ValueKey('$keyPrefix.chapter'),
             isExpanded: true,
             initialValue: chapter,
             decoration: InputDecoration(

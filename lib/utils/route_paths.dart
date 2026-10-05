@@ -42,6 +42,7 @@ const Set<String> kRegisteredRoutePaths = {
   // 2026-10-05: hidden research pages (no link anywhere; URL only).
   '/study/principles',
   '/study/promises',
+  '/study/testaments',
   '/world-history-wheel',
   '/sermons',
   '/misconceptions',
