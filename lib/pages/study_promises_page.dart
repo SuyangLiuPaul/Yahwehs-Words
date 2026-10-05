@@ -5,14 +5,14 @@ import 'package:yahwehs_words/models/study_data.dart';
 import 'package:yahwehs_words/utils/passage_localizer.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
-import 'package:yahwehs_words/widgets/study_claim_card.dart';
 import 'package:yahwehs_words/widgets/study_widgets.dart';
 
 const kStudyPromisesPath = '/study/promises';
 
 /// Hidden page (no link anywhere; reached by URL only): the promises of God,
-/// which have been fulfilled and which have not, set against the sermons and
-/// against history. Source: docs/讲道与圣经对照研究-圣经原则与神的应许-2026-10-05.docx
+/// Bible first: the verses themselves, then what the Bible says about their
+/// fulfilment, then history where a source was opened. Related sermons are
+/// links only.
 class StudyPromisesPage extends StatefulWidget {
   const StudyPromisesPage({super.key, this.loader});
 
@@ -39,7 +39,7 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
   Widget build(BuildContext context) {
     final locale = context.watch<AppSettings>().locale;
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           leading: const LocalizedBackButton(),
@@ -47,7 +47,6 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
           title: Text(studyL(locale, 'Promises of God', '神的应许', '神的應許')),
           bottom: TabBar(isScrollable: true, tabAlignment: TabAlignment.start, tabs: [
             Tab(text: studyL(locale, 'Promises', '应许目录', '應許目錄')),
-            Tab(text: studyL(locale, 'Sermons vs Bible', '讲道对照', '講道對照')),
             Tab(text: studyL(locale, 'About', '说明', '說明')),
           ]),
         ),
@@ -67,7 +66,6 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
             final d = snap.data!;
             return TabBarView(children: [
               _catalogue(d, locale),
-              _propositions(d, locale),
               _about(d, locale),
             ]);
           },
@@ -96,9 +94,9 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
                 locale, 'God has made many promises', '神有很多应许', '神有很多應許'),
             subtitle: studyL(
                 locale,
-                '${d.promises.length} representative promises, grouped, each marked fulfilled, being fulfilled, partly / disputed, or not yet — with the Bible text, the sermons, and how they relate to history. Tap a reference to read it in your Bible.',
-                '${d.promises.length} 条代表性的应许，分十组；每条标明已应验、持续应验中、部分应验或有分歧、尚未应验，并列出经文、讲道，以及与现实历史的关系。点经文可直接在你的圣经里阅读。',
-                '${d.promises.length} 條代表性的應許，分十組；每條標明已應驗、持續應驗中、部分應驗或有分歧、尚未應驗，並列出經文、講道，以及與現實歷史的關係。點經文可直接在你的聖經裡閱讀。'),
+                '${d.promises.length} promises in ten groups, each marked fulfilled, being fulfilled, partly / disputed, or not yet. Each starts with the Bible text, then what the Bible says about its fulfilment, then history where a source was opened. Related sermons are only links.',
+                '${d.promises.length} 条应许，分十组；每条标明已应验、持续应验中、部分应验或有分歧、尚未应验。每条先列经文原文，再说圣经里的应验与现状，有来源的再与历史对照；相关讲道只作链接。',
+                '${d.promises.length} 條應許，分十組；每條標明已應驗、持續應驗中、部分應驗或有分歧、尚未應驗。每條先列經文原文，再說聖經裡的應驗與現狀，有來源的再與歷史對照；相關講道只作連結。'),
             children: [
               Wrap(spacing: 8, runSpacing: 8, children: [
                 for (final s in ['✔', '∞', '◐', '✘'])
@@ -174,31 +172,6 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
     ];
   }
 
-  // ------------------------------------------------------------------ 讲道对照
-  Widget _propositions(StudyPromises d, String locale) {
-    return ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-        children: [
-          StudyHeader(
-            title: studyL(locale, 'What the sermons say about promises',
-                '讲道怎样讲应许', '講道怎樣講應許'),
-            subtitle: studyL(
-                locale,
-                'Nine claims from the sermons, each quoted verbatim, set against the Bible, with an assessment. Tap a quote to open the sermon.',
-                '讲道里关于应许的九个命题：每条都有逐字核对的原话，与圣经逐项对照，并给出评估。点原话可打开对应讲道。',
-                '講道裡關於應許的九個命題：每條都有逐字核對的原話，與聖經逐項對照，並給出評估。點原話可打開對應講道。'),
-          ),
-          const SizedBox(height: 14),
-          for (final c in d.propositions)
-            StudyClaimCard(
-                claim: c,
-                verdict: d.verdicts[c.verdict]!,
-                locale: locale,
-                keyPrefix: 'proposition',
-                initiallyExpanded: c.n == 1),
-        ]);
-  }
-
   // ------------------------------------------------------------------ 说明
   Widget _about(StudyPromises d, String locale) {
     final brightness = Theme.of(context).brightness;
@@ -213,9 +186,9 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
               title: studyL(locale, 'About this page', '关于这一页', '關於這一頁'),
               subtitle: studyL(
                   locale,
-                  'A research page: Pastor Eric H. H. Chang’s sermons compared with the Bible and with history. It is not linked from anywhere in the app.',
-                  '这是一个研究页：把张熙和牧师的讲道与圣经、与现实历史对照。应用里没有任何入口指向它。',
-                  '這是一個研究頁：把張熙和牧師的講道與聖經、與現實歷史對照。應用裡沒有任何入口指向它。')),
+                  'A research page on the promises of God, Bible first. It is not linked from anywhere in the app.',
+                  '这是一个关于神的应许的研究页，以圣经为主。应用里没有任何入口指向它。',
+                  '這是一個關於神的應許的研究頁，以聖經為主。應用裡沒有任何入口指向它。')),
           StudyLabel2(studyL(locale, 'Status legend', '状态说明', '狀態說明')),
           for (final s in ['✔', '∞', '◐', '✘'])
             Padding(
@@ -234,30 +207,39 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
             ),
           StudyLabel2(studyL(locale, 'How reliable is it', '可靠程度', '可靠程度')),
           bullet(
-              'Every Bible reference opens the app’s own text; nothing is quoted from memory.',
-              '每一处经文都打开应用自己的圣经，没有凭记忆引用。',
-              '每一處經文都打開應用自己的聖經，沒有憑記憶引用。'),
+              'Verse text comes from the app’s own Bibles (Chinese Union Version; KJV in English). Tap a verse to read it in your own Bible.',
+              '经文原文取自应用自己的圣经（和合本；英文界面用 KJV），没有凭记忆引用；点经文可在你自己的圣经里阅读。',
+              '經文原文取自應用自己的聖經（和合本；英文介面用 KJV），沒有憑記憶引用；點經文可在你自己的聖經裡閱讀。'),
           bullet(
-              'Every sermon quotation was checked verbatim against the sermon text. Tap it to open the sermon.',
-              '每一条讲道原话都逐字核对过对应讲道的中文文本；点一下可打开讲道。',
-              '每一條講道原話都逐字核對過對應講道的中文文本；點一下可打開講道。'),
+              'The status of each promise is judged from the Bible’s own record first. Where the Bible itself says both “fulfilled” and “still to come”, the entry says so.',
+              '每条应许的状态，首先依据圣经自己的记载判断；圣经内部同时有“已应验”和“还有未得”的说法时，条目会如实写明。',
+              '每條應許的狀態，首先依據聖經自己的記載判斷；聖經內部同時有“已應驗”和“還有未得”的說法時，條目會如實寫明。'),
           bullet(
-              'History notes name the source I opened (below). History can say whether an event happened; it cannot decide theology.',
-              '“与现实历史的关系”只列我打开读过的来源（见下）。历史能说明事件有没有发生，不能代替神学判断。',
-              '“與現實歷史的關係”只列我打開讀過的來源（見下）。歷史能說明事件有沒有發生，不能代替神學判斷。'),
+              'History notes name the source I opened (below). History can say whether an event happened; it cannot decide theology. Where traditions read a passage differently, the page says so and does not pick a side.',
+              '“与现实历史的关系”只列我打开读过的来源（见下）。历史能说明事件有没有发生，不能代替神学判断；传统之间读法不同的地方，本页注明，不替任何一方裁决。',
+              '“與現實歷史的關係”只列我打開讀過的來源（見下）。歷史能說明事件有沒有發生，不能代替神學判斷；傳統之間讀法不同的地方，本頁註明，不替任何一方裁決。'),
           bullet(
-              'I did not read all 429 sermons: I read the passages where “promise” is densest. This is not an exhaustive survey.',
-              '我没有读完全部429篇讲道：读的是“应许”一词最密集的相关段落，不是穷尽阅读。',
-              '我沒有讀完全部429篇講道：讀的是“應許”一詞最密集的相關段落，不是窮盡閱讀。'),
+              'Related sermons are links only. They are not the basis of any entry.',
+              '相关讲道只是链接，不是任何一条的依据。',
+              '相關講道只是連結，不是任何一條的依據。'),
           bullet(
-              'The text is written in Chinese; in English you will see the Chinese content with English titles.',
-              '研究内容以中文写成；英文界面只有标题和标签是英文。',
-              '研究內容以中文寫成；英文介面只有標題和標籤是英文。'),
+              'The explanations are written in Chinese; in English you will see English titles and the KJV text.',
+              '说明文字以中文写成；英文界面只有标题和经文是英文。',
+              '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
           StudyLabel2(
               studyL(locale, 'Sources opened', '外部资料（我实际打开的）', '外部資料（我實際打開的）')),
-          for (final s in d.sources) StudySourceLink(source: s, locale: locale),
+          for (final s in _allSources(d)) StudySourceLink(source: s, locale: locale),
         ]);
   }
+}
+
+List<StudySource> _allSources(StudyPromises d) {
+  final seen = <String>{};
+  return [
+    for (final p in d.promises)
+      for (final s in p.sources)
+        if (seen.add(s.url)) s
+  ];
 }
 
 class _PromiseCard extends StatelessWidget {
@@ -314,7 +296,12 @@ class _PromiseCard extends StatelessWidget {
           ),
           children: [
             StudyLabel2(studyL(locale, 'The promise', '应许经文', '應許經文')),
-            StudyRefChips(refs: p.refs, locale: locale),
+            for (final v in p.verseBlocks)
+              StudyVerseBlock(verse: v, locale: locale),
+            if (p.refs.length > p.verseBlocks.length)
+              StudyRefChips(
+                  refs: p.refs.skip(p.verseBlocks.length).toList(),
+                  locale: locale),
             StudyLabel2(
                 studyL(locale, 'To whom, on what condition', '对象与条件', '對象與條件')),
             Text('${p.who.of(locale)}\n${p.condText.of(locale)}',
@@ -336,9 +323,8 @@ class _PromiseCard extends StatelessWidget {
                 StudySourceLink(source: s, locale: locale),
             ],
             if (p.sermons.isNotEmpty) ...[
-              StudyLabel2(studyL(locale, 'In the sermons', '讲道里', '講道裡')),
-              for (final q in p.sermons)
-                StudyQuoteBlock(quote: q, locale: locale),
+              StudyLabel2(studyL(locale, 'Related sermons', '相关讲道', '相關講道')),
+              StudySermonLinks(sermons: p.sermons, locale: locale),
             ],
           ],
         ),

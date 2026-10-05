@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 /// Data for the two hidden study pages (圣经原则 / 神的应许). The JSON is
-/// generated from a verified research pass: every Bible reference resolves in
-/// the app's own text, every sermon quote was checked verbatim against the
-/// sermon corpus. Traditional-Chinese strings are converted from Simplified.
+/// generated from a verified research pass and is Bible-first: every verse text
+/// comes from the app's own Bibles (simplified, traditional, KJV), every sermon is
+/// only a link, and every external source named was opened and read.
+/// Traditional-Chinese strings are converted from Simplified.
 
 /// A localized string: zh-Hans, zh-Hant and (sometimes) en.
 class StudyText {
@@ -35,15 +36,27 @@ class StudyText {
   }
 }
 
-class StudyQuote {
-  final String sermonId;
-  final StudyText quote;
-  final StudyText sermonTitle;
-  const StudyQuote(this.sermonId, this.quote, this.sermonTitle);
-  factory StudyQuote.fromJson(Map<String, dynamic> j) => StudyQuote(
-      j['id'] as String,
-      StudyText.from(j['quote']),
-      StudyText.from(j['title']));
+/// A Bible passage with its text in the three bundled editions.
+class StudyVerse {
+  final String ref; // full English, e.g. "Isaiah 55:7"
+  final StudyText text;
+  const StudyVerse(this.ref, this.text);
+  factory StudyVerse.fromJson(Map<String, dynamic> j) => StudyVerse(
+      j['ref'] as String,
+      StudyText({
+        'zh-Hans': j['zh-Hans'] as String,
+        'zh-Hant': j['zh-Hant'] as String,
+        'en': j['en'] as String,
+      }));
+}
+
+/// A sermon this entry links to. Only the id and the title: tapping opens it.
+class StudySermon {
+  final String id;
+  final StudyText title;
+  const StudySermon(this.id, this.title);
+  factory StudySermon.fromJson(Map<String, dynamic> j) =>
+      StudySermon(j['id'] as String, StudyText.from(j['title']));
 }
 
 class StudySource {
@@ -62,13 +75,26 @@ class StudyLabel {
       StudyText.from(j['label']), StudyText.from(j['note'] ?? const {}));
 }
 
+List<StudySermon> _sermons(Object? j) => [
+      for (final s in (j as List))
+        StudySermon.fromJson(s as Map<String, dynamic>)
+    ];
+List<StudySource> _sources(Object? j) => [
+      for (final s in (j as List))
+        StudySource.fromJson(s as Map<String, dynamic>)
+    ];
+List<StudyVerse> _verses(Object? j) => [
+      for (final s in (j as List)) StudyVerse.fromJson(s as Map<String, dynamic>)
+    ];
+
 class StudyPromise {
   final String id, group, cond, status;
   final StudyText title, who, condText, fulfil;
   final StudyText? history;
   final List<String> refs, fulfilRefs;
+  final List<StudyVerse> verseBlocks;
   final List<StudySource> sources;
-  final List<StudyQuote> sermons;
+  final List<StudySermon> sermons;
   const StudyPromise({
     required this.id,
     required this.group,
@@ -81,6 +107,7 @@ class StudyPromise {
     required this.history,
     required this.refs,
     required this.fulfilRefs,
+    required this.verseBlocks,
     required this.sources,
     required this.sermons,
   });
@@ -96,84 +123,72 @@ class StudyPromise {
         history: j['history'] == null ? null : StudyText.from(j['history']),
         refs: (j['refs'] as List).cast<String>(),
         fulfilRefs: (j['fulfilRefs'] as List).cast<String>(),
-        sources: [
-          for (final s in (j['sources'] as List))
-            StudySource.fromJson(s as Map<String, dynamic>)
-        ],
-        sermons: [
-          for (final s in (j['sermons'] as List))
-            StudyQuote.fromJson(s as Map<String, dynamic>)
-        ],
+        verseBlocks: _verses(j['verseBlocks']),
+        sources: _sources(j['sources']),
+        sermons: _sermons(j['sermons']),
       );
 
   bool matches(String q, String locale) =>
       title.matches(q, locale) ||
       fulfil.matches(q, locale) ||
-      refs.any((r) => r.toLowerCase().contains(q.trim().toLowerCase()));
+      refs.any((r) => r.toLowerCase().contains(q.trim().toLowerCase())) ||
+      sermons.any((s) => s.id == q.trim());
 }
 
-/// One sermon claim compared with the Bible (a "proposition" about promises, or
-/// a "principle").
-class StudyClaim {
-  final String id, verdict;
+class StudyPrinciple {
+  final String id, cat;
   final int n;
-  final StudyText title, verdictNote;
-  final StudyText? tagline;
-  final List<StudyQuote> quotes;
+  final StudyText title, line;
+  final List<StudyVerse> verseBlocks;
+  final List<StudyText> says, limits;
   final List<String> verses;
-  final List<StudyText> points;
-  final List<String> existing;
-  const StudyClaim({
+  final List<StudySermon> sermons;
+  final List<StudySource> sources;
+  const StudyPrinciple({
     required this.id,
     required this.n,
-    required this.verdict,
+    required this.cat,
     required this.title,
-    required this.verdictNote,
-    required this.tagline,
-    required this.quotes,
+    required this.line,
+    required this.verseBlocks,
+    required this.says,
+    required this.limits,
     required this.verses,
-    required this.points,
-    required this.existing,
+    required this.sermons,
+    required this.sources,
   });
-  factory StudyClaim.fromJson(Map<String, dynamic> j) => StudyClaim(
+  factory StudyPrinciple.fromJson(Map<String, dynamic> j) => StudyPrinciple(
         id: j['id'] as String,
         n: j['n'] as int,
-        verdict: j['verdict'] as String,
+        cat: j['cat'] as String,
         title: StudyText.from(j['title']),
-        verdictNote: StudyText.from(j['verdictNote']),
-        tagline: j['tagline'] == null ? null : StudyText.from(j['tagline']),
-        // principles call them "quotes", propositions call them "sermons"
-        quotes: [
-          for (final s in ((j['quotes'] ?? j['sermons']) as List))
-            StudyQuote.fromJson(s as Map<String, dynamic>)
-        ],
+        line: StudyText.from(j['line']),
+        verseBlocks: _verses(j['verseBlocks']),
+        says: [for (final p in (j['says'] as List)) StudyText.from(p)],
+        limits: [for (final p in (j['limits'] as List)) StudyText.from(p)],
         verses: (j['verses'] as List).cast<String>(),
-        points: [for (final p in (j['points'] as List)) StudyText.from(p)],
-        existing: (j['existing'] as List? ?? const []).cast<String>(),
+        sermons: _sermons(j['sermons']),
+        sources: _sources(j['sources']),
       );
 
   bool matches(String q, String locale) =>
       title.matches(q, locale) ||
-      (tagline?.matches(q, locale) ?? false) ||
-      points.any((p) => p.matches(q, locale)) ||
+      line.matches(q, locale) ||
       verses.any((r) => r.toLowerCase().contains(q.trim().toLowerCase())) ||
-      quotes.any((x) => x.sermonId == q.trim());
+      sermons.any((s) => s.id == q.trim());
 }
 
 class StudyPromises {
-  final Map<String, StudyLabel> status, verdicts, conds;
+  final Map<String, StudyLabel> status, conds;
   final List<(String, StudyText)> groups;
   final List<StudyPromise> promises;
-  final List<StudyClaim> propositions;
-  final List<StudySource> sources;
-  const StudyPromises(this.status, this.verdicts, this.conds, this.groups,
-      this.promises, this.propositions, this.sources);
+  const StudyPromises(this.status, this.conds, this.groups, this.promises);
 }
 
 class StudyPrinciples {
-  final Map<String, StudyLabel> verdicts;
-  final List<StudyClaim> principles;
-  const StudyPrinciples(this.verdicts, this.principles);
+  final List<(String, StudyText)> categories;
+  final List<StudyPrinciple> principles;
+  const StudyPrinciples(this.categories, this.principles);
 }
 
 class StudyData {
@@ -189,7 +204,6 @@ class StudyData {
         'assets/study_promises.json')) as Map<String, dynamic>;
     return StudyPromises(
       _labels(j['status']),
-      _labels(j['verdicts']),
       _labels(j['conds']),
       [
         for (final g in (j['groups'] as List))
@@ -199,14 +213,6 @@ class StudyData {
         for (final p in (j['promises'] as List))
           StudyPromise.fromJson(p as Map<String, dynamic>)
       ],
-      [
-        for (final p in (j['propositions'] as List))
-          StudyClaim.fromJson(p as Map<String, dynamic>)
-      ],
-      [
-        for (final s in (j['sources'] as List))
-          StudySource.fromJson(s as Map<String, dynamic>)
-      ],
     );
   }
 
@@ -214,9 +220,12 @@ class StudyData {
       {Future<String> Function(String)? loader}) async {
     final j = jsonDecode(await (loader ?? rootBundle.loadString)(
         'assets/study_principles.json')) as Map<String, dynamic>;
-    return StudyPrinciples(_labels(j['verdicts']), [
+    return StudyPrinciples([
+      for (final c in (j['categories'] as List))
+        ((c as Map)['id'] as String, StudyText.from(c['name']))
+    ], [
       for (final p in (j['principles'] as List))
-        StudyClaim.fromJson(p as Map<String, dynamic>)
+        StudyPrinciple.fromJson(p as Map<String, dynamic>)
     ]);
   }
 }

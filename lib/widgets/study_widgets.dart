@@ -31,21 +31,6 @@ Color studyStatusColor(String status, Brightness b) {
   }
 }
 
-Color studyVerdictColor(String verdict, Brightness b) {
-  final dark = b == Brightness.dark;
-  switch (verdict) {
-    case 'agree':
-      return dark ? const Color(0xFF81C784) : const Color(0xFF2E7D32);
-    case 'qualify':
-      return dark ? const Color(0xFFFFB74D) : const Color(0xFFB45309);
-    default:
-      return dark ? const Color(0xFF90CAF9) : const Color(0xFF1E5AA8);
-  }
-}
-
-String studyVerdictGlyph(String verdict) =>
-    verdict == 'agree' ? '✔' : (verdict == 'qualify' ? '◐' : '⇄');
-
 /// Status / verdict keys (✔ ∞ ◐ ✘ ⇄) are drawn as icons: the web build ships
 /// no font for those code points and shows empty boxes.
 IconData studyGlyphIcon(String g) {
@@ -110,11 +95,10 @@ class StudyLabel2 extends StatelessWidget {
             decoration: BoxDecoration(
                 color: scheme.primary, borderRadius: BorderRadius.circular(2))),
         const SizedBox(width: 8),
-        Text(text,
-            style: Theme.of(context)
-                .textTheme
-                .labelLarge
-                ?.copyWith(fontWeight: FontWeight.w800, color: scheme.primary)),
+        Expanded(
+            child: Text(text,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w800, color: scheme.primary))),
       ]),
     );
   }
@@ -155,22 +139,26 @@ Future<void> openSermonById(BuildContext context, String id) async {
   await pushPage(SermonDetailPage(sermon: s), routeName: '/sermons/${s.id}');
 }
 
-/// A verbatim sermon quotation. Tapping opens the sermon it came from.
-class StudyQuoteBlock extends StatelessWidget {
-  final StudyQuote quote;
+/// A Bible passage shown with its text (simplified / traditional / KJV, from
+/// the app's own Bibles). Tapping opens the app's verse popup in the reader's
+/// own edition.
+class StudyVerseBlock extends StatelessWidget {
+  final StudyVerse verse;
   final String locale;
-  const StudyQuoteBlock({super.key, required this.quote, required this.locale});
+  const StudyVerseBlock({super.key, required this.verse, required this.locale});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final text = quote.quote.of(locale);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
-        key: ValueKey('quote.${quote.sermonId}'),
+        key: ValueKey('verse.${verse.ref}'),
         borderRadius: BorderRadius.circular(10),
-        onTap: () => openSermonById(context, quote.sermonId),
+        onTap: () {
+          final ref = parseReference(verse.ref);
+          if (ref != null) showVersePopup(context, ref);
+        },
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(14, 10, 12, 10),
@@ -181,19 +169,20 @@ class StudyQuoteBlock extends StatelessWidget {
                   Border(left: BorderSide(color: scheme.primary, width: 3.5))),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('「$text」', style: const TextStyle(fontSize: 15, height: 1.55)),
+            Text(verse.text.of(locale),
+                style: const TextStyle(fontSize: 15.5, height: 1.6)),
             const SizedBox(height: 6),
             Row(children: [
-              Icon(Icons.record_voice_over_rounded,
-                  size: 14, color: scheme.onSurfaceVariant),
+              Icon(Icons.menu_book_rounded, size: 14, color: scheme.primary),
               const SizedBox(width: 5),
               Expanded(
                   child: Text(
-                      '${studyL(locale, 'Sermon', '讲道', '講道')} ${quote.sermonId}'
-                      '${quote.sermonTitle.isEmpty ? '' : ' · ${quote.sermonTitle.of(locale)}'}',
+                      localizePassage(verse.ref, locale) +
+                          (locale == 'en' ? ' · KJV' : ' · 和合本'),
                       style: TextStyle(
-                          fontSize: 12, color: scheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis)),
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.primary))),
               Icon(Icons.chevron_right_rounded,
                   size: 18, color: scheme.onSurfaceVariant),
             ]),
@@ -201,6 +190,40 @@ class StudyQuoteBlock extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Related sermons: links only. Tapping opens the sermon.
+class StudySermonLinks extends StatelessWidget {
+  final List<StudySermon> sermons;
+  final String locale;
+  const StudySermonLinks(
+      {super.key, required this.sermons, required this.locale});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return LayoutBuilder(builder: (context, c) {
+      // Leave room for the chip's avatar and padding so a long title
+      // ellipsizes instead of overflowing a narrow phone.
+      final maxLabel = (c.maxWidth - 64).clamp(80.0, 320.0);
+      return Wrap(spacing: 8, runSpacing: 6, children: [
+        for (final s in sermons)
+          ActionChip(
+            key: ValueKey('sermon.${s.id}'),
+            visualDensity: VisualDensity.compact,
+            avatar: Icon(Icons.record_voice_over_rounded,
+                size: 15, color: scheme.primary),
+            label: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxLabel),
+              child: Text('${s.id} · ${s.title.of(locale)}'.trim(),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13)),
+            ),
+            onPressed: () => openSermonById(context, s.id),
+          ),
+      ]);
+    });
   }
 }
 
