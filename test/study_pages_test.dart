@@ -49,9 +49,16 @@ void main() {
       sermonIds = {for (final s in idx) (s as Map)['id'] as String};
     });
 
-    test('sizes: 190+ principles in 12 groups, 220+ promises in 10 groups', () {
+    test('linked teachings: Beatitudes, fruit of the Spirit and Lord\'s Prayer', () {
+      final link = principles.principles.where((p) => p.cat == 'link').toList();
+      expect(link.map((p) => p.id), containsAll(['beatitudes-fruit', 'beatitudes-lords-prayer', 'daily-one-element']));
+      final fruit = link.firstWhere((p) => p.id == 'beatitudes-fruit');
+      expect(fruit.sermons.map((s) => s.id), contains('016'));
+      expect(fruit.verses, containsAll(['Matthew 5:3-12', 'Galatians 5:22-23']));
+    });
+    test('sizes: 190+ principles in 13 groups, 220+ promises in 10 groups', () {
       expect(principles.principles.length, greaterThanOrEqualTo(190));
-      expect(principles.categories, hasLength(12));
+      expect(principles.categories, hasLength(13));
       expect(promises.promises.length, greaterThanOrEqualTo(220));
       expect(promises.groups, hasLength(10));
       final ids = principles.principles.map((p) => p.id).toList();
