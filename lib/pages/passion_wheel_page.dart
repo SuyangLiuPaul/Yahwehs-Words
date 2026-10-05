@@ -34,6 +34,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
   String? _gospel;
   String _selected = 'cross';
   bool _referenceTiming = true;
+  bool _showOrder = true;
   int? _selectedHour = 9;
   final _scroll = ScrollController();
   @override
@@ -311,6 +312,15 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                                               fontSize:
                                                   math.min(18, side * .037),
                                               fontWeight: FontWeight.bold)))))),
+                      if (_referenceTiming && _showOrder)
+                        Positioned.fill(
+                            child: IgnorePointer(
+                                child: CustomPaint(
+                                    key: const ValueKey('passion.order-path'),
+                                    painter: _OrderPathPainter(marks
+                                        .map(_hour)
+                                        .whereType<int>()
+                                        .toList())))),
                       for (final hour in List.generate(24, (i) => i))
                         _marker(hour, marks, selected, side, locale),
                     ]));
@@ -332,6 +342,24 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                     if (hour != null) _selectHour(hour, marks);
                   }),
               const SizedBox(height: 12),
+              if (_referenceTiming) ...[
+                FilterChip(
+                    key: const ValueKey('passion.order'),
+                    selected: _showOrder,
+                    label: Text(_l(locale, 'Show order of events', '显示事件顺序',
+                        '顯示事件順序')),
+                    onSelected: (v) => setState(() => _showOrder = v)),
+                const SizedBox(height: 4),
+                Text(
+                    _l(
+                        locale,
+                        'Red line: the order of events, from the evening meal (20:00) round the night, then out through the day to the burial (17:00).',
+                        '红线：事件的先后顺序，从晚餐（20:00）起，绕过夜晚，再沿白昼向外，直到安葬（17:00）。',
+                        '紅線：事件的先後順序，從晚餐（20:00）起，繞過夜晚，再沿白晝向外，直到安葬（17:00）。'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12.5)),
+                const SizedBox(height: 8),
+              ],
               Text(
                   _l(
                       locale,
@@ -600,4 +628,95 @@ class _PassionPainter extends CustomPainter {
   @override
   bool shouldRepaint(_PassionPainter old) =>
       locale != old.locale || showDarkness != old.showDarkness;
+}
+
+/// One smooth line through the diagram's events in the order they happened.
+///
+/// The dial folds 24 hours onto 12 angles, so a reader cannot tell the
+/// Thursday evening scenes from the Friday morning ones except by the
+/// ring they sit on. This line starts at 18:00 on the inner (night) ring,
+/// goes once round the night, eases out to the day ring across 05:00–06:00
+/// and carries on to the last event: a spiral, never crossing itself,
+/// that passes through every marker because the markers sit on the same
+/// two rings at the same angles.
+class _OrderPathPainter extends CustomPainter {
+  final List<int> hours;
+  _OrderPathPainter(this.hours);
+
+  /// Hours after the 18:00 start (the Thursday-evening meal falls in 18–24).
+  static double since(int hour) => ((hour - 18) % 24).toDouble();
+
+  static double _ring(double h) {
+    // Night ring until 05:00, day ring 06:00–17:00, easing between.
+    double ease(double x) => x * x * (3 - 2 * x);
+    if (h >= 5 && h < 6) return .265 + (.405 - .265) * ease(h - 5);
+    if (h >= 6 && h < 17) return .405;
+    if (h >= 17 && h < 18) return .405 + (.265 - .405) * ease(h - 17);
+    return .265;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (hours.length < 2) return;
+    final ts = hours.map(since).toList()..sort();
+    final start = ts.first, end = ts.last;
+    final center = size.center(Offset.zero);
+    final w = size.width;
+    Offset at(double u) {
+      final h = (18 + u) % 24;
+      final a = -math.pi / 2 + (h % 12) * math.pi / 6;
+      final r = w * _ring(h);
+      return center + Offset(math.cos(a) * r, math.sin(a) * r);
+    }
+
+    final path = Path()..moveTo(at(start).dx, at(start).dy);
+    for (var u = start + .05; u <= end + 1e-9; u += .05) {
+      final o = at(u);
+      path.lineTo(o.dx, o.dy);
+    }
+    final under = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = w * .016
+      ..color = Colors.black.withValues(alpha: .35);
+    final line = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = w * .009
+      ..color = const Color(0xffff5a4d).withValues(alpha: .92);
+    canvas.drawPath(path, under);
+    canvas.drawPath(path, line);
+
+    // Direction: a small arrowhead every three hours, and one at the end.
+    final head = Paint()..color = const Color(0xffff5a4d);
+    void arrow(double u) {
+      final p = at(u), q = at(u - .08);
+      final d = p - q;
+      if (d.distance == 0) return;
+      final dir = d / d.distance;
+      final n = Offset(-dir.dy, dir.dx);
+      final len = w * .026, half = w * .014;
+      final tip = p + dir * (len * .5);
+      final base = p - dir * (len * .5);
+      canvas.drawPath(
+          Path()
+            ..moveTo(tip.dx, tip.dy)
+            ..lineTo(base.dx + n.dx * half, base.dy + n.dy * half)
+            ..lineTo(base.dx - n.dx * half, base.dy - n.dy * half)
+            ..close(),
+          head);
+    }
+
+    for (var u = start + 1.5; u < end - .3; u += 3) {
+      arrow(u);
+    }
+    arrow(end);
+  }
+
+  @override
+  bool shouldRepaint(_OrderPathPainter old) =>
+      old.hours.length != hours.length ||
+      !old.hours.every(hours.contains);
 }

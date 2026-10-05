@@ -243,6 +243,25 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+  testWidgets('the order line is on by default and the chip toggles it',
+      (tester) async {
+    await mount(tester, const PassionWheelPage(), width: 402);
+    expect(find.byKey(const ValueKey('passion.order-path')), findsOneWidget);
+    Future<void> toggle() async {
+      await tester.ensureVisible(find.byKey(const ValueKey('passion.order')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('passion.order')));
+      await tester.pumpAndSettle();
+    }
+
+    await toggle();
+    expect(find.byKey(const ValueKey('passion.order-path')), findsNothing);
+    await toggle();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('passion.order-path')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('midnight, estimates and overlapping scenes remain interactive',
       (tester) async {
     await mount(tester, const PassionWheelPage(), width: 320, scale: 1.8);
