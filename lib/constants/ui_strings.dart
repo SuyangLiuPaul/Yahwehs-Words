@@ -3907,6 +3907,24 @@ const uiStrings = {
     'zh-Hant': '更多探索',
     'en': 'Explore more',
   },
+  // 2026-10-06: the home page's groups, after Featured was cut to videos,
+  // songs and sermons. Study = pages that read the Bible for you, Reference
+  // = charts and lookups, Help = how to use the app and tell us.
+  'quickLinksStudy': {
+    'zh-Hans': '研读',
+    'zh-Hant': '研讀',
+    'en': 'Study',
+  },
+  'quickLinksReference': {
+    'zh-Hans': '参考资料',
+    'zh-Hant': '參考資料',
+    'en': 'Reference',
+  },
+  'quickLinksHelp': {
+    'zh-Hans': '帮助与反馈',
+    'zh-Hant': '幫助與回饋',
+    'en': 'Help and feedback',
+  },
   'evidenceDescription': {
     'zh-Hans': '详细说明',
     'zh-Hant': '詳細說明',

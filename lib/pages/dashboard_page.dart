@@ -928,134 +928,25 @@ class _DashboardPageState extends State<DashboardPage> {
               onTap: () => pushPage(const SongsPage(), routeName: '/songs'),
             ),
             const SizedBox(height: 8),
-            // 主耶稣的教导, 2026-09-21. It opened at the foot of the page
-            // for a day — 「可以就直接放在最下面 home page的」 — and moved
-            // here the next morning: 「耶稣教导放在诗歌下面年代前面 featured
-            // 那边」. Under Songs, above the chronology chart.
-            //
-            // Being IN the section is the point of the move, not a detail
-            // of it: Featured is reorderable and hideable in Settings →
-            // Dashboard layout, and a card pinned below every section
-            // answered to neither control.
+            // 2026-10-06: Featured is the three things the church itself
+            // makes — videos, songs, sermons (「视频诗歌还有讲道是
+            // featured feature，其他的最下面」). Everything else moved into
+            // the groups at the foot of the page; the Jesus teachings, the
+            // chronology chart and the study pages are tiles there now.
             _FeaturedCard(
-              key: const ValueKey('home.jesusTeachings'),
-              icon: Icons.record_voice_over_outlined,
-              title: uiStrings['jesusTeachings']?[locale] ??
-                  'The Teachings of the Lord Jesus',
-              subtitle: uiStrings['jesusTeachingsHomeHint']?[locale] ?? '',
+              key: const ValueKey('home.sermons'),
+              icon: Icons.menu_book_outlined,
+              title: uiStrings['sermons']?[locale] ?? 'Sermons',
+              subtitle: studyL(
+                  locale,
+                  'Pastor Eric Chang’s sermons · read and listen',
+                  '张牧师讲道 · 阅读与收听',
+                  '張牧師講道 · 閱讀與收聽'),
               scheme: scheme,
               settings: settings,
-              onTap: () => pushPage(
-                const JesusTeachingsPage(),
-                routeName: kJesusTeachingsRoute,
-              ),
+              onTap: () =>
+                  pushPage(const SermonsPage(), routeName: '/sermons'),
             ),
-            const SizedBox(height: 8),
-            // 2026-09-03: the chronology chart, Featured because the
-            // user asked for it that way (2026-08-12, 「而且是
-            // featured」). It opens the Bible Timeline page on its
-            // chart view — the same page the quick-link grid's
-            // "Bible Timeline" tile opens on its event view, so this
-            // is a second door, not a second timeline.
-            _FeaturedCard(
-              icon: Icons.stacked_bar_chart_rounded,
-              title:
-                  uiStrings['chronologyChart']?[locale] ?? 'Chronology chart',
-              subtitle: uiStrings['chronologyFeaturedSubtitle']?[locale] ??
-                  'Who was alive at the same time — Adam to Joseph, drag '
-                      'the year and see',
-              scheme: scheme,
-              settings: settings,
-              onTap: () => pushPage(
-                const ChronologyChartPage(),
-                routeName: '/chronology',
-              ),
-            ),
-            if (kShowPassionTimeline) ...[
-              const SizedBox(height: 8),
-              _FeaturedCard(
-                  icon: Icons.schedule,
-                  title: kPassionTitle[locale] ?? kPassionTitle['en']!,
-                  subtitle: const {
-                    'en': 'When, where and what · compare all four Gospels',
-                    'zh-Hans': '时间、地点与事件 · 并列四福音',
-                    'zh-Hant': '時間、地點與事件 · 並列四福音'
-                  }[locale]!,
-                  scheme: scheme,
-                  settings: settings,
-                  onTap: () => pushPage(const PassionWheelPage(),
-                      routeName: kPassionWheelPath)),
-            ],
-            // 2026-10-05: the Bible-first study pages are no longer
-            // hidden (「两个app都上，不用hidden了」).
-            const SizedBox(height: 8),
-            _FeaturedCard(
-                icon: Icons.account_tree_outlined,
-                title: studyL(locale, 'Bible principles', '圣经原则', '聖經原則'),
-                subtitle: studyL(
-                    locale,
-                    'Principles from the Bible text · related sermons linked',
-                    '从圣经经文整理的原则 · 相关讲道可点开',
-                    '從聖經經文整理的原則 · 相關講道可點開'),
-                scheme: scheme,
-                settings: settings,
-                onTap: () => pushPage(const StudyPrinciplesPage(),
-                    routeName: kStudyPrinciplesPath)),
-            const SizedBox(height: 8),
-            _FeaturedCard(
-                icon: Icons.handshake_outlined,
-                title: studyL(locale, 'Promises of God', '神的应许', '神的應許'),
-                subtitle: studyL(
-                    locale,
-                    'Every promise the Bible makes · fulfilled, being fulfilled, or not yet',
-                    '圣经里的应许 · 已应验、正在应验、尚未应验',
-                    '聖經裡的應許 · 已應驗、正在應驗、尚未應驗'),
-                scheme: scheme,
-                settings: settings,
-                onTap: () => pushPage(const StudyPromisesPage(),
-                    routeName: kStudyPromisesPath)),
-            const SizedBox(height: 8),
-            _FeaturedCard(
-                icon: Icons.compare_arrows,
-                title: studyL(locale, 'New Testament and Old Testament',
-                    '新约与旧约的对应', '新約與舊約的對應'),
-                subtitle: studyL(
-                    locale,
-                    'Where the New Testament quotes the Old, side by side',
-                    '新约引用旧约之处 · 两边经文并列',
-                    '新約引用舊約之處 · 兩邊經文並列'),
-                scheme: scheme,
-                settings: settings,
-                onTap: () => pushPage(const StudyTestamentsPage(),
-                    routeName: kStudyTestamentsPath)),
-            if (kShowNewLearningPages) ...[
-              const SizedBox(height: 8),
-              _FeaturedCard(
-                  icon: Icons.menu_book_outlined,
-                  title: kPrinciplesTitle[locale] ?? kPrinciplesTitle['en']!,
-                  subtitle: const {
-                    'en': 'Pastor Eric’s sermons · explanations and Scripture',
-                    'zh-Hans': '张牧师讲道 · 简释、出处与经文',
-                    'zh-Hant': '張牧師講道 · 簡釋、出處與經文'
-                  }[locale]!,
-                  scheme: scheme,
-                  settings: settings,
-                  onTap: () => pushPage(const BiblePrinciplesPage(),
-                      routeName: kPrinciplesPath)),
-              const SizedBox(height: 8),
-              _FeaturedCard(
-                  icon: Icons.public,
-                  title: kWorldWheelTitle[locale] ?? kWorldWheelTitle['en']!,
-                  subtitle: const {
-                    'en': 'Nations, powers and events · explore the dates',
-                    'zh-Hans': '民族、政权与事件 · 探索历史年代',
-                    'zh-Hant': '民族、政權與事件 · 探索歷史年代'
-                  }[locale]!,
-                  scheme: scheme,
-                  settings: settings,
-                  onTap: () => pushPage(const WorldHistoryWheelPage(),
-                      routeName: kWorldWheelPath)),
-            ],
           ],
         );
 
@@ -1123,9 +1014,7 @@ class _DashboardPageState extends State<DashboardPage> {
               columns: isWide ? 4 : 2,
               children: [
                 // 2026-05-07 (v11): Search tile in the quick-links
-                // grid. The user wanted a one-tap entry to search
-                // from the dashboard. Placed first as the most
-                // discoverable slot for a frequently-used feature.
+                // grid, first as the most discoverable slot.
                 _LinkTile(
                   icon: Icons.search_rounded,
                   label: uiStrings['search']?[locale] ?? 'Search',
@@ -1137,38 +1026,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () =>
                       pushPage(const LibraryPage(), routeName: '/library'),
                 ),
-                _LinkTile(
-                  icon: Icons.menu_book_outlined,
-                  label: uiStrings['sermons']?[locale] ?? 'Sermons',
-                  onTap: () =>
-                      pushPage(const SermonsPage(), routeName: '/sermons'),
-                ),
-                _LinkTile(
-                  icon: Icons.settings_outlined,
-                  label: uiStrings['settings']?[locale] ?? 'Settings',
-                  onTap: () =>
-                      pushPage(const SettingsPage(), routeName: '/settings'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _QuickLinksGroupLabel(
-              label: uiStrings['quickLinksExplore']?[locale] ?? 'Explore more',
-              settings: settings,
-              scheme: scheme,
-            ),
-            const SizedBox(height: 8),
-            _LinkGrid(
-              columns: isWide ? 3 : 2,
-              children: [
-                _LinkTile(
-                  icon: Icons.insights_outlined,
-                  label: uiStrings['statistics']?[locale] ?? 'Statistics',
-                  onTap: () => pushPage(const StatsPage(), routeName: '/stats'),
-                ),
-                // Sits beside Bible Tools rather than inside it: same
-                // shelf, different subject — that page counts what is in
-                // the Bible, this one counts what the reader has been in.
+                // What the reader has been in, beside what they saved.
                 _LinkTile(
                   icon: Icons.auto_stories_outlined,
                   label: uiStrings['readingStats']?[locale] ??
@@ -1176,64 +1034,24 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () => pushPage(const ReadingStatsPage(),
                       routeName: '/reading-stats'),
                 ),
-                if (settings
-                    .isDashboardSectionVisible(DashboardSection.todayEvidence))
-                  _LinkTile(
-                    icon: Icons.museum_outlined,
-                    label:
-                        uiStrings['bibleEvidence']?[locale] ?? 'Bible Evidence',
-                    onTap: () =>
-                        pushPage(const EvidencePage(), routeName: '/evidence'),
-                  ),
                 _LinkTile(
-                  icon: Icons.account_tree_outlined,
-                  label: uiStrings['familyTree']?[locale] ?? 'Family Tree',
-                  onTap: () => pushPage(const FamilyTreePage(),
-                      routeName: '/family-tree'),
+                  icon: Icons.settings_outlined,
+                  label: uiStrings['settings']?[locale] ?? 'Settings',
+                  onTap: () =>
+                      pushPage(const SettingsPage(), routeName: '/settings'),
                 ),
-                _LinkTile(
-                  icon: Icons.timeline_rounded,
-                  label:
-                      uiStrings['bibleTimeline']?[locale] ?? 'Bible Timeline',
-                  onTap: () => pushPage(const BibleTimelinePage(),
-                      routeName: '/timeline'),
-                ),
-                _LinkTile(
-                  icon: Icons.auto_awesome_rounded,
-                  label: uiStrings['bibleTrivia']?[locale] ?? 'Bible Trivia',
-                  onTap: () => pushPage(const BibleTriviaPage()),
-                ),
-                // The 福音电台 sermon library had a tile here and it is
-                // REMOVED, 2026-09-06. It was a second corpus of 940
-                // records by 71 speakers, and the reasoning for keeping
-                // it behind its own door was sound while there were two
-                // corpora. The owner then decided there is only one:
-                // Pastor Eric Chang's. His 125 messages from that source
-                // are merged into `assets/sermons/` and reached through
-                // the existing Sermons page; the other 742 ship nowhere
-                // and `assets/sermon_library/` is a gitignored staging
-                // area.
-                //
-                // Removing the tile is not tidying. `SermonLibraryService`
-                // THROWS when `index.json` is absent — deliberately, so a
-                // missing asset cannot masquerade as an empty library —
-                // and that asset is no longer bundled. Left in place this
-                // tile opened an error page for every reader, and it
-                // shipped that way to dev/qat in v1.5.0.
-                // Songs and 獨一真神 are the two Featured cards. They
-                // appear HERE only when Featured is switched off —
-                // otherwise the same two links sat on the page twice,
-                // once at the top and once at the bottom. Reported with
-                // a screenshot, 2026-08-11: "好像多了重复了".
-                //
-                // Not simply deleted: Featured is a section the user
-                // can hide in Settings, and hiding it must not take
-                // Songs and the video off the dashboard altogether.
+                // Videos, songs and sermons are Featured cards. They
+                // appear here only when Featured is switched off, so
+                // hiding that section never takes them off the page
+                // (2026-08-11: 「好像多了重复了」 — never both).
                 if (!settings
                     .isDashboardSectionVisible(DashboardSection.featured)) ...[
-                  // 2026-08-09 (Songs v2): back after v1.3.126 removed
-                  // it. Note `pushPage`, not the `Get.to` the original
-                  // tile used — see the v1.4.4 note in HANDOFF.md.
+                  _LinkTile(
+                    icon: Icons.menu_book_outlined,
+                    label: uiStrings['sermons']?[locale] ?? 'Sermons',
+                    onTap: () =>
+                        pushPage(const SermonsPage(), routeName: '/sermons'),
+                  ),
                   _LinkTile(
                     icon: Icons.library_music_rounded,
                     label: uiStrings['songsPageTitle']?[locale] ?? 'Songs',
@@ -1248,25 +1066,147 @@ class _DashboardPageState extends State<DashboardPage> {
                         pushPage(const VideosPage(), routeName: '/videos'),
                   ),
                 ],
-                // 2026-05-07 (v12): feedback tile -- mailto-driven
-                // form page that lands directly in the developer's
-                // inbox via the user's mail client.
-                // 2026-08-11: 常見的聖經誤解. Placed in the quick-link
-                // grid at the bottom, where the user asked for it —
-                // this is a reference shelf, not something to greet
-                // someone with on opening the app.
+              ],
+            ),
+            const SizedBox(height: 16),
+            _QuickLinksGroupLabel(
+              label: uiStrings['quickLinksStudy']?[locale] ?? 'Study',
+              settings: settings,
+              scheme: scheme,
+            ),
+            const SizedBox(height: 8),
+            _LinkGrid(
+              columns: isWide ? 3 : 2,
+              children: [
+                _LinkTile(
+                  key: const ValueKey('home.jesusTeachings'),
+                  icon: Icons.record_voice_over_outlined,
+                  label: uiStrings['jesusTeachings']?[locale] ??
+                      'The Teachings of the Lord Jesus',
+                  onTap: () => pushPage(
+                    const JesusTeachingsPage(),
+                    routeName: kJesusTeachingsRoute,
+                  ),
+                ),
+                // 2026-10-05: the Bible-first study pages, no longer
+                // hidden (「两个app都上，不用hidden了」).
+                _LinkTile(
+                  icon: Icons.account_tree_outlined,
+                  label: studyL(locale, 'Bible principles', '圣经原则', '聖經原則'),
+                  onTap: () => pushPage(const StudyPrinciplesPage(),
+                      routeName: kStudyPrinciplesPath),
+                ),
+                _LinkTile(
+                  icon: Icons.handshake_outlined,
+                  label: studyL(locale, 'Promises of God', '神的应许', '神的應許'),
+                  onTap: () => pushPage(const StudyPromisesPage(),
+                      routeName: kStudyPromisesPath),
+                ),
+                _LinkTile(
+                  icon: Icons.compare_arrows,
+                  label: studyL(locale, 'New Testament and Old Testament',
+                      '新约与旧约的对应', '新約與舊約的對應'),
+                  onTap: () => pushPage(const StudyTestamentsPage(),
+                      routeName: kStudyTestamentsPath),
+                ),
+                if (kShowPassionTimeline)
+                  _LinkTile(
+                    icon: Icons.schedule,
+                    label: studyL(locale, 'The Passion of Jesus', '受难日时间表',
+                        '受難日時間表'),
+                    onTap: () => pushPage(const PassionWheelPage(),
+                        routeName: kPassionWheelPath),
+                  ),
+                if (kShowNewLearningPages) ...[
+                  _LinkTile(
+                    icon: Icons.menu_book_outlined,
+                    label: kPrinciplesTitle[locale] ?? kPrinciplesTitle['en']!,
+                    onTap: () => pushPage(const BiblePrinciplesPage(),
+                        routeName: kPrinciplesPath),
+                  ),
+                  _LinkTile(
+                    icon: Icons.public,
+                    label: kWorldWheelTitle[locale] ?? kWorldWheelTitle['en']!,
+                    onTap: () => pushPage(const WorldHistoryWheelPage(),
+                        routeName: kWorldWheelPath),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 16),
+            _QuickLinksGroupLabel(
+              label: uiStrings['quickLinksReference']?[locale] ?? 'Reference',
+              settings: settings,
+              scheme: scheme,
+            ),
+            const SizedBox(height: 8),
+            _LinkGrid(
+              columns: isWide ? 3 : 2,
+              children: [
+                // 2026-10-06: it was a Featured card; the chart opens the
+                // Bible Timeline page on its chart view, the tile beside
+                // it opens the same page on its event view.
+                _LinkTile(
+                  icon: Icons.stacked_bar_chart_rounded,
+                  label: uiStrings['chronologyChart']?[locale] ??
+                      'Chronology chart',
+                  onTap: () => pushPage(const ChronologyChartPage(),
+                      routeName: '/chronology'),
+                ),
+                _LinkTile(
+                  icon: Icons.timeline_rounded,
+                  label:
+                      uiStrings['bibleTimeline']?[locale] ?? 'Bible Timeline',
+                  onTap: () => pushPage(const BibleTimelinePage(),
+                      routeName: '/timeline'),
+                ),
+                _LinkTile(
+                  icon: Icons.account_tree_outlined,
+                  label: uiStrings['familyTree']?[locale] ?? 'Family Tree',
+                  onTap: () => pushPage(const FamilyTreePage(),
+                      routeName: '/family-tree'),
+                ),
+                if (settings
+                    .isDashboardSectionVisible(DashboardSection.todayEvidence))
+                  _LinkTile(
+                    icon: Icons.museum_outlined,
+                    label:
+                        uiStrings['bibleEvidence']?[locale] ?? 'Bible Evidence',
+                    onTap: () =>
+                        pushPage(const EvidencePage(), routeName: '/evidence'),
+                  ),
+                _LinkTile(
+                  icon: Icons.insights_outlined,
+                  label: uiStrings['statistics']?[locale] ?? 'Statistics',
+                  onTap: () => pushPage(const StatsPage(), routeName: '/stats'),
+                ),
+                _LinkTile(
+                  icon: Icons.auto_awesome_rounded,
+                  label: uiStrings['bibleTrivia']?[locale] ?? 'Bible Trivia',
+                  onTap: () => pushPage(const BibleTriviaPage()),
+                ),
+                // A reference shelf, not something to greet someone with
+                // on opening the app (2026-08-11).
                 _LinkTile(
                   icon: Icons.psychology_alt_outlined,
-                  // A SHORTER label than the page's own title: at two
-                  // columns "Common misunderstandings" has to break, and
-                  // it broke mid-word ("Common misu / nderstandings").
                   label: uiStrings['misconceptionsTile']?[locale] ??
                       'Misunderstandings',
                   onTap: () => pushPage(const MisconceptionsPage(),
                       routeName: '/misconceptions'),
                 ),
-                // 2026-09-18: beside Feedback, which is the other thing a
-                // reader who is stuck reaches for.
+              ],
+            ),
+            const SizedBox(height: 16),
+            _QuickLinksGroupLabel(
+              label: uiStrings['quickLinksHelp']?[locale] ??
+                  'Help and feedback',
+              settings: settings,
+              scheme: scheme,
+            ),
+            const SizedBox(height: 8),
+            _LinkGrid(
+              columns: isWide ? 3 : 2,
+              children: [
                 _LinkTile(
                   icon: Icons.help_outline_rounded,
                   label: uiStrings['helpTile']?[locale] ?? 'Help',
@@ -1866,6 +1806,7 @@ class _LinkTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   const _LinkTile({
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,

@@ -382,29 +382,24 @@ void main() {
         contains("'/jesus-teachings',"));
   });
 
-  test('the home page leads to it, inside Featured', () {
-    // 2026-09-21, moved the morning after it shipped at the foot of the
-    // page: 「耶稣教导放在诗歌下面年代前面 featured那边」 — under Songs,
-    // above the chronology chart.
+  test('the home page leads to it, in the Study group', () {
+    // 2026-09-21 it was a Featured card (「耶稣教导放在诗歌下面年代前面
+    // featured那边」). 2026-10-06 Featured was cut to videos, songs and
+    // sermons, and the Jesus teachings moved to the Study group of the
+    // quick links, with the study pages.
     //
     // A SOURCE-LEVEL guard: the dashboard needs the whole app standing
     // to pump, and what can go wrong quietly here is the wiring and the
     // ORDER, both of which are readable in the source.
     final src = File('lib/pages/dashboard_page.dart').readAsStringSync();
-    final featured = src.indexOf('case DashboardSection.featured:');
-    final songs = src.indexOf("routeName: '/songs'");
+    final study = src.indexOf("uiStrings['quickLinksStudy']");
     final card = src.indexOf("ValueKey('home.jesusTeachings')");
-    final chronology = src.indexOf("routeName: '/chronology'");
-    expect(featured, greaterThan(0));
-    expect(card, greaterThan(featured),
-        reason: 'the card must live inside the Featured section, so the '
-            'reader can reorder and hide it with everything else');
-    expect(card, greaterThan(songs), reason: 'it goes under Songs');
-    expect(card, lessThan(chronology),
-        reason: 'it goes above the chronology chart');
+    final reference = src.indexOf("uiStrings['quickLinksReference']");
+    expect(study, greaterThan(0));
+    expect(card, greaterThan(study), reason: 'it lives in the Study group');
+    expect(card, lessThan(reference), reason: 'and not in Reference');
     expect(src, contains('routeName: kJesusTeachingsRoute'));
-    // And it is a Featured card, not a one-off: the old foot-of-page
-    // widget is gone rather than left behind unused.
+    // The old foot-of-page widget is gone rather than left behind unused.
     expect(src, isNot(contains('_JesusTeachingsCard')));
   });
 }
