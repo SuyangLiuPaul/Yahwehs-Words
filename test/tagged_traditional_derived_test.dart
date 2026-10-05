@@ -202,7 +202,7 @@ void main() {
     // rewritten to `以利加拿都以雙分給哈拿` — the reading asset's own word
     // order, same characters, `s`/`i`/`g` untouched — so the two agree
     // again and the verse re-qualifies for this check.
-    expect(verified, 27317);  // 27312 -> 27317 on 2026-10-04 (Raymond "Use B" sheet; tagged layer mirrored)
+    expect(verified, 27318);  // 27312 -> 27317 on 2026-10-04 (Raymond "Use B" sheet; tagged layer mirrored); -> 27318 on 2026-10-06 (his green markup: 士師記 12:4 reading text now agrees with its tagged run)
   });
 
   test('only the characters changed — every run boundary, number, implied '

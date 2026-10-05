@@ -408,7 +408,9 @@ void main() {
     // printed variant glyphs (牠 銲 啣 …) are not imported. Also 历代志下
     // 10:6 回覆 → 回复 (his suggestion in the 用字 table).
     'assets/cuvs-yhwh.json':
-        'dc1e2c1edaabff538abba4a7b1e0e313bd83d7d26f57dd7e24f2e723b8f4479c',
+        '8c024ec85c7d0b8f308d772ee5e1e57ebe350d1f8467b4cdbfb855e91266ba4c',
+    // 2026-10-06, the tenth thaw: his second round of markup (green) on the
+    // same report; see tools/apply_rr_green_2026_10_06.py. (previous) dc1e2c1edaabff538abba4a7b1e0e313bd83d7d26f57dd7e24f2e723b8f4479c
     // (previous, 2026-09-18) 72b394bd01bfd97ac9c6feaf82dcaaef15fdb6f8a30ea767b2af0794f63dd47a
     // 2026-09-14 — five over-conversions undone, against the published
     // Traditional 和合本 at 信望愛 (bible.fhl.net, VERSION4=unv).
@@ -502,7 +504,8 @@ void main() {
     // list never named, by his principle (owner: 「按照他的做」).
     // 2026-10-04, the ninth thaw: same sheet, same tool, 繁體 side.
     'assets/cuvs-yhwh-tr.json':
-        '97ea77863923dc81fdd4bb39c056aeaf023a180430256a9692b51c42844b09b7',
+        '8989f49dfbd5f6906a327eaf5e0171a16d9caafd342398869348c4e189f161f5',
+    // 2026-10-06, the tenth thaw, 繁體 side. (previous) 97ea77863923dc81fdd4bb39c056aeaf023a180430256a9692b51c42844b09b7
     // (previous, 2026-09-18) b8000bc08832a6516ace238e796ac22f59ff39501e9c07e707c3a1d136ce4589
   };
 

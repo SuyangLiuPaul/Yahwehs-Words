@@ -6570,7 +6570,7 @@ class _ChapterPreview extends StatelessWidget {
         itemBuilder: (ctx, idx) {
           if (idx == 0) {
             return SizedBox(
-                height: topInset + 64 * settings.menuScale + 12);
+                height: topInset + 48 * settings.menuScale + 18);
           }
           if (idx == verses.length + 1) {
             return SizedBox(height: 96 * settings.menuScale);
@@ -6815,9 +6815,14 @@ class _ChapterPageState extends State<_ChapterPage>
             // New value reserves ~8 px breathing room below the
             // chrome at scale 1.0, scaling proportionally when
             // the user bumps menuScale.
+            // 2026-10-06: back out a little of that. On an iPhone the
+            // first line sat right under the chrome (「上面太近了 要点gap
+            // 吧」); 18 px of air below it reads as the page, not as text
+            // tucked under a bar. The swipe preview below uses the same
+            // number so the two heights agree.
             final topInset = MediaQuery.of(context).padding.top;
             return SizedBox(
-                height: topInset + 48 * settings.menuScale + 4);
+                height: topInset + 48 * settings.menuScale + 18);
           }
           final groupIdx = index - 1;
           if (groupIdx < paragraphGroups.length) {
