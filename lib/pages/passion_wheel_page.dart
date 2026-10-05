@@ -317,10 +317,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                             child: IgnorePointer(
                                 child: CustomPaint(
                                     key: const ValueKey('passion.order-path'),
-                                    painter: _OrderPathPainter(marks
-                                        .map(_hour)
-                                        .whereType<int>()
-                                        .toList())))),
+                                    painter: const _OrderPathPainter()))),
                       for (final hour in List.generate(24, (i) => i))
                         _marker(hour, marks, selected, side, locale),
                     ]));
@@ -353,9 +350,9 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                 Text(
                     _l(
                         locale,
-                        'Red line: the order of events, from the evening meal (20:00) round the night, then out through the day to the burial (17:00).',
-                        '红线：事件的先后顺序，从晚餐（20:00）起，绕过夜晚，再沿白昼向外，直到安葬（17:00）。',
-                        '紅線：事件的先後順序，從晚餐（20:00）起，繞過夜晚，再沿白晝向外，直到安葬（17:00）。'),
+                        'Red line: the order of events, from 18:00 (the dot) round the night, then out through the day.',
+                        '红线：事件的先后顺序，从 18:00（圆点）起，绕过夜晚，再沿白昼向外。',
+                        '紅線：事件的先後順序，從 18:00（圓點）起，繞過夜晚，再沿白晝向外。'),
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 12.5)),
                 const SizedBox(height: 8),
@@ -630,48 +627,50 @@ class _PassionPainter extends CustomPainter {
       locale != old.locale || showDarkness != old.showDarkness;
 }
 
-/// One smooth line through the diagram's events in the order they happened.
+/// One smooth line through the whole Passion day, in the order it ran.
 ///
 /// The dial folds 24 hours onto 12 angles, so a reader cannot tell the
 /// Thursday evening scenes from the Friday morning ones except by the
-/// ring they sit on. This line starts at 18:00 on the inner (night) ring,
-/// goes once round the night, eases out to the day ring across 05:00–06:00
-/// and carries on to the last event: a spiral, never crossing itself,
-/// that passes through every marker because the markers sit on the same
-/// two rings at the same angles.
+/// ring they sit on. The line makes the order visible and never crosses
+/// itself: a spiral from the inner ring out to the outer one.
 class _OrderPathPainter extends CustomPainter {
-  final List<int> hours;
-  _OrderPathPainter(this.hours);
+  const _OrderPathPainter();
 
-  /// Hours after the 18:00 start (the Thursday-evening meal falls in 18–24).
-  static double since(int hour) => ((hour - 18) % 24).toDouble();
+  /// The route runs the whole 24 hours, from 18:00 at the bottom of the
+  /// inner (night) ring, once round the night, out across 05:00–06:00 to
+  /// the day ring, and round the day to 18:00 again. That is how the
+  /// reference diagram itself is laid out (its night ring starts at 6 pm,
+  /// its day ring at 6 am), so the line reads the way the diagram does.
+  static const _hours = 24.0;
 
-  static double _ring(double h) {
-    // Night ring until 05:00, day ring 06:00–17:00, easing between.
-    double ease(double x) => x * x * (3 - 2 * x);
-    if (h >= 5 && h < 6) return .265 + (.405 - .265) * ease(h - 5);
-    if (h >= 6 && h < 17) return .405;
-    if (h >= 17 && h < 18) return .405 + (.265 - .405) * ease(h - 17);
-    return .265;
+  static double _ease(double x) =>
+      x * x * x * (x * (x * 6 - 15) + 10); // smootherstep
+
+  /// Ring radius (as a share of the side) at [t] hours after 18:00. Night
+  /// ring until 04:36, day ring from 06:24, and an unhurried S between —
+  /// wide enough to stay smooth, narrow enough that the 05:00 and 06:00
+  /// markers still sit on the line.
+  static double _ring(double t) {
+    const night = .265, day = .405, a = 10.6, b = 12.4;
+    if (t <= a) return night;
+    if (t >= b) return day;
+    return night + (day - night) * _ease((t - a) / (b - a));
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (hours.length < 2) return;
-    final ts = hours.map(since).toList()..sort();
-    final start = ts.first, end = ts.last;
     final center = size.center(Offset.zero);
     final w = size.width;
-    Offset at(double u) {
-      final h = (18 + u) % 24;
+    Offset at(double t) {
+      final h = (18 + t) % 24;
       final a = -math.pi / 2 + (h % 12) * math.pi / 6;
-      final r = w * _ring(h);
+      final r = w * _ring(t);
       return center + Offset(math.cos(a) * r, math.sin(a) * r);
     }
 
-    final path = Path()..moveTo(at(start).dx, at(start).dy);
-    for (var u = start + .05; u <= end + 1e-9; u += .05) {
-      final o = at(u);
+    final path = Path()..moveTo(at(0).dx, at(0).dy);
+    for (var t = .02; t <= _hours + 1e-9; t += .02) {
+      final o = at(t);
       path.lineTo(o.dx, o.dy);
     }
     final under = Paint()
@@ -689,10 +688,15 @@ class _OrderPathPainter extends CustomPainter {
     canvas.drawPath(path, under);
     canvas.drawPath(path, line);
 
+    // Where it starts: a filled dot at 18:00.
+    final s = at(0);
+    canvas.drawCircle(s, w * .014, Paint()..color = Colors.white);
+    canvas.drawCircle(s, w * .009, Paint()..color = const Color(0xffff5a4d));
+
     // Direction: a small arrowhead every three hours, and one at the end.
     final head = Paint()..color = const Color(0xffff5a4d);
-    void arrow(double u) {
-      final p = at(u), q = at(u - .08);
+    void arrow(double t) {
+      final p = at(t), q = at(t - .08);
       final d = p - q;
       if (d.distance == 0) return;
       final dir = d / d.distance;
@@ -709,14 +713,12 @@ class _OrderPathPainter extends CustomPainter {
           head);
     }
 
-    for (var u = start + 1.5; u < end - .3; u += 3) {
-      arrow(u);
+    for (var t = 1.5; t < _hours - .3; t += 3) {
+      arrow(t);
     }
-    arrow(end);
+    arrow(_hours);
   }
 
   @override
-  bool shouldRepaint(_OrderPathPainter old) =>
-      old.hours.length != hours.length ||
-      !old.hours.every(hours.contains);
+  bool shouldRepaint(_OrderPathPainter old) => false;
 }
