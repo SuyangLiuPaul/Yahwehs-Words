@@ -81,14 +81,8 @@ export default async (req) => {
 		);
 	}
 	const apiKey = (process.env.RESEND_API_KEY || '').trim();
-	if (!apiKey) {
-		// Not configured. Tell the client; they will fall back to mailto.
-		return jsonResponse(
-			{ error: 'Feedback service not configured (RESEND_API_KEY missing).' },
-			503,
-			req,
-		);
-	}
+	// 2026-10-06: no early 503 any more — the note is also kept in the admin
+	// portal's inbox, so a missing mail key must not lose it (see below).
 	const to = (process.env.FEEDBACK_TO || TO_DEFAULT).trim() || TO_DEFAULT;
 	const from = (process.env.FEEDBACK_FROM || FROM_DEFAULT).trim() || FROM_DEFAULT;
 
@@ -181,6 +175,52 @@ export default async (req) => {
 	let authEmailClean = authEmail;
 	if (authEmailClean && !emailRe.test(authEmailClean)) {
 		authEmailClean = '';
+	}
+
+	// 2026-10-06: keep a copy for the admin portal's feedback inbox
+	// (admin.yahwehword.com). Best-effort and bounded: the Realtime Database
+	// rules only accept a small new note, and a failure here never blocks
+	// the email below.
+	let stored = false;
+	try {
+		const r = await fetch(
+			'https://ysword-default-rtdb.firebaseio.com/adm_feedback.json',
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					app: 'words',
+					category,
+					message: message.slice(0, 3900),
+					name,
+					replyTo,
+					diag: [
+						version && `v${version}`,
+						locale,
+						position,
+						country,
+						ua.slice(0, 120),
+					].filter(Boolean).join(' · '),
+					status: 'new',
+					createdAt: new Date().toISOString(),
+				}),
+				signal: AbortSignal.timeout(5000),
+			},
+		);
+		stored = r.ok;
+	} catch (_) {
+		stored = false;
+	}
+	if (!apiKey) {
+		// No mail key: the portal copy is the delivery. Only when even that
+		// failed do we tell the client to fall back to mailto.
+		return stored
+			? jsonResponse({ ok: true, stored: true }, 200, req)
+			: jsonResponse(
+				{ error: 'Feedback service not configured (RESEND_API_KEY missing).' },
+				503,
+				req,
+			);
 	}
 
 	const subject = `YsWords feedback [${category}]${name ? ` — ${name}` : ''}`;

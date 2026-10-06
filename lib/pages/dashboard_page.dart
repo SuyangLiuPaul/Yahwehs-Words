@@ -1,4 +1,10 @@
+import 'package:url_launcher/url_launcher.dart';
+import 'package:yahwehs_words/services/release_registry.dart';
+import 'package:yahwehs_words/services/admin_content.dart';
 import '../widgets/play_update_banner.dart';
+import 'package:yahwehs_words/services/admin_overlay.dart';
+import 'package:yahwehs_words/services/usage_stats.dart';
+import 'package:yahwehs_words/widgets/admin_announcement_banner.dart';
 import 'package:yahwehs_words/constants/learning_visibility.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/study_principles_page.dart';
@@ -132,12 +138,38 @@ class _DashboardPageState extends State<DashboardPage> {
   /// shorter than the 24 px threshold the detail page bypasses).
   double? _resumeProgress;
 
+  /// What the admin portal says about the home page (featured order,
+  /// announcement). Empty until it loads, and if it never does.
+  AdminSite _adminSite = AdminSite.none;
+
+  /// Links added in the admin portal for this app.
+  List<AdminLink> _adminLinks = const [];
+
+  List<Widget> _adminLinkTiles(String slot) => [
+        for (final l in _adminLinks)
+          if (l.slot == slot)
+            _LinkTile(
+              key: ValueKey('admin.link.${l.id}'),
+              icon: Icons.link_rounded,
+              label: l.title,
+              onTap: () => launchUrl(Uri.parse(l.url),
+                  mode: LaunchMode.externalApplication),
+            ),
+      ];
+
   @override
   void initState() {
     super.initState();
     ProfileService.instance.addListener(_onProfileOrAuthChanged);
     CloudAuthService.instance.addListener(_onProfileOrAuthChanged);
     RealtimeDbSyncService.instance.addListener(_onProfileOrAuthChanged);
+    UsageStats.session();
+    AdminOverlay.collection('adm_links').then((o) {
+      if (mounted) setState(() => _adminLinks = parseAdminLinks(o, kRegistryApp));
+    });
+    AdminOverlay.site().then((site) {
+      if (mounted) setState(() => _adminSite = site);
+    });
     _loadDailyVerse();
     _loadDailyEvidence();
     _loadResumeSermon();
@@ -607,6 +639,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 // layout below it nothing.
                 PlayUpdateBanner(locale: locale),
                 StoreUpdateBanner(locale: locale),
+                AdminAnnouncementBanner(
+                    locale: locale, announcement: _adminSite.announcement),
                 UpdateAvailableBanner(
                   locale: locale,
                   release: _update,
@@ -888,26 +922,14 @@ class _DashboardPageState extends State<DashboardPage> {
         );
 
       case DashboardSection.featured:
-        // The church's own media, above Today's Evidence — the user
-        // asked for 獨一真神 and Songs to be the first things reachable
-        // rather than buried in the quick-link grid at the bottom.
+        // The church's own media: videos, songs, sermons. Rendered through
+        // the section system so it stays reorderable and hideable.
         //
-        // Rendered through the section system, so it stays reorderable
-        // and hideable like every other block. Hard-coding it above
-        // todayEvidence would have looked identical on a fresh install
-        // and silently removed that control.
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _SectionHeader(
-              icon: Icons.star_outline_rounded,
-              label: uiStrings['dashboardFeatured']?[locale] ?? 'Featured',
-              settings: settings,
-              scheme: scheme,
-              fontSize: headerSize,
-            ),
-            const SizedBox(height: 8),
-            _FeaturedCard(
+        // 2026-10-06: the order, and which of the three show, can also be
+        // set from the admin portal (`adm_site/featured`); with nothing set
+        // it is exactly videos, songs, sermons.
+        final featuredCards = <String, Widget>{
+          'videos': _FeaturedCard(
               icon: Icons.play_circle_outline_rounded,
               title: uiStrings['videosTitle']?[locale] ?? 'Featured videos',
               subtitle: uiStrings['videosSubtitle']?[locale] ??
@@ -917,8 +939,7 @@ class _DashboardPageState extends State<DashboardPage> {
               settings: settings,
               onTap: () => pushPage(const VideosPage(), routeName: '/videos'),
             ),
-            const SizedBox(height: 8),
-            _FeaturedCard(
+          'songs': _FeaturedCard(
               icon: Icons.library_music_rounded,
               title: uiStrings['songsPageTitle']?[locale] ?? 'Songs',
               subtitle: uiStrings['dashboardSongsSubtitle']?[locale] ??
@@ -927,13 +948,7 @@ class _DashboardPageState extends State<DashboardPage> {
               settings: settings,
               onTap: () => pushPage(const SongsPage(), routeName: '/songs'),
             ),
-            const SizedBox(height: 8),
-            // 2026-10-06: Featured is the three things the church itself
-            // makes — videos, songs, sermons (「视频诗歌还有讲道是
-            // featured feature，其他的最下面」). Everything else moved into
-            // the groups at the foot of the page; the Jesus teachings, the
-            // chronology chart and the study pages are tiles there now.
-            _FeaturedCard(
+          'sermons': _FeaturedCard(
               key: const ValueKey('home.sermons'),
               icon: Icons.menu_book_outlined,
               title: uiStrings['sermons']?[locale] ?? 'Sermons',
@@ -947,6 +962,28 @@ class _DashboardPageState extends State<DashboardPage> {
               onTap: () =>
                   pushPage(const SermonsPage(), routeName: '/sermons'),
             ),
+        };
+        final featuredKeys = <String>[
+          for (final k in _adminSite.featuredOrder ?? const <String>[])
+            if (featuredCards.containsKey(k)) k,
+          for (final k in featuredCards.keys)
+            if (!(_adminSite.featuredOrder ?? const <String>[]).contains(k)) k,
+        ].where((k) => !_adminSite.featuredOff.contains(k)).toList();
+        if (featuredKeys.isEmpty) return null;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _SectionHeader(
+              icon: Icons.star_outline_rounded,
+              label: uiStrings['dashboardFeatured']?[locale] ?? 'Featured',
+              settings: settings,
+              scheme: scheme,
+              fontSize: headerSize,
+            ),
+            for (final k in featuredKeys) ...[
+              const SizedBox(height: 8),
+              featuredCards[k]!,
+            ],
           ],
         );
 
@@ -1066,6 +1103,8 @@ class _DashboardPageState extends State<DashboardPage> {
                         pushPage(const VideosPage(), routeName: '/videos'),
                   ),
                 ],
+                              // From the admin portal (links added for this group).
+                ..._adminLinkTiles('frequent'),
               ],
             ),
             const SizedBox(height: 16),
@@ -1131,6 +1170,8 @@ class _DashboardPageState extends State<DashboardPage> {
                         routeName: kWorldWheelPath),
                   ),
                 ],
+                              // From the admin portal (links added for this group).
+                ..._adminLinkTiles('study'),
               ],
             ),
             const SizedBox(height: 16),
@@ -1194,6 +1235,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () => pushPage(const MisconceptionsPage(),
                       routeName: '/misconceptions'),
                 ),
+                              // From the admin portal (links added for this group).
+                ..._adminLinkTiles('reference'),
               ],
             ),
             const SizedBox(height: 16),
@@ -1218,6 +1261,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   onTap: () =>
                       pushPage(const FeedbackPage(), routeName: '/feedback'),
                 ),
+                              // From the admin portal (links added for this group).
+                ..._adminLinkTiles('help'),
               ],
             ),
           ],

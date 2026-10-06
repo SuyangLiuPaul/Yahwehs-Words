@@ -244,6 +244,54 @@ class Song {
     );
   }
 
+  /// A copy with the admin portal's field edits applied. Only the editable
+  /// fields; an empty string clears a field. Everything else is kept.
+  Song withPatch(Map<String, dynamic> p) {
+    String? pick(String k, String? cur) {
+      if (!p.containsKey(k)) return cur;
+      final v = p[k];
+      if (v == null) return null;
+      final t = v.toString().trim();
+      return t.isEmpty ? null : t;
+    }
+
+    List<String> themesOf(List<String> cur) {
+      if (!p.containsKey('themes')) return cur;
+      final v = p['themes'];
+      if (v is List) return v.map((e) => e.toString()).toList();
+      return const [];
+    }
+
+    return Song(
+      id: id,
+      title: pick('title', title) ?? title,
+      language: pick('language', language) ?? language,
+      source: source,
+      sourceLabel: sourceLabel,
+      code: code,
+      url: url,
+      album: pick('album', album),
+      artist: pick('artist', artist),
+      composer: pick('composer', composer),
+      lyricist: pick('lyricist', lyricist),
+      durationSec: durationSec,
+      audioUrl: pick('audioUrl', audioUrl),
+      instrumentalUrl: pick('instrumentalUrl', instrumentalUrl),
+      accompanimentUrl: pick('accompanimentUrl', accompanimentUrl),
+      audioTracks: audioTracks,
+      videoUrl: pick('videoUrl', videoUrl),
+      youtubeId: pick('youtubeId', youtubeId),
+      soundcloudTrackId: soundcloudTrackId,
+      scoreUrl: pick('scoreUrl', scoreUrl),
+      artworkUrl: pick('artworkUrl', artworkUrl),
+      lyrics: pick('lyrics', lyrics),
+      themes: themesOf(themes),
+      verse: pick('verse', verse),
+      firstSeenAt: firstSeenAt,
+      updatedAt: updatedAt,
+    );
+  }
+
   /// True when there is a direct mp3 this app can stream itself.
   /// SoundCloud-only rows are false — they open externally.
   ///

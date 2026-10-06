@@ -417,3 +417,11 @@
     Cache-Control = "no-store"
     Referrer-Policy = "no-referrer"
     Content-Security-Policy = "default-src 'none'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self'; connect-src https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'self'; form-action http://127.0.0.1:*; base-uri 'none'; frame-ancestors 'none'; object-src 'none'"
+
+# 2026-10-06: the admin portal (admin.yahwehword.com) reads this tiny file
+# to show which version is live. Public, 70 bytes, no secrets.
+[[headers]]
+  for = "/version.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "no-cache, no-store, must-revalidate"

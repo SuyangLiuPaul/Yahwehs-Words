@@ -26,6 +26,7 @@ import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/app_style_preset.dart';
 import 'package:yahwehs_words/models/dashboard_section.dart';
 import 'package:yahwehs_words/services/update_service.dart';
+import 'package:yahwehs_words/widgets/manual_update_tile.dart';
 import 'package:yahwehs_words/widgets/update_check_tile.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/constants/projection_strings.dart';
@@ -1444,6 +1445,17 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                         UpdateFrequencySelector(locale: settings.locale),
                       ],
                     ),
+                  ),
+                ),
+              ],
+              // 2026-10-06: web and store builds have no GitHub updater, so the
+              // manual check lives here instead.
+              if (!UpdateService.isSupported) ...[
+                SizedBox(height: 8 * s),
+                Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16 * s),
+                    child: ManualUpdateTile(locale: settings.locale),
                   ),
                 ),
               ],

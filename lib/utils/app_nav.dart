@@ -1,3 +1,4 @@
+import 'package:yahwehs_words/services/usage_stats.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
@@ -69,6 +70,7 @@ Future<T?>? pushPage<T>(
   bool preventDuplicates = true,
   Object? arguments,
 }) {
+  UsageStats.page(routeName ?? '/${page.runtimeType}');
   // 2026-10-04: a templated id carrying a space, non-ASCII or '%'/'#' (the
   // illustration map ids, e.g. `illus_dore_gustavedorécrucifixi`) never
   // matches GetX's route regex, and `_parseParams` then throws "Null check

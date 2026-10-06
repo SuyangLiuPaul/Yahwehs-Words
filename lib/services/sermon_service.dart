@@ -1,3 +1,5 @@
+import 'package:yahwehs_words/services/admin_content.dart';
+import 'package:yahwehs_words/services/admin_overlay.dart';
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
@@ -261,10 +263,19 @@ class SermonService {
     if (_index != null) return _index!;
     final raw = await rootBundle.loadString('assets/sermons/index.json');
     final list = json.decode(raw) as List<dynamic>;
-    _index = list
+    var sermons = list
         .whereType<Map<String, dynamic>>()
         .map(Sermon.fromJson)
         .toList();
+    // 2026-10-06: sermons the admin portal hid or retitled. Short timeout,
+    // never throws; with no answer the bundled index is used as is.
+    try {
+      sermons = applySermonOverlay(
+          sermons,
+          await AdminOverlay.collection('adm_sermons',
+              timeout: const Duration(seconds: 2)));
+    } catch (_) {}
+    _index = sermons;
     return _index!;
   }
 

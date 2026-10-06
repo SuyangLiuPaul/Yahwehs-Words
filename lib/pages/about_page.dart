@@ -7,6 +7,7 @@ import 'package:yahwehs_words/constants/sermon_credit.dart';
 import 'package:yahwehs_words/constants/app_version.dart';
 import 'package:yahwehs_words/pages/changelog_page.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
+import 'package:yahwehs_words/widgets/manual_update_tile.dart';
 import 'package:yahwehs_words/widgets/update_check_tile.dart';
 import 'package:yahwehs_words/constants/build_flags.dart';
 import 'package:yahwehs_words/constants/ui_strings.dart';
@@ -1099,6 +1100,9 @@ class _AppLicenseCard extends StatelessWidget {
             // 2026-06-16 (v1.3.88): native-only "Check for updates" against
             // the GitHub release feed (hides itself on web — PWA is current).
             UpdateCheckTile(locale: locale, scheme: scheme),
+            // 2026-10-06: the same question for web and store builds, which
+            // the tile above hides itself for.
+            ManualUpdateTile(locale: locale),
             // 2026-09-08: and the switch that means nobody has to find
             // that button. Same platform gate, so the pair appears and
             // disappears together.
