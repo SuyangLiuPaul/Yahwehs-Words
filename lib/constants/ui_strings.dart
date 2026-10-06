@@ -4056,9 +4056,9 @@ const uiStrings = {
     'en': 'About',
   },
   'appTagline': {
-    'zh-Hans': '双语圣经研读应用。',
-    'zh-Hant': '雙語聖經研讀應用。',
-    'en': 'A bilingual Bible study app.',
+    'zh-Hans': '研读雅伟的话。',
+    'zh-Hant': '研讀雅偉的話。',
+    'en': "Study Yahweh's Words",
   },
   'contactIntro': {
     'zh-Hans': '作者 Paul Liu',

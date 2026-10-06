@@ -163,8 +163,8 @@ def main():
     # a regex over every catalog row — which is why this reads 9 and
     # not 12. The hidden NASB and the two hidden Greek texts had been
     # counted here since the day each was hidden.
-    tag_en = 'Bilingual Bible · 14 versions · original languages'
-    tag_zh = '双语圣经 · 和合本雅伟版 · 原文对照与释经注'
+    tag_en = "Study Yahweh's Words"
+    tag_zh = '研读雅伟的话'
     domain = 'yahwehword.com'
 
     f_name = fitted(name, 82)
