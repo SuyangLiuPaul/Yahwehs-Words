@@ -1500,14 +1500,17 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Icon(icon, size: fontSize + 2, color: scheme.primary),
         const SizedBox(width: 6),
-        Text(
+        Expanded(
+          child: Text(
           label,
+          softWrap: true,
           style: TextStyle(
             fontFamily: settings.fontFamily,
             fontFamilyFallback: kCjkFontFallback,
             fontSize: fontSize,
             fontWeight: FontWeight.w700,
             color: scheme.primary,
+          ),
           ),
         ),
       ],
@@ -1832,8 +1835,15 @@ class _LinkGrid extends StatelessWidget {
       builder: (context, c) {
         // `floorToDouble` keeps the row from overflowing by a fraction
         // of a pixel and drawing Flutter's overflow stripes.
-        final w =
-            ((c.maxWidth - _gap * (columns - 1)) / columns).floorToDouble();
+        final settings = context.watch<AppSettings>();
+        final labelSize = (settings.fontSize - 2).clamp(14.0, 20.0).toDouble();
+        final scaledSize = MediaQuery.textScalerOf(context).scale(labelSize);
+        final minimumWidth = scaledSize > 22 ? 240.0 : 160.0;
+        final fittingColumns = ((c.maxWidth + _gap) / (minimumWidth + _gap))
+            .floor()
+            .clamp(1, columns);
+        final w = ((c.maxWidth - _gap * (fittingColumns - 1)) / fittingColumns)
+            .floorToDouble();
         return Wrap(
           spacing: _gap,
           runSpacing: _gap,
@@ -1881,41 +1891,22 @@ class _LinkTile extends StatelessWidget {
         children: [
           Icon(icon, color: scheme.primary, size: 20),
           const SizedBox(width: 8),
-          // One line, scaled down if it does not fit.
-          //
-          // Two rounds of picking a "short enough" label both failed on
-          // the device — "Misunderstandings" broke, then
-          // "Misconceptions" broke, then "Misreadings" broke — because
-          // character count is not width: "Bible Trivia" (12) fits on
-          // one line while "Misreadings" (11) does not, M and s and a
-          // being far wider than i and l and t. Guessing the ceiling
-          // per label cannot work across three locales and a
-          // user-adjustable font size.
-          //
-          // `maxLines: 1` + `softWrap: false` removes mid-word breaking
-          // as a possibility, and FittedBox shrinks only the labels
-          // that need it, so the common ones are untouched. Tiles also
-          // come out a uniform height, which the wrapping version never
-          // managed.
+          // Keep every link readable; long translations grow the tile.
           Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                label,
-                maxLines: 1,
-                softWrap: false,
-                style: TextStyle(
-                  fontFamily: settings.fontFamily,
-                  fontFamilyFallback: kCjkFontFallback,
-                  fontSize: (fs - 2).clamp(12.0, 18.0).toDouble(),
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                  height: 1.15,
-                ),
+            child: Text(
+              label,
+              softWrap: true,
+              style: TextStyle(
+                fontFamily: settings.fontFamily,
+                fontFamilyFallback: kCjkFontFallback,
+                fontSize: (fs - 2).clamp(14.0, 20.0).toDouble(),
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+                height: 1.3,
               ),
             ),
           ),
+          const SizedBox(width: 4),
           Icon(Icons.chevron_right, size: 16, color: scheme.outline),
         ],
       ),
