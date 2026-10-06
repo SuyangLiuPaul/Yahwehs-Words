@@ -1,3 +1,17 @@
+## October6 verified1.7.12 native delivery and remaining web gate
+
+Immutable Words v1.7.12 is1f83f651d3d38f36d3b3969d72a65b2edf19bf2b; exact-head CI37433584459 passed4,051tests/40skips. All seven native/tag workflows succeeded. GitHub release is public with seven installable assets and a genuine Android media-session QA video, verified digests/signatures. Evidence words-github-final-1712-verification.json and words-github-apks-1712-verification.json in /Users/pliu0036/Downloads/Yahweh-Release-1711.
+
+Google phone1.7.12/10070121 and Wear1.7.12/20001020 are Available to internal testers on their existing tracks, release11. Alpha1.7.12 is saved UNsubmitted because Alpha1.7.3 remains in review; preserve it and never cancel/restart. Accurate DataSafety/foreground-media declaration changes are queued. Real production tester qualification and old-to-new Play installation remain open.
+
+Microsoft submission12/1152921505702053845 carries validated1.7.12.0 x64, explicitly In certification/Step2Pre-processing with automatic publication. Prior public1.7.11.0 remains current until publishing finishes. Three localized notes updated; approved assets/markets preserved. See docs/microsoft-followup-1.7.12.md.
+
+Both signed Apple1.7.12/1070012 packages DELIVERED, processed, accurate standard encryption outsideAppleOS/FranceNo saved, existing internalWords1owner assigned, Public beta submitted with genuine notes/automatic notification. iOS829bab9b-ee63-4d43-9812-36c62dce144a and Mac277b877d-2e61-40a6-b9c0-a205023fba92 explicitly Waiting for Review. Watch matching1070012 included and CarPlay audio entitlement verified. Preserve older public reviews; no duplicate upload/submission. Evidence words-apple-beta-1712-delivery.json.
+
+International dev/qat/production websites all1.7.12, full main.dart.js SHA2564055c682828b9bf0d4afea0c7d376315657116ae4dff2c6762e8646cb667ddd0 verified. China sites still1.7.11 at last check: canonical wrapper ended verification failure after slow uploads; exact existing China bundle is being recovered on the existing deploy, with no source/version rebuild. Sword web waits sequentially. Do not claim all websites latest yet. Admin registry reflects only actual available channel versions, no forced/minimum update changes.
+
+Home compact groups PR44 passed exact-head CI37444177551 at4e2ca63694340860f0361e3bf8a17553aa9f5f55 and merged e495fea3c82378e90b0bb559182710f6f1aaef61. Four common links remain; Study/Reference/Help collapsed by default with full-width readable links when expanded. This runtime change is AFTER immutable1.7.12: no new tag/package, needs next version. Physical Watch/Wear/vehicle audible routing/call recovery and genuine AndroidAuto rendering are not verified. Final cleanup remains gated while web uploads/deploys active. Preserve all source/signing/installables/archives/dSYMs/T7images/owner changes; exclude yahwehdehua. Automation remains paused at10hours.
+
 ## Latest verified delivery and next companion preparation — 2026-10-02
 
 Both apps have immutable1.7.6 source/releases; all8websites verified1.7.6 and Google existingphone/Wearinternaltracks published. Microsoftsubmission6bothcertification. AllfourApple1.7.6 packagesdelivered; WordsMacprocessing, otherthreeexternalbetasWaitingforReview. Preserveinitialpublicreviews. [Delivery record](docs/delivery-1.7.6-2026-10-02.md).
