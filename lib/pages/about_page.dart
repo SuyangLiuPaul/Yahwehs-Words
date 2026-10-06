@@ -234,7 +234,7 @@ class _Header extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     uiStrings['appTagline']?[locale] ??
-                        'A bilingual Bible study app.',
+                        "Study Yahweh's Words",
                     style: TextStyle(
                       fontSize: 12,
                       color: scheme.onSurfaceVariant,

@@ -199,8 +199,7 @@ def build_manifest(name: str, short_name: str) -> dict:
         "background_color": "#ffffff",
         "theme_color": "#2196F3",
         "description": (
-            "YsWords means Yahweh's words. A bilingual Bible app to help "
-            "you listen to His voice and abide in Him daily."
+            "Study Yahweh's Words. Listen to His voice and abide in Him daily."
         ),
         # No "orientation" key. It used to say "portrait-primary", and
         # Android honours that lock for an installed PWA while iOS/iPadOS

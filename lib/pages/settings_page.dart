@@ -4134,7 +4134,7 @@ class _AboutCard extends StatelessWidget {
             SizedBox(height: 4 * s),
             Text(
               uiStrings['appTagline']?[locale] ??
-                  'A bilingual Bible study app.',
+                  "Study Yahweh's Words",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,

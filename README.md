@@ -6,7 +6,7 @@
   <img src="assets/app_icon_rounded.png" alt="Yahweh's Words app icon" width="80"/>
 </p>
 
-<p align="center"><em>A bilingual Bible reader for Yahweh's words built with Flutter.</em></p>
+<p align="center"><em>Study Yahweh's Words</em></p>
 
 <p align="center">
   <a href="https://yahwehword.com">

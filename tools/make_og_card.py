@@ -146,25 +146,11 @@ def main():
         return f
 
     name = "Yahweh's Words"
-    # "7 versions", NOT "7 translations" — the user's call, 2026-08-31:
-    # 「不然以为7个语言」. Both numbers are defensible and they mean
-    # different things, so the word has to be the careful one:
-    #   * 7 是版本条目数 — what the version picker actually offers.
-    #   * 5 是不同译本数 — 和合本雅伟版 and 梁家铿译本 are each shipped
-    #     in 简体 and 繁體, the same translation converted script-wise
-    #     (scripts/fix_traditional_conversion.py and the
-    #     repair_tr_*_glyph.py family), not two separate works.
-    # "translations" reads as "seven LANGUAGES", which would be a real
-    # overclaim; "versions" is both true and the standard word in Bible
-    # software (the V in KJV; 中文界面叫版本).
-    # test/seo_meta_test.dart derives the count from
-    # lib/constants/bible_versions.dart and fails if this line drifts.
-    # 2026-09-14: it derives it from `availableVersions` now, not from
-    # a regex over every catalog row — which is why this reads 9 and
-    # not 12. The hidden NASB and the two hidden Greek texts had been
-    # counted here since the day each was hidden.
-    tag_en = 'Bilingual Bible · 14 versions · original languages'
-    tag_zh = '双语圣经 · 和合本雅伟版 · 原文对照与释经注'
+    # 2026-10-07: the owner chose the same study tagline for both apps.
+    # Edition counts remain in the website feature list, checked against
+    # the actual picker by test/seo_meta_test.dart.
+    tag_en = "Study Yahweh's Words"
+    tag_zh = '研读雅伟的话'
     domain = 'yahwehword.com'
 
     f_name = fitted(name, 82)

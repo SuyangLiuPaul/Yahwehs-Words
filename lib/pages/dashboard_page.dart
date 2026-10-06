@@ -1335,7 +1335,7 @@ class _HomeFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tagline =
-        uiStrings['appTagline']?[locale] ?? 'A bilingual Bible study app.';
+        uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words";
     final updated =
         (uiStrings['homeFooterUpdated']?[locale] ?? 'Updated {time}')
             .replaceFirst('{time}', formatReleaseTimeLocal());
