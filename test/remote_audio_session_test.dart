@@ -75,17 +75,15 @@ void main() {
     for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
       SharedPreferences.setMockInitialValues({'locale': locale});
       final children = await CarAudioCatalogue.children(CarAudioCatalogue.root);
-      expect(children.map((item) => item.id), [
-        'car:queue',
-        'car:playlists',
-        'car:songs',
-        'car:instrumental',
-        'car:sermons'
-      ]);
+      expect(children.map((item) => item.id),
+          ['car:songs', 'car:instrumental', 'car:sermons', 'car:library']);
+      final library = await CarAudioCatalogue.children('car:library');
+      expect(library.map((item) => item.id), ['car:queue', 'car:playlists']);
+      expect(children.length, lessThanOrEqualTo(4));
       expect(children.every((item) => item.playable == false), true);
       expect(children.every((item) => item.artUri?.scheme == 'https'), true);
       expect(
-          children.last.title,
+          children[2].title,
           locale == 'en'
               ? 'Sermons'
               : locale == 'zh-Hant'
