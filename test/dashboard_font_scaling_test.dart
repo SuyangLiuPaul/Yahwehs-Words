@@ -109,4 +109,32 @@ void main() {
         find.text(label(s, 'dashboardSection_quickLinks_label', 'Quick links')),
         findsOneWidget);
   });
+  testWidgets('long quick links stay readable across locales and text scales',
+      (tester) async {
+    tester.view.physicalSize = const Size(390, 6000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    final settings = await pumpAt(tester, 20);
+    for (final width in [320.0, 390.0]) {
+      tester.view.physicalSize = Size(width, 6000);
+      for (final scale in [1.0, 1.8]) {
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
+          await settings.setLocale(locale);
+          await tester.pump(const Duration(milliseconds: 800));
+          final link = find.text(uiStrings['jesusTeachings']![locale]!);
+          expect(link, findsOneWidget);
+          final text = tester.widget<Text>(link);
+          expect(text.style!.fontSize, greaterThanOrEqualTo(14));
+          expect(text.softWrap, isTrue);
+          expect(text.maxLines, isNull);
+          expect(find.ancestor(of: link, matching: find.byType(FittedBox)),
+              findsNothing);
+          expect(tester.takeException(), isNull,
+              reason: '$locale at width $width and text scale $scale');
+        }
+      }
+    }
+  });
 }
