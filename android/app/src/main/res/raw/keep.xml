@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- audio_service resolves custom media action icons by name at runtime. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_shuffle,@drawable/ic_repeat,@drawable/ic_repeat_one" />
