@@ -125,6 +125,18 @@ jobs:
       - name: Build APK (release, intl flavor)
         run: flutter build apk --release --flavor intl
 
+      - name: Verify runtime media action icons survive resource shrinking
+        run: |
+          APK="build/app/outputs/flutter-apk/app-intl-release.apk"
+          AAPT2="$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)"
+          "$AAPT2" dump resources "$APK" > "$RUNNER_TEMP/media-resources.txt"
+          for icon in ic_shuffle ic_repeat ic_repeat_one; do
+            grep -Fq "drawable/$icon" "$RUNNER_TEMP/media-resources.txt" || {
+              echo "::error::Missing runtime media action icon: $icon"
+              exit 1
+            }
+          done
+
       # The failure this replaced was invisible for months because nothing
       # ever looked at the certificate. Now the job does, and prints the
       # digest so a future release can be compared against this one.
