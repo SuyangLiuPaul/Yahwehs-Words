@@ -268,8 +268,13 @@ void main() {
           reason: 'the version list changed — the share card and the '
               'JSON-LD featureList both advertise a count and neither '
               'is derived at build time');
-      for (final text in [card, markup]) {
-        expect(text, contains('${entries.length} versions'));
+      expect(markup, contains('${entries.length} versions'));
+      // The owner replaced the share-card tagline on 2026-10-07.
+      // A card need not claim an edition count; any count it does claim
+      // must still match the picker, and the new tagline must be present.
+      expect(card, contains("Study Yahweh's Words"));
+      for (final count in RegExp(r'(\d+)\s+versions').allMatches(card)) {
+        expect(count.group(1), '${entries.length}');
       }
     });
 
