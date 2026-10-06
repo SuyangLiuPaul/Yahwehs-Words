@@ -15,6 +15,20 @@ import 'sermon_audio_service.dart';
 /// hundreds of rows on a driving screen.
 class CarAudioCatalogue {
   static const root = 'car:root';
+
+  // Android Auto owns the layout. Request artwork-led entry tiles, then
+  // readable lists inside each source/playlist; never category styles,
+  // which require tintable vector icons rather than our source logos.
+  static const androidRootExtras = <String, dynamic>{
+    AndroidContentStyle.supportedKey: true,
+    AndroidContentStyle.browsableHintKey: AndroidContentStyle.gridItemHintValue,
+    AndroidContentStyle.playableHintKey: AndroidContentStyle.listItemHintValue,
+  };
+  static const androidFolderExtras = <String, dynamic>{
+    AndroidContentStyle.browsableHintKey: AndroidContentStyle.listItemHintValue,
+    AndroidContentStyle.playableHintKey: AndroidContentStyle.listItemHintValue,
+  };
+
   /// The themed logo, standing in for a cover. A getter, not a constant:
   /// it follows the theme colour the reader picks.
   static Uri get artwork => CompanionTheme.artwork;
@@ -31,7 +45,8 @@ class CarAudioCatalogue {
           title: title,
           artist: subtitle,
           playable: false,
-          artUri: art ?? artwork);
+          artUri: art ?? artwork,
+          extras: androidFolderExtras);
 
   /// A song source's own mark (FYDT, CDC, CGDC, …), served by the website
   /// from the same bundled asset the phone shows. Null when the source has
@@ -74,15 +89,22 @@ class CarAudioCatalogue {
       final locale =
           (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
       return [
-        folder('car:queue', _title(locale, 'Playing queue', '播放队列', '播放佇列')),
-        folder('car:playlists', _title(locale, 'Playlists', '播放列表', '播放清單')),
         folder('car:songs', _title(locale, 'Hymns', '诗歌', '詩歌')),
         folder('car:instrumental', _title(locale, 'Instrumental', '伴奏', '伴奏')),
-        folder('car:sermons', _title(locale, 'Sermons', '讲道', '講道'))
+        folder('car:sermons', _title(locale, 'Sermons', '讲道', '講道')),
+        folder('car:library', _title(locale, 'Library', '我的', '我的'))
       ];
     }
     final locale =
         (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+    // Four browsable root entries fit Android Auto's usual tab limit.
+    // Existing queue and playlist IDs stay reachable below Library.
+    if (id == 'car:library') {
+      return [
+        folder('car:queue', _title(locale, 'Playing queue', '播放队列', '播放佇列')),
+        folder('car:playlists', _title(locale, 'Playlists', '播放列表', '播放清單')),
+      ];
+    }
     if (id == 'car:queue' || id.startsWith('car:queue-page/')) {
       final queue = SongPlayerService.instance.queue;
       final offset =

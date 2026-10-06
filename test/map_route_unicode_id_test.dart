@@ -6,7 +6,7 @@ import 'package:yahwehs_words/utils/app_nav.dart';
 
 /// 2026-10-04 crash (1.7.10, iOS): tapping an illustration map whose id has
 /// non-ASCII characters (`illus_dore_gustavedorécrucifixi`) went through
-/// Get.toNamed('/maps/<id>'), whose regex never matches such a path, so GetX's
+/// `Get.toNamed('/maps/<id>')`, whose regex never matches such a path, so GetX's
 /// `_parseParams` threw "Null check operator used on a null value".
 void main() {
   test('ids that GetX cannot route are sent down the anonymous-route branch',
