@@ -42,3 +42,12 @@ International dev/qat/production websites all1.7.12, full main.dart.js SHA256405
 
 Home compact groups PR44 passed exact-head CI37444177551 at4e2ca63694340860f0361e3bf8a17553aa9f5f55 and merged e495fea3c82378e90b0bb559182710f6f1aaef61. Four common links remain; Study/Reference/Help collapsed by default with full-width readable links when expanded. This runtime change is AFTER immutable1.7.12: no new tag/package, needs next version. Physical Watch/Wear/vehicle audible routing/call recovery and genuine AndroidAuto rendering are not verified. Final cleanup remains gated while web uploads/deploys active. Preserve all source/signing/installables/archives/dSYMs/T7images/owner changes; exclude yahwehdehua. Automation remains paused at10hours.
 
+
+## October6 21:46 Melbourne — all six Words websites verified1.7.12
+
+The China upload gate is resolved. A raw application/zip draft of the exact held main.dart.js was accepted as deploy-preview6ac4cfb0a1dcdcec9d66cb79 without changing published production. Then normal official CLI full-site deploys retained all7,311files/eightfunctions/configuration and finished for cn/cn-dev/cn-qat. No runtime/build/source/version mutation. The earlier JSON/base64ZIP attempt failed extraction; do not reuse it. Initial long native uploads timed out after positive byte transfer; compressed raw ZIP succeeded and the full CLI required zero static files. This was transport recovery, not publishing a partial site.
+
+Full live bytes now match the local China build on all three sites: main.dart.js15,818,716bytes SHA256e4109ee67b9a30d350f6b087fd9ffd2ed3a1f316159c80676ae1b41b6218dbb5; bootstrap89b805e3a81824326df12c79c32ff403b37bef8b9e2c6dce75aaf78b65b20661. All three international sites also verified12, matching within their group and distinct fromChina. Evidence words-all-six-web-1712-verification.json. Admin Words Web1.7.12 saved and reloaded; notes updated in all3languages, store rows/minimums remain truthful/unchanged. Proof admin-words-web-1712-persisted.png.
+
+Sword canonical web release started only after Words complete verification. Native/store statuses above remain unchanged. Home compact groups still require a new version; not included in immutable1.7.12. Final cleanup remains gated while Sword deployment is active.
+
