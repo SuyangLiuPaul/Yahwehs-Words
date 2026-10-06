@@ -1,3 +1,4 @@
+import 'package:yahwehs_words/services/admin_overlay.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:yahwehs_words/models/song.dart';
@@ -209,9 +210,56 @@ class SongService {
   /// Never throws: falls back through cache → bundle.
   static Future<List<Song>> load() async {
     final bundle = await _impl.load();
-    return bundle.songs
+    final base = bundle.songs
         .where((s) => !hiddenSources.contains(s.source))
         .toList();
+    // 2026-10-06: what the admin portal hid / edited / added. Never throws;
+    // no overlay (offline, nothing changed) leaves the list as it was.
+    try {
+      return applyAdminOverlay(base, await AdminOverlay.collection('adm_songs'));
+    } catch (_) {
+      return base;
+    }
+  }
+
+  /// Apply the portal's overlay to a catalogue. Pure, so it is tested
+  /// without a network.
+  @visibleForTesting
+  static List<Song> applyAdminOverlay(
+      List<Song> base, Map<String, Map<String, dynamic>> overlay) {
+    if (overlay.isEmpty) return base;
+    final out = <Song>[];
+    for (final s in base) {
+      final o = overlay[s.id];
+      if (o == null) {
+        out.add(s);
+        continue;
+      }
+      if (o['hidden'] == true) continue;
+      final patch = o['patch'];
+      out.add(patch is Map ? s.withPatch(Map<String, dynamic>.from(patch)) : s);
+    }
+    final have = {for (final s in base) s.id};
+    overlay.forEach((id, o) {
+      if (o['custom'] != true || o['hidden'] == true || have.contains(id)) {
+        return;
+      }
+      final d = o['data'];
+      if (d is! Map) return;
+      final data = Map<String, dynamic>.from(d);
+      final title = '${data['title'] ?? ''}'.trim();
+      if (title.isEmpty) return;
+      final blank = Song(
+          id: id,
+          title: title,
+          language: 'zh',
+          source: 'custom',
+          sourceLabel: '',
+          url: '',
+          themes: const []);
+      out.add(blank.withPatch(data));
+    });
+    return out;
   }
 
   /// One song by its stable `<source>:<slug>` id, or null if the

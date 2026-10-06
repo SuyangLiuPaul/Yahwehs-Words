@@ -63,7 +63,7 @@ void main() {
 
   test('no zh-Hant field is its zh-Hans twin unless it is script-neutral', () {
     final fields = hantFields();
-    expect(fields, hasLength(1575));
+    expect(fields, hasLength(1645));  // 1617 -> 1645 on 2026-10-04: four more new entries
     final identical =
         fields.where((f) => f[1] != null && f[1] == f[0]).toList();
     // Down from 942. The 122 that remain are strings whose every character is
@@ -71,7 +71,9 @@ void main() {
     // titles like 死海古卷 / 但以理石碑 / 希西家水道. Any string here that
     // contains a Simplified-only character means a field regressed, and the
     // companion test catches that directly.
-    expect(identical, hasLength(122),
+    // 122 -> 120 on 2026-10-04: the Isaiah bulla and Hezekiah bulla discoveryDate fields
+    // ('2009年（2018年由伊拉特·馬扎爾發表）', '2009年（2015年公布）') are no longer script-neutral.
+    expect(identical, hasLength(120),
         reason: 'a zh-Hant field is its Simplified twin again — re-run '
             'tools/repair_untranslated_hant.py');
   });
@@ -106,7 +108,7 @@ void main() {
       walk(entry);
       if (bad) touched++;
     }
-    expect(evidences, hasLength(225));
+    expect(evidences, hasLength(235));  // 225 -> 231 -> 235 on 2026-10-04: ten new entries
     expect(touched, 0);
   });
 

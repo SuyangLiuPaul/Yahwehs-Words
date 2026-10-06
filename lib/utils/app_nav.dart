@@ -1,9 +1,14 @@
+import 'package:yahwehs_words/services/usage_stats.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import 'package:yahwehs_words/constants/motion.dart';
 import 'package:yahwehs_words/utils/route_paths.dart'
     show matchesRegisteredRoute;
+
+@visibleForTesting
+bool isGetRoutable(String name) =>
+    RegExp(r'^[\x21-\x7E]+$').hasMatch(name) && !name.contains('#');
 
 /// Canonical page-push helper — every `Get.to(...)` in the app should
 /// route through here instead of specifying its own transition/duration/
@@ -65,7 +70,15 @@ Future<T?>? pushPage<T>(
   bool preventDuplicates = true,
   Object? arguments,
 }) {
-  if (routeName != null && matchesRegisteredRoute(routeName)) {
+  UsageStats.page(routeName ?? '/${page.runtimeType}');
+  // 2026-10-04: a templated id carrying a space, non-ASCII or '%'/'#' (the
+  // illustration map ids, e.g. `illus_dore_gustavedorécrucifixi`) never
+  // matches GetX's route regex, and `_parseParams` then throws "Null check
+  // operator used on a null value" on the `paramsMatch!`. Such a path goes
+  // through the anonymous-route branch below instead.
+  if (routeName != null &&
+      isGetRoutable(routeName) &&
+      matchesRegisteredRoute(routeName)) {
     return Get.toNamed<T>(
       routeName,
       preventDuplicates: preventDuplicates,

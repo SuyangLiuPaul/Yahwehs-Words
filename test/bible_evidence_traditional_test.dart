@@ -50,8 +50,8 @@ void main() {
   int count(String needle) => needle.allMatches(hant).length;
 
   test('the asset still has the shape the repair was measured against', () {
-    expect(evidences.length, 225);
-    expect(locales.length, 1575);
+    expect(evidences.length, 235);  // 225 -> 231 -> 235 on 2026-10-04: ten new entries (tools/add_evidence_entries.py)
+    expect(locales.length, 1645);  // 235 entries x 7 localised fields
   });
 
   test('no zh-Hant field holds Simplified-only characters', () {
@@ -86,13 +86,16 @@ void main() {
     expect(count('被髮'), 0);
     expect(count('騷亂髮'), 0);
     expect(count('包括髮'), 0);
-    expect(count('被發掘'), 6);
+    // 6 -> 7 on 2026-10-04: one more correct 被發掘 in the new Pool of Siloam / Jericho text.
+    expect(count('被發掘'), 6);  // 7 -> 6 on 2026-10-04 (Transfiguration paragraph rewritten)
     // …but the two real ones are hair and must NOT have been swept.
     expect(count('頭髮'), 1, reason: 'the hair in Daniel 4:33 was swept away');
     expect(count('髮型'), 1, reason: 'the mushroom hairstyle was swept away');
 
     expect(count('覆活'), 0);
-    expect(count('復活'), 43);
+    // 43 -> 42 on 2026-10-04: the Hezekiah bulla text no longer calls a (not present) scarab a
+    // 'symbol of resurrection' (tools/apply_evidence_corrections.py).
+    expect(count('復活'), 42);
     // 覆 is correct in these and a widened 覆→復 rule would break them.
     expect(count('反覆'), greaterThan(0));
     expect(count('覆蓋'), greaterThan(0));
@@ -118,7 +121,7 @@ void main() {
     // Istanbul, wrecked by s2twp's 布爾→布林 rule, which exists for "Boolean".
     expect(count('伊斯坦布林'), 0,
         reason: 'Istanbul is spelled "Boolean" again');
-    expect(count('伊斯坦布爾'), 7);
+    expect(count('伊斯坦布爾'), 8);  // 7 -> 8 on 2026-10-04: samaria_ostraca (now in Istanbul)
 
     // 保存 (preserved) had been turned into 儲存 (stored) in five manuscript
     // descriptions. The nine remaining 儲存 are the real word — each one's
@@ -128,14 +131,20 @@ void main() {
     // 2 were already spelled 保存 before the repair; 3 were restored to it.
     expect(count('抄本保存'), 5);
     expect(count('儲存'), 9);
-    expect(count('保存'), 83);
+    // 83 -> 82 on 2026-10-04: the rewritten Thallus/Rylands/Nazareth paragraphs (tools/apply_evidence_corrections.py).
+    expect(count('保存'), 83);  // 82 -> 81 on 2026-10-04 (Golgotha / house of Peter rewrite)
   });
 
   test('wording was not localised — only glyphs were converted', () {
     // s2twp would also have rewritten these. Converting a glyph is not
     // rewriting; changing a word is, and this file is the Simplified source's
     // wording throughout.
-    expect(count('公元'), 525, reason: '公元 was localised to 西元');
+    // 525 -> 533 on 2026-10-04: net effect of the content corrections in
+    // tools/apply_evidence_corrections.py (Tall el-Hammam, Isaiah bulla, James ossuary,
+    // Ketef Hinnom, Khirbet Qeiyafa, Pool of Siloam, Jericho, Caiaphas, P52, Thallus,
+    // Nazareth Inscription, Sodom and Gomorrah: 533 -> 531), which rewrote paragraphs containing 公元.
+    expect(count('公元'), 583,  // 531 -> 536 on 2026-10-04 (Golgotha, house of Peter, Capernaum, Transfiguration, Timna, Jonah)
+         reason: '公元 was localised to 西元');
     expect(count('西元'), 288, reason: 'the file\'s own 西元 were disturbed');
     expect(count('意大利'), 8);
     expect(count('聯絡'), 0, reason: '聯繫 was localised to 聯絡');

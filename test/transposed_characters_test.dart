@@ -44,8 +44,11 @@ void main() {
     '040006002': ['不可在你前面吹号', '不可在你前面吹號'],
     '040025020': ['那另外的五千来', '那另外的五千來'],
     '044024016': ['我因此自己勉励', '我因此自己勉勵'],
-    '044026016': ['站着，我特意向你显现', '站着，我特意向你顯現'],
+    '044026016': ['站着！我特意向你显现', '站着！我特意向你顯現'],
     '045004023': ['算为他义”的这句话', '算為他義」的這句話'],
+    // 2026-10-04: moved here from keepAsIs. Pastor Raymond's "Use B" sheet
+    // rules for the printing (both witnesses read 稱為我名下 too).
+    '024007014': ['称为我名下', '稱為我名下'],
   };
 
   /// The readings that were there before, spelled out so that a re-import
@@ -60,6 +63,7 @@ void main() {
     '044024016': ['因此我自己勉励', '因此我自己勉勵'],
     '044026016': ['向你我显现', '向你我顯現'],
     '045004023': ['算为他的义”这句话', '算為他的義」這句話'],
+    '024007014': ['称我为名下', '稱我為名下'],
   };
 
   /// 耶利米書 7:14 was on the same list of candidates and came off it: ours
@@ -67,9 +71,7 @@ void main() {
   /// 1919 sides with ours. Two witnesses agreeing is not proof when they
   /// share an ancestor — the lesson 創世記 39:22 and 41:30 already taught
   /// this repo. Pinned so a later pass does not "fix" it.
-  const keepAsIs = <String, List<String>>{
-    '024007014': ['称我为名下', '稱我為名下'],
-  };
+  const keepAsIs = <String, List<String>>{};
 
   Map<String, String> load(String path) => {
         for (final row

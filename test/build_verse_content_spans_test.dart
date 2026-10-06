@@ -65,7 +65,16 @@ void main() {
       ),
     ));
     final rich = tester.widget<RichText>(find.byType(RichText).first);
-    return rich.text.toPlainText(includePlaceholders: false);
+    // NoteMarkerSpan is a lifted WidgetSpan; read its marker text back.
+    String walk(InlineSpan s) {
+      if (s is NoteMarkerSpan) return s.marker;
+      if (s is TextSpan) {
+        return (s.text ?? '') + (s.children ?? const []).map(walk).join();
+      }
+      return '';
+    }
+
+    return walk(rich.text);
   }
 
   /// Whether [needle] appears in any `Text` or `RichText` in the rendered

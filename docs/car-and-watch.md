@@ -1,3 +1,5 @@
+> **2026-10-06 redesign:** CarPlay tab bar (诗歌/伴奏/讲道/我的) with themed tiles, covers and source logos; Apple Watch and Wear OS rows with tile + title + subtitle; pages named by their songs ("Ask – Sail") not "1–60"; instrumental counts fixed. Details, screenshots, the Wear OS debug preview and what is still open (Android Auto cannot be run on an emulator): [HANDOFF-2026-10-06.md](HANDOFF-2026-10-06.md) §10 and `docs/screenshots/2026-10-06/car-watch-redesign/`. Not in any store build until the next release.
+
 > October2 media repair: Words1.7.4 carries current-song mix guards, brighter cover backing and reachable/foreground companion refresh. [Current delivery](delivery-1.7.4-2026-10-02.md) distinguishes shipped binaries from preparation and open physical-device checks.
 
 ## Current-song and live companion repair — October 2

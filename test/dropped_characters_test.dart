@@ -46,6 +46,9 @@ void main() {
     '047010009': ['免得你们以为', '免得你們以為'],
     '047012017': ['借着他们一个人', '藉着他們一個人'],
     '058002002': ['凡干犯悖逆的', '凡干犯悖逆的'],
+    // 2026-10-04: was in keepShort below as the 1919 reading. Pastor
+    // Raymond's "Use B" sheet rules for the printing, which has the 在.
+    '001041030': ['甚至在埃及地都忘了', '甚至在埃及地都忘了'],
   };
 
   /// These two look exactly like the ones above — two witnesses read longer
@@ -55,7 +58,6 @@ void main() {
   /// measurement does not "repair" them.
   const keepShort = <String, List<String>>{
     '001039022': ['都交在约瑟手下', '都交在約瑟手下'],
-    '001041030': ['甚至埃及地都忘了', '甚至埃及地都忘了'],
   };
 
   Map<String, String> load(String path) => {

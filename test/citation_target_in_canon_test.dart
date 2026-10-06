@@ -165,7 +165,7 @@ void main() {
     final raw = File('assets/bible_evidence.json').readAsStringSync();
     final entries =
         (jsonDecode(raw) as Map<String, dynamic>)['evidences'] as List;
-    expect(entries.length, 225);
+    expect(entries.length, 235);  // 225 -> 235 on 2026-10-04: ten new entries
 
     // Every segment of every citation, not a sample — including the
     // parts that inherit their book or chapter, which are the only ones
@@ -185,7 +185,8 @@ void main() {
       }
     }
     expect(bad, isEmpty);
-    expect(targets, 250, reason: 'the walk reached every cited passage');
+    expect(targets, 260,  // 250 -> 260 on 2026-10-04: ten new evidence entries
+         reason: 'the walk reached every cited passage');
   });
 
   test('the timeline and the family tree cite inside the canon too', () {

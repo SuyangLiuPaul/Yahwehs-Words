@@ -359,11 +359,11 @@ void main() {
     // text is a rarer exact string than the pre-restoration one was. `s`,
     // `i` and `g` are untouched, so `totalRuns`, `admitted` and `unanimous`
     // do not move.
-    expect(totalRuns, 360640);
-    expect(admitted, 24480);
-    expect(belowBar, 185456);
-    expect(polysemous, 140139);
-    expect(unanimous, 10565);
+    expect(totalRuns, 360636);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer (4 runs dropped with words the print omits)
+    expect(admitted, 24476);  // 2026-10-04: Use-B sheet mirrored into tagged runs
+    expect(belowBar, 185440);  // 2026-10-04: 185456 -> 185441 (Use-B sheet mirrored)
+    expect(polysemous, 140157);  // 2026-10-04: 140139 -> 140156 (Use-B sheet mirrored)
+    expect(unanimous, 10563);  // 2026-10-04: 10565 -> 10563 (Use-B sheet mirrored)
     expect(admitted + belowBar + polysemous + unanimous, totalRuns);
     // The headline: one run in fifteen is judgeable at all.
     expect(admitted / totalRuns, closeTo(0.068, 0.001));
@@ -412,7 +412,7 @@ void main() {
         }
       });
     }
-    expect(wordless, 312);
+    expect(wordless, 312);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer
     expect(wordlessTagged, 36);
     expect(affected, hasLength(23),
         reason: 'verses where a number present in the original is some run\'s '
@@ -829,7 +829,7 @@ void main() {
     // absence had flagged it. That the pool shrinks as real defects are fixed
     // is not evidence for the argument: 336 remain, and the one checked below
     // is still right.
-    expect(singletons, 335);
+    expect(singletons, 336);  // 2026-10-04: Raymond "Use B" sheet mirrored into the tagged layer
 
     // 約伯記 3:2 is one of the 371 and is correct: וַיַּעַן אִיּוֹב וַיֹּאמַר,
     // one Chinese verb for two Hebrew ones, tagged with the first.

@@ -2,7 +2,7 @@
   "_meta": {
     "schema": 2,
     "editorial": true,
-    "checkedAt": "2026-10-01",
+    "checkedAt": "2026-10-05",
     "sourcePassages": [
       "Matthew 26-27",
       "Mark 14-15",
@@ -14,17 +14,20 @@
       "https://www.biblegateway.com/passage/?search=Mark%2014-15&version=KJV",
       "https://www.biblegateway.com/passage/?search=Luke%2022-23&version=KJV",
       "https://www.biblegateway.com/passage/?search=John%2018-19&version=KJV",
-      "https://www.biblegateway.com/passage/?search=John%2013&version=KJV"
+      "https://www.biblegateway.com/passage/?search=John%2013&version=KJV",
+      "https://evidenceunseen.com/new-testament/john/difficulties/was-jesus-crucified-on-the-third-hour-or-the-sixth-hour",
+      "https://www.bibletimemarkers.com/counting-hours",
+      "https://en.wikipedia.org/wiki/Roman_timekeeping"
     ],
     "method": "Parallel Gospel references and original summaries retained. Reference-diagram placements are separate diagramHour metadata; clockHour remains limited to explicit third/sixth/ninth daytime hours. No Scripture wording is changed.",
     "referenceDiagram": {
       "asset": "assets/images/passion-reference-clock.jpeg",
       "title": "圣经黑暗时刻时辰圈",
       "source": "https://www.fydt.org/",
-      "providedBy": "Owner, 2026-10-01",
+      "providedBy": "福音电台 (fydt.org) reference diagram, added 2026-10-01",
       "sha256": "80df6472ead28e4a85fb78b5df860ceecd046f7a6adb801d6ddf0c073c682804",
       "timing": "Approximate placements transcribed from the attached diagram; separate from clockHour, which records Gospel time statements. The diagram does not settle John 19:14 versus Mark 15:25.",
-      "printedReferences": "diagramRefs transcribes the owner-supplied image separately from the existing study references. Both sets open the local Scripture reader."
+      "printedReferences": "diagramRefs transcribes the attached reference image separately from the existing study references. Both sets open the local Scripture reader."
     }
   },
   "events": [
@@ -445,9 +448,9 @@
         "zh-Hant": "約翰：約第六時 · 與馬可時序不同"
       },
       "summary": {
-        "en": "John 19:14 places Jesus before Pilate at about the sixth hour; Mark 15:25 places crucifixion at the third hour. These statements are retained separately. This wheel does not choose a disputed clock-system explanation.",
-        "zh-Hans": "约19:14记耶稣在彼拉多面前时约第六时；可15:25记钉十字架为第三时。本图分别保留这两项记载，不擅自选定有争议的计时解释。",
-        "zh-Hant": "約19:14記耶穌在彼拉多面前時約第六時；可15:25記釘十字架為第三時。本圖分別保留這兩項記載，不擅自選定有爭議的計時解釋。"
+        "en": "John 19:14 says about the sixth hour; Mark 15:25 gives the third hour for the crucifixion. Counted from sunrise, the sixth hour is about noon, and some translations print that: in this app’s Bibles the CSB, the NET and the Chinese Union Version (约有午正) say about noon, while the KJV, ASV, NASB, LEB and BSB keep sixth hour. Explanations people give: John counts hours from midnight, so about 06:00; both statements are rough estimates, somewhere between 09:00 and noon; a copyist confused the numerals for three and six (Wessel); the third hour in Mark is a later insertion (Lane). Roman civil days did run from midnight, but a reference page on Roman timekeeping says Roman hours were still counted as twelfths of the daylight, from sunrise. This wheel does not choose between them: it keeps both statements, and shows 08:00 only because the source diagram does. Summarised from Evidence Unseen, BibleTimeMarkers and Wikipedia (Roman timekeeping).",
+        "zh-Hans": "约19:14说“约第六时”，可15:25说钉十字架是“第三时”。按日出起算，第六时约是正午，有的译本直接写成正午：在本应用的圣经里，和合本（约有午正）、CSB、NET 写作约正午，KJV、ASV、NASB、LEB、BSB 则保留“第六时”。常见的解释有：约翰按午夜起算，所以约是早上六点；两处都只是大概的时间，实际在上午九点到正午之间；抄写员把“三”和“六”的数字写混了（Wessel）；可15:25 的“第三时”是后来加入的（Lane）。罗马的民用日确实从午夜算起，但有一份讲罗马计时的参考资料说，罗马人的时辰仍按白昼十二等分、从日出起算。本图不在其中替任何一方定论，只分别保留两处记载；八点的位置只是因为原图这样标。资料概括自 Evidence Unseen、BibleTimeMarkers 和维基百科（Roman timekeeping）。",
+        "zh-Hant": "約19:14說“約第六時”，可15:25說釘十字架是“第三時”。按日出起算，第六時約是正午，有的譯本直接寫成正午：在本應用的聖經裡，和合本（約有午正）、CSB、NET 寫作約正午，KJV、ASV、NASB、LEB、BSB 則保留“第六時”。常見的解釋有：約翰按午夜起算，所以約是早上六點；兩處都只是大概的時間，實際在上午九點到正午之間；抄寫員把“三”和“六”的數字寫混了（Wessel）；可15:25 的“第三時”是後來加入的（Lane）。羅馬的民用日確實從午夜算起，但有一份講羅馬計時的參考資料說，羅馬人的時辰仍按白晝十二等分、從日出起算。本圖不在其中替任何一方定論，只分別保留兩處記載；八點的位置只是因為原圖這樣標。資料概括自 Evidence Unseen、BibleTimeMarkers 和維基百科（Roman timekeeping）。"
       },
       "refs": [
         "Matthew 27:15-26",

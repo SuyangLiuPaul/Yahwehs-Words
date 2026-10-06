@@ -555,7 +555,7 @@ const List<HelpTopic> kHelpTopics = [
       '主頁「更多探索」›「聖經工具」：總覽（整本聖經的統計）、查詢（原文詞查詢）、分佈（一個詞在各卷出現多少次）。',
       'Home › Explore more › Bible Tools: Overview (statistics for the whole Bible), Lookup (original-language words) and Distribution (how often a word occurs, book by book).',
     ),
-    path: ['quickLinksExplore', 'statistics'],
+    path: ['quickLinksReference', 'statistics'],
     keywords: [
       'tools',
       '工具',
@@ -809,7 +809,7 @@ const List<HelpTopic> kHelpTopics = [
       '張恩年牧師的講道，按主題分類。每篇可以切換英文、簡體、繁體；有錄音的可以直接播放，主頁的「繼續講道」從上次停下的地方接著聽。\n\n想知道某節經文在哪些講道里講過：選中經文，點「相關講道」。',
       'Pastor Eric Chang\'s sermons, grouped by topic. Each one switches between English, simplified and traditional Chinese; where there is a recording it plays in the app, and Resume sermon on the home page picks up where you stopped.\n\nTo find sermons on a verse, select it and tap Related sermons.',
     ),
-    path: ['quickLinksFrequent', 'sermons'],
+    path: ['dashboardFeatured', 'sermons'],
     keywords: [
       'sermon',
       '讲道',
@@ -971,7 +971,7 @@ const List<HelpTopic> kHelpTopics = [
       '考古、手抄本、歷史和科學方面的發現，每條都連到相關經文。可以瀏覽、搜尋，也可以用 AI 按問題查詢（需要你自己的 AI 金鑰）。\n\n主頁的「今日證據」每天換一條；讀某一章時，「⋯」›「本章資源」›「聖經實證」只列和這章有關的。',
       'Archaeological, manuscript, historical and scientific finds, each linked to its scripture. Browse, search, or ask the AI a question (with your own AI key).\n\nToday\'s Evidence on the home page changes daily; while reading, ⋯ › This Chapter › Bible Evidence lists only the finds for that chapter.',
     ),
-    path: ['quickLinksExplore', 'bibleEvidence'],
+    path: ['quickLinksReference', 'bibleEvidence'],
     keywords: [
       'evidence',
       '实证',
@@ -1000,7 +1000,7 @@ const List<HelpTopic> kHelpTopics = [
       '聖經人物的家譜。點一個人看他的經文和親屬。',
       'The family tree of biblical people. Tap a person for their passages and relations.',
     ),
-    path: ['quickLinksExplore', 'familyTree'],
+    path: ['quickLinksReference', 'familyTree'],
     keywords: [
       'family',
       '家谱',
@@ -1025,7 +1025,7 @@ const List<HelpTopic> kHelpTopics = [
       '• 聖經時間軸：聖經事件按年代排列\n• 年代對照圖（主頁「精選推薦」）：從創造到啟示錄畫在同一條刻度上，看誰和誰同時在世，其他大事又在什麼時候',
       '• Bible Timeline: biblical events in order\n• The chronology chart (Featured on the home page): Creation to Revelation on one axis — who was alive at the same time, and when everything else happened',
     ),
-    path: ['quickLinksExplore', 'bibleTimeline'],
+    path: ['quickLinksReference', 'bibleTimeline'],
     keywords: [
       'timeline',
       '时间轴',
@@ -1054,7 +1054,7 @@ const List<HelpTopic> kHelpTopics = [
       '聖經裡不容易注意到的規律：離合詩、數字結構、神名的排列等等，按聖經順序排列，有些配了示意圖。',
       'Patterns that are easy to miss — acrostics, numerical structures, the arrangement of divine names — in canonical order, some with diagrams.',
     ),
-    path: ['quickLinksExplore', 'bibleTrivia'],
+    path: ['quickLinksReference', 'bibleTrivia'],
     keywords: [
       'trivia',
       '冷知识',
@@ -1081,7 +1081,7 @@ const List<HelpTopic> kHelpTopics = [
       '大家常說、但經文其實不是這樣說的事，每條都附上經文。學者確實有分歧的地方會直接說明，不替你選邊。',
       'Things people often repeat that the text does not actually say, each with its passages. Where scholars genuinely disagree, the card says so rather than picking a side.',
     ),
-    path: ['quickLinksExplore', 'misconceptionsTile'],
+    path: ['quickLinksReference', 'misconceptionsTile'],
     keywords: [
       'misconception',
       '误解',
@@ -1106,7 +1106,7 @@ const List<HelpTopic> kHelpTopics = [
       '你讀過哪些書卷和章節、讀了多少，一目瞭然。',
       'Which books and chapters you have read, and how much.',
     ),
-    path: ['quickLinksExplore', 'readingStats'],
+    path: ['quickLinksFrequent', 'readingStats'],
     keywords: [
       'reading',
       '阅读',
@@ -1132,7 +1132,7 @@ const List<HelpTopic> kHelpTopics = [
       '發現問題或有建議，在「意見回饋」裡寫下來直接寄給開發者，不用離開 app。會自動附上版本、裝置等資料，方便查問題。',
       'Found a problem or have an idea? Write it in Feedback and it goes straight to the developer without leaving the app, with the version and device attached to help track it down.',
     ),
-    path: ['quickLinksExplore', 'feedback'],
+    path: ['quickLinksHelp', 'feedback'],
     keywords: [
       'feedback',
       '反馈',

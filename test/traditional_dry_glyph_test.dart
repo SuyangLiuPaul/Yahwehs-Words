@@ -50,10 +50,10 @@ void main() {
     // was missing here until the dropped-character repair put it back. Until
     // then the two cancelled and this read 111 — a coincidence, not
     // corroboration, which is why each side is now accounted for by name.
-    expect(count('干'), 112);
+    expect(count('干'), 111);  // 112 -> 111 on 2026-10-04: 使徒行傳 8:27 reads 甘大基 (his "Use B" sheet; the print agrees)
     expect(count('乾'), 221);
     expect(count('幹'), 9);
-    expect(count('干') + count('乾') + count('幹'), 342);
+    expect(count('干') + count('乾') + count('幹'), 341);
   });
 
   test('nothing that can only be dryness is left setting 幹', () {
@@ -124,12 +124,21 @@ void main() {
         contains('與我無干<note: 原文是我卻乾淨>'));
   });
 
-  test('Candace is spelled 干大基, on evidence other than the witness', () {
+  test('Candace is spelled 甘大基 since 2026-10-04 (publisher: print)', () {
+    // Until 2026-10-04 this edition wrote 干大基 on the strength of 新譯本 and
+    // 梁家鏗; Pastor Raymond's "Use B" sheet rules for the printed 和合本
+    // (衣索匹亞女王甘大基, bible.fhl.net unv agrees), so the verse now reads
+    // as the print does. The biblexg interlinear layer keeps its own 干大基.
+    expect(textOf('使徒行傳', '8', '27'), contains('衣索匹亞女王甘大基'));
+    expect(File('assets/biblexg-v2-tr.json').readAsStringSync(),
+        contains('干大基'));
+  });
+
+  test('(former) Candace test, kept for its argument', () {
     // The one position the witness cannot settle: it transliterates the whole
     // clause differently (衣索匹亞女王甘大基). Settled by the 新譯本 Traditional
     // (git blob 57c4686) and by 梁家鏗's independent Traditional NT, which both
     // write 干大基 — as does our own Simplified asset.
-    expect(textOf('使徒行傳', '8', '27'), contains('埃提阿伯女王干大基'));
     expect(File('assets/biblexg-v2-tr.json').readAsStringSync(),
         contains('干大基'));
   });
@@ -153,7 +162,7 @@ void main() {
     // 342, not 341, since 希伯來書 2:2 got its 干犯 back — the Simplified file
     // was short there too, so the two editions still agree character for
     // character on this glyph.
-    expect(plain.split('干').length - 1, 342);
+    expect(plain.split('干').length - 1, 341);  // 342 -> 341 on 2026-10-04: 使徒行传 8:27 甘大基
     expect(plain.contains('幹'), isFalse);
     expect(plain.contains('乾'), isFalse);
   });

@@ -34,6 +34,7 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
   String? _gospel;
   String _selected = 'cross';
   bool _referenceTiming = true;
+  bool _showOrder = true;
   int? _selectedHour = 9;
   final _scroll = ScrollController();
   @override
@@ -311,6 +312,12 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                                               fontSize:
                                                   math.min(18, side * .037),
                                               fontWeight: FontWeight.bold)))))),
+                      if (_referenceTiming && _showOrder)
+                        Positioned.fill(
+                            child: IgnorePointer(
+                                child: CustomPaint(
+                                    key: const ValueKey('passion.order-path'),
+                                    painter: const _OrderPathPainter()))),
                       for (final hour in List.generate(24, (i) => i))
                         _marker(hour, marks, selected, side, locale),
                     ]));
@@ -332,6 +339,24 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                     if (hour != null) _selectHour(hour, marks);
                   }),
               const SizedBox(height: 12),
+              if (_referenceTiming) ...[
+                FilterChip(
+                    key: const ValueKey('passion.order'),
+                    selected: _showOrder,
+                    label: Text(_l(locale, 'Show order of events', '显示事件顺序',
+                        '顯示事件順序')),
+                    onSelected: (v) => setState(() => _showOrder = v)),
+                const SizedBox(height: 4),
+                Text(
+                    _l(
+                        locale,
+                        'Red line: the order of events, from 18:00 (the dot) round the night, then out through the day.',
+                        '红线：事件的先后顺序，从 18:00（圆点）起，绕过夜晚，再沿白昼向外。',
+                        '紅線：事件的先後順序，從 18:00（圓點）起，繞過夜晚，再沿白晝向外。'),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12.5)),
+                const SizedBox(height: 8),
+              ],
               Text(
                   _l(
                       locale,
@@ -367,9 +392,9 @@ class _PassionWheelPageState extends State<PassionWheelPage> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(_l(
                         locale,
-                        'Source: owner-supplied 福音电台 diagram (fydt.org). Modern times are approximate; the original image is attached above.',
-                        '来源：你提供的福音电台参考图（fydt.org）。现代钟点为近似或估计，原图附件见上方。',
-                        '來源：你提供的福音電台參考圖（fydt.org）。現代鐘點為近似或估計，原圖附件見上方。'))),
+                        'Source: reference diagram by 福音电台 (fydt.org). Modern times are approximate; the original image is attached above.',
+                        '来源：福音电台（fydt.org）参考图。现代钟点为近似或估计，原图附件见上方。',
+                        '來源：福音電台（fydt.org）參考圖。現代鐘點為近似或估計，原圖附件見上方。'))),
             ])));
   }
 
@@ -600,4 +625,100 @@ class _PassionPainter extends CustomPainter {
   @override
   bool shouldRepaint(_PassionPainter old) =>
       locale != old.locale || showDarkness != old.showDarkness;
+}
+
+/// One smooth line through the whole Passion day, in the order it ran.
+///
+/// The dial folds 24 hours onto 12 angles, so a reader cannot tell the
+/// Thursday evening scenes from the Friday morning ones except by the
+/// ring they sit on. The line makes the order visible and never crosses
+/// itself: a spiral from the inner ring out to the outer one.
+class _OrderPathPainter extends CustomPainter {
+  const _OrderPathPainter();
+
+  /// The route runs the whole 24 hours, from 18:00 at the bottom of the
+  /// inner (night) ring, once round the night, out across 05:00–06:00 to
+  /// the day ring, and round the day to 18:00 again. That is how the
+  /// reference diagram itself is laid out (its night ring starts at 6 pm,
+  /// its day ring at 6 am), so the line reads the way the diagram does.
+  static const _hours = 24.0;
+
+  static double _ease(double x) =>
+      x * x * x * (x * (x * 6 - 15) + 10); // smootherstep
+
+  /// Ring radius (as a share of the side) at [t] hours after 18:00. Night
+  /// ring until 04:36, day ring from 06:24, and an unhurried S between —
+  /// wide enough to stay smooth, narrow enough that the 05:00 and 06:00
+  /// markers still sit on the line.
+  static double _ring(double t) {
+    const night = .265, day = .405, a = 10.6, b = 12.4;
+    if (t <= a) return night;
+    if (t >= b) return day;
+    return night + (day - night) * _ease((t - a) / (b - a));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final w = size.width;
+    Offset at(double t) {
+      final h = (18 + t) % 24;
+      final a = -math.pi / 2 + (h % 12) * math.pi / 6;
+      final r = w * _ring(t);
+      return center + Offset(math.cos(a) * r, math.sin(a) * r);
+    }
+
+    final path = Path()..moveTo(at(0).dx, at(0).dy);
+    for (var t = .02; t <= _hours + 1e-9; t += .02) {
+      final o = at(t);
+      path.lineTo(o.dx, o.dy);
+    }
+    final under = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = w * .016
+      ..color = Colors.black.withValues(alpha: .35);
+    final line = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = w * .009
+      ..color = const Color(0xffff5a4d).withValues(alpha: .92);
+    canvas.drawPath(path, under);
+    canvas.drawPath(path, line);
+
+    // Where it starts: a filled dot at 18:00.
+    final s = at(0);
+    canvas.drawCircle(s, w * .014, Paint()..color = Colors.white);
+    canvas.drawCircle(s, w * .009, Paint()..color = const Color(0xffff5a4d));
+
+    // Direction: a small arrowhead every three hours, and one at the end.
+    final head = Paint()..color = const Color(0xffff5a4d);
+    void arrow(double t) {
+      final p = at(t), q = at(t - .08);
+      final d = p - q;
+      if (d.distance == 0) return;
+      final dir = d / d.distance;
+      final n = Offset(-dir.dy, dir.dx);
+      final len = w * .026, half = w * .014;
+      final tip = p + dir * (len * .5);
+      final base = p - dir * (len * .5);
+      canvas.drawPath(
+          Path()
+            ..moveTo(tip.dx, tip.dy)
+            ..lineTo(base.dx + n.dx * half, base.dy + n.dy * half)
+            ..lineTo(base.dx - n.dx * half, base.dy - n.dy * half)
+            ..close(),
+          head);
+    }
+
+    for (var t = 1.5; t < _hours - .3; t += 3) {
+      arrow(t);
+    }
+    arrow(_hours);
+  }
+
+  @override
+  bool shouldRepaint(_OrderPathPainter old) => false;
 }

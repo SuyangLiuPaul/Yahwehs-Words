@@ -190,7 +190,10 @@ void main() {
     //   orthographies and did not move a character, which is what keeps
     //   them useful here.
     const edition = <String, int>{
-      '為': 7952,
+      // 7,951 since 2026-10-06 (Raymond 牧師's second round): 使徒行傳 28:17
+      // 「卻做為囚犯」 → 「卻被鎖綁」 — one 為 gone, in running text, by his
+      // request. Was 7,952.
+      '為': 7951,
       '羣': 323,
       '眾': 1896,
       // 2,647 since 2026-09-18: Raymond 牧師's one exception to 着 —

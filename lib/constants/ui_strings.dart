@@ -1752,10 +1752,10 @@ const uiStrings = {
   // 98 -> 105 events on 2026-09-21, when Words took Yahweh's Sword's
   // bible_timeline.json.
   'onboardDiscoverBody': {
-    'zh-Hans': '圣经时间轴（105 个事件）、家谱（277 位人物）、圣经证据（225 项考古／抄本／科学发现），都可在主页打开。',
-    'zh-Hant': '聖經時間軸（105 個事件）、家譜（277 位人物）、聖經證據（225 項考古／抄本／科學發現），都可在主頁打開。',
+    'zh-Hans': '圣经时间轴（105 个事件）、家谱（277 位人物）、圣经证据（235 项考古／抄本／科学发现），都可在主页打开。',
+    'zh-Hant': '聖經時間軸（105 個事件）、家譜（277 位人物）、聖經證據（235 項考古／抄本／科學發現），都可在主頁打開。',
     'en':
-        'Bible Timeline (105 events), Family Tree (277 people), and Bible Evidence (225 archaeology / manuscript / science finds) — all reachable from Home.',
+        'Bible Timeline (105 events), Family Tree (277 people), and Bible Evidence (235 archaeology / manuscript / science finds) — all reachable from Home.',
   },
   'onboardCustomizeTitle': {
     'zh-Hans': '自定义与同步',
@@ -3906,6 +3906,24 @@ const uiStrings = {
     'zh-Hans': '更多探索',
     'zh-Hant': '更多探索',
     'en': 'Explore more',
+  },
+  // 2026-10-06: the home page's groups, after Featured was cut to videos,
+  // songs and sermons. Study = pages that read the Bible for you, Reference
+  // = charts and lookups, Help = how to use the app and tell us.
+  'quickLinksStudy': {
+    'zh-Hans': '研读',
+    'zh-Hant': '研讀',
+    'en': 'Study',
+  },
+  'quickLinksReference': {
+    'zh-Hans': '参考资料',
+    'zh-Hant': '參考資料',
+    'en': 'Reference',
+  },
+  'quickLinksHelp': {
+    'zh-Hans': '帮助与反馈',
+    'zh-Hant': '幫助與回饋',
+    'en': 'Help and feedback',
   },
   'evidenceDescription': {
     'zh-Hans': '详细说明',

@@ -259,6 +259,23 @@ struct WatchArtwork: View {
   }
 }
 
+/// A home-screen row: a theme-coloured symbol tile and a label.
+struct WatchMenuRow: View {
+  let symbol: String
+  let text: String
+  var body: some View {
+    HStack(spacing: 8) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 8)
+          .fill(LinearGradient(colors: [WatchStyle.accent, WatchStyle.accent.opacity(0.55)], startPoint: .topLeading, endPoint: .bottomTrailing))
+        Image(systemName: symbol).font(.system(size: 15, weight: .semibold)).foregroundStyle(.white)
+      }.frame(width: 32, height: 32).accessibilityHidden(true)
+      Text(text).font(.footnote).fontWeight(.semibold).lineLimit(2).multilineTextAlignment(.leading)
+      Spacer(minLength: 0)
+    }
+  }
+}
+
 struct WatchHome: View {
   @EnvironmentObject var companion: WatchCompanion
   @State private var playbackPresented = false
@@ -280,9 +297,9 @@ struct WatchHome: View {
               Label(WatchStyle.text(state,"Listen on iPhone","在 iPhone 上聆听","在 iPhone 上聆聽"), systemImage: "iphone").font(.caption2).foregroundStyle(WatchStyle.secondary)
             }.frame(maxWidth: .infinity).padding(12).background(WatchStyle.surface, in: RoundedRectangle(cornerRadius: 18))
           }.buttonStyle(.plain)
-          NavigationLink { WatchLibrary(id: "car:root", title: WatchStyle.text(state,"Listen","聆听","聆聽")) } label: { Label(WatchStyle.text(state,"Hymns & sermons","诗歌与讲道","詩歌與講道"), systemImage: "headphones") }
-          NavigationLink { WatchBibleView() } label: { Label(WatchStyle.text(state,"Bible · on your phone","圣经 · 手机当前章节","聖經 · 手機目前章節"), systemImage: "text.book.closed") }
-          NavigationLink { DailyVerseView() } label: { Label(WatchStyle.text(state,"Daily verse","每日经文","每日經文"), systemImage: "book.closed") }
+          NavigationLink { WatchLibrary(id: "car:root", title: WatchStyle.text(state,"Listen","聆听","聆聽")) } label: { WatchMenuRow(symbol: "headphones", text: WatchStyle.text(state,"Hymns & sermons","诗歌与讲道","詩歌與講道")) }
+          NavigationLink { WatchBibleView() } label: { WatchMenuRow(symbol: "text.book.closed.fill", text: WatchStyle.text(state,"Bible · on your phone","圣经 · 手机当前章节","聖經 · 手機目前章節")) }
+          NavigationLink { DailyVerseView() } label: { WatchMenuRow(symbol: "sun.max.fill", text: WatchStyle.text(state,"Daily verse","每日经文","每日經文")) }
           Text(companion.connected ? WatchStyle.text(state,"Connected to iPhone","已连接 iPhone","已連接 iPhone") : WatchStyle.text(state,"iPhone offline · saved verse available","iPhone 离线 · 可读已保存经文","iPhone 離線 · 可讀已儲存經文"))
             .font(.caption2).foregroundStyle(WatchStyle.secondary).multilineTextAlignment(.center)
           Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh","刷新","重新整理"), systemImage: "arrow.clockwise") }.font(.caption)
@@ -412,6 +429,72 @@ struct WatchPlaybackView: View {
   }
 }
 
+/// A rounded theme-coloured tile with a white symbol, or the item's own artwork
+/// (a source's logo, a song's cover) when it has one. The same look as the
+/// car screen, so a list on the wrist is not plain text next to a dashboard
+/// that has pictures.
+struct WatchTile: View {
+  let item: [String: Any]
+  var size: CGFloat = 34
+  private var artworkURL: URL? {
+    guard let raw = item["artwork"] as? String, let url = URL(string: raw), url.scheme == "https",
+      url.host != nil, !raw.contains("/icons/Icon-") else { return nil }
+    return url
+  }
+  static func symbol(_ item: [String: Any]) -> String {
+    let key = item["id"] as? String ?? ""
+    let title = (item["title"] as? String ?? "").lowercased()
+    if key.hasPrefix("car:topic/") {
+      let table: [(String, String)] = [
+        ("mount", "mountain.2.fill"), ("parable", "text.bubble.fill"), ("beatitude", "sparkles"),
+        ("baptism", "drop.fill"), ("antichrist", "exclamationmark.triangle.fill"), ("timothy", "envelope.fill"),
+        ("eschatology", "hourglass"), ("hasten", "sun.max.fill"), ("death and resurrection", "sunrise.fill"),
+        ("relating", "person.2.fill"), ("testimony", "person.crop.circle.fill"),
+        ("vision for the church", "building.columns.fill"), ("vision", "eye.fill"), ("direction", "safari.fill"),
+        ("experience", "heart.fill"), ("regeneration", "leaf.fill"), ("mission", "paperplane.fill"),
+        ("quality", "star.fill"), ("truth", "lightbulb.fill"), ("fydt", "antenna.radiowaves.left.and.right"),
+        ("matthew", "book.fill")]
+      for (needle, symbol) in table where title.contains(needle) { return symbol }
+      return "waveform"
+    }
+    if key.contains("sermon") { return "waveform" }
+    if key.contains("instrumental") { return "pianokeys" }
+    if key == "car:queue" || key.hasPrefix("car:queue-page") { return "list.bullet" }
+    if key == "car:playlists" { return "music.note.list" }
+    if key.hasPrefix("car:playlist/") { return key.contains("avourite") ? "heart.fill" : "music.note.list" }
+    return item["playable"] as? Bool == true ? "music.note" : "music.note.list"
+  }
+  var body: some View {
+    ZStack {
+      RoundedRectangle(cornerRadius: size * 0.24)
+        .fill(LinearGradient(colors: [WatchStyle.accent, WatchStyle.accent.opacity(0.55)], startPoint: .topLeading, endPoint: .bottomTrailing))
+      Image(systemName: WatchTile.symbol(item)).font(.system(size: size * 0.45, weight: .semibold)).foregroundStyle(.white)
+      if let url = artworkURL {
+        AsyncImage(url: url) { phase in
+          if let image = phase.image { image.resizable().scaledToFill() }
+        }
+      }
+    }.frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: size * 0.24)).accessibilityHidden(true)
+  }
+}
+
+/// One library row: tile, title (two lines), and the line under it — how many
+/// songs, who sings, which source.
+struct WatchLibraryRow: View {
+  let item: [String: Any]
+  var body: some View {
+    HStack(spacing: 8) {
+      WatchTile(item: item)
+      VStack(alignment: .leading, spacing: 1) {
+        Text(item["title"] as? String ?? "Audio").font(.footnote).fontWeight(.semibold).lineLimit(2)
+        if let sub = item["subtitle"] as? String, !sub.isEmpty {
+          Text(sub).font(.caption2).foregroundStyle(WatchStyle.secondary).lineLimit(1)
+        }
+      }
+    }
+  }
+}
+
 struct WatchLibrary: View {
   @EnvironmentObject var companion: WatchCompanion
   let id: String
@@ -429,9 +512,9 @@ struct WatchLibrary: View {
         let name = item["title"] as? String ?? "Audio"
         let key = item["id"] as? String ?? ""
         if item["playable"] as? Bool == true {
-          Button(name) { companion.send("select", id: key) }
+          Button { companion.send("select", id: key) } label: { WatchLibraryRow(item: item) }
         } else {
-          NavigationLink(name) { WatchLibrary(id:key, title:name) }
+          NavigationLink { WatchLibrary(id:key, title:name) } label: { WatchLibraryRow(item: item) }
         }
       }
       if !companion.error.isEmpty { Text(companion.error).font(.caption2) }

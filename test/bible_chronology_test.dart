@@ -6135,16 +6135,21 @@ void main() {
       expect(main, contains('ChronologyChartPage()'));
     });
 
-    test('the chart has a Featured card on the dashboard', () {
+    test('the chart is reachable from the dashboard', () {
       final src = File('lib/pages/dashboard_page.dart').readAsStringSync();
-      // The user asked for it to be featured, not merely reachable:
-      // 2026-08-12, 「而且是featured」.
+      // 2026-08-12 it was a Featured card (「而且是featured」). 2026-10-06
+      // the owner re-decided Featured = videos, songs, sermons only
+      // (「视频诗歌还有讲道是featured feature，其他的最下面」), so the chart is
+      // now a tile in the grouped links at the foot of the page. Still on
+      // the dashboard, still one tap — which is what this guards.
+      expect(src, contains("uiStrings['chronologyChart']"));
+      expect(src, contains("routeName: '/chronology'"));
       final featured = src.substring(
         src.indexOf('case DashboardSection.featured:'),
         src.indexOf('case DashboardSection.todayEvidence:'),
       );
-      expect(featured, contains("uiStrings['chronologyChart']"));
-      expect(featured, contains("routeName: '/chronology'"));
+      expect(featured, isNot(contains("uiStrings['chronologyChart']")),
+          reason: 'Featured is videos, songs and sermons only');
     });
   });
 }

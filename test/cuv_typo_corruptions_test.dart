@@ -252,7 +252,9 @@ void main() {
     // 「你和你我兒子孫子」 was in the first draft of this fix and was removed:
     // Wikisource's transcription of the printed 1919 和合本 reads 你我 here
     // too, so 你的 would be an emendation of the CUV. The user's call.
-    expect(trText('001045010').startsWith('你和你我兒子孫子'), isTrue);
+    // 2026-10-04: Pastor Raymond's "Use B" sheet rules for the printed 和合本
+    // (bible.fhl.net unv reads 你的兒子孫子), so this is no longer left alone.
+    expect(trText('001045010').startsWith('你和你的兒子孫子'), isTrue);
   });
 
   test('the four the second witness AGREES with us on are untouched', () {
@@ -268,8 +270,10 @@ void main() {
     // the base text moved, and it moved towards the official. The two
     // that still stand are the ones the publisher has not moved, and
     // they are the ones this test is now for.
-    expect(count(trBlob, '大姆指'), 2); // witness: 大拇指
-    expect(count(trBlob, '以士利亞'), 1); // witness: 以土利亞
+    expect(count(trBlob, '大姆指'), 0); // 2026-10-04: his sheet reads 大拇指
+    expect(count(trBlob, '大拇指'), 16);  // 14 before + these two
+    expect(count(trBlob, '以士利亞'), 0); // 2026-10-04: his sheet reads 以土利亞 (路加福音 3:1)
+    expect(count(trBlob, '以土利亞'), 1);
     expect(count(trBlob, '木丕子'), 0); // was 1; publisher now reads 木墩子
     expect(count(trBlob, '木墩子'), 1);
     expect(count(trBlob, '挓抄手'), 0); // was 1; publisher now reads 挓挲手

@@ -1,3 +1,5 @@
+import 'package:yahwehs_words/services/admin_content.dart';
+import 'package:yahwehs_words/services/admin_overlay.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -36,13 +38,21 @@ const String kVideosAssetPath = 'assets/videos.json';
 List<VideoSeries>? _cachedSeries;
 
 Future<List<VideoSeries>> loadVideoSeries() async {
-  final cached = _cachedSeries;
-  if (cached != null) return cached;
-  final raw = await rootBundle.loadString(kVideosAssetPath);
-  final parsed =
-      VideoSeries.listFromJson(jsonDecode(raw) as Map<String, dynamic>);
-  _cachedSeries = parsed;
-  return parsed;
+  var base = _cachedSeries;
+  if (base == null) {
+    final raw = await rootBundle.loadString(kVideosAssetPath);
+    base = VideoSeries.listFromJson(jsonDecode(raw) as Map<String, dynamic>);
+    _cachedSeries = base;
+  }
+  // 2026-10-06: what the admin portal hid / retitled / added. Short
+  // timeout and never throws: with no answer the bundled list is shown.
+  try {
+    final overlay = await AdminOverlay.collection('adm_videos',
+        timeout: const Duration(seconds: 2));
+    return applyVideoOverlay(base, overlay);
+  } catch (_) {
+    return base;
+  }
 }
 
 /// URL-routing Stage 4 (`docs/url-routing-plan.md` §6 batch 2): the

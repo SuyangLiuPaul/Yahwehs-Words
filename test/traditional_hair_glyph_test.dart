@@ -38,7 +38,7 @@ void main() {
 
   test('hair is written 髮, in the number the witness has', () {
     expect(count('髮'), 88);
-    expect(count('發'), 1287);
+    expect(count('發'), 1285);  // 1287 -> 1285 on 2026-10-04: 哥林多後書 12:20 loses two 發 (his "Use B" sheet)
   });
 
   test('no collocation that can only be hair is left reading 發', () {

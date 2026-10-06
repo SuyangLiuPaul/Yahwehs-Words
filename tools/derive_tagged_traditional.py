@@ -175,9 +175,14 @@ EXPECTED = {
     # Simplified tagged source (以利加拿都双分给哈拿以 -> 以利加拿都以双分
     # 给哈拿) to match the fifth thaw's repair of the reading text — same
     # class of bug as 士師記 15:13, second occurrence.
-    'verified_exact': 27312,
+    # 27,317 on 2026-10-04: Pastor Raymond's "Use B" sheet moved ~124 reading
+    # verses (tools/apply_rr_reply_2026_10_04.py); the same edits were replayed
+    # into the Simplified tagged source (tools/mirror_rr_reply_to_tagged.py),
+    # so every one of them is again exact, plus five verses that already
+    # disagreed before and now agree. Passthrough 29 -> 28: one 嗳/嗐 pair.
+    'verified_exact': 27317,
     # Characters resolved by step 3 above — in no table, passed through.
-    'passthrough_chars': 29,
+    'passthrough_chars': 28,
 }
 
 

@@ -302,17 +302,24 @@ def audit(version: str, verbose: bool, tail: int, versify: bool) -> int:
 # `unexplained`. `left_to_read_distinct` is unchanged at 682: both
 # H3068 and H3069 still have other unexplained occurrences elsewhere in
 # the corpus.
+# 2026-10-06 release reconciliation: 64baef71's approved Use-B edits
+# removed one tagged run each at Acts 23:35 (G2532), 24:23 (G2192),
+# 25:22 (G846), and Esther 6:7 (H376). 189ccddb restored Esther's 人
+# into the adjacent H3366 run, not as a separate run. Comparison against
+# a03e9223 therefore derives -4 runs and -4 tagged runs in both modes.
+# Orphan/tail totals are unchanged. Only the census pins change here;
+# the frozen Bible text and tagged assets are untouched.
 PINNED = {
     True: {  # versify=True — the figure the queue quotes
-        "total_runs": 367573,
-        "total_tagged": 360929,
+        "total_runs": 367569,
+        "total_tagged": 360925,
         "left_to_read": 1989,
         "left_to_read_distinct": 682,
         "orphan_occurrences": 9719,
     },
     False: {  # --no-versification — the pre-2026-08 raw figure
-        "total_runs": 367573,
-        "total_tagged": 360929,
+        "total_runs": 367569,
+        "total_tagged": 360925,
         "orphan_occurrences": 25096,
     },
 }

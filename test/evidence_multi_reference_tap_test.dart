@@ -288,7 +288,7 @@ void main() {
               1)
           .length;
       expect(chipped, 21);
-      expect(entries.length - chipped, 204);
+      expect(entries.length - chipped, 214);  // 210 -> 214 on 2026-10-04: four more single-reference entries
     });
 
     test('a single reference is one segment and still resolves', () {

@@ -178,8 +178,8 @@ void main() {
       // 什麼 → 甚麼, and 户 卧 着 now stand opposite 戶 臥 着 by his
       // rulings; 樑 鑑 燬 鏽 are gone, so four second forms fold away
       // (the pair count stays 1144).
-      expect(kCuvSimplifiedChars.length, 1144);
-      expect(counts.length, 1125);
+      expect(kCuvSimplifiedChars.length, 1143);  // 1144 -> 1143 on 2026-10-04 (his "Use B" sheet moved one pair; derive_cuv_script_tables.py --write)
+      expect(counts.length, 1124);  // 1125 -> 1124 on 2026-10-04
     });
 
     test('no Traditional character stands opposite two Simplified ones, so '

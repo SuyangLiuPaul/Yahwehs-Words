@@ -198,7 +198,7 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
     // A two-column table gives the number column its own intrinsic width and
     // then a fixed gap, and keeps the notes' continuation lines aligned under
     // each other whatever the font does to the digits.
-    final body = Table(
+    final table = Table(
       columnWidths: const {
         0: IntrinsicColumnWidth(),
         1: FlexColumnWidth(),
@@ -212,7 +212,8 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
                 padding: EdgeInsets.only(right: fs * 0.45, bottom: fs * 0.12),
                 child: Text(
                   superscriptNumber(i + 1),
-                  style: style.copyWith(color: scheme.primary),
+                  style: style.copyWith(
+                      color: scheme.primary, fontWeight: FontWeight.w800),
                 ),
               ),
               Padding(
@@ -222,6 +223,18 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
             ],
           ),
       ],
+    );
+
+    // 2026-10-04: 「下面也要一个款式」 — the notes sit in a tinted panel with
+    // an accent bar, so the apparatus reads as one block.
+    final body = Container(
+      decoration: BoxDecoration(
+        color: scheme.primary.withValues(alpha: 0.07),
+        border: Border(left: BorderSide(color: scheme.primary, width: 3)),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      padding: EdgeInsets.fromLTRB(fs * 0.6, fs * 0.35, fs * 0.6, fs * 0.2),
+      child: table,
     );
 
     final folds = widget.preview > 0 && all.length > widget.preview;

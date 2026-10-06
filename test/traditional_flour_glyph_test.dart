@@ -38,7 +38,7 @@ void main() {
 
   test('flour is written 麵, in the number the witness has', () {
     expect(count('麵'), 107);
-    expect(count('面'), 2077);
+    expect(count('面'), 2076);  // 2077 -> 2076 on 2026-10-04: 哥林多後書 13:5's 面 dropped with Raymond's "Use B" sheet
   });
 
   test('no collocation that can only be flour is left reading 面', () {

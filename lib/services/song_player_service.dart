@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'sermon_audio_service.dart';
+import 'car_audio_catalogue.dart';
 import 'media_companion_service.dart';
 
 import 'package:audio_service/audio_service.dart';
@@ -75,6 +76,7 @@ class SongPlayerService extends ChangeNotifier {
         config: const AudioServiceConfig(
           androidNotificationChannelId: 'app.yswords.songs.playback',
           androidNotificationChannelName: 'Words audio',
+          androidBrowsableRootExtras: CarAudioCatalogue.androidRootExtras,
           fastForwardInterval: Duration(seconds: 30),
           rewindInterval: Duration(seconds: 15),
           // Keep the notification while paused: a driver who pauses at
