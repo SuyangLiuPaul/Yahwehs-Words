@@ -12,7 +12,11 @@ void main() {
   group('parseVersions', () {
     final node = {
       'platforms': {
-        'android': {'latest': '1.7.10', 'min': '1.7.0', 'url': 'https://x.test/a'},
+        'android': {
+          'latest': '1.7.10',
+          'min': '1.7.0',
+          'url': 'https://x.test/a'
+        },
         'web': {'latest': '', 'min': '', 'url': ''},
       },
       'notes': {'zh-Hans': '简体说明', 'en': 'English notes', 'zh-Hant': ''},
@@ -31,6 +35,37 @@ void main() {
       expect(ReleaseRegistry.parseVersions(null, 'android'), isNull);
       expect(ReleaseRegistry.parseVersions('x', 'android'), isNull);
     });
+  });
+
+  test('delivery channels distinguish stores from downloadable builds', () {
+    expect(
+        registryChannel(platform: 'android', storeBuild: true), 'google_play');
+    expect(registryChannel(platform: 'android', storeBuild: false), 'apk');
+    expect(registryChannel(platform: 'windows', storeBuild: true),
+        'microsoft_store');
+    expect(registryChannel(platform: 'windows', storeBuild: false),
+        'windows_download');
+    expect(
+        registryChannel(platform: 'macos', storeBuild: true), 'mac_app_store');
+    expect(registryChannel(platform: 'web', storeBuild: true), 'web');
+    final node = {
+      'platforms': {
+        'android': {'latest': '1.7.10'},
+        'google_play': {'latest': '1.7.8'},
+        'apk': {'latest': '1.7.11'},
+      }
+    };
+    expect(
+        ReleaseRegistry.parseVersions(node, 'android', channel: 'google_play')!
+            .latest,
+        '1.7.8');
+    expect(
+        ReleaseRegistry.parseVersions(node, 'android', channel: 'apk')!.latest,
+        '1.7.11');
+    expect(
+        ReleaseRegistry.parseVersions(node, 'android', channel: 'missing')!
+            .latest,
+        '1.7.10');
   });
 
   group('decideUpdate', () {
@@ -112,8 +147,12 @@ void main() {
   });
 
   test('both doors carry the tile', () {
-    for (final f in ['lib/pages/about_page.dart', 'lib/pages/settings_page.dart']) {
-      expect(File(f).readAsStringSync(), contains('ManualUpdateTile('), reason: f);
+    for (final f in [
+      'lib/pages/about_page.dart',
+      'lib/pages/settings_page.dart'
+    ]) {
+      expect(File(f).readAsStringSync(), contains('ManualUpdateTile('),
+          reason: f);
     }
   });
 }

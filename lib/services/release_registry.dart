@@ -32,16 +32,27 @@ String registryPlatform() {
   }
 }
 
+/// Separate delivery channels: a GitHub APK must not announce an update
+/// that Google Play or another store has not accepted for this user.
+String registryChannel({String? platform, bool? storeBuild}) {
+  final p = platform ?? registryPlatform();
+  final store = storeBuild ?? const bool.fromEnvironment('STORE_BUILD');
+  return switch (p) {
+    'android' => store ? 'google_play' : 'apk',
+    'ios' => 'app_store',
+    'macos' => store ? 'mac_app_store' : 'mac_download',
+    'windows' => store ? 'microsoft_store' : 'windows_download',
+    _ => p,
+  };
+}
+
 class ReleaseEntry {
   final String latest; // "" when the portal has no value
   final String min;
   final String url; // "" when none
   final Map<String, String> notes; // locale -> text
   const ReleaseEntry(
-      {this.latest = '',
-      this.min = '',
-      this.url = '',
-      this.notes = const {}});
+      {this.latest = '', this.min = '', this.url = '', this.notes = const {}});
 
   String notesFor(String locale) {
     final n = notes[locale] ?? '';
@@ -54,9 +65,11 @@ class ReleaseRegistry {
   ReleaseRegistry._();
 
   /// Parse the `versions/<app>` node. Pure so it can be tested.
-  static ReleaseEntry? parseVersions(Object? json, String platform) {
+  static ReleaseEntry? parseVersions(Object? json, String platform,
+      {String? channel}) {
     if (json is! Map) return null;
-    final plat = (json['platforms'] as Map?)?[platform];
+    final platforms = json['platforms'] as Map?;
+    final plat = platforms?[channel ?? platform] ?? platforms?[platform];
     if (plat is! Map) return null;
     String s(Object? v) => v is String ? v.trim() : '';
     final notes = <String, String>{};
@@ -86,7 +99,9 @@ class ReleaseRegistry {
           .get(Uri.parse('$_base/versions/$app.json'))
           .timeout(const Duration(seconds: 8));
       if (r.statusCode != 200) return null;
-      return parseVersions(jsonDecode(r.body), platform ?? registryPlatform());
+      final p = platform ?? registryPlatform();
+      return parseVersions(jsonDecode(r.body), p,
+          channel: registryChannel(platform: p));
     } catch (_) {
       return null;
     }
