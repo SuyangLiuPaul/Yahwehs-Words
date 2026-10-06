@@ -1,4 +1,5 @@
 import 'companion_theme.dart';
+import '../constants/song_source_icons.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/song.dart';
@@ -23,8 +24,43 @@ class CarAudioCatalogue {
           : locale.startsWith('zh')
               ? hans
               : en;
-  static MediaItem folder(String id, String title) =>
-      MediaItem(id: id, title: title, playable: false, artUri: artwork);
+  static MediaItem folder(String id, String title,
+          {String? subtitle, Uri? art}) =>
+      MediaItem(
+          id: id,
+          title: title,
+          artist: subtitle,
+          playable: false,
+          artUri: art ?? artwork);
+
+  /// A song source's own mark (FYDT, CDC, CGDC, …), served by the website
+  /// from the same bundled asset the phone shows. Null when the source has
+  /// none, and the folder keeps the themed logo.
+  static Uri? sourceLogo(String source) {
+    final asset = songSourceIcon(source);
+    return asset == null
+        ? null
+        : Uri.parse('https://yahwehword.com/assets/$asset');
+  }
+
+  /// "Ask 祈求" -> "Ask"; "祈求之歌" -> "祈求之歌". The leading word, or the
+  /// first few characters when the title opens in Chinese — enough to tell
+  /// pages apart at a glance.
+  static String shortTitle(String title) {
+    final t = title.trim();
+    if (t.isEmpty) return '';
+    final first = t.split(RegExp(r'\s+')).first;
+    final runes = first.runes.toList();
+    return runes.length > 8 ? String.fromCharCodes(runes.take(8)) : first;
+  }
+
+  /// A page label a person can read: where the page starts and ends, in the
+  /// songs themselves ("Ask – Sail"), not in counting numbers ("1–60").
+  static String pageLabel(List<String> titles) {
+    if (titles.isEmpty) return '';
+    final a = shortTitle(titles.first), b = shortTitle(titles.last);
+    return a == b ? a : '$a – $b';
+  }
 
   static Future<List<Song>> _songs() async => (await SongService.load())
       .where((s) =>
@@ -113,10 +149,21 @@ class CarAudioCatalogue {
                   null)
           .map((s) => s.source)
           .toSet();
+      int count(String source) => songs
+          .where((s) =>
+              s.source == source &&
+              (!instrumental ||
+                  SongQueue.resolveTrack(s, TrackPreference.instrumental,
+                          TrackFallback.skip) !=
+                      null))
+          .length;
       return [
         for (final source in sources)
           folder('$id/$source',
-              songs.firstWhere((s) => s.source == source).sourceLabel)
+              songs.firstWhere((s) => s.source == source).sourceLabel,
+              subtitle: _title(locale, '${count(source)} songs',
+                  '${count(source)} 首', '${count(source)} 首'),
+              art: sourceLogo(source))
       ];
     }
     if (id.startsWith('car:songs/') || id.startsWith('car:instrumental/')) {
@@ -124,7 +171,7 @@ class CarAudioCatalogue {
       final source = id.split('/').last;
       final items = (await _songs()).where((s) => s.source == source);
       // Page larger libraries so a car never receives a thousand siblings.
-      return _songPages(id, items.toList(), instrumental);
+      return _songPages(id, items.toList(), instrumental, locale);
     }
     if (id.startsWith('car:page/')) {
       final parts = id.split('/');
@@ -145,9 +192,14 @@ class CarAudioCatalogue {
         .where((s) => audio.hasAudio(s.id))
         .toList();
     if (id == 'car:sermons') {
+      final locale =
+          (await SharedPreferences.getInstance()).getString('locale') ?? 'en';
+      int count(String topic) => sermons.where((s) => s.topic == topic).length;
       return [
         for (final topic in sermons.map((s) => s.topic).toSet())
-          folder('car:topic/${Uri.encodeComponent(topic)}', topic)
+          folder('car:topic/${Uri.encodeComponent(topic)}', topic,
+              subtitle: _title(locale, '${count(topic)} sermons',
+                  '${count(topic)} 篇', '${count(topic)} 篇'))
       ];
     }
     if (id.startsWith('car:topic/')) {
@@ -183,14 +235,24 @@ class CarAudioCatalogue {
       ];
 
   static List<MediaItem> _songPages(
-      String parent, List<Song> songs, bool instrumental) {
+      String parent, List<Song> songs, bool instrumental, String locale) {
     final items = _songItems(songs, instrumental);
     if (items.length <= 60) return items;
     final source = parent.split('/').last;
+    final logo = sourceLogo(source);
     return [
       for (var i = 0; i < items.length; i += 60)
-        folder('car:page/${instrumental ? "instrumental" : "vocal"}/$source/$i',
-            '${i + 1}–${(i + 60).clamp(0, items.length)}')
+        folder(
+            'car:page/${instrumental ? "instrumental" : "vocal"}/$source/$i',
+            pageLabel([
+              for (final m in items.skip(i).take(60)) m.title,
+            ]),
+            subtitle: _title(
+                locale,
+                '${items.skip(i).take(60).length} songs',
+                '${items.skip(i).take(60).length} 首',
+                '${items.skip(i).take(60).length} 首'),
+            art: logo)
     ];
   }
 

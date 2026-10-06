@@ -66,7 +66,30 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         applyTheme(state)
         val scroll = ScrollView(this).apply { setBackgroundColor(Color.BLACK); isVerticalScrollBarEnabled=false }
         content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL; setPadding(dp(12),dp(24),dp(12),dp(32)) }
-        scroll.addView(content); setContentView(scroll); render()
+        scroll.addView(content); setContentView(scroll)
+        previewLibrary()
+        render()
+    }
+    /** Debuggable builds only: `--es preview sources|pages|sermons` shows a library list with sample rows,
+     *  so the list design can be looked at on an emulator that has no phone to ask. */
+    private var preview = false
+    private fun previewLibrary() {
+        if ((applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) == 0) return
+        val kind = intent?.getStringExtra("preview") ?: return
+        fun row(id: String, title: String, sub: String, art: String = "", playable: Boolean = false) =
+            JSONObject().put("id", id).put("title", title).put("subtitle", sub).put("artwork", art).put("playable", playable)
+        val logos = "https://yahwehword.com/assets/assets/song_sources/"
+        preview = true; connected = true
+        state = JSONObject().put("locale", "zh-Hans")
+        screen = "library"
+        when (kind) {
+            "sources" -> { title = "诗歌"; items = listOf(row("car:songs/cdc", "Christian Disciples Church", "298 首", logos + "cdc.png"),
+                row("car:songs/cgdc", "基督門徒福音會 CGDC", "63 首", logos + "cgdc.jpg"), row("car:songs/fydt", "福音电台 FYDT", "213 首", logos + "fydt.jpg")) }
+            "pages" -> { title = "Christian Disciples Church"; items = listOf(row("car:page/vocal/cdc/0", "A – Keep", "60 首", logos + "cdc.png"),
+                row("car:page/vocal/cdc/60", "Let – With", "60 首", logos + "cdc.png"), row("car:page/vocal/cdc/120", "Yahweh – 可喜可乐之城", "60 首", logos + "cdc.png")) }
+            else -> { title = "讲道"; items = listOf(row("car:topic/Baptism", "Baptism", "5 篇"), row("car:topic/Death", "Death and Resurrection of Christ", "3 篇"),
+                row("car:topic/Mount", "Sermon on the Mount", "39 篇"), row("car:sermon/1", "The purpose of Christ's death", "Eric H. H. Chang", playable = true)) }
+        }
     }
     override fun onResume() {
         super.onResume()
@@ -173,7 +196,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         return if (id != 0) id else android.R.drawable.ic_media_play
     }
     private fun send(action: String, id: String? = null) {
-        if (!foreground) return
+        if (!foreground || preview) return
         val generation = foregroundGeneration
         if (action in setOf("shuffle", "repeat") && (!connected || !isFresh() || state.optBoolean("loading") || error.isNotEmpty())) return
 
@@ -220,6 +243,70 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         val view = Button(this).apply { text=label; textSize=13f; minHeight=dp(48); isAllCaps=false; setTextColor(Color.WHITE); background=background(surface); setPadding(dp(8),dp(6),dp(8),dp(6)); isEnabled=enabled; setOnClickListener { action() } }
         content.addView(view, LinearLayout.LayoutParams(-1,-2).apply { bottomMargin=dp(8) })
         return view
+    }
+    // ---- library rows: a tile (the item's own artwork, or a themed glyph tile) + title + subtitle ----
+    private val rowArtwork = object : android.util.LruCache<String, Bitmap>(48) {}
+    private fun tileGlyph(item: JSONObject): String {
+        val id = item.optString("id"); val title = item.optString("title")
+        return when {
+            id == "car:queue" || id.startsWith("car:queue-page") -> "≡"
+            id == "car:playlists" || id.startsWith("car:playlist/") -> "♫"
+            id.contains("instrumental") -> "♬"
+            item.optBoolean("playable") -> "♪"
+            else -> title.firstOrNull { it.isLetterOrDigit() }?.uppercaseChar()?.toString() ?: "♪"
+        }
+    }
+    private fun themedTile(size: Int): GradientDrawable = GradientDrawable(
+        GradientDrawable.Orientation.TL_BR, intArrayOf(accent, Color.argb(255, (Color.red(accent) * 0.55).toInt(), (Color.green(accent) * 0.55).toInt(), (Color.blue(accent) * 0.55).toInt()))
+    ).apply { cornerRadius = dp(size / 4).toFloat() }
+    private fun fetchRowArtwork(raw: String, done: (Bitmap?) -> Unit) {
+        rowArtwork.get(raw)?.let { done(it); return }
+        val url = try { URL(raw).takeIf { it.protocol == "https" && it.host.isNotEmpty() && it.userInfo == null } } catch (_: Exception) { null } ?: return done(null)
+        artworkWorker.execute {
+            var connection: HttpsURLConnection? = null
+            val bitmap = try {
+                connection = url.openConnection() as HttpsURLConnection
+                connection!!.connectTimeout = 5000; connection!!.readTimeout = 5000; connection!!.instanceFollowRedirects = false
+                if (connection!!.responseCode != 200) throw IllegalStateException()
+                val bytes = connection!!.inputStream.use { input ->
+                    val output = ByteArrayOutputStream(); val buffer = ByteArray(8192)
+                    while (true) { val count = input.read(buffer); if (count < 0) break; if (output.size() + count > 512 * 1024) throw IllegalStateException(); output.write(buffer, 0, count) }
+                    output.toByteArray()
+                }
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }; BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+                if (bounds.outWidth !in 1..4096 || bounds.outHeight !in 1..4096) throw IllegalStateException()
+                val options = BitmapFactory.Options().apply { inSampleSize = 1 }; while (maxOf(bounds.outWidth, bounds.outHeight) / options.inSampleSize > 160) options.inSampleSize *= 2
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+            } catch (_: Exception) { null } finally { connection?.disconnect() }
+            if (bitmap != null) rowArtwork.put(raw, bitmap)
+            runOnUiThread { if (!isFinishing && !isDestroyed) done(bitmap) }
+        }
+    }
+    private fun libraryRow(item: JSONObject, action: () -> Unit) {
+        val size = 36
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
+            background = background(surface); setPadding(dp(8), dp(6), dp(10), dp(6)); minimumHeight = dp(52)
+            setOnClickListener { action() }
+        }
+        val glyph = TextView(this).apply { text = tileGlyph(item); textSize = 16f; setTextColor(Color.WHITE); gravity = Gravity.CENTER; typeface = android.graphics.Typeface.DEFAULT_BOLD }
+        val tile = FrameLayout(this).apply { background = themedTile(size); clipToOutline = true; addView(glyph, FrameLayout.LayoutParams(-1, -1)) }
+        val image = ImageView(this).apply { scaleType = ImageView.ScaleType.CENTER_CROP; visibility = android.view.View.GONE }
+        tile.addView(image, FrameLayout.LayoutParams(-1, -1))
+        val art = item.optString("artwork")
+        // The themed logo is the stand-in for "no cover"; only real covers and source logos are worth fetching.
+        if (art.isNotEmpty() && !art.contains("/icons/Icon-")) {
+            fun show(b: Bitmap) { image.setImageBitmap(b); image.visibility = android.view.View.VISIBLE; glyph.visibility = android.view.View.GONE }
+            fetchRowArtwork(art) { b -> if (b != null) show(b) }
+        }
+        row.addView(tile, LinearLayout.LayoutParams(dp(size), dp(size)).apply { marginEnd = dp(8) })
+        val texts = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        texts.addView(TextView(this).apply { text = item.optString("title"); textSize = 13f; setTextColor(Color.WHITE); maxLines = 2; ellipsize = android.text.TextUtils.TruncateAt.END; typeface = android.graphics.Typeface.DEFAULT_BOLD })
+        val sub = item.optString("subtitle")
+        if (sub.isNotEmpty()) texts.addView(TextView(this).apply { text = sub; textSize = 11f; setTextColor(Color.rgb(202, 220, 235)); maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END })
+        row.addView(texts, LinearLayout.LayoutParams(0, -2, 1f))
+        if (!item.optBoolean("playable")) row.addView(TextView(this).apply { text = "›"; textSize = 18f; setTextColor(Color.rgb(202, 220, 235)) })
+        content.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(8) })
     }
     private fun artwork(size: Int = 68) {
         val image = ImageView(this).apply { scaleType=ImageView.ScaleType.FIT_CENTER; background=background(Color.rgb(232, 245, 255),14); setPadding(dp(3),dp(3),dp(3),dp(3)); contentDescription=null }
@@ -374,7 +461,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                 text(title,true)
                 if(loading && error.isEmpty()) text(tr("Loading from phone…","正在从手机加载…","正在從手機載入…"))
                 else if(items.isEmpty() && error.isEmpty()) text(tr("No audio in this category.","此分类暂无音频。","此分類暫無音訊。"))
-                for(item in items) button(item.optString("title")) {
+                for(item in items) libraryRow(item) {
                     if(item.optBoolean("playable")) { send("select",item.optString("id"));screen="playing";render() }
                     else { history.add(folder to title);folder=item.optString("id");title=item.optString("title");items=emptyList();send("children",folder);render() }
                 }
