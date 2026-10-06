@@ -123,6 +123,14 @@ void main() {
         for (final locale in ['en', 'zh-Hans', 'zh-Hant']) {
           await settings.setLocale(locale);
           await tester.pump(const Duration(milliseconds: 800));
+          final study = find.byKey(const PageStorageKey('home.quickLinks.study'));
+          final expansion = tester.widget<ExpansionTile>(find.descendant(of: study, matching: find.byType(ExpansionTile)));
+          expect(expansion.initiallyExpanded, isFalse);
+          if (find.text(uiStrings['jesusTeachings']![locale]!).evaluate().isEmpty) {
+            await tester.ensureVisible(study);
+            await tester.tap(find.descendant(of: study, matching: find.byType(ListTile)).first);
+            await tester.pump(const Duration(milliseconds: 400));
+          }
           final link = find.text(uiStrings['jesusTeachings']![locale]!);
           expect(link, findsOneWidget);
           final text = tester.widget<Text>(link);

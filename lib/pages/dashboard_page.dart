@@ -1108,14 +1108,12 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 16),
-            _QuickLinksGroupLabel(
+            _QuickLinksExpansion(
+              key: const PageStorageKey('home.quickLinks.study'),
+              icon: Icons.menu_book_outlined,
               label: uiStrings['quickLinksStudy']?[locale] ?? 'Study',
               settings: settings,
               scheme: scheme,
-            ),
-            const SizedBox(height: 8),
-            _LinkGrid(
-              columns: isWide ? 3 : 2,
               children: [
                 _LinkTile(
                   key: const ValueKey('home.jesusTeachings'),
@@ -1175,14 +1173,12 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 16),
-            _QuickLinksGroupLabel(
+            _QuickLinksExpansion(
+              key: const PageStorageKey('home.quickLinks.reference'),
+              icon: Icons.local_library_outlined,
               label: uiStrings['quickLinksReference']?[locale] ?? 'Reference',
               settings: settings,
               scheme: scheme,
-            ),
-            const SizedBox(height: 8),
-            _LinkGrid(
-              columns: isWide ? 3 : 2,
               children: [
                 // 2026-10-06: it was a Featured card; the chart opens the
                 // Bible Timeline page on its chart view, the tile beside
@@ -1240,15 +1236,13 @@ class _DashboardPageState extends State<DashboardPage> {
               ],
             ),
             const SizedBox(height: 16),
-            _QuickLinksGroupLabel(
+            _QuickLinksExpansion(
+              key: const PageStorageKey('home.quickLinks.help'),
+              icon: Icons.help_outline_rounded,
               label: uiStrings['quickLinksHelp']?[locale] ??
                   'Help and feedback',
               settings: settings,
               scheme: scheme,
-            ),
-            const SizedBox(height: 8),
-            _LinkGrid(
-              columns: isWide ? 3 : 2,
               children: [
                 _LinkTile(
                   icon: Icons.help_outline_rounded,
@@ -1547,6 +1541,49 @@ class _QuickLinksGroupLabel extends StatelessWidget {
         letterSpacing: 0.6,
         color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
       ),
+    );
+  }
+}
+
+/// Secondary Home links stay discoverable without filling the initial screen.
+class _QuickLinksExpansion extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final AppSettings settings;
+  final ColorScheme scheme;
+  final List<Widget> children;
+
+  const _QuickLinksExpansion({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.settings,
+    required this.scheme,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      initiallyExpanded: false,
+      tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+      childrenPadding: const EdgeInsets.only(top: 4, bottom: 8),
+      shape: const RoundedRectangleBorder(),
+      collapsedShape: const RoundedRectangleBorder(),
+      leading: Icon(icon, color: scheme.primary, size: 22),
+      iconColor: scheme.primary,
+      collapsedIconColor: scheme.onSurfaceVariant,
+      title: Text(
+        label,
+        style: TextStyle(
+          fontFamily: settings.fontFamily,
+          fontFamilyFallback: kCjkFontFallback,
+          fontSize: (settings.fontSize - 2).clamp(14.0, 20.0).toDouble(),
+          fontWeight: FontWeight.w600,
+          color: scheme.onSurface,
+        ),
+      ),
+      children: [_LinkGrid(columns: 1, children: children)],
     );
   }
 }
