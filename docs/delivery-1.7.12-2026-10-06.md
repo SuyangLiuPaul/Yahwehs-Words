@@ -51,3 +51,12 @@ Full live bytes now match the local China build on all three sites: main.dart.js
 
 Sword canonical web release started only after Words complete verification. Native/store statuses above remain unchanged. Home compact groups still require a new version; not included in immutable1.7.12. Final cleanup remains gated while Sword deployment is active.
 
+
+## October6 22:00 Melbourne — Microsoft1.7.12 published and final cache cleanup
+
+Fresh authorized visible Partner Center reload confirms Words Submission12/1152921505702053845 PUBLISHED: Congrats your product is now updated, latest product available, Store presence Submission12, Start update enabled. This supersedes earlier certification checkpoints. Validated immutable1.7.12.0 package identity/source/hash preserved; no duplicate submission. Screenshot microsoft-words-1712-published.png in /Users/pliu0036/Downloads/Yahweh-Release-1711. Admin Microsoft latest12 saved after publication; Web/GitHub12 remain verified. Apple/Google review/test qualification gates remain separate.
+
+All8pairedwebsites verified12 by full live main/bootstrap bytes; admin Web12 persisted for both. After confirming no active build/upload, T7 available, no cache file open, no signing/package/archive/dSYM/symlink in selected cache paths, removed only3regenerable project test_cache directories and Gradle8.11.1/9.3.1 transforms. Net reclaimed6.842GiB, free36.014GiB immediately after; per-file hashes/inventory storage-final-1712-cleanup.json and gradle-*-transforms-removed-1712.sha256.tsv retained locally. No new archive transfer; existing /Volumes/T7/Yahweh-Release-Backups-20261002 and sparseimages, latest packages, all signed archives/dSYMs/source/signing/owner/personal data preserved. Sword owner PBX SHA unchanged. This completes the1.7.12 upload-gated cache pass, not remaining public-review follow-up. Automation remains paused; do not delete/resume without completing/reconciling follow-up.
+
+Home compact groups merged after immutable12, still need a new paired version/package; no newer tag claimed. Physical Watch/Wear/vehicle audio/call recovery and actual AndroidAuto remain unverified. Do not work on yahwehdehua.
+

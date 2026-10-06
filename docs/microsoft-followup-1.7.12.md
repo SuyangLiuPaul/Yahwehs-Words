@@ -7,3 +7,7 @@
 - Submission12/1152921505702053845 already uploaded/validated/submitted, In certification, automatic publication. Do not duplicate/cancel/reupload or replace with older artifact; preserve same/newer delivery.
 - Three localized release notes changed; approved descriptions/screenshots/markets preserved. Evidence words-msix-1712-verification.json, microsoft-words-1712-submitted.png and microsoft-words-release-notes-1712.json.
 - Published previous1.7.11.0 is separate from latest certification. Preserve immutable tags and unrelated owner work.
+
+## Latest publication observation
+
+October6 22:00Melbourne fresh portal confirms Submission12/1152921505702053845 PUBLISHED/latest available/Start update enabled. Preserve this1.7.12.0 publication; supersedes certification status above. Proof microsoft-words-1712-published.png. No duplicate or older upload.
