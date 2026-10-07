@@ -1,3 +1,4 @@
+import { sanitizeDiagnostics } from './_diagnostics.mjs';
 // YsWords feedback submission — Netlify Function. Receives a
 // structured feedback payload from the in-app FeedbackPage and
 // emails it directly to the developer via Resend.
@@ -93,6 +94,10 @@ export default async (req) => {
 		return jsonResponse({ error: 'Invalid JSON body.' }, 400, req);
 	}
 
+	if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+		return jsonResponse({ error: 'Invalid feedback payload.' }, 400, req);
+	}
+
 	// User-typed fields
 	// 2026-05-10 (v1.2.30): strip CR/LF from `category`, `name`, and
 	// `subject` before they can land in the email Subject header. The
@@ -156,7 +161,7 @@ export default async (req) => {
 	if (!message) {
 		return jsonResponse({ error: 'Message is required.' }, 400, req);
 	}
-	if (message.length > 8000) {
+	if (message.length > 4000) {
 		return jsonResponse({ error: 'Message too long.' }, 400, req);
 	}
 	// 2026-05-09 (v1.2.6 audit): tighter regex — require ≥2-char TLD
@@ -181,6 +186,8 @@ export default async (req) => {
 	// (admin.yahwehword.com). Best-effort and bounded: the Realtime Database
 	// rules only accept a small new note, and a failure here never blocks
 	// the email below.
+	const diagnostics = sanitizeDiagnostics(payload.diagnostics);
+	diagnostics.app = 'words';
 	let stored = false;
 	try {
 		const r = await fetch(
@@ -190,8 +197,9 @@ export default async (req) => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					app: 'words',
+					diagnostics,
 					category,
-					message: message.slice(0, 3900),
+					message: message,
 					name,
 					replyTo,
 					diag: [
@@ -223,7 +231,7 @@ export default async (req) => {
 			);
 	}
 
-	const subject = `YsWords feedback [${category}]${name ? ` — ${name}` : ''}`;
+	const subject = `Yahweh's Words feedback [${category}]${name ? ` — ${name}` : ''}`;
 
 	// Server timestamp formatted human-readable: "2026-05-07 13:35:08 UTC".
 	// Easier to read at a glance than raw ISO 8601 with milliseconds.
@@ -248,6 +256,10 @@ export default async (req) => {
 	lines.push('');
 	lines.push('─── App context ─────────────────────────');
 	if (locale) lines.push(`App locale   : ${locale}`);
+	if (diagnostics.diagnosisId) lines.push(`Diagnosis ID : ${diagnostics.diagnosisId}`);
+	if (diagnostics.appVersion) lines.push(`App version  : ${diagnostics.appVersion}`);
+	if (diagnostics.channel) lines.push(`Channel      : ${diagnostics.channel}`);
+	if (diagnostics.events?.length) lines.push(`Status events: ${JSON.stringify(diagnostics.events)}`);
 	if (version) lines.push(`Bible version: ${version}`);
 	if (position) lines.push(`Last position: ${position}`);
 	if (theme) lines.push(`Theme        : ${theme}`);

@@ -50,8 +50,10 @@ object WordsWearBridge {
             val allowed = setOf("play", "pause", "next", "previous", "forward", "backward", "stop", "select", "shuffle", "repeat")
             val method = when { action == "snapshot" -> "snapshot"; action == "children" -> "children"; action in allowed -> "command"; else -> return@post }
             val args = mutableMapOf<String, Any>("action" to action)
+            args["diagnosisId"] = data.optString("diagnosisId")
+            args["diagnosisPlatform"] = "wearos"
             if (data.has("id")) args["id"] = data.getString("id")
-            channel!!.invokeMethod(method, if (method == "snapshot") null else args, object : MethodChannel.Result {
+            channel!!.invokeMethod(method, args, object : MethodChannel.Result {
                 override fun success(result: Any?) {
                     val reply = if (method == "children") JSONObject().put("items", org.json.JSONArray(result as? List<*> ?: emptyList<Any>()))
                         else JSONObject(result as? Map<*, *> ?: emptyMap<String, Any>())

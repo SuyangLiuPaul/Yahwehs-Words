@@ -198,7 +198,7 @@ final class WatchCompanion: NSObject, ObservableObject, WCSessionDelegate {
     DispatchQueue.main.asyncAfter(deadline: .now() + 12) {
       finish(nil, failure: WatchStyle.text(self.state,"iPhone did not reply. Open Words and retry.","iPhone 未回复，请打开 Words 后重试。","iPhone 未回覆，請開啟 Words 後重試。"))
     }
-    var data: [String: Any] = ["action": action]
+    var data: [String: Any] = ["action": action, "diagnosisPlatform": "watchos", "diagnosisId": WatchDiagnosis.id]
     if let id = id { data["id"] = id }
     session.sendMessage(data, replyHandler: { value in
       DispatchQueue.main.async { finish(value) }
@@ -276,6 +276,16 @@ struct WatchMenuRow: View {
   }
 }
 
+enum WatchDiagnosis {
+  static var id: String {
+    let key = "installation_diagnosis_id_v1"
+    if let stored = UserDefaults.standard.string(forKey: key), stored.range(of: "^YD-[0-9a-f]{32}$", options: .regularExpression) != nil { return stored }
+    let next = "YD-" + UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
+    UserDefaults.standard.set(next, forKey: key)
+    return next
+  }
+}
+
 struct WatchHome: View {
   @EnvironmentObject var companion: WatchCompanion
   @State private var playbackPresented = false
@@ -302,6 +312,12 @@ struct WatchHome: View {
           NavigationLink { DailyVerseView() } label: { WatchMenuRow(symbol: "sun.max.fill", text: WatchStyle.text(state,"Daily verse","每日经文","每日經文")) }
           Text(companion.connected ? WatchStyle.text(state,"Connected to iPhone","已连接 iPhone","已連接 iPhone") : WatchStyle.text(state,"iPhone offline · saved verse available","iPhone 离线 · 可读已保存经文","iPhone 離線 · 可讀已儲存經文"))
             .font(.caption2).foregroundStyle(WatchStyle.secondary).multilineTextAlignment(.center)
+          NavigationLink {
+            ScrollView { VStack(spacing: 12) {
+            Text(WatchDiagnosis.id).font(.footnote)
+            Text(WatchStyle.text(state,"Shared through iPhone only when you send feedback.","仅在 iPhone 发送反馈时分享。","僅在 iPhone 傳送回饋時分享。")).font(.footnote)
+            }.padding() }
+          } label: { Text(WatchStyle.text(state,"Diagnosis ID","诊断编号","診斷編號")).font(.footnote) }
           Button { companion.send("snapshot") } label: { Label(WatchStyle.text(state,"Refresh","刷新","重新整理"), systemImage: "arrow.clockwise") }.font(.caption)
         }.padding(.horizontal, 6)
       }.background(.black)

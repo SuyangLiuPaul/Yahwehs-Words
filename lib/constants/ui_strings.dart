@@ -1763,10 +1763,10 @@ const uiStrings = {
     'en': 'Customize & sync',
   },
   'onboardCustomizeBody': {
-    'zh-Hans': '在「设置 → 主页布局」中拖动排序或隐藏任意板块；用 Google 登录即可在所有设备同步书签、笔记和高亮。',
-    'zh-Hant': '在「設定 → 主頁佈局」中拖動排序或隱藏任意板塊；用 Google 登入即可在所有裝置同步書籤、筆記和高亮。',
+    'zh-Hans': '在「设置 → 首页内容」中拖动排序或隐藏可选板块；用 Google 登录即可在所有设备同步书签、笔记和高亮。',
+    'zh-Hant': '在「設定 → 首頁內容」中拖動排序或隱藏可選板塊；用 Google 登入即可在所有裝置同步書籤、筆記和高亮。',
     'en':
-        'Drag-reorder or hide any block under Settings → Dashboard layout. Sign in with Google to sync bookmarks, notes, and highlights across devices.',
+        'Reorder Home sections or hide optional sections under Settings → Home sections. Sign in with Google to sync bookmarks, notes, and highlights across devices.',
   },
   // 2026-05-10 (v1.2.11): the Customize slide above explicitly
   // pitches Google sign-in for cross-device sync — but the China
@@ -1783,10 +1783,10 @@ const uiStrings = {
     'en': 'Customize',
   },
   'onboardCustomizeBodyChina': {
-    'zh-Hans': '在「设置 → 主页布局」中拖动排序或隐藏任意板块。中国版的所有标记、笔记和收藏都保存在本设备。',
-    'zh-Hant': '在「設定 → 主頁佈局」中拖動排序或隱藏任意板塊。中國版的所有標記、筆記和收藏都保存在本裝置。',
+    'zh-Hans': '在「设置 → 首页内容」中拖动排序或隐藏可选板块。中国版的所有标记、笔记和收藏都保存在本设备。',
+    'zh-Hant': '在「設定 → 首頁內容」中拖動排序或隱藏可選板塊。中國版的所有標記、筆記和收藏都保存在本裝置。',
     'en':
-        'Drag-reorder or hide any block under Settings → Dashboard layout. In the China build, highlights, notes, and bookmarks all stay on this device.',
+        'Reorder Home sections or hide optional sections under Settings → Home sections. In the China build, highlights, notes, and bookmarks all stay on this device.',
   },
 
   // Legacy v1 onboarding strings — kept for backward compatibility
@@ -1848,14 +1848,14 @@ const uiStrings = {
     // section visibility (the old single "show/hide" switches still
     // work via legacy keys; the new card adds drag-handles and
     // covers every block, not just the three discoverable ones).
-    'zh-Hans': '主页布局',
-    'zh-Hant': '主頁佈局',
-    'en': 'Dashboard layout',
+    'zh-Hans': '首页内容',
+    'zh-Hant': '首頁內容',
+    'en': 'Home sections',
   },
   'dashboardLayoutHint': {
-    'zh-Hans': '拖动手柄调整顺序；关闭开关即可隐藏该板块。',
-    'zh-Hant': '拖動手柄調整順序；關閉開關即可隱藏該板塊。',
-    'en': 'Drag the handle to reorder. Toggle a row off to hide that block.',
+    'zh-Hans': '调整首页内容板块的顺序和显示。拖动手柄排序，关闭开关隐藏板块；研习、参考和帮助可在首页展开。更新提醒和公告固定在内容上方，不参与排序。',
+    'zh-Hant': '調整首頁內容板塊的順序和顯示。拖動手柄排序，關閉開關隱藏板塊；研習、參考和幫助可在首頁展開。更新提醒和公告固定在內容上方，不參與排序。',
+    'en': 'Choose which Home sections to show and drag the handles to reorder them. Expand Study, Reference and Help on Home. Update notices and announcements stay above the sections.',
   },
   'dashboardLayoutResetConfirm': {
     'zh-Hans': '是否恢复默认顺序，并重新打开所有板块？',
@@ -1877,16 +1877,16 @@ const uiStrings = {
     'en': 'Reset settings',
   },
   'resetSettingsConfirm': {
-    'zh-Hans': '将恢复字体、主题、颜色、主页布局等所有偏好设置。您的书签、笔记、高亮、账号和语言不会改变。是否继续？',
-    'zh-Hant': '將恢復字體、主題、顏色、主頁佈局等所有偏好設定。您的書籤、筆記、高亮、帳號和語言不會改變。是否繼續？',
+    'zh-Hans': '将恢复字体、主题、颜色、首页内容等所有偏好设置。您的书签、笔记、高亮、账号和语言不会改变。是否继续？',
+    'zh-Hant': '將恢復字體、主題、顏色、首頁內容等所有偏好設定。您的書籤、筆記、高亮、帳號和語言不會改變。是否繼續？',
     'en':
-        'This restores fonts, theme, color, dashboard layout, and other preferences. Your bookmarks, notes, highlights, profile, and language stay the same. Continue?',
+        'This restores fonts, theme, color, Home sections, and other preferences. Your bookmarks, notes, highlights, profile, and language stay the same. Continue?',
   },
   'resetSettingsNote': {
-    'zh-Hans': '恢复字体、主题、颜色、主页布局等偏好设置。您的书签、笔记、高亮、账号和语言不会改变。',
-    'zh-Hant': '恢復字體、主題、顏色、主頁佈局等偏好設定。您的書籤、筆記、高亮、帳號和語言不會改變。',
+    'zh-Hans': '恢复字体、主题、颜色、首页内容等偏好设置。您的书签、笔记、高亮、账号和语言不会改变。',
+    'zh-Hant': '恢復字體、主題、顏色、首頁內容等偏好設定。您的書籤、筆記、高亮、帳號和語言不會改變。',
     'en':
-        'Restores fonts, theme, color, dashboard layout, and other preferences. Your bookmarks, notes, highlights, profile, and language are kept.',
+        'Restores fonts, theme, color, Home sections, and other preferences. Your bookmarks, notes, highlights, profile, and language are kept.',
   },
   'resetSettingsDone': {
     'zh-Hans': '设置已恢复默认。',
@@ -2639,15 +2639,24 @@ const uiStrings = {
   //                                    smaller free-tier quota —
   //                                    BYOK key recommended)
   'aiModelTitle': {
-    'zh-Hans': 'AI 响应深度',
-    'zh-Hant': 'AI 回應深度',
-    'en': 'AI response depth',
+    'zh-Hans': 'AI 模型',
+    'zh-Hant': 'AI 模型',
+    'en': 'AI model',
   },
   'aiModelBody': {
-    'zh-Hans': '选择 AI 回答的速度与详尽度——不同档位对应不同的 Gemini 模型。',
-    'zh-Hant': '選擇 AI 回答的速度與詳盡度——不同檔位對應不同的 Gemini 模型。',
-    'en':
-        'Choose the speed-vs-depth trade-off — each tier maps to a different Gemini model.',
+    'zh-Hans': '无需选择速度或深度档位。使用中等推理等级，适合日常圣经研习与较复杂的解释。',
+    'zh-Hant': '無需選擇速度或深度檔位。使用中等推理等級，適合日常聖經研習與較複雜的解釋。',
+    'en': 'No tier selection needed. Uses medium thinking for everyday Bible study and more involved explanations.',
+  },
+  'aiModelRecommended': {
+    'zh-Hans': 'Gemini 3.8 Flash · 推荐',
+    'zh-Hant': 'Gemini 3.8 Flash · 推薦',
+    'en': 'Gemini 3.8 Flash · Recommended',
+  },
+  'aiModelAvailability': {
+    'zh-Hans': '使用你自己的 Gemini API 密钥；可用额度取决于你的 Google 项目。',
+    'zh-Hant': '使用你自己的 Gemini API 金鑰；可用額度取決於你的 Google 專案。',
+    'en': 'Uses your own Gemini API key. Availability depends on your Google project quota.',
   },
   'aiModelFast': {
     'zh-Hans': '快',
@@ -3288,7 +3297,7 @@ const uiStrings = {
     'zh-Hant': '主操作 — 跳回上次讀經位置。',
     'en': 'Primary CTA — jump back to your last reading position.',
   },
-  // Shown beneath the Read Bible row in Settings → Dashboard layout
+  // Shown beneath the Read Bible row in Settings → Home sections
   // when the user tries to hide it (the Switch is disabled). Round 55
   // user feedback: "if all invisible then can't use the app" — so
   // Read Bible is locked on as the primary entry point.
@@ -3376,9 +3385,9 @@ const uiStrings = {
     'en': 'Quick links',
   },
   'dashboardSection_quickLinks_description': {
-    'zh-Hans': '资料库、统计、讲道、家谱等的入口磁贴。',
-    'zh-Hant': '資料庫、統計、講道、家譜等的入口磁貼。',
-    'en': 'Tiles linking to Library, Statistics, Sermons, and more.',
+    'zh-Hans': '常用入口，以及可展开的研习、参考和帮助分组。此开关控制整个快捷入口板块。',
+    'zh-Hant': '常用入口，以及可展開的研習、參考和幫助分組。此開關控制整個快捷入口板塊。',
+    'en': 'Frequently used links plus expandable Study, Reference and Help groups. This switch controls the whole Quick links section.',
   },
   'settingsSectionNotifications': {
     'zh-Hans': '通知',
@@ -6113,6 +6122,11 @@ const uiStrings = {
     'zh-Hant': '精選推薦',
     'en': 'Featured',
   },
+  'dashboardSection_featured_description': {
+    'zh-Hans': '本堂的视频教导与诗歌目录。',
+    'zh-Hant': '本堂的影片教導與詩歌目錄。',
+    'en': "The church's own media — the video teaching and the songs directory.",
+  },
   'dashboardSongsSubtitle': {
     'zh-Hans': '本堂诗歌 · 在线聆听、乐谱、离线下载',
     'zh-Hant': '本堂詩歌 · 線上聆聽、樂譜、離線下載',
@@ -8262,8 +8276,8 @@ const uiStrings = {
   // reason as authNoticeNotSignedIn: the old copy told China-build
   // readers cloud sync was not on the table, and it now is.
   'onboardCustomizeBodyEmail': {
-    'zh-Hans': '在「设置 → 主页布局」中拖动排序或隐藏任意板块；用邮箱登录即可在所有设备同步书签、笔记和高亮。',
-    'zh-Hant': '在「設定 → 主頁佈局」中拖動排序或隱藏任意板塊；用電郵登入即可在所有裝置同步書籤、筆記和高亮。',
+    'zh-Hans': '在「设置 → 首页内容」中拖动排序或隐藏可选板块；用邮箱登录即可在所有设备同步书签、笔记和高亮。',
+    'zh-Hant': '在「設定 → 首頁內容」中拖動排序或隱藏可選板塊；用電郵登入即可在所有裝置同步書籤、筆記和高亮。',
     'en': 'Drag-reorder or hide any block under Settings → Dashboard '
         'layout. Sign in with an email address '
         'to sync bookmarks, notes and highlights across devices.',
@@ -8486,6 +8500,13 @@ const uiStrings = {
     'zh-Hans': '阅读统计',
     'zh-Hant': '閱讀統計',
     'en': 'Reading statistics',
+  },
+  // Home uses a short label without shrinking the reader's chosen font.
+  // Keep the full page title above and allow wrapping at large text sizes.
+  'readingStatsShortcut': {
+    'zh-Hans': '阅读统计',
+    'zh-Hant': '閱讀統計',
+    'en': 'Reading stats',
   },
   'readingStatsChapters': {
     'zh-Hans': '打开过的章',

@@ -22,6 +22,14 @@ import java.util.UUID
 /** A phone companion. No watch streaming, account login, or hidden download. */
 class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
     private lateinit var content: LinearLayout
+    private val diagnosisId: String by lazy {
+        val prefs = getPreferences(0)
+        val stored = prefs.getString("installation_diagnosis_id_v1", null)
+        if (stored != null && Regex("^YD-[0-9a-f]{32}$").matches(stored)) stored
+        else ("YD-" + UUID.randomUUID().toString().replace("-", "").lowercase()).also {
+            prefs.edit().putString("installation_diagnosis_id_v1", it).apply()
+        }
+    }
     private var state = JSONObject()
     private var screen = "home"
     private val history = mutableListOf<Pair<String,String>>()
@@ -217,7 +225,7 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
         }
         if (action == "children") activeRequest = request
         if (action == "children") loading = true
-        val data = JSONObject().put("action",action).put("requestId",request)
+        val data = JSONObject().put("action",action).put("requestId",request).put("diagnosisId",diagnosisId).put("diagnosisPlatform","wearos")
         if (id != null) data.put("id", id)
         Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
             if (!foreground || generation != foregroundGeneration) return@addOnSuccessListener
@@ -465,6 +473,13 @@ class WatchActivity : Activity(), MessageClient.OnMessageReceivedListener, DataC
                     if(item.optBoolean("playable")) { send("select",item.optString("id"));screen="playing";render() }
                     else { history.add(folder to title);folder=item.optString("id");title=item.optString("title");items=emptyList();send("children",folder);render() }
                 }
+            }
+        }
+        if(screen == "home") {
+            button(tr("Diagnosis ID","诊断编号","診斷編號")) {
+                android.app.AlertDialog.Builder(this).setTitle(tr("Diagnosis ID","诊断编号","診斷編號"))
+                    .setMessage(diagnosisId + "\n\n" + tr("Shared through your phone only when you send feedback.","仅在手机发送反馈时分享。","僅在手機傳送回饋時分享。"))
+                    .setPositiveButton(android.R.string.ok, null).show()
             }
         }
         if(error.isNotEmpty()) text(error)

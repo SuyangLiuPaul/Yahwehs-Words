@@ -1,3 +1,4 @@
+import 'installation_diagnostics.dart';
 import 'companion_theme.dart';
 import 'dart:async';
 import 'remote_audio_source.dart';
@@ -32,6 +33,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
   SongAudioHandler({SongPlaybackEngine? engine})
       : _player = engine ?? SongPlaybackEngine() {
     _engineSubscriptions.add(_player.onPlaying.listen((playing) {
+      InstallationDiagnostics.record('audio', playing ? 'playing' : 'paused');
       _playing = playing;
       _broadcast();
     }));
@@ -186,6 +188,7 @@ class SongAudioHandler extends BaseAudioHandler with SeekHandler {
     // Both songs and sermons feed one session. A call must not leave the
     // phone claiming playback after the OS has silenced the audio route.
     if (event.begin) {
+      InstallationDiagnostics.record('audio', 'interrupted');
       if (!_interrupted) {
         _resumeAfterInterruption = playbackState.value.playing;
         _interruptedSource = _remote;

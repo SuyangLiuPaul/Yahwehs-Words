@@ -1,6 +1,6 @@
 # Yahweh's Sword — Privacy Policy / 隐私政策（雅伟之剑）
 
-Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
+Last updated / 最后更新：2026-10-07　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
 
 ## English
 
@@ -13,6 +13,8 @@ Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's Peop
 **Network requests.** The app downloads Bible and study data from our data host (yswords-data.netlify.app), and checks GitHub (api.github.com) for new versions. These servers see your IP address as any website does. We do not link it to you.
 
 **Feedback.** If you use the feedback form, what you type, including any contact details you choose to give, is emailed to us to reply and improve the app.
+
+**Diagnosis IDs and voluntary reports.** Each installation keeps a random, resettable diagnosis ID locally. When you explicitly send feedback or a diagnostic report, it can include that ID, app version, platform, delivery channel and up to 20 recent update, audio or companion status codes. These details help us find the report in the admin portal; they do not include hardware identifiers, passwords, notes or searches. Resetting the ID does not delete earlier reports. Contact support to request removal of a report.
 
 **Advertising, tracking, sale of data.** None. We do not sell personal data and do not track you across apps or sites.
 
@@ -33,6 +35,8 @@ Last updated / 最后更新：2026-09-24　Publisher / 发布者：Yahweh's Peop
 **网络请求。** 应用会从我们的数据服务器（yswords-data.netlify.app）下载圣经与研经数据，并访问 GitHub（api.github.com）检查新版本。这些服务器会像任何网站一样看到你的 IP 地址，我们不会将其与你个人关联。
 
 **反馈。** 如果你使用反馈表单，你填写的内容（包括你自愿提供的联系方式）会以邮件发给我们，用于回复和改进应用。
+
+**诊断编号与自愿反馈。** 每个安装在本机保存一个随机、可重设的诊断编号。仅在你主动发送反馈或诊断报告时，报告可附带该编号、应用版本、平台、更新渠道及最近最多 20 条更新、音频或配套设备状态代码。这些信息帮助我们在管理后台查找报告，不包含硬件标识、密码、笔记或搜索内容。重设编号不会删除以前的报告；如需删除报告，请联系支持。
 
 **广告、追踪与出售数据。** 一律没有。我们不出售个人数据，也不跨应用或网站追踪你。
 

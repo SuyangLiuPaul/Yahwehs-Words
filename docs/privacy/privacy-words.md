@@ -1,6 +1,6 @@
 # Yahweh's Words — Privacy Policy / 隐私政策（雅伟的话）
 
-Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
+Last updated / 最后更新：2026-10-07　Publisher / 发布者：Yahweh's People　Contact / 联系：support@yahwehword.com
 
 ## English
 
@@ -21,6 +21,8 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 **Network requests.** The app downloads Bible and study data from yswords-data.netlify.app, checks GitHub (api.github.com) for new versions in the versions distributed outside the Microsoft Store, and loads fonts from Google Fonts on some platforms. These servers see your IP address as any website does.
 
 **Feedback.** If you use the feedback form, what you type is emailed to us.
+
+**Diagnosis IDs and voluntary reports.** Each installation keeps a random, resettable diagnosis ID locally. When you explicitly send feedback or a diagnostic report, it can include that ID, app version, platform, delivery channel and up to 20 recent update, audio or companion status codes. Words reports can also include the random IDs of recently connected watches. These details help us find the report in the admin portal; they do not include hardware identifiers, passwords, notes or searches. Resetting the ID does not delete earlier reports. Contact support to request removal of a report.
 
 **Optional watch and car controls.** A paired watch or car interface can receive the daily verse and audio titles, playback position and control commands from your phone. A watch keeps the last daily verse locally for offline display. Account credentials, notes and bookmarks are not transferred to the companion. The app does not record microphone audio.
 
@@ -51,6 +53,8 @@ Last updated / 最后更新：2026-09-30　Publisher / 发布者：Yahweh's Peop
 **网络请求。** 应用从 yswords-data.netlify.app 下载圣经与研经数据；在 Microsoft Store 之外分发的版本还会访问 GitHub（api.github.com）检查新版本；部分平台会从 Google Fonts 加载字体。这些服务器会像任何网站一样看到你的 IP 地址。
 
 **反馈。** 如果你使用反馈表单，你填写的内容会以邮件发给我们。
+
+**诊断编号与自愿反馈。** 每个安装在本机保存一个随机、可重设的诊断编号。仅在你主动发送反馈或诊断报告时，报告可附带该编号、应用版本、平台、更新渠道及最近最多 20 条更新、音频或配套设备状态代码。Words 的报告还可附带最近连接过的手表的随机编号。这些信息帮助我们在管理后台查找报告，不包含硬件标识、密码、笔记或搜索内容。重设编号不会删除以前的报告；如需删除报告，请联系支持。
 
 **可选手表与车载控制。** 配对的手表或车载界面可从手机接收每日经文、音频标题、播放位置及控制指令；手表会在本机缓存最近的每日经文供离线阅读。账户凭据、笔记和书签不会传给配套设备。应用不会录制麦克风音频。
 

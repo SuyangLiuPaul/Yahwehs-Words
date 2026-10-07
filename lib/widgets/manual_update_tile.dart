@@ -1,3 +1,4 @@
+import '../services/installation_diagnostics.dart';
 // "Check for updates" for every build that has no GitHub self-updater:
 // the web app, and the store builds (Google Play, App Store, Microsoft
 // Store). Until 2026-10-06 those builds had NO manual check at all — the
@@ -216,12 +217,14 @@ class _ManualUpdateTileState extends State<ManualUpdateTile> {
   Future<void> _tap() async {
     if (_busy) return;
     setState(() => _busy = true);
+    InstallationDiagnostics.record('update', 'started');
     ManualUpdateResult res;
     try {
       res = await (widget.checker ?? _check)();
     } catch (_) {
       res = const ManualUpdateResult(ManualUpdateKind.failed);
     }
+    InstallationDiagnostics.record('update', res.kind.name);
     if (!mounted) return;
     setState(() => _busy = false);
     final title = switch (res.kind) {

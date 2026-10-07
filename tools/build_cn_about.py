@@ -20,7 +20,7 @@ What it changes, and nothing else:
     at '/cn' so a message says which page it was written on;
   * replaces the script with the same form handler minus the three-script
     machinery;
-  * drops the two Microsoft Store buttons (no mainland-China listing);
+  * preserves official store badges; both Microsoft listings include China;
   * adds a 「下载 Mac 版」 button (/dl/<app>-mac) beside the APK one on the
     Words and Sword cards.
 """
@@ -177,12 +177,8 @@ def build(src: str) -> str:
     src, n = re.subn(r'\s*<nav class="bar">.*?</nav>', '', src, count=1, flags=re.S)
     assert n == 1, 'language switch not found'
 
-    # 2a. the Microsoft Store buttons: the Store listings exclude mainland China
-    #     (ISBN required there), so the link would not work for these readers.
-    #     The Windows download button beside it stays.
-    src, n = re.subn(r'\n?[ \t]*<a class="dl" href="https://apps\.microsoft\.com/[^"]*">.*?</a>',
-                     '', src, flags=re.S)
-    assert n == 2, 'expected two Microsoft Store buttons, found %d' % n
+    # Store badge links remain: both Microsoft listings include China.
+    # APK / Windows / Mac direct downloads remain as regional alternatives.
 
     # 2b. the GitHub buttons: GitHub is unreliable from the mainland, and
     #     the Download button beside them already serves the APK.
@@ -218,7 +214,7 @@ def build(src: str) -> str:
                      add_mac, out)
     assert n == 2, 'expected two APK buttons, found %d' % n
     out, n = re.subn(
-        r'(<a class="dl" href="/dl/(?:words|sword)-win">下载 Windows 版</a>(?:\s*<a[^>]*>.*?</a>)*\s*</div>)',
+        r'(<a class="dl" href="/dl/(?:words|sword)-win">下载 Windows 版</a>.*?</div>)',
         r'\1\n      <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>', out, flags=re.S)
     assert n == 2, 'mac hint anchor not found'
 
