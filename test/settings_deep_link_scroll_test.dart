@@ -21,14 +21,20 @@ void main() {
 
   setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
 
-  testWidgets('bare settings opens at the top with AI below the fold',
+  testWidgets('Basic starts collapsed and Advanced reveals AI on demand',
       (tester) async {
     await tester.pumpWidget(host(null));
     await tester.pumpAndSettle();
+    expect(find.byType(GeminiKeyCard), findsNothing);
+    final toggle = find.byKey(const Key('settings.advanced.toggle'));
+    await tester.ensureVisible(toggle);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
     expect(find.byType(GeminiKeyCard), findsOneWidget);
-    final card = tester.getRect(find.byType(GeminiKeyCard));
-    final screen = tester.getRect(find.byType(MaterialApp));
-    expect(card.top, greaterThanOrEqualTo(screen.bottom));
+    await tester.ensureVisible(toggle);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    expect(find.byType(GeminiKeyCard), findsNothing);
   });
 
   testWidgets('/settings/ai scrolls the AI section into view', (tester) async {
