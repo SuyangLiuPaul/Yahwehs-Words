@@ -1470,7 +1470,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                 key: _dashboardKey,
                 child: _SectionHeader(
                     uiStrings['settingsSectionDashboard']?[settings.locale] ??
-                        'Dashboard sections',
+                        'Home sections',
                     icon: Icons.dashboard_customize_outlined),
               ),
               _DashboardSectionsCard(settings: settings, s: s),
@@ -2880,7 +2880,9 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
               padding: EdgeInsets.fromLTRB(12 * s, 8 * s, 12 * s, 4 * s),
               child: Text(
                 uiStrings['dashboardLayoutHint']?[locale] ??
-                    'Drag the handle to reorder. Toggle a row off to hide that block.',
+                    'Choose which Home sections to show and drag the handles to reorder them. '
+                    'Expand Study, Reference and Help on Home. Update notices and '
+                    'announcements stay above the sections.',
                 style: TextStyle(
                   fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
                   fontSize: (14 * s).clamp(11.0, 14.0),
@@ -4253,7 +4255,7 @@ class _AboutCard extends StatelessWidget {
             SizedBox(height: 4 * s),
             Text(
               uiStrings['resetSettingsNote']?[locale] ??
-                  'Restores fonts, theme, color, dashboard layout, and '
+                  'Restores fonts, theme, color, Home sections, and '
                       'other preferences. Your bookmarks, notes, '
                       'highlights, profile, and language are kept.',
               textAlign: TextAlign.center,
@@ -4290,7 +4292,7 @@ class _AboutCard extends StatelessWidget {
         title: Text(uiStrings['resetSettings']?[locale] ?? 'Reset settings'),
         content: Text(
           uiStrings['resetSettingsConfirm']?[locale] ??
-              'This restores fonts, theme, color, dashboard layout, '
+              'This restores fonts, theme, color, Home sections, '
                   'and other preferences. Your bookmarks, notes, '
                   'highlights, profile, and language stay the same. '
                   'Continue?',

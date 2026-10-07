@@ -4,7 +4,7 @@ import 'package:yahwehs_words/constants/ui_strings.dart';
 ///
 /// The dashboard renders sections in the order persisted in
 /// `AppSettings.dashboardSectionOrder` (driven by Settings →
-/// "Dashboard layout"). Each section also has an independent
+/// "Home sections"). Each section also has an independent
 /// visibility flag on `AppSettings`. Sections may also have an
 /// **implicit** hide condition (e.g. `resumeSermon` hides when no
 /// sermon has been opened yet, `recentBookmarks` hides when there
@@ -55,8 +55,8 @@ enum DashboardSection {
   /// by day-of-year. Default on.
   todayEvidence,
 
-  /// Quick-link tiles grid (Library / Statistics / Bible Evidence /
-  /// Sermons / Family Tree / Bible Timeline / Settings). Default on.
+  /// Frequent links with expandable Study, Reference and Help groups.
+  /// Visibility applies to the entire section. Default on.
   quickLinks,
 }
 
@@ -234,7 +234,8 @@ extension DashboardSectionLabel on DashboardSection {
       case DashboardSection.todayEvidence:
         return 'One archaeology / manuscript / science entry per day.';
       case DashboardSection.quickLinks:
-        return 'Tiles linking to Library, Statistics, Sermons, etc.';
+        return 'Frequently used links plus expandable Study, Reference and Help '
+            'groups. This switch controls the whole Quick links section.';
     }
   }
 }
