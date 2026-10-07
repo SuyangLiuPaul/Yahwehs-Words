@@ -1055,11 +1055,13 @@ class _DashboardPageState extends State<DashboardPage> {
                 _LinkTile(
                   icon: Icons.search_rounded,
                   label: uiStrings['search']?[locale] ?? 'Search',
+                  showChevron: false,
                   onTap: () => pushPage(const SearchPage()),
                 ),
                 _LinkTile(
                   icon: Icons.collections_bookmark_outlined,
                   label: uiStrings['library']?[locale] ?? 'Library',
+                  showChevron: false,
                   onTap: () =>
                       pushPage(const LibraryPage(), routeName: '/library'),
                 ),
@@ -1068,12 +1070,14 @@ class _DashboardPageState extends State<DashboardPage> {
                   icon: Icons.auto_stories_outlined,
                   label: uiStrings['readingStatsShortcut']?[locale] ??
                       'Reading stats',
+                  showChevron: false,
                   onTap: () => pushPage(const ReadingStatsPage(),
                       routeName: '/reading-stats'),
                 ),
                 _LinkTile(
                   icon: Icons.settings_outlined,
                   label: uiStrings['settings']?[locale] ?? 'Settings',
+                  showChevron: false,
                   onTap: () =>
                       pushPage(const SettingsPage(), routeName: '/settings'),
                 ),
@@ -1897,11 +1901,13 @@ class _LinkTile extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool showChevron;
   const _LinkTile({
     super.key,
     required this.icon,
     required this.label,
     required this.onTap,
+    this.showChevron = true,
   });
 
   @override
@@ -1943,8 +1949,12 @@ class _LinkTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 16, color: scheme.outline),
+          // Frequent shortcuts already have a button outline and an icon.
+          // Use their trailing space for readable labels on narrow phones.
+          if (showChevron) ...[
+            const SizedBox(width: 4),
+            Icon(Icons.chevron_right, size: 16, color: scheme.outline),
+          ],
         ],
       ),
     );
