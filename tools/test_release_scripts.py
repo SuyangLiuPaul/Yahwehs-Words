@@ -366,6 +366,8 @@ class WebScriptCase(unittest.TestCase):
         (self.project / 'pubspec.yaml').write_text(
             'name: yswords\nversion: 1.0.0\n', encoding='utf-8')
         shutil.copy(str(TOOLS / script), str(self.project / 'tools'))
+        executable(self.project / 'tools' / 'verify_web_asset_manifests.py',
+                   '#!/usr/bin/env python3\nprint("manifest verifier stub")\n')
 
         self.sites = self.root / 'sites'
         self.sites.mkdir()
