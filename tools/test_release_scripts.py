@@ -367,7 +367,12 @@ class WebScriptCase(unittest.TestCase):
             'name: yswords\nversion: 1.0.0\n', encoding='utf-8')
         shutil.copy(str(TOOLS / script), str(self.project / 'tools'))
         executable(self.project / 'tools' / 'verify_web_asset_manifests.py',
-                   '#!/usr/bin/env python3\nprint("manifest verifier stub")\n')
+                   '#!/usr/bin/env python3\nimport os, sys\n'
+                   'assert sys.argv[1].startswith("https://") and '
+                   'sys.argv[1].endswith(".netlify.app"), "full host required"\n'
+                   'if os.environ.get("BAD_MANIFEST") == "1": '
+                   'sys.exit("invalid manifest")\n'
+                   'print("manifest verifier stub")\n')
 
         self.sites = self.root / 'sites'
         self.sites.mkdir()
@@ -523,6 +528,12 @@ class ReleaseWeb(WebScriptCase):
             self.assertIn(f'https://{host}.netlify.app/version.json', calls,
                           f'{host} was deployed to and never asked')
         self.assertIn('✓ v1.0.0 deployed', r.stdout)
+
+    def test_invalid_startup_manifest_prevents_release_success(self):
+        r = self.run_script(BAD_MANIFEST='1')
+        self.assertNotEqual(r.returncode, 0, r.stdout + r.stderr)
+        self.assertIn('invalid manifest', r.stderr)
+        self.assertNotIn('✓ v1.0.0 deployed', r.stdout)
 
     def test_a_deploy_that_exits_0_and_does_not_land_is_not_a_release(self):
         # The recorded v1.4.61 / v1.4.65 failure: "Deploy canceled" is a
