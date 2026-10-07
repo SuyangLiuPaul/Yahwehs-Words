@@ -319,6 +319,13 @@
   [headers.values]
     Cache-Control = "no-cache, must-revalidate"
 
+# Native/wasm asset discovery reads the binary form; keep its cache
+# policy aligned with the JSON wrapper used by the JavaScript build.
+[[headers]]
+  for = "/assets/AssetManifest.bin"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
 [[headers]]
   for = "/assets/FontManifest.json"
   [headers.values]

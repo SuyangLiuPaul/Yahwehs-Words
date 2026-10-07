@@ -217,6 +217,7 @@ verify_site() {
       "$url/main.dart.js" 2>/dev/null | shasum -a 256 | cut -d' ' -f1)"
     if [[ "$served" = "$APP_VERSION" && "$got_boot" = "$want_boot" \
           && "$got_main" = "$want_main" ]]; then
+      python3 "$PROJECT/tools/verify_web_asset_manifests.py" "$url" || return 1
       echo "  ✓ $label — v$APP_VERSION, bundle matches build/web"
       return 0
     fi

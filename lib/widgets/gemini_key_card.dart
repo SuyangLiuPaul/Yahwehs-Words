@@ -275,21 +275,19 @@ class GeminiKeyCardState extends State<GeminiKeyCard> {
           children: [
             Row(
               children: [
-                Icon(Icons.smart_toy_outlined,
-                    size: 18, color: scheme.primary),
+                Icon(Icons.smart_toy_outlined, size: 18, color: scheme.primary),
                 SizedBox(width: 8 * s),
-                Text(
+                Expanded(
+                    child: Text(
                   uiStrings['aiByokTitle']?[locale] ??
                       'Use my own Gemini API key',
                   style: TextStyle(
                     fontFamily: widget.settings.fontFamily,
-                    fontSize: (widget.settings.fontSize - 1)
-                        .clamp(13.0, 16.0),
+                    fontSize: (widget.settings.fontSize - 1).clamp(13.0, 16.0),
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface,
                   ),
-                ),
-                const Spacer(),
+                )),
                 if (hasKey)
                   Icon(Icons.check_circle_outline_rounded,
                       size: 18, color: paletteAccent(context, Colors.green)),

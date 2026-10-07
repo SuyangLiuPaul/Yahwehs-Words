@@ -107,7 +107,7 @@ void main() {
       expect(sheet.contains('stripParentheticals: strip'), isTrue,
           reason: 'the popup sheet\'s copy-all');
       final page = File('lib/pages/settings_page.dart').readAsStringSync();
-      expect(page.contains('stripParentheticals: settings.copyStripParentheticals'),
+      expect(RegExp(r'stripParentheticals:\s*settings\.copyStripParentheticals').hasMatch(page),
           isTrue, reason: 'the preview must show what the copy will do');
     });
   });
