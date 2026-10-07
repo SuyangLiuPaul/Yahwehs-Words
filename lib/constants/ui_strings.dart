@@ -6113,6 +6113,11 @@ const uiStrings = {
     'zh-Hant': '精選推薦',
     'en': 'Featured',
   },
+  'dashboardSection_featured_description': {
+    'zh-Hans': '本堂的视频教导与诗歌目录。',
+    'zh-Hant': '本堂的影片教導與詩歌目錄。',
+    'en': "The church's own media — the video teaching and the songs directory.",
+  },
   'dashboardSongsSubtitle': {
     'zh-Hans': '本堂诗歌 · 在线聆听、乐谱、离线下载',
     'zh-Hant': '本堂詩歌 · 線上聆聽、樂譜、離線下載',
