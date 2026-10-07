@@ -1066,8 +1066,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 // What the reader has been in, beside what they saved.
                 _LinkTile(
                   icon: Icons.auto_stories_outlined,
-                  label: uiStrings['readingStats']?[locale] ??
-                      'Reading statistics',
+                  label: uiStrings['readingStatsShortcut']?[locale] ??
+                      'Reading stats',
                   onTap: () => pushPage(const ReadingStatsPage(),
                       routeName: '/reading-stats'),
                 ),

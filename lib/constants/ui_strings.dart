@@ -8492,6 +8492,13 @@ const uiStrings = {
     'zh-Hant': '閱讀統計',
     'en': 'Reading statistics',
   },
+  // Home uses a short label without shrinking the reader's chosen font.
+  // Keep the full page title above and allow wrapping at large text sizes.
+  'readingStatsShortcut': {
+    'zh-Hans': '阅读统计',
+    'zh-Hant': '閱讀統計',
+    'en': 'Reading stats',
+  },
   'readingStatsChapters': {
     'zh-Hans': '打开过的章',
     'zh-Hant': '開啟過的章',

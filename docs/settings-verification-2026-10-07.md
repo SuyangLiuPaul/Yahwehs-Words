@@ -24,3 +24,11 @@ Sword static analysis, full suite 6097 passed/10 skipped and final related 60 te
 Evidence: /Users/pliu0036/Downloads/Yahweh-Settings-20261007/ (settings-control-consumers.json, settings-verification.json, international-final-live-verification.json, china-final-live-verification.json, logs and screenshots).
 
 Native/store packages were not rebuilt for these copy changes; a future explicitly authorized native release is required. No new physical companion, notification delivery or installation-flow verification is claimed. Existing preference keys, content, routes, immutable tags and pending store reviews remain preserved. No GitHub push in this task.
+
+## Follow-up: Home reading shortcut and update timing
+
+Home's English shortcut now says `Reading stats`; the page title remains `Reading statistics`, and both Chinese labels remain unchanged. Font size and wrapping/accessibility behavior are preserved. This follow-up is local source only, not part of the eight deployed bundles above; no version bump or deployment.
+
+Source inspection: Settings has a manual update check for native direct-download builds and a channel-aware manual check for store/web builds. Direct-download automatic checks default to daily when Home is initialized, with launch/daily/weekly/monthly choices. Store eligibility is checked through the relevant store; registry announcements alone do not prove an installable store update. Web checks start after 20 seconds, repeat every 30 minutes, and also check on resume.
+
+Songs call a best-effort background refresh on catalogue load, throttled for 12 hours after a successful fetch. Upstream's configured song workflow runs daily at 18:00 UTC; this is a schedule, not proof that its latest run succeeded. Admin overlays cache successful reads for 30 minutes and refetch on a later request, not on a continuous background timer. SermonService currently caches its merged index for the process lifetime, so an already loaded sermon list does not automatically reapply subsequent admin changes. SongService.refresh exists, but no production UI call site was found; do not promise a Songs pull-to-refresh action based on stale comments. No runtime/UI tests were run for this follow-up.
