@@ -1569,7 +1569,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                       'About',
                   icon: Icons.info_outline),
             ),
-            _AboutCard(settings: settings, s: s),
+            _AboutCard(settings: settings, s: s, showTools: !kIsWeb),
             // 2026-05-24 (v1.3.25): PWA install card — only shows
             // when the install affordance is meaningful (browser
             // not already in installed mode, native build hides
@@ -1664,6 +1664,9 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                       ...sections['displayDetails']!,
                       ...sections['readingDetails']!,
                       ...sections['companionPreferences']!,
+                      _SectionHeader(_tierText(settings.locale, '离线与维护',
+                          '離線與維護', 'Offline and maintenance')),
+                      _AboutCard(settings: settings, s: s, showSummary: false),
                       ...sections['backup']!,
                     ],
                     ...sections['about']!,
@@ -4143,7 +4146,13 @@ class _AiModelCard extends StatelessWidget {
 class _AboutCard extends StatelessWidget {
   final AppSettings settings;
   final double s;
-  const _AboutCard({required this.settings, required this.s});
+  final bool showSummary;
+  final bool showTools;
+  const _AboutCard(
+      {required this.settings,
+      required this.s,
+      this.showSummary = true,
+      this.showTools = true});
 
   @override
   Widget build(BuildContext context) {
@@ -4155,97 +4164,154 @@ class _AboutCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.menu_book_rounded,
-                    color: scheme.primary, size: settings.fontSize + 4),
-                SizedBox(width: 8 * s),
-                Flexible(
-                    child: Text(
-                  uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
-                  style: TextStyle(
-                    fontFamily: settings.fontFamily,
-                    fontFamilyFallback: kCjkFontFallback,
-                    fontSize: settings.fontSize + 2,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
-                  ),
-                )),
-              ],
-            ),
-            SizedBox(height: 4 * s),
-            Text(
-              uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            SizedBox(height: 4 * s),
-            // 2026-06-29: surface the running version HERE on the Settings
-            // About card. It used to live ONLY on the AboutPage sub-page (its
-            // app-bar title + a footer buried under a long scroll), so a user
-            // on the Settings screen saw no version at all — reported as
-            // "version number not showing" on the Mi Pad. kAppVersion is
-            // guarded against a blank dart-define, so this never renders empty.
-            Text(
-              'v$kAppVersion'
-              '${kChinaMode ? ' · ${uiStrings['chinaBuildTag']?[locale] ?? 'China build'}' : ''}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-            SizedBox(height: 6 * s),
-            const ContactLine(),
-            SizedBox(height: 8 * s),
-            // Round 56 day-3 (2026-05-06): button into the full
-            // Attributions / Licensing / Takedown page. Copyright
-            // audit prompted listing every bundled third-party
-            // resource + per-item licence + a prominent takedown
-            // contact, which doesn't fit on the existing _AboutCard.
-            OutlinedButton.icon(
-              icon: const Icon(Icons.gavel_rounded, size: 18),
-              label: Text(
-                uiStrings['aboutOpenButton']?[locale] ??
-                    'Attributions & licensing',
-              ),
-              onPressed: () => pushPage(const AboutPage(), routeName: '/about'),
-            ),
-            SizedBox(height: 10 * s),
-            // Clear-cache button — wipes service workers + browser
-            // Cache Storage + the build-stamp localStorage entry,
-            // then reloads. Local profile data (highlights / notes /
-            // bookmarks in SharedPreferences / IndexedDB) is NOT
-            // touched. Useful when the app is stuck on a stale
-            // build and the automatic kill-switch reload didn't
-            // catch it.
-            //
-            // Web only: on the native builds there is no service worker
-            // or Cache Storage, and the button did nothing after its
-            // confirm dialog.
-            if (kIsWeb) ...[
-              OutlinedButton.icon(
-                icon: const Icon(Icons.cleaning_services_outlined, size: 18),
-                label: Text(
-                  uiStrings['clearCache']?[locale] ?? 'Clear cache & reload',
-                ),
-                onPressed: () => _confirmClearCache(context, locale),
+            if (showSummary) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.menu_book_rounded,
+                      color: scheme.primary, size: settings.fontSize + 4),
+                  SizedBox(width: 8 * s),
+                  Flexible(
+                      child: Text(
+                    uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: settings.fontSize + 2,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
+                  )),
+                ],
               ),
               SizedBox(height: 4 * s),
               Text(
-                uiStrings['clearCacheNote']?[locale] ??
-                    'Wipes browser cache + service workers. Your profile '
-                        'data (highlights, notes, bookmarks) stays put.',
+                uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
+                  color: scheme.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              SizedBox(height: 4 * s),
+              // 2026-06-29: surface the running version HERE on the Settings
+              // About card. It used to live ONLY on the AboutPage sub-page (its
+              // app-bar title + a footer buried under a long scroll), so a user
+              // on the Settings screen saw no version at all — reported as
+              // "version number not showing" on the Mi Pad. kAppVersion is
+              // guarded against a blank dart-define, so this never renders empty.
+              Text(
+                'v$kAppVersion'
+                '${kChinaMode ? ' · ${uiStrings['chinaBuildTag']?[locale] ?? 'China build'}' : ''}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              SizedBox(height: 6 * s),
+              const ContactLine(),
+              SizedBox(height: 8 * s),
+              // Round 56 day-3 (2026-05-06): button into the full
+              // Attributions / Licensing / Takedown page. Copyright
+              // audit prompted listing every bundled third-party
+              // resource + per-item licence + a prominent takedown
+              // contact, which doesn't fit on the existing _AboutCard.
+              OutlinedButton.icon(
+                icon: const Icon(Icons.gavel_rounded, size: 18),
+                label: Text(
+                  uiStrings['aboutOpenButton']?[locale] ??
+                      'Attributions & licensing',
+                ),
+                onPressed: () =>
+                    pushPage(const AboutPage(), routeName: '/about'),
+              ),
+              SizedBox(height: 10 * s),
+            ],
+            if (showTools) ...[
+              // Clear-cache button — wipes service workers + browser
+              // Cache Storage + the build-stamp localStorage entry,
+              // then reloads. Local profile data (highlights / notes /
+              // bookmarks in SharedPreferences / IndexedDB) is NOT
+              // touched. Useful when the app is stuck on a stale
+              // build and the automatic kill-switch reload didn't
+              // catch it.
+              //
+              // Web only: on the native builds there is no service worker
+              // or Cache Storage, and the button did nothing after its
+              // confirm dialog.
+              if (kIsWeb) ...[
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.cleaning_services_outlined, size: 18),
+                  label: Text(
+                    uiStrings['clearCache']?[locale] ?? 'Clear cache & reload',
+                  ),
+                  onPressed: () => _confirmClearCache(context, locale),
+                ),
+                SizedBox(height: 4 * s),
+                Text(
+                  uiStrings['clearCacheNote']?[locale] ??
+                      'Wipes browser cache + service workers. Your profile '
+                          'data (highlights, notes, bookmarks) stays put.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
+                    fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
+                    color: scheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+              SizedBox(height: 16 * s),
+              // ── Offline Pack (Round 56) ─────────────────────────
+              // Bulk pre-fetch every Bible / sermon / tool the user
+              // checks so the app launches instantly + works without
+              // network. Lives in its own card section because the
+              // download flow (categories + progress + clear) needs
+              // its own state surface.
+              _OfflinePackCard(settings: settings, s: s),
+              SizedBox(height: 12 * s),
+              // Show-tour-again — clears the v2 onboarding-seen flag and
+              // immediately shows the dialog so the user can re-walk the
+              // 5-slide tour without leaving Settings. Useful for users
+              // who skipped the tour on first run.
+              OutlinedButton.icon(
+                icon: const Icon(Icons.school_outlined, size: 18),
+                label: Text(
+                  uiStrings['showTourAgain']?[locale] ?? 'Show tour again',
+                ),
+                onPressed: () => _showTour(context, locale),
+              ),
+              SizedBox(height: 12 * s),
+              // Reset settings — wipes visual / preference state back to
+              // defaults but leaves user CONTENT alone. Locale is also
+              // preserved so we don't yank the user out of their language.
+              // Wrapped in a confirm dialog because there's no undo.
+              OutlinedButton.icon(
+                icon: Icon(Icons.restart_alt_rounded,
+                    size: 18, color: scheme.error),
+                label: Text(
+                  uiStrings['resetSettings']?[locale] ?? 'Reset settings',
+                  style: TextStyle(color: scheme.error),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: scheme.error.withValues(alpha: 0.5)),
+                ),
+                onPressed: () => _confirmResetSettings(context, locale),
+              ),
+              SizedBox(height: 4 * s),
+              Text(
+                uiStrings['resetSettingsNote']?[locale] ??
+                    'Restores fonts, theme, color, Home sections, and '
+                        'other preferences. Your bookmarks, notes, '
+                        'highlights, profile, and language are kept.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: settings.fontFamily,
@@ -4256,58 +4322,6 @@ class _AboutCard extends StatelessWidget {
                 ),
               ),
             ],
-            SizedBox(height: 16 * s),
-            // ── Offline Pack (Round 56) ─────────────────────────
-            // Bulk pre-fetch every Bible / sermon / tool the user
-            // checks so the app launches instantly + works without
-            // network. Lives in its own card section because the
-            // download flow (categories + progress + clear) needs
-            // its own state surface.
-            _OfflinePackCard(settings: settings, s: s),
-            SizedBox(height: 12 * s),
-            // Show-tour-again — clears the v2 onboarding-seen flag and
-            // immediately shows the dialog so the user can re-walk the
-            // 5-slide tour without leaving Settings. Useful for users
-            // who skipped the tour on first run.
-            OutlinedButton.icon(
-              icon: const Icon(Icons.school_outlined, size: 18),
-              label: Text(
-                uiStrings['showTourAgain']?[locale] ?? 'Show tour again',
-              ),
-              onPressed: () => _showTour(context, locale),
-            ),
-            SizedBox(height: 12 * s),
-            // Reset settings — wipes visual / preference state back to
-            // defaults but leaves user CONTENT alone. Locale is also
-            // preserved so we don't yank the user out of their language.
-            // Wrapped in a confirm dialog because there's no undo.
-            OutlinedButton.icon(
-              icon: Icon(Icons.restart_alt_rounded,
-                  size: 18, color: scheme.error),
-              label: Text(
-                uiStrings['resetSettings']?[locale] ?? 'Reset settings',
-                style: TextStyle(color: scheme.error),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: scheme.error.withValues(alpha: 0.5)),
-              ),
-              onPressed: () => _confirmResetSettings(context, locale),
-            ),
-            SizedBox(height: 4 * s),
-            Text(
-              uiStrings['resetSettingsNote']?[locale] ??
-                  'Restores fonts, theme, color, Home sections, and '
-                      'other preferences. Your bookmarks, notes, '
-                      'highlights, profile, and language are kept.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
           ],
         ),
       ),
