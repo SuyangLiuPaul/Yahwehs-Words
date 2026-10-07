@@ -193,11 +193,15 @@
   }
   .host { font-size: .75rem; color: var(--faint); margin: 0;
     word-break: break-all; }
-  .store-badge {display:inline-flex; padding:10px;align-items:center;background:transparent;border:0;}
-  .store-badge img {height:44px;width:auto;max-width:100%;}
+  .store-badge {display:flex;justify-content:center;align-items:center;min-height:64px;padding:0;background:transparent;border:0;}
+  .store-badge img {height:44px;width:auto;max-width:100%;object-fit:contain;}
   .store-badge img[src$=".png"] {height:60px;}
-  .store-option {display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px;}
-  .store-option small {font-size:14px;}
+  .store-option {display:contents;}
+  .store-option small {font-size:14px;grid-column:1/-1;line-height:1.5;color:var(--muted);}
+  .store-links {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;flex-basis:100%;padding:12px 0;border-top:1px solid var(--outline);margin-top:8px;}
+  .links a.go,.links a.dl {min-height:44px;display:inline-flex;align-items:center;justify-content:center;white-space:normal;text-align:center;}
+  .links a.gh {flex-basis:100%;min-height:44px;display:flex;align-items:center;}
+  @media(max-width:360px) {.store-links {grid-template-columns:1fr;} .app {padding:1rem;} }
   .links { margin-top: auto; padding-top: 1.125rem; display: flex;
     gap: .5rem; flex-wrap: wrap; align-items: center; }
   a.go, a.dl {
@@ -462,9 +466,10 @@
         <a class="go" href="https://yahwehword.com/"><span data-l="hans">打开</span><span data-l="hant">開啟</span><span data-l="en">Open</span></a>
         <a class="dl" href="/dl/words"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
         <a class="dl" href="/dl/words-win"><span data-l="hans">下载 Windows 版</span><span data-l="hant">下載 Windows 版</span><span data-l="en">Download for Windows</span></a>
-        <a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
-        <a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
-        <span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span>
+        <a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
+
+
+        <div class="store-links"><a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a><span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span></div>
         <a class="gh" href="https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Latest packages · GitHub</span></a>
       </div>
     </article>
@@ -486,9 +491,10 @@
         <a class="go" href="https://sword.yahwehword.com/"><span data-l="hans">打开</span><span data-l="hant">開啟</span><span data-l="en">Open</span></a>
         <a class="dl" href="/dl/sword"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
         <a class="dl" href="/dl/sword-win"><span data-l="hans">下载 Windows 版</span><span data-l="hant">下載 Windows 版</span><span data-l="en">Download for Windows</span></a>
-        <a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+
         <a class="dl" href="/beta#sword-apple">TestFlight · iPhone / Mac</a>
-        <span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span>
+
+        <div class="store-links"><a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a><span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span></div>
         <a class="gh" href="https://github.com/SuyangLiuPaul/Yahwehs-Sword/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Latest packages · GitHub</span></a>
       </div>
     </article>
