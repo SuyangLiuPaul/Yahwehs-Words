@@ -50,8 +50,9 @@
 // (An earlier same-day patch wrongly made gemini-2.5-flash the default; that
 // model's free tier is only ~20 req/day and exhausted fast — reverted.)
 import { byokRequiredError } from './_byok.mjs';
+import { RECOMMENDED_GEMINI_MODEL, callRecommendedGemini } from './_gemini_recommended.mjs';
 
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+const MODEL = process.env.GEMINI_MODEL || RECOMMENDED_GEMINI_MODEL;
 
 // 2026-05-10 (v1.2.26): per-request AI tier override, identical
 // shape to aiBibleSearch.mjs / aiSearch.mjs. Allowlist-clamped.
@@ -59,6 +60,7 @@ const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
 // maps to `gemini-3-flash-preview` because Google moved
 // `gemini-2.5-pro` behind a paywall on April 1 2026.
 const _AI_MODEL_MAP = {
+	'auto': RECOMMENDED_GEMINI_MODEL,
 	'flash-lite': 'gemini-2.5-flash-lite',
 	'flash':      'gemini-2.5-flash',
 	'pro':        'gemini-3-flash-preview',
@@ -622,6 +624,11 @@ function buildSystemMessage(locale) {
 }
 
 async function callGeminiWithKey(apiKey, prompt, locale, model) {
+  if (model === RECOMMENDED_GEMINI_MODEL) {
+    return callRecommendedGemini({apiKey, prompt: prompt,
+      systemMessage: buildSystemMessage(locale), baseUrl: BASE_URL,
+      signal: AbortSignal.timeout(modelTimeoutMs(model)), json: false});
+  }
 	const url = `${BASE_URL}/chat/completions`;
 	const resp = await fetch(url, {
 		method: 'POST',
@@ -663,6 +670,7 @@ async function callGeminiWithKey(apiKey, prompt, locale, model) {
 // the 24s deadline. Detailed rationale in aiBibleSearch.mjs.
 function modelTimeoutMs(model) {
 	switch (model) {
+		case RECOMMENDED_GEMINI_MODEL: return 14_000;
 		case 'gemini-3-flash-preview': return 14_000;
 		case 'gemini-2.5-flash':       return 10_000;
 		case 'gemini-2.5-flash-lite':  return 6_000;
@@ -801,8 +809,8 @@ async function callGemini(prompt, locale, overrideKey = null, model = MODEL, ctx
 		const err = new Error(
 			'Gemini models exhausted across step-down chain.');
 		err.publicReason = isByok
-			? 'Your Gemini key\'s quota is exhausted for the selected tier. ' +
-				'Try again later or pick a lighter tier in Settings → AI.'
+			? 'Your Gemini key\'s quota is exhausted for the recommended model. ' +
+				'Try again later or check your Google project quota in AI Studio.'
 			: 'AI quota for the developer\'s shared key is exhausted across ' +
 				'all free-tier models. Try again later, or paste your own ' +
 				'Gemini API key in Settings → AI to use your own quota.';
@@ -823,11 +831,9 @@ async function callGemini(prompt, locale, overrideKey = null, model = MODEL, ctx
 		const err = new Error('AI explanation call timed out.');
 		err.publicReason = isByok
 			? 'AI response took too long on your Gemini key. The selected ' +
-				'tier may be under heavy use right now — try again, or pick ' +
-				'a lighter tier in Settings → AI.'
-			: 'AI response took too long. The selected tier may be under ' +
-				'heavy use right now — try again, or pick a lighter tier in ' +
-				'Settings → AI.';
+				'model may be under heavy use right now. Please try again shortly.'
+			: 'AI response took too long. The recommended model may be under ' +
+				'heavy use right now. Please try again shortly.';
 		err.statusCode = 504;
 		throw err;
 	}

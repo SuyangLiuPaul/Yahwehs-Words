@@ -39,7 +39,6 @@ import 'package:yahwehs_words/constants/bible_versions.dart';
 import 'package:yahwehs_words/pages/about_page.dart';
 import 'package:yahwehs_words/pages/changelog_page.dart';
 import 'package:yahwehs_words/pages/help_page.dart' show openHelp;
-import 'package:yahwehs_words/utils/ai_markdown.dart' show parseAiMarkdown;
 import 'package:yahwehs_words/utils/theme_color_helpers.dart';
 import 'package:yahwehs_words/pages/profiles_page.dart';
 import 'package:yahwehs_words/services/cloud_auth_service.dart';
@@ -3933,168 +3932,57 @@ class _AiModelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final locale = settings.locale;
+    final bodyStyle = TextStyle(
+      fontFamily: settings.fontFamily,
+      fontFamilyFallback: kCjkFontFallback,
+      fontSize: (settings.fontSize - 2).clamp(14.0, 18.0),
+      height: 1.5,
+      color: scheme.onSurfaceVariant,
+    );
     return Card(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(16 * s, 14 * s, 16 * s, 14 * s),
+        padding: EdgeInsets.all(16 * s),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
-                Icon(Icons.psychology_outlined,
-                    size: 18, color: scheme.primary),
+                Icon(Icons.psychology_outlined, color: scheme.primary),
                 SizedBox(width: 8 * s),
-                Text(
-                  uiStrings['aiModelTitle']?[locale] ??
-                      'AI response depth',
-                  style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: (settings.fontSize - 1)
-                        .clamp(13.0, 16.0),
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
+                Expanded(
+                  child: Text(
+                    uiStrings['aiModelTitle']?[locale] ?? 'AI model',
+                    style: bodyStyle.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 6 * s),
-            Text(
-              uiStrings['aiModelBody']?[locale] ??
-                  'Choose the trade-off between AI speed and depth.',
-              style: TextStyle(
-                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 4)
-                    .clamp(11.0, 13.0),
-                color: scheme.onSurface.withValues(alpha: 0.78),
-                height: 1.5,
-              ),
-            ),
             SizedBox(height: 10 * s),
-            // 2026-05-11 (v1.2.40): Deep tier is now backed by
-            // `gemini-3-flash-preview` (free-tier compatible thinking
-            // model) instead of `gemini-2.5-pro` (which Google moved
-            // behind a paywall on April 1 2026). The v1.2.39 BYOK
-            // gating is no longer needed — every tier works on the
-            // free tier without BYOK. Re-enabled the Deep segment;
-            // dropped the lock icon + locked-note. BYOK is still
-            // recommended for users who hit Deep's higher RPD limit
-            // (the BYOK card sits below this card with that pitch).
-            Center(
-              child: SegmentedButton<String>(
-                segments: [
-                  ButtonSegment<String>(
-                    value: 'flash-lite',
-                    label: Text(
-                      uiStrings['aiModelFast']?[locale] ?? 'Fast',
-                    ),
-                    icon: const Icon(Icons.bolt_outlined),
-                  ),
-                  ButtonSegment<String>(
-                    value: 'flash',
-                    label: Text(
-                      uiStrings['aiModelStandard']?[locale] ?? 'Standard',
-                    ),
-                    icon: const Icon(Icons.balance_outlined),
-                  ),
-                  ButtonSegment<String>(
-                    value: 'pro',
-                    label: Text(
-                      uiStrings['aiModelDeep']?[locale] ?? 'Deep',
-                    ),
-                    icon: const Icon(Icons.psychology_alt_outlined),
-                  ),
-                ],
-                selected: {settings.aiModel},
-                onSelectionChanged: (selection) {
-                  if (selection.isNotEmpty) {
-                    settings.setAiModel(selection.first);
-                  }
-                },
+            Text(
+              uiStrings['aiModelRecommended']?[locale] ??
+                  'Gemini 3.8 Flash · Recommended',
+              style: bodyStyle.copyWith(
+                fontWeight: FontWeight.w600,
+                color: scheme.primary,
               ),
             ),
-            SizedBox(height: 12 * s),
-            // 2026-05-10 (v1.2.27): per-tier detail panel — updates
-            // when user picks a different option. Names the actual
-            // Gemini model, marks the default, calls out free-tier
-            // quota reality so users know when to BYOK before
-            // hitting "quota exhausted".
-            _AiModelDetailPanel(
-                aiModel: settings.aiModel,
-                settings: settings,
-                scheme: scheme,
-                s: s),
+            SizedBox(height: 8 * s),
+            Text(
+                uiStrings['aiModelBody']?[locale] ??
+                    'No tier selection needed. Uses medium thinking for everyday '
+                        'Bible study and more involved explanations.',
+                style: bodyStyle),
+            SizedBox(height: 8 * s),
+            Text(
+                uiStrings['aiModelAvailability']?[locale] ??
+                    'Uses your own Gemini API key. Availability and quota depend '
+                        'on your Google project.',
+                style: bodyStyle),
           ],
         ),
-      ),
-    );
-  }
-}
-
-
-/// Detail card that updates with the user's currently-selected AI
-/// tier. Subtle filled background so it reads as informational
-/// (not a warning) but stays distinct from the parent card.
-class _AiModelDetailPanel extends StatelessWidget {
-  final String aiModel;
-  final AppSettings settings;
-  final ColorScheme scheme;
-  final double s;
-  const _AiModelDetailPanel({
-    required this.aiModel,
-    required this.settings,
-    required this.scheme,
-    required this.s,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final locale = settings.locale;
-    final detailKey = switch (aiModel) {
-      'flash' => 'aiModelStandardDetail',
-      'pro' => 'aiModelDeepDetail',
-      _ => 'aiModelFastDetail',
-    };
-    final detailEnFallback = switch (aiModel) {
-      'flash' =>
-          'Standard · Gemini 2.5 Flash. Balanced speed and depth.',
-      'pro' =>
-          'Deep · Gemini 2.5 Pro. Most thorough analysis, smallest free-tier quota — BYOK recommended.',
-      _ => 'Fast (default) · Gemini 2.5 Flash-Lite. Quickest answers, largest free-tier quota.',
-    };
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12 * s, vertical: 10 * s),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.info_outline_rounded,
-              size: 16, color: scheme.primary.withValues(alpha: 0.85)),
-          SizedBox(width: 8 * s),
-          Expanded(
-            // 2026-05-11 (v1.2.38): the tier-detail strings include
-            // markdown emphasis (`**Free-tier quota is tiny**` etc.)
-            // so users could see the trade-offs at a glance. Render
-            // through the shared markdown parser instead of the
-            // raw `Text(...)` so the asterisks resolve to actual
-            // bold spans.
-            child: Text.rich(
-              TextSpan(
-                children: parseAiMarkdown(
-                  uiStrings[detailKey]?[locale] ?? detailEnFallback,
-                  base: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: (settings.fontSize - 4).clamp(11.0, 13.0),
-                    color: scheme.onSurface.withValues(alpha: 0.78),
-                    height: 1.55,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -130,12 +130,8 @@ const _kGeminiApiKey = 'geminiApiKey';
 //   'flash'      → 'gemini-2.5-flash'      (balanced)
 //   'pro'        → 'gemini-2.5-pro'        (deep, slower, smaller quota)
 const _kAiModel = 'aiModel';
-// Allowlist mirrored on the Netlify function side so a corrupt
-// SharedPrefs entry can't drive the server to a model we don't
-// support. Default 'flash-lite' matches the previous hardcoded
-// MODEL constant in netlify/functions/aiBibleSearch.mjs.
-const Set<String> _kAiModelAllowed = {'flash-lite', 'flash', 'pro'};
-const String _kAiModelDefault = 'flash-lite';
+const Set<String> _kAiModelAllowed = {'auto', 'flash-lite', 'flash', 'pro'};
+const String _kAiModelDefault = 'auto';
 
 // 2026-05-24 (v1.3.19): TTS voice preference constants removed
 // along with the 朗读 feature. Existing SharedPreferences keys
@@ -556,17 +552,16 @@ class AppSettings extends ChangeNotifier {
   bool get hasUserGeminiKey => _geminiApiKey.trim().isNotEmpty;
 
   /// 2026-05-10 (v1.2.26): user's selected AI response-depth tier
-  /// — one of {'flash-lite', 'flash', 'pro'}. Default 'flash-lite'
-  /// matches the previous hardcoded server default.
+  /// Current recommended policy ('auto'); legacy preferences are migrated.
   String get aiModel => _aiModel;
 
   Future<void> setAiModel(String model) async {
     if (!_kAiModelAllowed.contains(model)) return;
-    if (_aiModel == model) return;
-    _aiModel = model;
+    if (_aiModel == _kAiModelDefault) return;
+    _aiModel = _kAiModelDefault;
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kAiModel, model);
+    await prefs.setString(_kAiModel, _aiModel);
   }
 
   // 2026-05-24 (v1.3.19): `ttsVoiceGender` / `ttsVoiceTier` getters
@@ -1653,10 +1648,11 @@ class AppSettings extends ChangeNotifier {
     // 2026-05-10 (v1.2.26): restore aiModel from prefs. Allowlist
     // -clamp so a corrupt entry doesn't drive the server to an
     // unsupported model — invalid values fall back to default.
-    final storedAiModel = prefs.getString(_kAiModel);
-    _aiModel = (storedAiModel != null && _kAiModelAllowed.contains(storedAiModel))
-        ? storedAiModel
-        : _kAiModelDefault;
+    // Migrate legacy depth choices to the current recommended policy.
+    _aiModel = _kAiModelDefault;
+    if (prefs.getString(_kAiModel) != _aiModel) {
+      await prefs.setString(_kAiModel, _aiModel);
+    }
 
     // 2026-05-24 (v1.3.19): TTS voice pref restore removed with the
     // 朗读 feature. The stored SharedPreferences keys are left in
@@ -1967,9 +1963,7 @@ class AppSettings extends ChangeNotifier {
         _pickVerseAfterChapter = m['pickVerseAfterChapter'] as bool;
       }
       if (m['aiModel'] is String) {
-        final raw = m['aiModel'] as String;
-        _aiModel =
-            _kAiModelAllowed.contains(raw) ? raw : _kAiModelDefault;
+        _aiModel = _kAiModelDefault;
       }
       if (m['notesSortMode'] is String) {
         final raw = m['notesSortMode'] as String;

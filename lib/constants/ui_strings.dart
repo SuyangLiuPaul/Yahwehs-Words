@@ -2639,15 +2639,24 @@ const uiStrings = {
   //                                    smaller free-tier quota —
   //                                    BYOK key recommended)
   'aiModelTitle': {
-    'zh-Hans': 'AI 响应深度',
-    'zh-Hant': 'AI 回應深度',
-    'en': 'AI response depth',
+    'zh-Hans': 'AI 模型',
+    'zh-Hant': 'AI 模型',
+    'en': 'AI model',
   },
   'aiModelBody': {
-    'zh-Hans': '选择 AI 回答的速度与详尽度——不同档位对应不同的 Gemini 模型。',
-    'zh-Hant': '選擇 AI 回答的速度與詳盡度——不同檔位對應不同的 Gemini 模型。',
-    'en':
-        'Choose the speed-vs-depth trade-off — each tier maps to a different Gemini model.',
+    'zh-Hans': '无需选择速度或深度档位。使用中等推理等级，适合日常圣经研习与较复杂的解释。',
+    'zh-Hant': '無需選擇速度或深度檔位。使用中等推理等級，適合日常聖經研習與較複雜的解釋。',
+    'en': 'No tier selection needed. Uses medium thinking for everyday Bible study and more involved explanations.',
+  },
+  'aiModelRecommended': {
+    'zh-Hans': 'Gemini 3.8 Flash · 推荐',
+    'zh-Hant': 'Gemini 3.8 Flash · 推薦',
+    'en': 'Gemini 3.8 Flash · Recommended',
+  },
+  'aiModelAvailability': {
+    'zh-Hans': '使用你自己的 Gemini API 密钥；可用额度取决于你的 Google 项目。',
+    'zh-Hant': '使用你自己的 Gemini API 金鑰；可用額度取決於你的 Google 專案。',
+    'en': 'Uses your own Gemini API key. Availability depends on your Google project quota.',
   },
   'aiModelFast': {
     'zh-Hans': '快',
