@@ -1,3 +1,4 @@
+import 'installation_diagnostics.dart';
 import 'dart:async' show TimeoutException;
 import 'dart:convert';
 
@@ -67,8 +68,7 @@ class FeedbackService {
     final mq = MediaQuery.of(context);
     final size = mq.size;
     final dpr = mq.devicePixelRatio;
-    final isDark =
-        MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+    final isDark = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
     final tzOffset = DateTime.now().timeZoneOffset;
     final tzMin = tzOffset.inMinutes;
@@ -86,6 +86,7 @@ class FeedbackService {
     final browser = readBrowserInfo();
 
     final body = jsonEncode({
+      'diagnostics': await InstallationDiagnostics.snapshot(),
       'category': category,
       'message': message,
       if (name != null && name.isNotEmpty) 'name': name,
@@ -93,8 +94,7 @@ class FeedbackService {
       // v15: signed-in email is always attached when the user is
       // signed in so the dev knows who submitted. v16 removed the
       // copy-to-user CC entirely (see class doc).
-      if (authEmail != null && authEmail.isNotEmpty)
-        'authEmail': authEmail,
+      if (authEmail != null && authEmail.isNotEmpty) 'authEmail': authEmail,
       if (appLocale != null && appLocale.isNotEmpty) 'locale': appLocale,
       if (bibleVersion != null && bibleVersion.isNotEmpty)
         'version': bibleVersion,
@@ -122,11 +122,9 @@ class FeedbackService {
           )
           .timeout(const Duration(seconds: 15));
     } on TimeoutException {
-      return FeedbackResult.error(
-          'Submission timed out. Please try again.');
+      return FeedbackResult.error('Submission timed out. Please try again.');
     } catch (_) {
-      return FeedbackResult.error(
-          'Could not reach the feedback service.');
+      return FeedbackResult.error('Could not reach the feedback service.');
     }
     if (resp.statusCode == 200) {
       return FeedbackResult.ok();

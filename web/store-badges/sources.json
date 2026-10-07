@@ -1,0 +1,20 @@
+[
+  {
+    "file": "app-store-en.svg",
+    "source": "https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg",
+    "bytes": 10804,
+    "sha256": "a26fc5b38380272c92e9019a2eb8b45542a66814b3e2b203772db8904b9fb99f"
+  },
+  {
+    "file": "microsoft-en.svg",
+    "source": "https://get.microsoft.com/images/en-us%20dark.svg",
+    "bytes": 26533,
+    "sha256": "0e0cd666d0b351bc2680658faf8485a5d2d78d2ab14086d37fca7f0e8c12fa69"
+  },
+  {
+    "file": "google-play-en.png",
+    "source": "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
+    "bytes": 4904,
+    "sha256": "f72611e2df8e88204009fd896d05d5e8e83c77009c63943bbffa169559934849"
+  }
+]

@@ -193,6 +193,11 @@
   }
   .host { font-size: .75rem; color: var(--faint); margin: 0;
     word-break: break-all; }
+  .store-badge {display:inline-flex; padding:10px;align-items:center;background:transparent;border:0;}
+  .store-badge img {height:44px;width:auto;max-width:100%;}
+  .store-badge img[src$=".png"] {height:60px;}
+  .store-option {display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px;}
+  .store-option small {font-size:14px;}
   .links { margin-top: auto; padding-top: 1.125rem; display: flex;
     gap: .5rem; flex-wrap: wrap; align-items: center; }
   a.go, a.dl {
@@ -457,9 +462,9 @@
         <a class="go" href="https://yahwehword.com/"><span data-l="hans">打开</span><span data-l="hant">開啟</span><span data-l="en">Open</span></a>
         <a class="dl" href="/dl/words"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
         <a class="dl" href="/dl/words-win"><span data-l="hans">下载 Windows 版</span><span data-l="hant">下載 Windows 版</span><span data-l="en">Download for Windows</span></a>
-        <a class="dl" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#7fba00" d="M13 1h10v10H13z"/><path fill="#00a4ef" d="M1 13h10v10H1z"/><path fill="#ffb900" d="M13 13h10v10H13z"/></svg> <span data-l="hans">Microsoft Store</span><span data-l="hant">Microsoft Store</span><span data-l="en">Microsoft Store</span></a>
-        <a class="dl" href="/beta#words-apple"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M16 4c1-1 1-2 1-3-2 0-4 2-4 4 1 0 2 0 3-1ZM20 13c0-2 2-4 2-4-3-3-5-1-7-1-2 0-4-2-7 1-3 3-1 9 1 12 2 3 3 1 6 1s4 2 6-1c1-1 2-3 2-4-1 0-3-2-3-4Z"/></svg> <span data-l="hans">App Store · 测试版</span><span data-l="hant">App Store · 測試版</span><span data-l="en">App Store · Beta</span></a>
-        <a class="dl" href="/beta#words-android"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#34a853" d="M3 2l12 10L3 22z"/><path fill="#4285f4" d="M3 2l16 8-4 2z"/><path fill="#fbbc04" d="M15 12l4-2 3 2-3 2z"/><path fill="#ea4335" d="M3 22l12-10 4 2z"/></svg> <span data-l="hans">Google Play · 测试版</span><span data-l="hant">Google Play · 測試版</span><span data-l="en">Google Play · Beta</span></a>
+        <a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
+        <a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+        <span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span>
         <a class="gh" href="https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Latest packages · GitHub</span></a>
       </div>
     </article>
@@ -481,9 +486,9 @@
         <a class="go" href="https://sword.yahwehword.com/"><span data-l="hans">打开</span><span data-l="hant">開啟</span><span data-l="en">Open</span></a>
         <a class="dl" href="/dl/sword"><span data-l="hans">下载 APK</span><span data-l="hant">下載 APK</span><span data-l="en">Download APK</span></a>
         <a class="dl" href="/dl/sword-win"><span data-l="hans">下载 Windows 版</span><span data-l="hant">下載 Windows 版</span><span data-l="en">Download for Windows</span></a>
-        <a class="dl" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#7fba00" d="M13 1h10v10H13z"/><path fill="#00a4ef" d="M1 13h10v10H1z"/><path fill="#ffb900" d="M13 13h10v10H13z"/></svg> <span data-l="hans">Microsoft Store</span><span data-l="hant">Microsoft Store</span><span data-l="en">Microsoft Store</span></a>
-        <a class="dl" href="/beta#sword-apple"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M16 4c1-1 1-2 1-3-2 0-4 2-4 4 1 0 2 0 3-1ZM20 13c0-2 2-4 2-4-3-3-5-1-7-1-2 0-4-2-7 1-3 3-1 9 1 12 2 3 3 1 6 1s4 2 6-1c1-1 2-3 2-4-1 0-3-2-3-4Z"/></svg> <span data-l="hans">App Store · 测试版</span><span data-l="hant">App Store · 測試版</span><span data-l="en">App Store · Beta</span></a>
-        <a class="dl" href="/beta#sword-android"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#34a853" d="M3 2l12 10L3 22z"/><path fill="#4285f4" d="M3 2l16 8-4 2z"/><path fill="#fbbc04" d="M15 12l4-2 3 2-3 2z"/><path fill="#ea4335" d="M3 22l12-10 4 2z"/></svg> <span data-l="hans">Google Play · 测试版</span><span data-l="hant">Google Play · 測試版</span><span data-l="en">Google Play · Beta</span></a>
+        <a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+        <a class="dl" href="/beta#sword-apple">TestFlight · iPhone / Mac</a>
+        <span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small><span data-l="hans">Google Play · 需加入测试群组</span><span data-l="hant">Google Play · 需加入測試群組</span><span data-l="en">Google Play · join the test group first</span></small></span>
         <a class="gh" href="https://github.com/SuyangLiuPaul/Yahwehs-Sword/releases/latest"><span data-l="hans">其他平台 · GitHub</span><span data-l="hant">其他平台 · GitHub</span><span data-l="en">Latest packages · GitHub</span></a>
       </div>
     </article>

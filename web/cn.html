@@ -194,6 +194,11 @@
   }
   .host { font-size: .75rem; color: var(--faint); margin: 0;
     word-break: break-all; }
+  .store-badge {display:inline-flex; padding:10px;align-items:center;background:transparent;border:0;}
+  .store-badge img {height:44px;width:auto;max-width:100%;}
+  .store-badge img[src$=".png"] {height:60px;}
+  .store-option {display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px;}
+  .store-option small {font-size:14px;}
   .links { margin-top: auto; padding-top: 1.125rem; display: flex;
     gap: .5rem; flex-wrap: wrap; align-items: center; }
   a.go, a.dl {
@@ -441,7 +446,7 @@
       </div>
       <p class="en">Yahweh’s Words</p>
       <p class="what">
-        中英对照的圣经：和合本雅伟版、梁家铿译本、KJV、LEB，附希腊文与希伯来文原文、串珠、讲道与诗歌。
+        研读雅伟的话：和合本雅伟版、梁家铿译本、KJV、LEB，附希腊文与希伯来文原文、串珠、讲道与诗歌。
         
         
       </p>
@@ -451,8 +456,9 @@
         <a class="dl" href="/dl/words">下载 APK</a>
         <a class="dl" href="/dl/words-mac">下载 Mac 版</a>
         <a class="dl" href="/dl/words-win">下载 Windows 版</a>
-        <a class="dl" href="/beta#words-apple"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M16 4c1-1 1-2 1-3-2 0-4 2-4 4 1 0 2 0 3-1ZM20 13c0-2 2-4 2-4-3-3-5-1-7-1-2 0-4-2-7 1-3 3-1 9 1 12 2 3 3 1 6 1s4 2 6-1c1-1 2-3 2-4-1 0-3-2-3-4Z"/></svg> App Store · 测试版</a>
-        <a class="dl" href="/beta#words-android"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#34a853" d="M3 2l12 10L3 22z"/><path fill="#4285f4" d="M3 2l16 8-4 2z"/><path fill="#fbbc04" d="M15 12l4-2 3 2-3 2z"/><path fill="#ea4335" d="M3 22l12-10 4 2z"/></svg> Google Play · 测试版</a>
+        <a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
+        <a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+        <span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span>
       </div>
       <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>
     </article>
@@ -475,8 +481,9 @@
         <a class="dl" href="/dl/sword">下载 APK</a>
         <a class="dl" href="/dl/sword-mac">下载 Mac 版</a>
         <a class="dl" href="/dl/sword-win">下载 Windows 版</a>
-        <a class="dl" href="/beta#sword-apple"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M16 4c1-1 1-2 1-3-2 0-4 2-4 4 1 0 2 0 3-1ZM20 13c0-2 2-4 2-4-3-3-5-1-7-1-2 0-4-2-7 1-3 3-1 9 1 12 2 3 3 1 6 1s4 2 6-1c1-1 2-3 2-4-1 0-3-2-3-4Z"/></svg> App Store · 测试版</a>
-        <a class="dl" href="/beta#sword-android"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#34a853" d="M3 2l12 10L3 22z"/><path fill="#4285f4" d="M3 2l16 8-4 2z"/><path fill="#fbbc04" d="M15 12l4-2 3 2-3 2z"/><path fill="#ea4335" d="M3 22l12-10 4 2z"/></svg> Google Play · 测试版</a>
+        <a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+        <a class="dl" href="/beta#sword-apple">TestFlight · iPhone / Mac</a>
+        <span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span>
       </div>
       <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>
     </article>
@@ -516,7 +523,7 @@
 
 
   <h2>联系我们</h2>
-  <div class="contact">
+  <div class="contact" id="contact">
     <p>
       有问题、发现错误，或者读着哪里别扭 —— 都写信给我们。
       

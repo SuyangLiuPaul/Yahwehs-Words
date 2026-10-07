@@ -1,3 +1,4 @@
+import 'installation_diagnostics.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -107,6 +108,10 @@ class MediaCompanionService {
     _subscriptions.add(handler.mediaItem.listen(publishChange));
     _subscriptions.add(handler.playbackState.listen(publishChange));
     _channel.setMethodCallHandler((call) async {
+      final diagnosticArgs = call.arguments;
+      if (diagnosticArgs is Map) {
+        InstallationDiagnostics.companion(diagnosticArgs['diagnosisPlatform'], diagnosticArgs['diagnosisId']);
+      }
       switch (call.method) {
         case 'snapshot':
           await _loadLocale();
@@ -132,7 +137,14 @@ class MediaCompanionService {
           final task = _commands.then(
               (_) => _command(args['action'] as String, args['id'] as String?));
           _commands = task.catchError((Object _) {});
-          await task;
+          InstallationDiagnostics.record('companion', 'started');
+          try {
+            await task;
+            InstallationDiagnostics.record('companion', 'succeeded');
+          } catch (_) {
+            InstallationDiagnostics.record('companion', 'failed');
+            rethrow;
+          }
           unawaited(_publish());
           return _snapshot();
         default:

@@ -56,6 +56,9 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
 
+      - name: Diagnostic feedback privacy and failure checks
+        run: node tools/test_diagnostic_feedback.mjs
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:

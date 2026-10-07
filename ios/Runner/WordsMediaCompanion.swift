@@ -138,7 +138,7 @@ final class WordsMediaCompanion: NSObject, FlutterPlugin, WCSessionDelegate {
                replyHandler: @escaping ([String: Any]) -> Void) {
     let action = message["action"] as? String ?? "snapshot"
     if action == "snapshot" {
-      request("snapshot") { replyHandler($0 as? [String: Any] ?? [:]) }
+      request("snapshot", arguments: message) { replyHandler($0 as? [String: Any] ?? [:]) }
     } else if action == "children", let id = message["id"] as? String {
       request("children", arguments: ["id": id]) { value in
         if let failure = value as? [String: Any], failure["error"] != nil {

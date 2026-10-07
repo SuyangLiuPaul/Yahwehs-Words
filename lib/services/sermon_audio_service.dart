@@ -1,3 +1,4 @@
+import 'installation_diagnostics.dart';
 import 'companion_theme.dart';
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
@@ -326,6 +327,7 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
     if (_wired) return;
     _wired = true;
     _player.onPlaying.listen((v) {
+      InstallationDiagnostics.record('audio', v ? 'playing' : 'paused');
       _playing = v;
       if (v) {
         _loading = false;

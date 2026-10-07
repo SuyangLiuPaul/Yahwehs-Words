@@ -120,8 +120,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   }) {
     final name = _nameController.text.trim();
     final replyTo = _replyToController.text.trim();
-    final authEmail =
-        CloudAuthService.instance.currentUser?.email ?? '';
+    final authEmail = CloudAuthService.instance.currentUser?.email ?? '';
     final msg = _messageController.text.trim();
 
     final lines = <String>[];
@@ -182,8 +181,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     // only collects an optional reply-to email (so the developer
     // can answer back if needed). Signed-in users get this
     // pre-filled with their auth email; guests can leave it blank.
-    final authEmail =
-        CloudAuthService.instance.currentUser?.email ?? '';
+    final authEmail = CloudAuthService.instance.currentUser?.email ?? '';
     final replyTo = _replyToController.text.trim();
 
     // 2026-05-07 (v13/v14): POST first to /api/submitFeedback
@@ -210,8 +208,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
     if (result.ok) {
       setState(() => _submitting = false);
       messenger.showSnackBar(SnackBar(
-        content: Text(uiStrings['feedbackSent']?[locale] ??
-            'Feedback sent. Thank you!'),
+        content: Text(
+            uiStrings['feedbackSent']?[locale] ?? 'Feedback sent. Thank you!'),
         duration: const Duration(seconds: 3),
       ));
       Get.back();
@@ -223,8 +221,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       // Fall back to mailto so feedback still reaches the developer.
       final subject = _composeSubject(locale);
       final body = _composeBody(settings: settings, mp: mp);
-      final mailto =
-          'mailto:$_devEmail?subject=${Uri.encodeComponent(subject)}'
+      final mailto = 'mailto:$_devEmail?subject=${Uri.encodeComponent(subject)}'
           '&body=${Uri.encodeComponent(body)}';
       final opened = await LinkOpener.open(mailto);
       if (!mounted) return;
@@ -234,10 +231,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
           context,
           'To: $_devEmail\n'
           'Subject: $subject\n\n$body',
-          messageOverride:
-              uiStrings['feedbackCopiedFallback']?[locale] ??
-                  'Mail app unavailable — feedback copied to clipboard. '
-                      'Paste it into your email to $_devEmail.',
+          messageOverride: uiStrings['feedbackCopiedFallback']?[locale] ??
+              'Mail app unavailable — feedback copied to clipboard. '
+                  'Paste it into your email to $_devEmail.',
         );
         return;
       }
@@ -290,175 +286,181 @@ class _FeedbackPageState extends State<FeedbackPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-              // Intro / framing — sets the expectation that this
-              // goes directly to the developer's inbox via the
-              // user's mail client.
-              //
-              // 2026-05-08 (v1.1.0 — Liquid Glass): plain Container
-              // upgraded to LiquidGlassCard so the form's framing
-              // surface uses the same translucent material as the
-              // rest of the v1.1.0 design pass.
-              LiquidGlassCard(
-                padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-                borderRadius: 18,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.mail_outline_rounded,
-                        size: 18, color: scheme.primary),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        uiStrings['feedbackIntro']?[locale] ??
-                            'Tap "Send via Email" and your default mail app will open with this message ready for you to send to the developer.',
-                        style: TextStyle(
-                          fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                          fontSize: (fs - 3).clamp(11.0, 14.0).toDouble(),
-                          color: scheme.onSurfaceVariant,
-                          height: 1.45,
+                  // Intro / framing — sets the expectation that this
+                  // goes directly to the developer's inbox via the
+                  // user's mail client.
+                  //
+                  // 2026-05-08 (v1.1.0 — Liquid Glass): plain Container
+                  // upgraded to LiquidGlassCard so the form's framing
+                  // surface uses the same translucent material as the
+                  // rest of the v1.1.0 design pass.
+                  LiquidGlassCard(
+                    padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                    borderRadius: 18,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.mail_outline_rounded,
+                            size: 18, color: scheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            uiStrings['feedbackIntro']?[locale] ??
+                                'Tap "Send via Email" and your default mail app will open with this message ready for you to send to the developer.',
+                            style: TextStyle(
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              fontSize: (fs - 3).clamp(11.0, 14.0).toDouble(),
+                              color: scheme.onSurfaceVariant,
+                              height: 1.45,
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Category picker — chip row.
+                  Text(
+                    uiStrings['feedbackCategoryLabel']?[locale] ??
+                        'What is this about?',
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: (fs - 2).clamp(12.0, 15.0).toDouble(),
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final cat in _FeedbackCategory.values)
+                        ChoiceChip(
+                          label: Text(_categoryLabel(cat, locale)),
+                          selected: _category == cat,
+                          onSelected: (_) => setState(() => _category = cat),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+
+                  // Required message field.
+                  Text(
+                    uiStrings['feedbackMessageLabel']?[locale] ??
+                        'Your message *',
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: (fs - 2).clamp(12.0, 15.0).toDouble(),
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: _messageController,
+                    maxLength: 4000,
+                    minLines: 5,
+                    maxLines: 12,
+                    textInputAction: TextInputAction.newline,
+                    decoration: InputDecoration(
+                      hintText: uiStrings['feedbackMessageHint']?[locale] ??
+                          'Describe the bug / feature / thought.',
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Optional name.
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: uiStrings['feedbackNameLabel']?[locale] ??
+                          'Your name (optional)',
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 2026-05-07 (v16): single optional reply-to field.
+                  // Pre-filled with the auth email for signed-in users;
+                  // editable so they can route replies elsewhere. Guests
+                  // start blank and can drop their email in if they want
+                  // a response. Used only as the message's Reply-To
+                  // header — no copy / CC.
+                  TextField(
+                    controller: _replyToController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: uiStrings['feedbackReplyToLabel']?[locale] ??
+                          'Reply-to email (optional)',
+                      hintText: 'you@example.com',
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+
+                  // Send button.
+                  FilledButton.icon(
+                    onPressed: _submitting ? null : _submit,
+                    icon: _submitting
+                        // 2026-05-10 (v1.2.23): theme-aware spinner so
+                        // the in-button progress matches the button's
+                        // foreground in every theme (was hardcoded
+                        // Colors.white — fine for the default blue
+                        // FilledButton in light mode, broke in dark
+                        // mode + custom palettes).
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.4,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : const Icon(Icons.send_rounded),
+                    label: Text(
+                      _submitting
+                          ? (uiStrings['feedbackSending']?[locale] ??
+                              'Sending…')
+                          : (uiStrings['feedbackSend']?[locale] ?? 'Send'),
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: (fs - 1).clamp(13.0, 16.0).toDouble(),
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Category picker — chip row.
-              Text(
-                uiStrings['feedbackCategoryLabel']?[locale] ??
-                    'What is this about?',
-                style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                  fontSize: (fs - 2).clamp(12.0, 15.0).toDouble(),
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final cat in _FeedbackCategory.values)
-                    ChoiceChip(
-                      label: Text(_categoryLabel(cat, locale)),
-                      selected: _category == cat,
-                      onSelected: (_) =>
-                          setState(() => _category = cat),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 24),
                     ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    uiStrings['feedbackPrivacyNote']?[locale] ??
+                        'No data is sent automatically. Pressing the button '
+                            'just opens your mail app with this content '
+                            'pre-filled — you choose whether to hit Send.',
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: (fs - 4).clamp(10.0, 12.0).toDouble(),
+                      color: scheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
-              const SizedBox(height: 18),
-
-              // Required message field.
-              Text(
-                uiStrings['feedbackMessageLabel']?[locale] ??
-                    'Your message *',
-                style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                  fontSize: (fs - 2).clamp(12.0, 15.0).toDouble(),
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _messageController,
-                minLines: 5,
-                maxLines: 12,
-                textInputAction: TextInputAction.newline,
-                decoration: InputDecoration(
-                  hintText: uiStrings['feedbackMessageHint']?[locale] ??
-                      'Describe the bug / feature / thought.',
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Optional name.
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: uiStrings['feedbackNameLabel']?[locale] ??
-                      'Your name (optional)',
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // 2026-05-07 (v16): single optional reply-to field.
-              // Pre-filled with the auth email for signed-in users;
-              // editable so they can route replies elsewhere. Guests
-              // start blank and can drop their email in if they want
-              // a response. Used only as the message's Reply-To
-              // header — no copy / CC.
-              TextField(
-                controller: _replyToController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: uiStrings['feedbackReplyToLabel']?[locale] ??
-                      'Reply-to email (optional)',
-                  hintText: 'you@example.com',
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                ),
-              ),
-              const SizedBox(height: 22),
-
-              // Send button.
-              FilledButton.icon(
-                onPressed: _submitting ? null : _submit,
-                icon: _submitting
-                    // 2026-05-10 (v1.2.23): theme-aware spinner so
-                    // the in-button progress matches the button's
-                    // foreground in every theme (was hardcoded
-                    // Colors.white — fine for the default blue
-                    // FilledButton in light mode, broke in dark
-                    // mode + custom palettes).
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.4,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                    : const Icon(Icons.send_rounded),
-                label: Text(
-                  _submitting
-                      ? (uiStrings['feedbackSending']?[locale] ?? 'Sending…')
-                      : (uiStrings['feedbackSend']?[locale] ?? 'Send'),
-                  style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: (fs - 1).clamp(13.0, 16.0).toDouble(),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                style: FilledButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                uiStrings['feedbackPrivacyNote']?[locale] ??
-                    'No data is sent automatically. Pressing the button '
-                        'just opens your mail app with this content '
-                        'pre-filled — you choose whether to hit Send.',
-                style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                  fontSize: (fs - 4).clamp(10.0, 12.0).toDouble(),
-                  color: scheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                  height: 1.4,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
             ),
           ),
         ),
