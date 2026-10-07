@@ -31,9 +31,11 @@ import 'package:yahwehs_words/widgets/update_check_tile.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/constants/projection_strings.dart';
 import 'package:yahwehs_words/services/projection_backdrop.dart';
-import 'package:yahwehs_words/services/verse_photo_picker.dart' show pickVersePhoto;
+import 'package:yahwehs_words/services/verse_photo_picker.dart'
+    show pickVersePhoto;
 import 'package:yahwehs_words/widgets/projection_stage.dart';
-import 'package:yahwehs_words/pages/projection_page.dart' show kProjectionTypeSteps;
+import 'package:yahwehs_words/pages/projection_page.dart'
+    show kProjectionTypeSteps;
 import 'package:yahwehs_words/models/verse.dart';
 import 'package:yahwehs_words/constants/bible_versions.dart';
 import 'package:yahwehs_words/pages/about_page.dart';
@@ -188,17 +190,17 @@ class SettingsPage extends StatelessWidget {
         }
       },
       child: Scaffold(
-      appBar: AppBar(
-        leading: const LocalizedBackButton(),
-        // The settings locale is now available inside the Consumer below
-        title: Consumer<AppSettings>(
-          builder: (context, settings, _) =>
-              Text(uiStrings['settings']?[settings.locale] ?? 'Settings'),
+        appBar: AppBar(
+          leading: const LocalizedBackButton(),
+          // The settings locale is now available inside the Consumer below
+          title: Consumer<AppSettings>(
+            builder: (context, settings, _) =>
+                Text(uiStrings['settings']?[settings.locale] ?? 'Settings'),
+          ),
+          actions: const [LanguageSwitcherButton(), HomeIconButton()],
         ),
-        actions: const [LanguageSwitcherButton(), HomeIconButton()],
+        body: _SettingsPageBody(initialSection: initialSection),
       ),
-      body: _SettingsPageBody(initialSection: initialSection),
-    ),
     );
   }
 }
@@ -223,6 +225,21 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
   final _notificationsKey = GlobalKey();
   final _aiKey = GlobalKey();
   final _aboutKey = GlobalKey();
+
+  bool _advancedExpanded = false;
+
+  String _tierText(String locale, String hans, String hant, String en) =>
+      locale == 'zh-Hant'
+          ? hant
+          : locale == 'zh-Hans'
+              ? hans
+              : en;
+
+  bool _needsAdvanced(SettingsSection? section) =>
+      section != null &&
+      section != SettingsSection.account &&
+      section != SettingsSection.display &&
+      section != SettingsSection.about;
 
   GlobalKey? _keyFor(SettingsSection? section) {
     switch (section) {
@@ -250,6 +267,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
   @override
   void initState() {
     super.initState();
+    _advancedExpanded = kIsWeb && _needsAdvanced(widget.initialSection);
     final target = _keyFor(widget.initialSection);
     if (target == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -273,6 +291,25 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
       curve: AppMotion.enter,
       alignment: 0.05,
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant _SettingsPageBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialSection != oldWidget.initialSection) {
+      if (kIsWeb && _needsAdvanced(widget.initialSection)) {
+        _advancedExpanded = true;
+      }
+      final target = _keyFor(widget.initialSection);
+      if (target != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Scrollable.ensureVisible(target.currentContext ?? context,
+                duration: AppMotion.slow, alignment: 0.05);
+          }
+        });
+      }
+    }
   }
 
   @override
@@ -317,6 +354,1243 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
         final maxW = ResponsiveBreakpoints.settingsMaxWidth(dc);
         final s = ResponsiveBreakpoints.spacingScale(dc);
 
+        // Keep native packages unchanged; web uses progressive disclosure.
+        final sections = <String, List<Widget>>{
+          'help': <Widget>[
+            // 2026-09-18: above everything, because this is where a
+            // reader looking for a feature arrives when they cannot
+            // find it — and until today there was nothing here to find.
+            Card(
+              elevation: 0,
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              child: ListTile(
+                key: const Key('settings.help'),
+                leading: const Icon(Icons.help_outline_rounded),
+                title: Text(uiStrings['helpTitle']?[settings.locale] ??
+                    'Help & shortcuts'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => openHelp(context),
+              ),
+            ),
+            // 2026-09-18: the release notes, one tap away. They lived only
+            // behind a button on the About page, where the owner could not
+            // find them (「可以有个地方放最新的release notes吗」).
+            Card(
+              elevation: 0,
+              child: ListTile(
+                key: const Key('settings.changelog'),
+                leading: const Icon(Icons.new_releases_outlined),
+                title: Text(uiStrings['changelogTitle']?[settings.locale] ??
+                    "What's new"),
+                subtitle: Text('v$kAppVersion'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => pushPage(const ChangelogPage()),
+              ),
+            ),
+            SizedBox(height: 12 * s),
+          ],
+          'account': <Widget>[
+            // Account section now FIRST — see comment below at the
+            // old _accountKey location for the rationale.
+            KeyedSubtree(
+              key: _accountKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionAccount']?[settings.locale] ??
+                      'Account',
+                  icon: Icons.account_circle_outlined),
+            ),
+            _AccountSection(settings: settings, s: s),
+            SizedBox(height: 16 * s),
+          ],
+          'displayHeader': <Widget>[
+            KeyedSubtree(
+              key: _displayKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionDisplay']?[settings.locale] ??
+                      'Display',
+                  icon: Icons.palette_outlined),
+            ),
+          ],
+          'fontSize': <Widget>[
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['fontSize']?[settings.locale] ?? 'Font Size',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Slider(
+                      value: settings.fontSize,
+                      min: 12,
+                      max: 40,
+                      divisions: 28,
+                      label: '${settings.fontSize.toInt()} pt',
+                      onChanged: (val) => settings.setFontSize(val),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'menuSize': <Widget>[
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['menuScale']?[settings.locale] ?? 'Menu Size',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Slider(
+                      value: settings.menuScale,
+                      min: 0.7,
+                      max: 1.5,
+                      divisions: 8,
+                      label: '${settings.menuScale.toStringAsFixed(1)}x',
+                      onChanged: (val) => settings.setMenuScale(val),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'displayDetails': <Widget>[
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['lineSpacing']?[settings.locale] ??
+                          'Line Spacing',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Slider(
+                      value: settings.lineSpacing,
+                      min: 1.0,
+                      max: 3.0,
+                      divisions: 20,
+                      label: settings.lineSpacing.toStringAsFixed(1),
+                      onChanged: (val) => settings
+                          .setLineSpacing(double.parse(val.toStringAsFixed(1))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+            // 2026-09-20: how long the opening verse stays up. It was
+            // a fixed 3 s and the feedback was that the verse was gone
+            // before it had been read.
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            uiStrings['splashSeconds']?[settings.locale] ??
+                                'Splash screen',
+                            style: TextStyle(
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              fontSize: settings.fontSize + 2,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          (uiStrings['splashSecondsValue']?[settings.locale] ??
+                                  '{n}s')
+                              .replaceAll('{n}', '${settings.splashSeconds}'),
+                          style: TextStyle(
+                            fontFamily: settings.fontFamily,
+                            fontFamilyFallback: kCjkFontFallback,
+                            fontSize: settings.fontSize,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Slider(
+                      key: const Key('settings.splashSeconds'),
+                      value: settings.splashSeconds.toDouble(),
+                      min: kSplashSecondsMin.toDouble(),
+                      max: kSplashSecondsMax.toDouble(),
+                      divisions: kSplashSecondsMax - kSplashSecondsMin,
+                      label: '${settings.splashSeconds}',
+                      onChanged: (val) =>
+                          settings.setSplashSeconds(val.round()),
+                    ),
+                    Text(
+                      uiStrings['splashSecondsHint']?[settings.locale] ??
+                          'How long the opening verse stays. "Enter" goes '
+                              'in at any time.',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize * 0.8,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(16 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['samplePreview']?[settings.locale] ??
+                          'Sample Preview',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12 * s),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          uiStrings['copyFormat']?[settings.locale] ??
+                              'Copy Format',
+                          style: TextStyle(
+                            fontFamily: settings.fontFamily,
+                            fontFamilyFallback: kCjkFontFallback,
+                            fontSize: settings.fontSize + 2,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 8 * s),
+                        DropdownButton<String>(
+                          isExpanded: true,
+                          itemHeight: null,
+                          value: settings.copyFormat,
+                          onChanged: (val) {
+                            if (val != null) settings.setCopyFormat(val);
+                          },
+                          items: [
+                            DropdownMenuItem(
+                                value: 'plain',
+                                child: Text(
+                                  uiStrings['plainText']?[settings.locale] ??
+                                      'Plain Text',
+                                  style: TextStyle(
+                                    fontSize: settings.fontSize,
+                                    fontFamily: settings.fontFamily,
+                                    fontFamilyFallback: kCjkFontFallback,
+                                  ),
+                                )),
+                            DropdownMenuItem(
+                                value: 'withRef',
+                                child: Text(
+                                  uiStrings['withReference']
+                                          ?[settings.locale] ??
+                                      'With Reference',
+                                  style: TextStyle(
+                                    fontSize: settings.fontSize,
+                                    fontFamily: settings.fontFamily,
+                                    fontFamilyFallback: kCjkFontFallback,
+                                  ),
+                                )),
+                            DropdownMenuItem(
+                                value: 'devotional',
+                                child: Text(
+                                  uiStrings['devotionalFormat']
+                                          ?[settings.locale] ??
+                                      'Devotional Format',
+                                  style: TextStyle(
+                                    fontSize: settings.fontSize,
+                                    fontFamily: settings.fontFamily,
+                                    fontFamilyFallback: kCjkFontFallback,
+                                  ),
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12 * s),
+                    // 2026-09-13: 「好像这里面有原文（）这个复制粘贴要不要包含应该在
+                    // setting有一个option toggle」. The CUV's translators' notes sit in
+                    // full-width parentheses inside the verse text; whether a copy keeps
+                    // them is a choice, made here beside the format it applies to. The
+                    // preview below follows it, so the reader sees the answer before
+                    // they paste.
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                uiStrings['copyStripNotes']?[settings.locale] ??
+                                    "Leave out translators' notes",
+                                style: TextStyle(
+                                  fontFamily: settings.fontFamily,
+                                  fontFamilyFallback: kCjkFontFallback,
+                                  fontSize: settings.fontSize,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 4 * s),
+                              Text(
+                                uiStrings['copyStripNotesHint']
+                                        ?[settings.locale] ??
+                                    'Notes in full-width parentheses, like （原文作…）, '
+                                        'are not copied.',
+                                style: TextStyle(
+                                  fontFamily: settings.fontFamily,
+                                  fontFamilyFallback: kCjkFontFallback,
+                                  fontSize: settings.fontSize * 0.85,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                              ),
+                              // 2026-09-15. 「这个开了为什么复制后还是
+                              // 这样」. The switch was on, the copy was
+                              // unchanged, and both were correct: 出埃及记
+                              // 19 has nothing in full-width parentheses,
+                              // and most chapters do not. A switch that
+                              // demonstrably does nothing reads as broken,
+                              // so it says when it has nothing to do.
+                              //
+                              // Corrected the same day, by the same
+                              // reader, over 出埃及记 30 — the chapter
+                              // whose verse 13 is the example the hint
+                              // above sends people to. The first version
+                              // read the THREE VERSES THE PREVIEW SAMPLES
+                              // and printed a claim about the whole
+                              // chapter, so it called 出 30 empty while
+                              // 出 30:13 sat eleven verses below the fold.
+                              //
+                              // Three states, not two: the preview shows
+                              // one (say nothing — the switch speaks for
+                              // itself), the chapter has one out of shot
+                              // (say where), the chapter has none (say so).
+                              if (settings.copyStripParentheticals &&
+                                  !verseSamples.any((v) =>
+                                      parentheticalNotePattern
+                                          .hasMatch(v['text'] as String)))
+                                Builder(builder: (context) {
+                                  // The WHOLE chapter, not the three
+                                  // verses on screen — that confusion is
+                                  // the whole reason this branch exists.
+                                  Verse? elsewhere;
+                                  for (final v in versesInChapter) {
+                                    if (parentheticalNotePattern
+                                        .hasMatch(v.text)) {
+                                      elsewhere = v;
+                                      break;
+                                    }
+                                  }
+                                  final text = elsewhere == null
+                                      ? (uiStrings['copyStripNotesNothingHere']
+                                              ?[settings.locale] ??
+                                          'This chapter has none, so the '
+                                              'switch changes nothing here.')
+                                      : (uiStrings['copyStripNotesElsewhere']
+                                                  ?[settings.locale] ??
+                                              'This chapter has one (verse '
+                                                  '{verse}), but not in the '
+                                                  'verses previewed above.')
+                                          .replaceAll(
+                                              '{verse}', elsewhere.verseLabel);
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: 4 * s),
+                                    child: Text(
+                                      text,
+                                      style: TextStyle(
+                                        fontFamily: settings.fontFamily,
+                                        fontFamilyFallback: kCjkFontFallback,
+                                        fontSize: settings.fontSize * 0.85,
+                                        fontStyle: FontStyle.italic,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                            ],
+                          ),
+                        ),
+                        Switch.adaptive(
+                          value: settings.copyStripParentheticals,
+                          onChanged: settings.setCopyStripParentheticals,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12 * s),
+                    Text(
+                      currentBook != null && currentChapter != null
+                          ? '$currentBook $currentChapter'
+                          : uiStrings['noVersesAvailable']?[settings.locale] ??
+                              'No verses available',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontFamily: settings.fontFamily,
+                            fontFamilyFallback: kCjkFontFallback,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: settings.fontSize,
+                          ),
+                    ),
+                    SizedBox(height: 8 * s),
+                    if (settings.copyFormat == 'devotional')
+                      Padding(
+                        padding:
+                            EdgeInsets.only(bottom: settings.lineSpacing * 2),
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: settings.fontSize,
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                              height: settings.lineSpacing,
+                              color:
+                                  Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: getDevotionalFormattedText(
+                                    stripParentheticals:
+                                        settings.copyStripParentheticals,
+                                    verseSamples,
+                                    currentBook,
+                                    currentChapter),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      ...verseSamples.map((v) {
+                        final label = v['verseLabel'] as String;
+                        final ref =
+                            '${currentBook ?? ''} $currentChapter:$label';
+                        // 2026-05-19 (v1.2.58): switch the preview's
+                        // ad-hoc regex pipeline to the shared
+                        // `sanitizeForCopy` helper so the preview
+                        // matches the real copy output byte-for-byte.
+                        // Earlier regex chain stripped `{phrase}`
+                        // entirely (the v1.2.56 brace bug that was
+                        // only fixed in sanitize), and didn't strip
+                        // `\n` (which v1.2.57 added to ~292 verses
+                        // for poetry layout). Single helper, single
+                        // truth.
+                        final cleanText = sanitizeForCopy(v['text'] as String,
+                            stripParentheticals:
+                                settings.copyStripParentheticals);
+                        final headerText =
+                            settings.copyFormat == 'withRef' ? '[$ref] ' : '';
+
+                        return Padding(
+                          padding:
+                              EdgeInsets.only(bottom: settings.lineSpacing * 2),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: settings.fontSize,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                                height: settings.lineSpacing,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color,
+                              ),
+                              children: [
+                                if (settings.copyFormat == 'plain') ...[
+                                  TextSpan(
+                                    text: '$label ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  TextSpan(text: cleanText),
+                                ] else ...[
+                                  TextSpan(text: '$headerText$cleanText'),
+                                ],
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    // Removed Copy Preview button and its padding
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+            // Round 56: Style preset picker. Bundles font + size +
+            // line spacing + menu scale + paragraph mode into
+            // named one-tap presets (Classic / Modern / Reverent
+            // / Compact / Reader). Sits at the top of Display so
+            // users see it before manually tuning each setting.
+            _StylePresetCard(settings: settings, s: s),
+            SizedBox(height: 16 * s),
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['fontFamily']?[settings.locale] ??
+                          'Font Family',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12 * s),
+                    DropdownButton<String>(
+                      value: settings.fontSelection,
+                      isExpanded: true,
+                      onChanged: (val) {
+                        if (val != null) settings.setFontFamily(val);
+                      },
+                      // Round 56 (continued): each row physically
+                      // renders in its own font via
+                      // [previewTextStyle], so the user can
+                      // visually compare options before picking.
+                      // Bundled fonts always work; Google Fonts
+                      // are downloaded on demand by the
+                      // `google_fonts` package; system-only
+                      // entries fall back to the engine default
+                      // when not installed locally.
+                      items: [
+                        for (final f in availableFontOptions())
+                          DropdownMenuItem(
+                            value: f.key,
+                            child: Text(
+                              f.labelFor(settings.locale),
+                              style: previewTextStyle(
+                                f.key,
+                                TextStyle(
+                                  fontSize: settings.fontSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 6 * s),
+                    Text(
+                      uiStrings['fontFamilyHint']?[settings.locale] ??
+                          'Bundled fonts (Roboto, Microsoft YaHei) work everywhere. Other choices use the system fonts installed on your device.',
+                      style: TextStyle(
+                        fontSize: (settings.fontSize - 4).clamp(11.0, 13.0),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
+                        fontStyle: FontStyle.italic,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+            // Primary Color card - always visible (dark + light)
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['primaryColor']?[settings.locale] ??
+                          'Primary Color',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12 * s),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: palette.map((c) {
+                        final isSelected = settings.primaryColor == c;
+                        // Floor the avatar at ~22 dp so the swatch
+                        // never falls below a comfortable tap
+                        // target even when the user shrinks the
+                        // font size to its minimum.
+                        final avatarRadius =
+                            (settings.fontSize * 0.8).clamp(20.0, 28.0);
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(40),
+                          onTap: () => settings.setPrimaryColor(c),
+                          child: Padding(
+                            // Padding pushes the actual hit-test
+                            // size up past 44 dp on every device
+                            // class without changing the visual
+                            // size of the swatch.
+                            padding: const EdgeInsets.all(4),
+                            child: CircleAvatar(
+                              backgroundColor: c,
+                              radius: avatarRadius,
+                              child: isSelected
+                                  ? Icon(Icons.check,
+                                      color: c.computeLuminance() > 0.5
+                                          ? Colors.black
+                                          : Colors.white,
+                                      size: settings.fontSize * 0.6)
+                                  : null,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+            SizedBox(height: 16 * s),
+            // 2026-09-13: the projector, set up here beside Copy — 「像
+            // copy风格一样在setting里面」. What the operator decides once
+            // (size, ground, which edition keeps the passage company)
+            // lives in Settings; what changes mid-service (blank, the
+            // verse) stays on the projection page.
+            _ProjectorCard(
+              settings: settings,
+              mainProvider: mainProvider,
+              s: s,
+              // TWO verses when the chapter has them. Three of the
+              // four layout choices — run-together, verse numbers, and
+              // what alignment does to a second line — are invisible
+              // on a single verse, and a preview that cannot show
+              // what a control does is not a preview.
+              previewVerses: versesInChapter.take(2).toList(),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'readingHeader': <Widget>[
+            KeyedSubtree(
+              key: _readingKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionReading']?[settings.locale] ??
+                      'Reading',
+                  icon: Icons.menu_book_outlined),
+            ),
+          ],
+          'theme': <Widget>[
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['themeMode']?[settings.locale] ?? 'Theme Mode',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12 * s),
+                    DropdownButton<ThemeMode>(
+                      isExpanded: true,
+                      itemHeight: null,
+                      value: settings.themeMode,
+                      onChanged: (val) {
+                        if (val != null) settings.setThemeMode(val);
+                      },
+                      items: [
+                        DropdownMenuItem(
+                          value: ThemeMode.system,
+                          child: Text(
+                            uiStrings['themeSystem']?[settings.locale] ??
+                                'System Default',
+                            style: TextStyle(
+                              fontSize: settings.fontSize,
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: ThemeMode.light,
+                          child: Text(
+                            uiStrings['themeDay']?[settings.locale] ??
+                                'Light Mode',
+                            style: TextStyle(
+                              fontSize: settings.fontSize,
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: ThemeMode.dark,
+                          child: Text(
+                            uiStrings['themeNight']?[settings.locale] ??
+                                'Dark Mode',
+                            style: TextStyle(
+                              fontSize: settings.fontSize,
+                              fontFamily: settings.fontFamily,
+                              fontFamilyFallback: kCjkFontFallback,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'readingMode': <Widget>[
+            Card(
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['readingMode']?[settings.locale] ??
+                          'Reading Mode',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 12 * s),
+                    LayoutBuilder(
+                      builder: (context, toggleConstraints) {
+                        return ToggleButtons(
+                          isSelected: [
+                            !settings.paragraphMode,
+                            settings.paragraphMode
+                          ],
+                          onPressed: (index) =>
+                              settings.setParagraphMode(index == 1),
+                          borderRadius: BorderRadius.circular(8),
+                          constraints: BoxConstraints(
+                            minHeight: 36,
+                            minWidth: (toggleConstraints.maxWidth - 8) / 2,
+                            maxWidth: (toggleConstraints.maxWidth - 8) / 2,
+                          ),
+                          children: [
+                            Text(
+                              uiStrings['verseByVerse']?[settings.locale] ??
+                                  'Verse by Verse',
+                              style: TextStyle(
+                                fontSize: settings.fontSize * 0.9,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                              ),
+                            ),
+                            Text(
+                              uiStrings['paragraphFlow']?[settings.locale] ??
+                                  'Paragraph Flow',
+                              style: TextStyle(
+                                fontSize: settings.fontSize * 0.9,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'readingDetails': <Widget>[
+            // 2026-05-07 (v17): the "Offline Mode" toggle was
+            // removed from this card. The bool was persisted in
+            // SharedPreferences but never read by any other code
+            // path -- a piece of dead UI that suggested the user
+            // could opt out of network use, which was never true.
+            // The Flutter web service worker decides what's cached;
+            // the dedicated "Offline pack" card lower in this page
+            // is the real "make this work without network" knob.
+            Card(
+              child: Column(
+                children: [
+                  // 2026-08-02 (v1.3.156): 护眼 (easy-on-eyes) reading
+                  // theme — a warm sepia palette for the Bible reading
+                  // pane only, independent of the app-wide light/dark
+                  // ThemeMode above. Field request, referencing another
+                  // app's warm-paper reading screen.
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['readingPaperTheme']?[settings.locale] ??
+                          'Paper reading theme',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['readingPaperThemeSubtitle']
+                              ?[settings.locale] ??
+                          'Switch the reading pane to a warm, paper-like '
+                              'background for more comfortable long '
+                              'reading sessions.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.readingPaperTheme,
+                    onChanged: (val) => settings.setReadingPaperTheme(val),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['boldVerseText']?[settings.locale] ??
+                          'Bold verse text',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['boldVerseTextSubtitle']?[settings.locale] ??
+                          'Render scripture body text in semi-bold weight.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.boldVerseText,
+                    onChanged: (val) => settings.setBoldVerseText(val),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['showSectionTitles']?[settings.locale] ??
+                          'Section titles',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['showSectionTitlesSubtitle']
+                              ?[settings.locale] ??
+                          'Render paragraph headings (e.g. "The Sermon '
+                              'on the Mount") above the verse.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.showSectionTitles,
+                    onChanged: (val) => settings.setShowSectionTitles(val),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['showBookIntro']?[settings.locale] ??
+                          'Book introductions',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['showBookIntroSubtitle']?[settings.locale] ??
+                          'Show a collapsible card at the top of '
+                              'chapter 1 with the book\'s author, '
+                              'date, themes, and key passage.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.showBookIntro,
+                    onChanged: (val) => settings.setShowBookIntro(val),
+                  ),
+                  // Round 56: removed the "Pick verse after
+                  // chapter" toggle. The picker now always shows
+                  // book → chapter → verse as 3-step grid flow,
+                  // matching how YouVersion / Bible Hub etc. work
+                  // and per user request: "选择节应该全部用 grid mode".
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['showStrongsBadge']?[settings.locale] ??
+                          "Show Strong's number on word chips",
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['showStrongsBadgeSubtitle']?[settings.locale] ??
+                          "Display the G#### / H#### badge under each Hebrew/Greek word in the exegesis sheet.",
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.showStrongsInOriginals,
+                    onChanged: (val) => settings.setShowStrongsInOriginals(val),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(
+                      uiStrings['autoExpandFirstRef']?[settings.locale] ??
+                          'Auto-expand first verse group',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['autoExpandFirstRefSubtitle']
+                              ?[settings.locale] ??
+                          "Automatically open the first book group of concordance refs in the exegesis sheet.",
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.autoExpandFirstRef,
+                    onChanged: (val) => settings.setAutoExpandFirstRef(val),
+                  ),
+                  const Divider(height: 1),
+                  // 2026-09-08: the only search-behaviour switch this
+                  // page has, so it lives at the foot of the Reading
+                  // card rather than under a one-row section header of
+                  // its own. Its strings are in
+                  // `fuzzy_search_strings.dart` and not `uiStrings`;
+                  // see that file's header for why.
+                  SwitchListTile(
+                    title: Text(
+                      fuzzySearchStrings['fuzzySearchSetting']
+                              ?[settings.locale] ??
+                          'Broaden a search that finds nothing',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      fuzzySearchStrings['fuzzySearchSettingSubtitle']
+                              ?[settings.locale] ??
+                          'Lets 磯法 reach 矶法, 上帝 reach 神 and '
+                              '"loved" reach "love". Rows found this '
+                              'way are labelled.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.fuzzySearch,
+                    onChanged: (val) => settings.setFuzzySearch(val),
+                  ),
+                  // 2026-05-07 (v17): "Check for Updates" tile
+                  // removed. It re-ran FetchVerses against the
+                  // already-bundled assets and unconditionally
+                  // showed "You're up to date", making it pure
+                  // theatre. Real PWA updates are driven by the
+                  // service worker (replaced on next reload), and
+                  // the "Clear cache & reload" button further down
+                  // this page already provides an honest force-
+                  // refresh path.
+                ],
+              ),
+            ),
+            SizedBox(height: 16 * s),
+          ],
+          'appHeader': <Widget>[
+            _SectionHeader(
+                uiStrings['settingsSectionApp']?[settings.locale] ?? 'App',
+                icon: Icons.tune_outlined),
+          ],
+          'language': <Widget>[
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(16 * s),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiStrings['interfaceLanguage']?[settings.locale] ??
+                          'Interface Language',
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(height: 8 * s),
+                    DropdownButton<String>(
+                      isExpanded: true,
+                      itemHeight: null,
+                      value: settings.locale,
+                      onChanged: (val) {
+                        if (val != null) settings.setLocale(val);
+                      },
+                      items: [
+                        DropdownMenuItem(
+                          value: 'zh-Hans',
+                          child: Text('简体中文',
+                              style: TextStyle(
+                                fontSize: settings.fontSize,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                              )),
+                        ),
+                        DropdownMenuItem(
+                          value: 'zh-Hant',
+                          child: Text('繁體中文',
+                              style: TextStyle(
+                                fontSize: settings.fontSize,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                              )),
+                        ),
+                        DropdownMenuItem(
+                          value: 'en',
+                          child: Text('English',
+                              style: TextStyle(
+                                fontSize: settings.fontSize,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                              )),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          'updates': <Widget>[
+            // 2026-09-09: the update controls, in Settings.
+            //
+            // From the owner: 「word也没有选项每天check更新的」 — and
+            // the switch existed, in the About page, where they had no
+            // reason to look. Sword keeps it in Settings; a reader who
+            // knows one app should not have to re-learn the other. The
+            // About-page copy stays where it is rather than moving:
+            // it sits beside the version number, which is the other
+            // place this question gets asked, and both render the same
+            // widgets over the same setting.
+            //
+            // The pair hides itself on the web, where a build is
+            // whatever the server last served and `WebUpdateChecker`
+            // watches that continuously — a daily switch there would
+            // be a control over nothing.
+            if (UpdateService.isSupported) ...[
+              SizedBox(height: 8 * s),
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16 * s),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      UpdateCheckTile(
+                        locale: settings.locale,
+                        scheme: Theme.of(context).colorScheme,
+                      ),
+                      AutoUpdateCheckToggle(locale: settings.locale),
+                      UpdateFrequencySelector(locale: settings.locale),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            // 2026-10-06: web and store builds have no GitHub updater, so the
+            // manual check lives here instead.
+            if (!UpdateService.isSupported) ...[
+              SizedBox(height: 8 * s),
+              Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16 * s),
+                  child: ManualUpdateTile(locale: settings.locale),
+                ),
+              ),
+            ],
+            DiagnosisTile(locale: settings.locale),
+          ],
+          'companionPreferences': <Widget>[
+            // 2026-05-06: Account section moved to TOP of Settings
+            // (was after Display/Reading/App). User feedback: tapping
+            // a profile chip on the dashboard navigates here, so
+            // sync / sign-in controls should be the first thing they
+            // see — not buried halfway down. Display/Reading/App
+            // still come right after.
+            SizedBox(height: 16 * s),
+            KeyedSubtree(
+              key: _dashboardKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionDashboard']?[settings.locale] ??
+                      'Home sections',
+                  icon: Icons.dashboard_customize_outlined),
+            ),
+            _DashboardSectionsCard(settings: settings, s: s),
+            // Round 56 day-3 (2026-05-06): the BYOK card was
+            // briefly here at the top level, but the user wanted
+            // "the app configures everything as long as I get
+            // their permission" — i.e. zero AI setup for normal
+            // users. The shared developer Gemini key already
+            // covers AI features for everyone after sign-in, so
+            // BYOK is purely an escape valve for power users / the
+            // case when shared quota is exhausted. Moved the card
+            // to AboutPage (Settings → About → Attributions &
+            // licensing → bottom) so it stays discoverable without
+            // cluttering the main Settings list.
+            SizedBox(height: 16 * s),
+            KeyedSubtree(
+              key: _notificationsKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionNotifications']?[settings.locale] ??
+                      'Notifications',
+                  icon: Icons.notifications_outlined),
+            ),
+            _NotificationsCard(settings: settings, s: s),
+            SizedBox(height: 16 * s),
+            // 2026-05-08 (v1.1.9): BYOK Gemini-key card re-exposed.
+            // The widget itself (lib/widgets/gemini_key_card.dart)
+            // has been live the whole time, but on 2026-05-06 the
+            // section was removed from the UI because the dev's
+            // shared key was carrying everyone with no setup
+            // friction. After 2026-05-08 the shared key started
+            // hitting the Gemini free-tier 250-RPD ceiling for the
+            // day; users who hit "AI quota exhausted" need a way
+            // to drop in their own AI Studio key and keep working.
+            // Putting it under its own "AI" section above About
+            // so it's discoverable without crowding the daily-use
+            // toggles further up.
+            KeyedSubtree(
+              key: _aiKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionAi']?[settings.locale] ?? 'AI',
+                  icon: Icons.auto_awesome_outlined),
+            ),
+            GeminiKeyCard(settings: settings, s: s),
+            SizedBox(height: 12 * s),
+            // 2026-05-10 (v1.2.26): AI model picker. Three tiers
+            // mapped server-side to gemini-2.5-flash-lite (fast),
+            // gemini-2.5-flash (balanced), gemini-2.5-pro (deep).
+            // Defaults to fast — same model the server used pre-
+            // v1.2.26 — so existing users see no behaviour change
+            // unless they explicitly bump it.
+            _AiModelCard(settings: settings, s: s),
+            SizedBox(height: 12 * s),
+            // 2026-05-24 (v1.3.19): _TtsVoiceCard removed with the
+            // 朗读 feature.
+            SizedBox(height: 16 * s),
+          ],
+          'about': <Widget>[
+            KeyedSubtree(
+              key: _aboutKey,
+              child: _SectionHeader(
+                  uiStrings['settingsSectionAbout']?[settings.locale] ??
+                      'About',
+                  icon: Icons.info_outline),
+            ),
+            _AboutCard(settings: settings, s: s, showTools: !kIsWeb),
+            // 2026-05-24 (v1.3.25): PWA install card — only shows
+            // when the install affordance is meaningful (browser
+            // not already in installed mode, native build hides
+            // it entirely).
+            const _InstallAppCard(),
+          ],
+          'backup': <Widget>[
+            // 2026-05-24 (v1.3.26): export card — gives the user a
+            // portable copy of their highlights / bookmarks / notes
+            // in Markdown or JSON.
+            const _ExportDataCard(),
+            SizedBox(height: 10 * s),
+            // 2026-08-03 (v1.4.0): import card — the reverse of
+            // export. Export existed with no way back in; see
+            // _ImportDataCard's own doc comment for the format/
+            // conflict-handling rationale.
+            const _ImportDataCard(),
+            SizedBox(height: 16 * s),
+          ],
+        };
+
         return Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxW),
@@ -328,1248 +1602,75 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // 2026-09-18: above everything, because this is where a
-                  // reader looking for a feature arrives when they cannot
-                  // find it — and until today there was nothing here to find.
-                  Card(
-                    elevation: 0,
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    child: ListTile(
-                      key: const Key('settings.help'),
-                      leading: const Icon(Icons.help_outline_rounded),
-                      title: Text(uiStrings['helpTitle']?[settings.locale] ??
-                          'Help & shortcuts'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => openHelp(context),
-                    ),
-                  ),
-                  // 2026-09-18: the release notes, one tap away. They lived only
-                  // behind a button on the About page, where the owner could not
-                  // find them (「可以有个地方放最新的release notes吗」).
-                  Card(
-                    elevation: 0,
-                    child: ListTile(
-                      key: const Key('settings.changelog'),
-                      leading: const Icon(Icons.new_releases_outlined),
-                      title: Text(uiStrings['changelogTitle']
-                              ?[settings.locale] ??
-                          "What's new"),
-                      subtitle: Text('v$kAppVersion'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => pushPage(const ChangelogPage()),
-                    ),
-                  ),
-                  SizedBox(height: 12 * s),
-                  // Account section now FIRST — see comment below at the
-                  // old _accountKey location for the rationale.
-                  KeyedSubtree(
-                    key: _accountKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionAccount']?[settings.locale] ??
-                            'Account',
-                        icon: Icons.account_circle_outlined),
-                  ),
-                  _AccountSection(settings: settings, s: s),
-                  SizedBox(height: 16 * s),
-                  KeyedSubtree(
-                    key: _displayKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionDisplay']?[settings.locale] ??
-                            'Display',
-                        icon: Icons.palette_outlined),
-                  ),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['fontSize']?[settings.locale] ??
-                                'Font Size',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Slider(
-                            value: settings.fontSize,
-                            min: 12,
-                            max: 40,
-                            divisions: 28,
-                            label: '${settings.fontSize.toInt()} pt',
-                            onChanged: (val) => settings.setFontSize(val),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['menuScale']?[settings.locale] ??
-                                'Menu Size',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Slider(
-                            value: settings.menuScale,
-                            min: 0.7,
-                            max: 1.5,
-                            divisions: 8,
-                            label: '${settings.menuScale.toStringAsFixed(1)}x',
-                            onChanged: (val) => settings.setMenuScale(val),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['lineSpacing']?[settings.locale] ??
-                                'Line Spacing',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Slider(
-                            value: settings.lineSpacing,
-                            min: 1.0,
-                            max: 3.0,
-                            divisions: 20,
-                            label: settings.lineSpacing.toStringAsFixed(1),
-                            onChanged: (val) => settings.setLineSpacing(
-                                double.parse(val.toStringAsFixed(1))),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  // 2026-09-20: how long the opening verse stays up. It was
-                  // a fixed 3 s and the feedback was that the verse was gone
-                  // before it had been read.
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  uiStrings['splashSeconds']
-                                          ?[settings.locale] ??
-                                      'Splash screen',
-                                  style: TextStyle(
-                                    fontFamily: settings.fontFamily,
-                                    fontFamilyFallback: kCjkFontFallback,
-                                    fontSize: settings.fontSize + 2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                (uiStrings['splashSecondsValue']
-                                            ?[settings.locale] ??
-                                        '{n}s')
-                                    .replaceAll(
-                                        '{n}', '${settings.splashSeconds}'),
-                                style: TextStyle(
-                                  fontFamily: settings.fontFamily,
-                                  fontFamilyFallback: kCjkFontFallback,
-                                  fontSize: settings.fontSize,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Slider(
-                            key: const Key('settings.splashSeconds'),
-                            value: settings.splashSeconds.toDouble(),
-                            min: kSplashSecondsMin.toDouble(),
-                            max: kSplashSecondsMax.toDouble(),
-                            divisions: kSplashSecondsMax - kSplashSecondsMin,
-                            label: '${settings.splashSeconds}',
-                            onChanged: (val) =>
-                                settings.setSplashSeconds(val.round()),
-                          ),
-                          Text(
-                            uiStrings['splashSecondsHint']?[settings.locale] ??
-                                'How long the opening verse stays. "Enter" goes '
-                                    'in at any time.',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize * 0.8,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['samplePreview']?[settings.locale] ??
-                                'Sample Preview',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 12 * s),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                uiStrings['copyFormat']?[settings.locale] ??
-                                    'Copy Format',
-                                style: TextStyle(
-                                  fontFamily: settings.fontFamily,
-                                  fontFamilyFallback: kCjkFontFallback,
-                                  fontSize: settings.fontSize + 2,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(height: 8 * s),
-                              DropdownButton<String>(
-                                isExpanded: true,
-                                itemHeight: null,
-                                value: settings.copyFormat,
-                                onChanged: (val) {
-                                  if (val != null) settings.setCopyFormat(val);
-                                },
-                                items: [
-                                  DropdownMenuItem(
-                                      value: 'plain',
-                                      child: Text(
-                                        uiStrings['plainText']
-                                                ?[settings.locale] ??
-                                            'Plain Text',
-                                        style: TextStyle(
-                                          fontSize: settings.fontSize,
-                                          fontFamily: settings.fontFamily,
-                                          fontFamilyFallback: kCjkFontFallback,
-                                        ),
-                                      )),
-                                  DropdownMenuItem(
-                                      value: 'withRef',
-                                      child: Text(
-                                        uiStrings['withReference']
-                                                ?[settings.locale] ??
-                                            'With Reference',
-                                        style: TextStyle(
-                                          fontSize: settings.fontSize,
-                                          fontFamily: settings.fontFamily,
-                                          fontFamilyFallback: kCjkFontFallback,
-                                        ),
-                                      )),
-                                  DropdownMenuItem(
-                                      value: 'devotional',
-                                      child: Text(
-                                        uiStrings['devotionalFormat']
-                                                ?[settings.locale] ??
-                                            'Devotional Format',
-                                        style: TextStyle(
-                                          fontSize: settings.fontSize,
-                                          fontFamily: settings.fontFamily,
-                                          fontFamilyFallback: kCjkFontFallback,
-                                        ),
-                                      )),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 12 * s),
-                          // 2026-09-13: 「好像这里面有原文（）这个复制粘贴要不要包含应该在
-                          // setting有一个option toggle」. The CUV's translators' notes sit in
-                          // full-width parentheses inside the verse text; whether a copy keeps
-                          // them is a choice, made here beside the format it applies to. The
-                          // preview below follows it, so the reader sees the answer before
-                          // they paste.
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      uiStrings['copyStripNotes']
-                                              ?[settings.locale] ??
-                                          "Leave out translators' notes",
-                                      style: TextStyle(
-                                        fontFamily: settings.fontFamily,
-                                        fontFamilyFallback: kCjkFontFallback,
-                                        fontSize: settings.fontSize,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4 * s),
-                                    Text(
-                                      uiStrings['copyStripNotesHint']
-                                              ?[settings.locale] ??
-                                          'Notes in full-width parentheses, like （原文作…）, '
-                                              'are not copied.',
-                                      style: TextStyle(
-                                        fontFamily: settings.fontFamily,
-                                        fontFamilyFallback: kCjkFontFallback,
-                                        fontSize: settings.fontSize * 0.85,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
-                                      ),
-                                    ),
-                                    // 2026-09-15. 「这个开了为什么复制后还是
-                                    // 这样」. The switch was on, the copy was
-                                    // unchanged, and both were correct: 出埃及记
-                                    // 19 has nothing in full-width parentheses,
-                                    // and most chapters do not. A switch that
-                                    // demonstrably does nothing reads as broken,
-                                    // so it says when it has nothing to do.
-                                    //
-                                    // Corrected the same day, by the same
-                                    // reader, over 出埃及记 30 — the chapter
-                                    // whose verse 13 is the example the hint
-                                    // above sends people to. The first version
-                                    // read the THREE VERSES THE PREVIEW SAMPLES
-                                    // and printed a claim about the whole
-                                    // chapter, so it called 出 30 empty while
-                                    // 出 30:13 sat eleven verses below the fold.
-                                    //
-                                    // Three states, not two: the preview shows
-                                    // one (say nothing — the switch speaks for
-                                    // itself), the chapter has one out of shot
-                                    // (say where), the chapter has none (say so).
-                                    if (settings.copyStripParentheticals &&
-                                        !verseSamples.any((v) =>
-                                            parentheticalNotePattern
-                                                .hasMatch(v['text'] as String)))
-                                      Builder(builder: (context) {
-                                        // The WHOLE chapter, not the three
-                                        // verses on screen — that confusion is
-                                        // the whole reason this branch exists.
-                                        Verse? elsewhere;
-                                        for (final v in versesInChapter) {
-                                          if (parentheticalNotePattern
-                                              .hasMatch(v.text)) {
-                                            elsewhere = v;
-                                            break;
-                                          }
-                                        }
-                                        final text = elsewhere == null
-                                            ? (uiStrings[
-                                                        'copyStripNotesNothingHere']
-                                                    ?[settings.locale] ??
-                                                'This chapter has none, so the '
-                                                    'switch changes nothing here.')
-                                            : (uiStrings['copyStripNotesElsewhere']
-                                                        ?[settings.locale] ??
-                                                    'This chapter has one (verse '
-                                                        '{verse}), but not in the '
-                                                        'verses previewed above.')
-                                                .replaceAll('{verse}',
-                                                    elsewhere.verseLabel);
-                                        return Padding(
-                                          padding: EdgeInsets.only(top: 4 * s),
-                                          child: Text(
-                                            text,
-                                            style: TextStyle(
-                                              fontFamily: settings.fontFamily,
-                                              fontFamilyFallback:
-                                                  kCjkFontFallback,
-                                              fontSize:
-                                                  settings.fontSize * 0.85,
-                                              fontStyle: FontStyle.italic,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                  ],
-                                ),
-                              ),
-                              Switch.adaptive(
-                                value: settings.copyStripParentheticals,
-                                onChanged: settings.setCopyStripParentheticals,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 12 * s),
-                          Text(
-                            currentBook != null && currentChapter != null
-                                ? '$currentBook $currentChapter'
-                                : uiStrings['noVersesAvailable']
-                                        ?[settings.locale] ??
-                                    'No verses available',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontFamily: settings.fontFamily,
-                                  fontFamilyFallback: kCjkFontFallback,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontSize: settings.fontSize,
-                                ),
-                          ),
-                          SizedBox(height: 8 * s),
-                          if (settings.copyFormat == 'devotional')
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  bottom: settings.lineSpacing * 2),
-                              child: RichText(
-                                text: TextSpan(
-                                  style: TextStyle(
-                                    fontSize: settings.fontSize,
-                                    fontFamily: settings.fontFamily,
-                                    fontFamilyFallback: kCjkFontFallback,
-                                    height: settings.lineSpacing,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.color,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                      text: getDevotionalFormattedText(
-                                          stripParentheticals:
-                                              settings.copyStripParentheticals,
-                                          verseSamples,
-                                          currentBook,
-                                          currentChapter),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          else
-                            ...verseSamples.map((v) {
-                              final label = v['verseLabel'] as String;
-                              final ref =
-                                  '${currentBook ?? ''} $currentChapter:$label';
-                              // 2026-05-19 (v1.2.58): switch the preview's
-                              // ad-hoc regex pipeline to the shared
-                              // `sanitizeForCopy` helper so the preview
-                              // matches the real copy output byte-for-byte.
-                              // Earlier regex chain stripped `{phrase}`
-                              // entirely (the v1.2.56 brace bug that was
-                              // only fixed in sanitize), and didn't strip
-                              // `\n` (which v1.2.57 added to ~292 verses
-                              // for poetry layout). Single helper, single
-                              // truth.
-                              final cleanText = sanitizeForCopy(
-                                  v['text'] as String,
-                                  stripParentheticals:
-                                      settings.copyStripParentheticals);
-                              final headerText =
-                                  settings.copyFormat == 'withRef'
-                                      ? '[$ref] '
-                                      : '';
-
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: settings.lineSpacing * 2),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                      height: settings.lineSpacing,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.color,
-                                    ),
-                                    children: [
-                                      if (settings.copyFormat == 'plain') ...[
-                                        TextSpan(
-                                          text: '$label ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                          ),
-                                        ),
-                                        TextSpan(text: cleanText),
-                                      ] else ...[
-                                        TextSpan(text: '$headerText$cleanText'),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }),
-                          // Removed Copy Preview button and its padding
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  // Round 56: Style preset picker. Bundles font + size +
-                  // line spacing + menu scale + paragraph mode into
-                  // named one-tap presets (Classic / Modern / Reverent
-                  // / Compact / Reader). Sits at the top of Display so
-                  // users see it before manually tuning each setting.
-                  _StylePresetCard(settings: settings, s: s),
-                  SizedBox(height: 16 * s),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['fontFamily']?[settings.locale] ??
-                                'Font Family',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 12 * s),
-                          DropdownButton<String>(
-                            value: settings.fontSelection,
-                            isExpanded: true,
-                            onChanged: (val) {
-                              if (val != null) settings.setFontFamily(val);
-                            },
-                            // Round 56 (continued): each row physically
-                            // renders in its own font via
-                            // [previewTextStyle], so the user can
-                            // visually compare options before picking.
-                            // Bundled fonts always work; Google Fonts
-                            // are downloaded on demand by the
-                            // `google_fonts` package; system-only
-                            // entries fall back to the engine default
-                            // when not installed locally.
-                            items: [
-                              for (final f in availableFontOptions())
-                                DropdownMenuItem(
-                                  value: f.key,
-                                  child: Text(
-                                    f.labelFor(settings.locale),
-                                    style: previewTextStyle(
-                                      f.key,
-                                      TextStyle(
-                                        fontSize: settings.fontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: 6 * s),
-                          Text(
-                            uiStrings['fontFamilyHint']?[settings.locale] ??
-                                'Bundled fonts (Roboto, Microsoft YaHei) work everywhere. Other choices use the system fonts installed on your device.',
-                            style: TextStyle(
-                              fontSize:
-                                  (settings.fontSize - 4).clamp(11.0, 13.0),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6),
-                              fontStyle: FontStyle.italic,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  // Primary Color card - always visible (dark + light)
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['primaryColor']?[settings.locale] ??
-                                'Primary Color',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 12 * s),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: palette.map((c) {
-                              final isSelected = settings.primaryColor == c;
-                              // Floor the avatar at ~22 dp so the swatch
-                              // never falls below a comfortable tap
-                              // target even when the user shrinks the
-                              // font size to its minimum.
-                              final avatarRadius =
-                                  (settings.fontSize * 0.8).clamp(20.0, 28.0);
-                              return InkWell(
-                                borderRadius: BorderRadius.circular(40),
-                                onTap: () => settings.setPrimaryColor(c),
-                                child: Padding(
-                                  // Padding pushes the actual hit-test
-                                  // size up past 44 dp on every device
-                                  // class without changing the visual
-                                  // size of the swatch.
-                                  padding: const EdgeInsets.all(4),
-                                  child: CircleAvatar(
-                                    backgroundColor: c,
-                                    radius: avatarRadius,
-                                    child: isSelected
-                                        ? Icon(Icons.check,
-                                            color: c.computeLuminance() > 0.5
-                                                ? Colors.black
-                                                : Colors.white,
-                                            size: settings.fontSize * 0.6)
-                                        : null,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  SizedBox(height: 16 * s),
-                  // 2026-09-13: the projector, set up here beside Copy — 「像
-                  // copy风格一样在setting里面」. What the operator decides once
-                  // (size, ground, which edition keeps the passage company)
-                  // lives in Settings; what changes mid-service (blank, the
-                  // verse) stays on the projection page.
-                  _ProjectorCard(
-                    settings: settings,
-                    mainProvider: mainProvider,
-                    s: s,
-                    // TWO verses when the chapter has them. Three of the
-                    // four layout choices — run-together, verse numbers, and
-                    // what alignment does to a second line — are invisible
-                    // on a single verse, and a preview that cannot show
-                    // what a control does is not a preview.
-                    previewVerses: versesInChapter.take(2).toList(),
-                  ),
-                  SizedBox(height: 16 * s),
-                  KeyedSubtree(
-                    key: _readingKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionReading']?[settings.locale] ??
-                            'Reading',
-                        icon: Icons.menu_book_outlined),
-                  ),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['themeMode']?[settings.locale] ??
-                                'Theme Mode',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 12 * s),
-                          DropdownButton<ThemeMode>(
-                            isExpanded: true,
-                            itemHeight: null,
-                            value: settings.themeMode,
-                            onChanged: (val) {
-                              if (val != null) settings.setThemeMode(val);
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: ThemeMode.system,
-                                child: Text(
-                                  uiStrings['themeSystem']?[settings.locale] ??
-                                      'System Default',
-                                  style: TextStyle(
-                                    fontSize: settings.fontSize,
-                                    fontFamily: settings.fontFamily,
-                                    fontFamilyFallback: kCjkFontFallback,
-                                  ),
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.light,
-                                child: Text(
-                                  uiStrings['themeDay']?[settings.locale] ??
-                                      'Light Mode',
-                                  style: TextStyle(
-                                    fontSize: settings.fontSize,
-                                    fontFamily: settings.fontFamily,
-                                    fontFamilyFallback: kCjkFontFallback,
-                                  ),
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.dark,
-                                child: Text(
-                                  uiStrings['themeNight']?[settings.locale] ??
-                                      'Dark Mode',
-                                  style: TextStyle(
-                                    fontSize: settings.fontSize,
-                                    fontFamily: settings.fontFamily,
-                                    fontFamilyFallback: kCjkFontFallback,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16 * s, vertical: 12 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['readingMode']?[settings.locale] ??
-                                'Reading Mode',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 12 * s),
-                          LayoutBuilder(
-                            builder: (context, toggleConstraints) {
-                              return ToggleButtons(
-                                isSelected: [
-                                  !settings.paragraphMode,
-                                  settings.paragraphMode
-                                ],
-                                onPressed: (index) =>
-                                    settings.setParagraphMode(index == 1),
-                                borderRadius: BorderRadius.circular(8),
-                                constraints: BoxConstraints(
-                                  minHeight: 36,
-                                  minWidth:
-                                      (toggleConstraints.maxWidth - 8) / 2,
-                                  maxWidth:
-                                      (toggleConstraints.maxWidth - 8) / 2,
-                                ),
-                                children: [
-                                  Text(
-                                    uiStrings['verseByVerse']
-                                            ?[settings.locale] ??
-                                        'Verse by Verse',
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize * 0.9,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                    ),
-                                  ),
-                                  Text(
-                                    uiStrings['paragraphFlow']
-                                            ?[settings.locale] ??
-                                        'Paragraph Flow',
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize * 0.9,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  // 2026-05-07 (v17): the "Offline Mode" toggle was
-                  // removed from this card. The bool was persisted in
-                  // SharedPreferences but never read by any other code
-                  // path -- a piece of dead UI that suggested the user
-                  // could opt out of network use, which was never true.
-                  // The Flutter web service worker decides what's cached;
-                  // the dedicated "Offline pack" card lower in this page
-                  // is the real "make this work without network" knob.
-                  Card(
-                    child: Column(
-                      children: [
-                        // 2026-08-02 (v1.3.156): 护眼 (easy-on-eyes) reading
-                        // theme — a warm sepia palette for the Bible reading
-                        // pane only, independent of the app-wide light/dark
-                        // ThemeMode above. Field request, referencing another
-                        // app's warm-paper reading screen.
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['readingPaperTheme']?[settings.locale] ??
-                                'Paper reading theme',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['readingPaperThemeSubtitle']
-                                    ?[settings.locale] ??
-                                'Switch the reading pane to a warm, paper-like '
-                                    'background for more comfortable long '
-                                    'reading sessions.',
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.readingPaperTheme,
-                          onChanged: (val) =>
-                              settings.setReadingPaperTheme(val),
-                        ),
-                        const Divider(height: 1),
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['boldVerseText']?[settings.locale] ??
-                                'Bold verse text',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['boldVerseTextSubtitle']
-                                    ?[settings.locale] ??
-                                'Render scripture body text in semi-bold weight.',
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.boldVerseText,
-                          onChanged: (val) => settings.setBoldVerseText(val),
-                        ),
-                        const Divider(height: 1),
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['showSectionTitles']?[settings.locale] ??
-                                'Section titles',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['showSectionTitlesSubtitle']
-                                    ?[settings.locale] ??
-                                'Render paragraph headings (e.g. "The Sermon '
-                                    'on the Mount") above the verse.',
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.showSectionTitles,
-                          onChanged: (val) =>
-                              settings.setShowSectionTitles(val),
-                        ),
-                        const Divider(height: 1),
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['showBookIntro']?[settings.locale] ??
-                                'Book introductions',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['showBookIntroSubtitle']
-                                    ?[settings.locale] ??
-                                'Show a collapsible card at the top of '
-                                    'chapter 1 with the book\'s author, '
-                                    'date, themes, and key passage.',
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.showBookIntro,
-                          onChanged: (val) => settings.setShowBookIntro(val),
-                        ),
-                        // Round 56: removed the "Pick verse after
-                        // chapter" toggle. The picker now always shows
-                        // book → chapter → verse as 3-step grid flow,
-                        // matching how YouVersion / Bible Hub etc. work
-                        // and per user request: "选择节应该全部用 grid mode".
-                        const Divider(height: 1),
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['showStrongsBadge']?[settings.locale] ??
-                                "Show Strong's number on word chips",
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['showStrongsBadgeSubtitle']
-                                    ?[settings.locale] ??
-                                "Display the G#### / H#### badge under each Hebrew/Greek word in the exegesis sheet.",
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.showStrongsInOriginals,
-                          onChanged: (val) =>
-                              settings.setShowStrongsInOriginals(val),
-                        ),
-                        const Divider(height: 1),
-                        SwitchListTile(
-                          title: Text(
-                            uiStrings['autoExpandFirstRef']?[settings.locale] ??
-                                'Auto-expand first verse group',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            uiStrings['autoExpandFirstRefSubtitle']
-                                    ?[settings.locale] ??
-                                "Automatically open the first book group of concordance refs in the exegesis sheet.",
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.autoExpandFirstRef,
-                          onChanged: (val) =>
-                              settings.setAutoExpandFirstRef(val),
-                        ),
-                        const Divider(height: 1),
-                        // 2026-09-08: the only search-behaviour switch this
-                        // page has, so it lives at the foot of the Reading
-                        // card rather than under a one-row section header of
-                        // its own. Its strings are in
-                        // `fuzzy_search_strings.dart` and not `uiStrings`;
-                        // see that file's header for why.
-                        SwitchListTile(
-                          title: Text(
-                            fuzzySearchStrings['fuzzySearchSetting']
-                                    ?[settings.locale] ??
-                                'Broaden a search that finds nothing',
-                            style: TextStyle(
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          subtitle: Text(
-                            fuzzySearchStrings['fuzzySearchSettingSubtitle']
-                                    ?[settings.locale] ??
-                                'Lets 磯法 reach 矶法, 上帝 reach 神 and '
-                                    '"loved" reach "love". Rows found this '
-                                    'way are labelled.',
-                            style: TextStyle(
-                              fontSize: settings.fontSize,
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                            ),
-                          ),
-                          value: settings.fuzzySearch,
-                          onChanged: (val) => settings.setFuzzySearch(val),
-                        ),
-                        // 2026-05-07 (v17): "Check for Updates" tile
-                        // removed. It re-ran FetchVerses against the
-                        // already-bundled assets and unconditionally
-                        // showed "You're up to date", making it pure
-                        // theatre. Real PWA updates are driven by the
-                        // service worker (replaced on next reload), and
-                        // the "Clear cache & reload" button further down
-                        // this page already provides an honest force-
-                        // refresh path.
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 16 * s),
-                  _SectionHeader(
-                      uiStrings['settingsSectionApp']?[settings.locale] ??
-                          'App',
-                      icon: Icons.tune_outlined),
-                  Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(16 * s),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            uiStrings['interfaceLanguage']?[settings.locale] ??
-                                'Interface Language',
-                            style: TextStyle(
-                              fontFamily: settings.fontFamily,
-                              fontFamilyFallback: kCjkFontFallback,
-                              fontSize: settings.fontSize + 2,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          SizedBox(height: 8 * s),
-                          DropdownButton<String>(
-                            isExpanded: true,
-                            itemHeight: null,
-                            value: settings.locale,
-                            onChanged: (val) {
-                              if (val != null) settings.setLocale(val);
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'zh-Hans',
-                                child: Text('简体中文',
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                    )),
-                              ),
-                              DropdownMenuItem(
-                                value: 'zh-Hant',
-                                child: Text('繁體中文',
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                    )),
-                              ),
-                              DropdownMenuItem(
-                                value: 'en',
-                                child: Text('English',
-                                    style: TextStyle(
-                                      fontSize: settings.fontSize,
-                                      fontFamily: settings.fontFamily,
-                                      fontFamilyFallback: kCjkFontFallback,
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // 2026-09-09: the update controls, in Settings.
-                  //
-                  // From the owner: 「word也没有选项每天check更新的」 — and
-                  // the switch existed, in the About page, where they had no
-                  // reason to look. Sword keeps it in Settings; a reader who
-                  // knows one app should not have to re-learn the other. The
-                  // About-page copy stays where it is rather than moving:
-                  // it sits beside the version number, which is the other
-                  // place this question gets asked, and both render the same
-                  // widgets over the same setting.
-                  //
-                  // The pair hides itself on the web, where a build is
-                  // whatever the server last served and `WebUpdateChecker`
-                  // watches that continuously — a daily switch there would
-                  // be a control over nothing.
-                  if (UpdateService.isSupported) ...[
-                    SizedBox(height: 8 * s),
+                  if (!kIsWeb) ...[
+                    ...sections['help']!,
+                    ...sections['account']!,
+                    ...sections['displayHeader']!,
+                    ...sections['fontSize']!,
+                    ...sections['menuSize']!,
+                    ...sections['displayDetails']!,
+                    ...sections['readingHeader']!,
+                    ...sections['theme']!,
+                    ...sections['readingMode']!,
+                    ...sections['readingDetails']!,
+                    ...sections['appHeader']!,
+                    ...sections['language']!,
+                    ...sections['updates']!,
+                    ...sections['companionPreferences']!,
+                    ...sections['about']!,
+                    ...sections['backup']!,
+                  ] else ...[
+                    ...sections['help']!,
+                    _SectionHeader(
+                        _tierText(
+                            settings.locale, '基本设置', '基本設定', 'Basic settings'),
+                        icon: Icons.settings_outlined),
+                    ...sections['account']!,
+                    ...sections['appHeader']!,
+                    ...sections['language']!,
+                    ...sections['displayHeader']!,
+                    ...sections['fontSize']!,
+                    ...sections['menuSize']!,
+                    ...sections['theme']!,
+                    ...sections['readingHeader']!,
+                    ...sections['readingMode']!,
+                    ...sections['updates']!,
                     Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(16 * s),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            UpdateCheckTile(
-                              locale: settings.locale,
-                              scheme: Theme.of(context).colorScheme,
-                            ),
-                            AutoUpdateCheckToggle(locale: settings.locale),
-                            UpdateFrequencySelector(locale: settings.locale),
-                          ],
+                      child: Semantics(
+                        expanded: _advancedExpanded,
+                        child: ListTile(
+                          key: const Key('settings.advanced.toggle'),
+                          leading: const Icon(Icons.tune_outlined),
+                          title: Text(_tierText(settings.locale, '高级设置', '進階設定',
+                              'Advanced settings')),
+                          subtitle: Text(_tierText(
+                              settings.locale,
+                              '字体、复制与投影、首页布局、AI、通知及数据',
+                              '字體、複製與投影、首頁版面、AI、通知及資料',
+                              'Fonts, copy and projection, Home layout, AI, notifications and data')),
+                          trailing: Icon(_advancedExpanded
+                              ? Icons.expand_less
+                              : Icons.expand_more),
+                          onTap: () => setState(
+                              () => _advancedExpanded = !_advancedExpanded),
                         ),
                       ),
                     ),
+                    if (_advancedExpanded) ...[
+                      _SectionHeader(
+                          _tierText(settings.locale, '显示与阅读细调', '顯示與閱讀細調',
+                              'Appearance and reading details'),
+                          icon: Icons.palette_outlined),
+                      ...sections['displayDetails']!,
+                      ...sections['readingDetails']!,
+                      ...sections['companionPreferences']!,
+                      _SectionHeader(_tierText(settings.locale, '离线与维护',
+                          '離線與維護', 'Offline and maintenance')),
+                      _AboutCard(settings: settings, s: s, showSummary: false),
+                      ...sections['backup']!,
+                    ],
+                    ...sections['about']!,
                   ],
-                  // 2026-10-06: web and store builds have no GitHub updater, so the
-                  // manual check lives here instead.
-                  if (!UpdateService.isSupported) ...[
-                    SizedBox(height: 8 * s),
-                    Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(16 * s),
-                        child: ManualUpdateTile(locale: settings.locale),
-                      ),
-                    ),
-                  ],
-                  DiagnosisTile(locale: settings.locale),
-                  // 2026-05-06: Account section moved to TOP of Settings
-                  // (was after Display/Reading/App). User feedback: tapping
-                  // a profile chip on the dashboard navigates here, so
-                  // sync / sign-in controls should be the first thing they
-                  // see — not buried halfway down. Display/Reading/App
-                  // still come right after.
-                  SizedBox(height: 16 * s),
-                  KeyedSubtree(
-                    key: _dashboardKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionDashboard']
-                                ?[settings.locale] ??
-                            'Home sections',
-                        icon: Icons.dashboard_customize_outlined),
-                  ),
-                  _DashboardSectionsCard(settings: settings, s: s),
-                  // Round 56 day-3 (2026-05-06): the BYOK card was
-                  // briefly here at the top level, but the user wanted
-                  // "the app configures everything as long as I get
-                  // their permission" — i.e. zero AI setup for normal
-                  // users. The shared developer Gemini key already
-                  // covers AI features for everyone after sign-in, so
-                  // BYOK is purely an escape valve for power users / the
-                  // case when shared quota is exhausted. Moved the card
-                  // to AboutPage (Settings → About → Attributions &
-                  // licensing → bottom) so it stays discoverable without
-                  // cluttering the main Settings list.
-                  SizedBox(height: 16 * s),
-                  KeyedSubtree(
-                    key: _notificationsKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionNotifications']
-                                ?[settings.locale] ??
-                            'Notifications',
-                        icon: Icons.notifications_outlined),
-                  ),
-                  _NotificationsCard(settings: settings, s: s),
-                  SizedBox(height: 16 * s),
-                  // 2026-05-08 (v1.1.9): BYOK Gemini-key card re-exposed.
-                  // The widget itself (lib/widgets/gemini_key_card.dart)
-                  // has been live the whole time, but on 2026-05-06 the
-                  // section was removed from the UI because the dev's
-                  // shared key was carrying everyone with no setup
-                  // friction. After 2026-05-08 the shared key started
-                  // hitting the Gemini free-tier 250-RPD ceiling for the
-                  // day; users who hit "AI quota exhausted" need a way
-                  // to drop in their own AI Studio key and keep working.
-                  // Putting it under its own "AI" section above About
-                  // so it's discoverable without crowding the daily-use
-                  // toggles further up.
-                  KeyedSubtree(
-                    key: _aiKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionAi']?[settings.locale] ??
-                            'AI',
-                        icon: Icons.auto_awesome_outlined),
-                  ),
-                  GeminiKeyCard(settings: settings, s: s),
-                  SizedBox(height: 12 * s),
-                  // 2026-05-10 (v1.2.26): AI model picker. Three tiers
-                  // mapped server-side to gemini-2.5-flash-lite (fast),
-                  // gemini-2.5-flash (balanced), gemini-2.5-pro (deep).
-                  // Defaults to fast — same model the server used pre-
-                  // v1.2.26 — so existing users see no behaviour change
-                  // unless they explicitly bump it.
-                  _AiModelCard(settings: settings, s: s),
-                  SizedBox(height: 12 * s),
-                  // 2026-05-24 (v1.3.19): _TtsVoiceCard removed with the
-                  // 朗读 feature.
-                  SizedBox(height: 16 * s),
-                  KeyedSubtree(
-                    key: _aboutKey,
-                    child: _SectionHeader(
-                        uiStrings['settingsSectionAbout']?[settings.locale] ??
-                            'About',
-                        icon: Icons.info_outline),
-                  ),
-                  _AboutCard(settings: settings, s: s),
-                  // 2026-05-24 (v1.3.25): PWA install card — only shows
-                  // when the install affordance is meaningful (browser
-                  // not already in installed mode, native build hides
-                  // it entirely).
-                  const _InstallAppCard(),
-                  // 2026-05-24 (v1.3.26): export card — gives the user a
-                  // portable copy of their highlights / bookmarks / notes
-                  // in Markdown or JSON.
-                  const _ExportDataCard(),
-                  SizedBox(height: 10 * s),
-                  // 2026-08-03 (v1.4.0): import card — the reverse of
-                  // export. Export existed with no way back in; see
-                  // _ImportDataCard's own doc comment for the format/
-                  // conflict-handling rationale.
-                  const _ImportDataCard(),
-                  SizedBox(height: 16 * s),
                 ],
               ),
             ),
@@ -1746,7 +1847,8 @@ class _AccountSectionState extends State<_AccountSection> {
                   child: Text(
                     uiStrings['profileTitle']?[locale] ?? 'Profiles',
                     style: TextStyle(
-                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
                       fontSize: settings.fontSize + 2,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1773,7 +1875,8 @@ class _AccountSectionState extends State<_AccountSection> {
               title: Text(
                 _displayNameFor(auth, p),
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
                   fontSize: settings.fontSize,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1929,9 +2032,10 @@ class _AccountSectionState extends State<_AccountSection> {
                             'still works \u2014 it just stays on this '
                             'device.'),
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                  fontSize: (settings.fontSize - 7)
-                      .clamp(12.0, 14.0).toDouble(),
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize:
+                      (settings.fontSize - 7).clamp(12.0, 14.0).toDouble(),
                   fontStyle: FontStyle.italic,
                   color: scheme.onSurfaceVariant,
                 ),
@@ -1962,14 +2066,12 @@ class _AccountSectionState extends State<_AccountSection> {
       children: [
         Expanded(
           child: Text(
-            (uiStrings['cloudSignedInAs']?[locale] ??
-                    'Cloud-synced as {email}')
+            (uiStrings['cloudSignedInAs']?[locale] ?? 'Cloud-synced as {email}')
                 .replaceAll('{email}', auth.currentUser?.email ?? ''),
             style: TextStyle(
               fontFamily: settings.fontFamily,
               fontFamilyFallback: kCjkFontFallback,
-              fontSize:
-                  (settings.fontSize - 6).clamp(12.0, 15.0).toDouble(),
+              fontSize: (settings.fontSize - 6).clamp(12.0, 15.0).toDouble(),
               color: scheme.onSurfaceVariant,
             ),
           ),
@@ -1986,7 +2088,8 @@ class _AccountSectionState extends State<_AccountSection> {
     );
   }
 
-  Future<void> _confirmDeleteAccount(BuildContext context, String locale) async {
+  Future<void> _confirmDeleteAccount(
+      BuildContext context, String locale) async {
     final auth = CloudAuthService.instance;
     final needsPassword = auth.deletionRequiresPassword;
     final passwordController = TextEditingController();
@@ -2046,7 +2149,8 @@ class _AccountSectionState extends State<_AccountSection> {
                 'Incorrect password. Please try again.')
             : (uiStrings['deleteAccountFailure']?[locale] ??
                 'Could not finish deleting the account. Try again or contact support@yahwehword.com.'));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Widget _appleSignInButton(
@@ -2062,16 +2166,16 @@ class _AccountSectionState extends State<_AccountSection> {
       ),
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
-        final result = await CloudAuthService.instance
-            .signInWithAppleAndAdoptProfile();
+        final result =
+            await CloudAuthService.instance.signInWithAppleAndAdoptProfile();
         if (!context.mounted || result.isOk) return;
         messenger.showSnackBar(SnackBar(
           content: Text(result.errorMessage ?? 'Apple sign-in failed.'),
         ));
       },
       icon: const Icon(Icons.apple, size: 18),
-      label: Text(uiStrings['cloudSignInApple']?[locale] ??
-          'Sign in with Apple'),
+      label:
+          Text(uiStrings['cloudSignInApple']?[locale] ?? 'Sign in with Apple'),
     );
   }
 
@@ -2271,7 +2375,8 @@ Future<void> _pickProjectionBackdrop(
   if (!context.mounted) return;
   if (stored == null) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(projectionString('projectionBackdropFailed',
+      content: Text(projectionString(
+          'projectionBackdropFailed',
           'That picture could not be saved — the background is unchanged.',
           settings.locale)),
     ));
@@ -2295,6 +2400,7 @@ class _ProjectorCard extends StatelessWidget {
   final AppSettings settings;
   final MainProvider mainProvider;
   final double s;
+
   /// What the preview draws: the first verses of the open chapter, or
   /// empty when no chapter is open.
   final List<Verse> previewVerses;
@@ -2461,8 +2567,8 @@ class _ProjectorCard extends StatelessWidget {
                             runSpacing: 4,
                             children: [
                               OutlinedButton.icon(
-                                icon: const Icon(Icons.image_outlined,
-                                    size: 18),
+                                icon:
+                                    const Icon(Icons.image_outlined, size: 18),
                                 label: Text(
                                   settings.projectionBackdrop.isEmpty
                                       ? t('projectionBackdropChoose',
@@ -2476,8 +2582,8 @@ class _ProjectorCard extends StatelessWidget {
                               ),
                               if (settings.projectionBackdrop.isNotEmpty)
                                 TextButton.icon(
-                                  icon: const Icon(Icons.close_rounded,
-                                      size: 18),
+                                  icon:
+                                      const Icon(Icons.close_rounded, size: 18),
                                   label: Text(
                                     t('projectionBackdropRemove', 'Remove'),
                                     style: label(scale: 0.9),
@@ -2548,8 +2654,8 @@ class _ProjectorCard extends StatelessWidget {
                   for (final v in ProjectionAlign.values)
                     DropdownMenuItem(
                       value: v,
-                      child: Text(projectionAlignLabel(v, locale),
-                          style: label()),
+                      child:
+                          Text(projectionAlignLabel(v, locale), style: label()),
                     ),
                 ],
               ),
@@ -2571,8 +2677,8 @@ class _ProjectorCard extends StatelessWidget {
                   for (final v in ProjectionFlow.values)
                     DropdownMenuItem(
                       value: v,
-                      child: Text(projectionFlowLabel(v, locale),
-                          style: label()),
+                      child:
+                          Text(projectionFlowLabel(v, locale), style: label()),
                     ),
                 ],
               ),
@@ -2629,10 +2735,18 @@ class _ProjectorCard extends StatelessWidget {
             // name, and the phone report that produced `stack: true` for
             // the companion pickers applies here for the same reason.
             for (final spec in [
-              ('projectionFontZh', 'Chinese face', settings.projectionFontZh,
-                  settings.setProjectionFontZh),
-              ('projectionFontEn', 'English face', settings.projectionFontEn,
-                  settings.setProjectionFontEn),
+              (
+                'projectionFontZh',
+                'Chinese face',
+                settings.projectionFontZh,
+                settings.setProjectionFontZh
+              ),
+              (
+                'projectionFontEn',
+                'English face',
+                settings.projectionFontEn,
+                settings.setProjectionFontEn
+              ),
             ])
               row(
                 spec.$1,
@@ -2647,8 +2761,7 @@ class _ProjectorCard extends StatelessWidget {
                     DropdownMenuItem(
                       value: '',
                       child: Text(
-                          t('projectionFontFollow',
-                              'Follow the reading font'),
+                          t('projectionFontFollow', 'Follow the reading font'),
                           style: label()),
                     ),
                     for (final f in availableFontOptions())
@@ -2663,7 +2776,8 @@ class _ProjectorCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 4 * s),
               child: Text(
-                t('projectionFontHint',
+                t(
+                    'projectionFontHint',
                     'The wall often carries both at once, so the two are '
                         'chosen separately.'),
                 style: label(weight: FontWeight.w400, scale: 0.8)
@@ -2732,38 +2846,40 @@ class _ProjectorCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: LayoutBuilder(builder: (context, box) => ProjectionStage(
-                    verses: previewVerses,
-                    reference: previewVerses.length > 1
-                        ? '${previewVerses.first.book} '
-                            '${previewVerses.first.chapter}:'
-                            '${previewVerses.first.verseLabel}–'
-                            '${previewVerses.last.verseLabel}'
-                        : '${previewVerses.first.book} '
-                            '${previewVerses.first.chapter}:'
-                            '${previewVerses.first.verseLabel}',
-                    versionCode: mainProvider.currentVersion,
-                    typeSize: projectionPreviewTypeSize(
-                        box.maxWidth,
-                        kProjectionTypeSteps[settings.projectionTypeStep
-                            .clamp(0, kProjectionTypeSteps.length - 1)]),
-                    blank: false,
-                    locale: locale,
-                    scheme: projectionDarkScheme(settings.primaryColor),
-                    ground: ground,
-                    secondOn: false,
-                    secondTexts: null,
-                    secondCode: null,
-                    secondLoading: false,
-                    layout: settings.projectionLayout,
-                    referenceStep: settings.projectionReferenceStep,
-                    fontZh: projectionFamilyFor(
-                        settings.projectionFontZh, settings.fontFamily),
-                    fontEn: projectionFamilyFor(
-                        settings.projectionFontEn, settings.fontFamily),
-                    backdrop: projectionBackdropImage(
-                        settings.projectionBackdrop),
-                  )),
+                  child: LayoutBuilder(
+                      builder: (context, box) => ProjectionStage(
+                            verses: previewVerses,
+                            reference: previewVerses.length > 1
+                                ? '${previewVerses.first.book} '
+                                    '${previewVerses.first.chapter}:'
+                                    '${previewVerses.first.verseLabel}–'
+                                    '${previewVerses.last.verseLabel}'
+                                : '${previewVerses.first.book} '
+                                    '${previewVerses.first.chapter}:'
+                                    '${previewVerses.first.verseLabel}',
+                            versionCode: mainProvider.currentVersion,
+                            typeSize: projectionPreviewTypeSize(
+                                box.maxWidth,
+                                kProjectionTypeSteps[settings.projectionTypeStep
+                                    .clamp(
+                                        0, kProjectionTypeSteps.length - 1)]),
+                            blank: false,
+                            locale: locale,
+                            scheme: projectionDarkScheme(settings.primaryColor),
+                            ground: ground,
+                            secondOn: false,
+                            secondTexts: null,
+                            secondCode: null,
+                            secondLoading: false,
+                            layout: settings.projectionLayout,
+                            referenceStep: settings.projectionReferenceStep,
+                            fontZh: projectionFamilyFor(
+                                settings.projectionFontZh, settings.fontFamily),
+                            fontEn: projectionFamilyFor(
+                                settings.projectionFontEn, settings.fontFamily),
+                            backdrop: projectionBackdropImage(
+                                settings.projectionBackdrop),
+                          )),
                 ),
               ),
             ],
@@ -2776,6 +2892,7 @@ class _ProjectorCard extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String label;
+
   /// 2026-08-02 (round 60): icon-prefixed section headers, mirroring
   /// the same treatment applied to the Home dashboard's section
   /// headers — a small tinted glyph ahead of the label so the long
@@ -2792,8 +2909,7 @@ class _SectionHeader extends StatelessWidget {
     // 22. Caps at 22 so very-large reader settings don't make
     // section headers tower over the cards beneath them.
     final settings = context.watch<AppSettings>();
-    final size =
-        (settings.fontSize - 2).clamp(11.0, 22.0).toDouble();
+    final size = (settings.fontSize - 2).clamp(11.0, 22.0).toDouble();
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
       child: Row(
@@ -2806,7 +2922,8 @@ class _SectionHeader extends StatelessWidget {
           Text(
             label.toUpperCase(),
             style: TextStyle(
-              fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+              fontFamily: settings.fontFamily,
+              fontFamilyFallback: kCjkFontFallback,
               fontSize: size,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.6,
@@ -2911,10 +3028,11 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
               child: Text(
                 uiStrings['dashboardLayoutHint']?[locale] ??
                     'Choose which Home sections to show and drag the handles to reorder them. '
-                    'Expand Study, Reference and Help on Home. Update notices and '
-                    'announcements stay above the sections.',
+                        'Expand Study, Reference and Help on Home. Update notices and '
+                        'announcements stay above the sections.',
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
                   fontSize: (14 * s).clamp(11.0, 14.0),
                   color: scheme.onSurface.withValues(alpha: 0.65),
                 ),
@@ -2976,8 +3094,7 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                 // block can still open the Bible. Switch is rendered
                 // disabled with a small "always on" caption beneath
                 // the description.
-                final isMandatory =
-                    section == DashboardSection.readBible;
+                final isMandatory = section == DashboardSection.readBible;
                 return Padding(
                   // Each tile gets a unique key — required by
                   // ReorderableListView so the framework can match
@@ -3022,7 +3139,8 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                                   child: Text(
                                     section.label(locale),
                                     style: TextStyle(
-                                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                      fontFamily: settings.fontFamily,
+                                      fontFamilyFallback: kCjkFontFallback,
                                       fontSize: (15 * s).clamp(13.0, 16.0),
                                       fontWeight: FontWeight.w600,
                                       color: scheme.onSurface.withValues(
@@ -3045,15 +3163,16 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                             SizedBox(height: 2 * s),
                             Text(
                               isMandatory
-                                  ? (uiStrings['dashboardSection_readBible_locked']
+                                  ? (uiStrings[
+                                              'dashboardSection_readBible_locked']
                                           ?[locale] ??
                                       'Always visible — primary entry point.')
                                   : section.description(locale),
                               style: TextStyle(
-                                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
                                 fontSize: (12.5 * s).clamp(10.5, 13.0),
-                                color:
-                                    scheme.onSurface.withValues(alpha: 0.6),
+                                color: scheme.onSurface.withValues(alpha: 0.6),
                                 height: 1.3,
                               ),
                             ),
@@ -3062,8 +3181,7 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                               Row(
                                 children: [
                                   Icon(Icons.visibility_off_outlined,
-                                      size: 13,
-                                      color: scheme.onSurfaceVariant),
+                                      size: 13, color: scheme.onSurfaceVariant),
                                   SizedBox(width: 4 * s),
                                   Flexible(
                                     child: Text(
@@ -3092,8 +3210,8 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                         // can't turn this off" affordance.
                         onChanged: isMandatory
                             ? null
-                            : (v) => settings.setDashboardSectionVisible(
-                                section, v),
+                            : (v) =>
+                                settings.setDashboardSectionVisible(section, v),
                       ),
                     ],
                   ),
@@ -3112,7 +3230,8 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
                 label: Text(
                   uiStrings['resetToDefault']?[locale] ?? 'Reset to default',
                   style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                    fontFamily: settings.fontFamily,
+                    fontFamilyFallback: kCjkFontFallback,
                     fontSize: (14 * s).clamp(12.0, 15.0),
                   ),
                 ),
@@ -3159,6 +3278,7 @@ class _SettingsSwitch extends StatelessWidget {
   final String label;
   final String? subtitle;
   final bool value;
+
   /// Null draws the switch disabled — for a platform or permission
   /// state where flipping it could not do anything.
   final ValueChanged<bool>? onChanged;
@@ -3182,7 +3302,8 @@ class _SettingsSwitch extends StatelessWidget {
       title: Text(
         label,
         style: TextStyle(
-          fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+          fontFamily: settings.fontFamily,
+          fontFamilyFallback: kCjkFontFallback,
           fontSize: settings.fontSize,
           fontWeight: FontWeight.w600,
         ),
@@ -3192,7 +3313,8 @@ class _SettingsSwitch extends StatelessWidget {
           : Text(
               subtitle!,
               style: TextStyle(
-                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                fontFamily: settings.fontFamily,
+                fontFamilyFallback: kCjkFontFallback,
                 fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
                 color: scheme.onSurfaceVariant,
               ),
@@ -3261,21 +3383,19 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
         // (white text on a too-light surface) and clashed with
         // the user's chosen primary palette.
         final accent = paletteAccent(context, Colors.green);
-        final onAccent = ThemeData.estimateBrightnessForColor(accent) ==
-                Brightness.dark
-            ? Colors.white
-            : Colors.black;
+        final onAccent =
+            ThemeData.estimateBrightnessForColor(accent) == Brightness.dark
+                ? Colors.white
+                : Colors.black;
         messenger.showSnackBar(SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle_outline,
-                  color: onAccent, size: 18),
+              Icon(Icons.check_circle_outline, color: onAccent, size: 18),
               const SizedBox(width: 8),
               Text(
                 uiStrings['syncSuccess']?[locale] ?? 'Synced.',
                 style: TextStyle(
-                    fontFamily: widget.settings.fontFamily,
-                    color: onAccent),
+                    fontFamily: widget.settings.fontFamily, color: onAccent),
               ),
             ],
           ),
@@ -3294,8 +3414,7 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
         messenger.showSnackBar(SnackBar(
           content: Row(
             children: [
-              Icon(Icons.error_outline,
-                  color: scheme.onError, size: 18),
+              Icon(Icons.error_outline, color: scheme.onError, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -3325,9 +3444,13 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
     final now = DateTime.now().toUtc();
     final diff = now.difference(utc);
     final isZh = locale.startsWith('zh');
-    if (diff.inSeconds < 30) return isZh ? _zhScript(locale, '刚刚', '剛剛') : 'just now';
+    if (diff.inSeconds < 30) {
+      return isZh ? _zhScript(locale, '刚刚', '剛剛') : 'just now';
+    }
     if (diff.inMinutes < 1) {
-      return isZh ? _zhScript(locale, '不到一分钟前', '不到一分鐘前') : 'less than a minute ago';
+      return isZh
+          ? _zhScript(locale, '不到一分钟前', '不到一分鐘前')
+          : 'less than a minute ago';
     }
     if (diff.inMinutes < 60) {
       return isZh
@@ -3451,12 +3574,11 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
                   fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
                   color: color,
-                  fontWeight: isSyncing
-                      ? FontWeight.w600
-                      : FontWeight.w400,
+                  fontWeight: isSyncing ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ),
@@ -3467,27 +3589,28 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
             // separate OAuth scope to re-grant, so the button has
             // nothing to do.
             FilledButton.tonalIcon(
-                onPressed: isSyncing ? null : _trigger,
-                icon: isSyncing
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.2,
-                          color: scheme.onSurfaceVariant,
-                        ),
-                      )
-                    : const Icon(Icons.sync, size: 16),
-                label: Text(
-                  isSyncing
-                      ? (uiStrings['syncingNowShort']?[locale] ?? 'Syncing…')
-                      : (uiStrings['syncNow']?[locale] ?? 'Sync now'),
-                  style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
-                  ),
+              onPressed: isSyncing ? null : _trigger,
+              icon: isSyncing
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    )
+                  : const Icon(Icons.sync, size: 16),
+              label: Text(
+                isSyncing
+                    ? (uiStrings['syncingNowShort']?[locale] ?? 'Syncing…')
+                    : (uiStrings['syncNow']?[locale] ?? 'Sync now'),
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
                 ),
               ),
+            ),
           ],
         ),
         // Full-width progress bar appears below the row whenever the
@@ -3505,10 +3628,8 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
                     borderRadius: BorderRadius.circular(2),
                     child: LinearProgressIndicator(
                       minHeight: 3,
-                      backgroundColor:
-                          scheme.primary.withValues(alpha: 0.12),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(scheme.primary),
+                      backgroundColor: scheme.primary.withValues(alpha: 0.12),
+                      valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                     ),
                   ),
                 )
@@ -3518,7 +3639,6 @@ class _SyncStatusRowState extends State<_SyncStatusRow> {
     );
   }
 }
-
 
 /// Notifications opt-in card. On web, toggling on prompts the
 /// browser for permission via `Notification.requestPermission()`. On
@@ -3574,8 +3694,7 @@ class _NotificationsCardState extends State<_NotificationsCard> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                uiStrings['notificationsDenied']
-                        ?[widget.settings.locale] ??
+                uiStrings['notificationsDenied']?[widget.settings.locale] ??
                     'Browser denied notification permission. Allow notifications in your browser settings to enable.',
               ),
             ),
@@ -3609,8 +3728,8 @@ class _NotificationsCardState extends State<_NotificationsCard> {
 
     return Card(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(8 * widget.s, 4 * widget.s,
-            8 * widget.s, 4 * widget.s),
+        padding: EdgeInsets.fromLTRB(
+            8 * widget.s, 4 * widget.s, 8 * widget.s, 4 * widget.s),
         child: Column(
           children: [
             _SettingsSwitch(
@@ -3620,11 +3739,10 @@ class _NotificationsCardState extends State<_NotificationsCard> {
               subtitle: hint,
               value: settings.notificationsEnabled &&
                   perm == NotificationPermission.granted,
-              onChanged: (supported &&
-                      perm != NotificationPermission.denied &&
-                      !_busy)
-                  ? _toggle
-                  : null, // disabled: unsupported / denied
+              onChanged:
+                  (supported && perm != NotificationPermission.denied && !_busy)
+                      ? _toggle
+                      : null, // disabled: unsupported / denied
               settings: settings,
             ),
             if (settings.notificationsEnabled &&
@@ -3652,9 +3770,9 @@ class _NotificationsCardState extends State<_NotificationsCard> {
                       final messenger = ScaffoldMessenger.of(context);
                       try {
                         await NotificationService.show(
-                          title: uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
-                          body: uiStrings['notificationsTestBody']
-                                  ?[locale] ??
+                          title: uiStrings['appName']?[locale] ??
+                              'Yahweh\'s Words',
+                          body: uiStrings['notificationsTestBody']?[locale] ??
                               'This is a test notification.',
                           tag: 'yswords-test',
                         );
@@ -3714,9 +3832,9 @@ class _NotificationsCardState extends State<_NotificationsCard> {
                       uiStrings['notificationsTest']?[locale] ??
                           'Send test notification',
                       style: TextStyle(
-                        fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                        fontSize:
-                            (settings.fontSize - 2).clamp(12.0, 14.0),
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: (settings.fontSize - 2).clamp(12.0, 14.0),
                       ),
                     ),
                   ),
@@ -3756,8 +3874,7 @@ class _NotificationsCardState extends State<_NotificationsCard> {
                         style: TextStyle(
                           fontFamily: settings.fontFamily,
                           fontFamilyFallback: kCjkFontFallback,
-                          fontSize:
-                              (settings.fontSize - 3).clamp(11.0, 14.0),
+                          fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
@@ -3795,15 +3912,25 @@ class _NotificationCategoriesSection extends StatelessWidget {
   String _categoryLabel(String id, String locale) {
     switch (id) {
       case NotificationCategoryIds.dailyVerse:
-        return locale.startsWith('zh') ? _zhScript(locale, '每日经文', '每日經文') : 'Daily verse';
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '每日经文', '每日經文')
+            : 'Daily verse';
       case NotificationCategoryIds.bibleEvidence:
-        return locale.startsWith('zh') ? _zhScript(locale, '圣经考证', '聖經考證') : 'Bible evidence';
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '圣经考证', '聖經考證')
+            : 'Bible evidence';
       case NotificationCategoryIds.sermonOfDay:
-        return locale.startsWith('zh') ? _zhScript(locale, '今日讲道', '今日講道') : 'Sermon of the day';
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '今日讲道', '今日講道')
+            : 'Sermon of the day';
       case NotificationCategoryIds.newsDigest:
-        return locale.startsWith('zh') ? _zhScript(locale, '新闻摘要', '新聞摘要') : 'News digest';
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '新闻摘要', '新聞摘要')
+            : 'News digest';
       case NotificationCategoryIds.memoryVerse:
-        return locale.startsWith('zh') ? _zhScript(locale, '晚安经文', '晚安經文') : 'Bedtime verse';
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '晚安经文', '晚安經文')
+            : 'Bedtime verse';
       default:
         return id;
     }
@@ -3829,13 +3956,14 @@ class _NotificationCategoriesSection extends StatelessWidget {
   String _formatTime(int hour, int minute) =>
       '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
 
-  Future<void> _pickTime(
-      BuildContext context, String categoryId) async {
+  Future<void> _pickTime(BuildContext context, String categoryId) async {
     final current = settings.notificationCategory(categoryId);
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: current.hour, minute: current.minute),
-      helpText: settings.locale.startsWith('zh') ? _zhScript(settings.locale, '选择推送时间', '選擇推送時間') : 'Pick time',
+      helpText: settings.locale.startsWith('zh')
+          ? _zhScript(settings.locale, '选择推送时间', '選擇推送時間')
+          : 'Pick time',
     );
     if (picked == null) return;
     await settings.setNotificationCategory(
@@ -3872,8 +4000,7 @@ class _NotificationCategoriesSection extends StatelessWidget {
           // an edit icon, a focused tappable target, and the local
           // time hint so it's unambiguous.
           return Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
               children: [
                 Icon(_categoryIcon(id),
@@ -3888,9 +4015,8 @@ class _NotificationCategoriesSection extends StatelessWidget {
                       fontFamily: settings.fontFamily,
                       fontFamilyFallback: kCjkFontFallback,
                       fontSize: settings.fontSize - 1,
-                      fontWeight: prefs.enabled
-                          ? FontWeight.w600
-                          : FontWeight.normal,
+                      fontWeight:
+                          prefs.enabled ? FontWeight.w600 : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -3901,8 +4027,7 @@ class _NotificationCategoriesSection extends StatelessWidget {
                   label: Text(
                     _formatTime(prefs.hour, prefs.minute),
                     style: TextStyle(
-                      fontSize: (settings.fontSize - 2)
-                          .clamp(12.0, 14.0),
+                      fontSize: (settings.fontSize - 2).clamp(12.0, 14.0),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -3930,13 +4055,13 @@ class _NotificationCategoriesSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
           child: Text(
             locale.startsWith('zh')
-                ? _zhScript(locale, '所有时间为本地时间。设置改动后立即重排，每天到点自动推送。', '所有時間為本地時間。設定改動後立即重排，每天到點自動推送。')
+                ? _zhScript(locale, '所有时间为本地时间。设置改动后立即重排，每天到点自动推送。',
+                    '所有時間為本地時間。設定改動後立即重排，每天到點自動推送。')
                 : 'Times are local. Changes apply immediately; '
                     'fires daily at the chosen time.',
             style: TextStyle(
               fontSize: (settings.fontSize - 4).clamp(10.0, 12.0),
-              color: scheme.onSurfaceVariant
-                  .withValues(alpha: 0.8),
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -3945,7 +4070,6 @@ class _NotificationCategoriesSection extends StatelessWidget {
     );
   }
 }
-
 
 /// Settings → About — app name, version line, and the unified
 /// ContactLine. Lives at the bottom of the Settings list.
@@ -4022,7 +4146,13 @@ class _AiModelCard extends StatelessWidget {
 class _AboutCard extends StatelessWidget {
   final AppSettings settings;
   final double s;
-  const _AboutCard({required this.settings, required this.s});
+  final bool showSummary;
+  final bool showTools;
+  const _AboutCard(
+      {required this.settings,
+      required this.s,
+      this.showSummary = true,
+      this.showTools = true});
 
   @override
   Widget build(BuildContext context) {
@@ -4034,158 +4164,164 @@ class _AboutCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.menu_book_rounded,
-                    color: scheme.primary, size: settings.fontSize + 4),
-                SizedBox(width: 8 * s),
-                Flexible(
-                    child: Text(
-                  uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
+            if (showSummary) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.menu_book_rounded,
+                      color: scheme.primary, size: settings.fontSize + 4),
+                  SizedBox(width: 8 * s),
+                  Flexible(
+                      child: Text(
+                    uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
+                    style: TextStyle(
+                      fontFamily: settings.fontFamily,
+                      fontFamilyFallback: kCjkFontFallback,
+                      fontSize: settings.fontSize + 2,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
+                  )),
+                ],
+              ),
+              SizedBox(height: 4 * s),
+              Text(
+                uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
+                  color: scheme.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              SizedBox(height: 4 * s),
+              // 2026-06-29: surface the running version HERE on the Settings
+              // About card. It used to live ONLY on the AboutPage sub-page (its
+              // app-bar title + a footer buried under a long scroll), so a user
+              // on the Settings screen saw no version at all — reported as
+              // "version number not showing" on the Mi Pad. kAppVersion is
+              // guarded against a blank dart-define, so this never renders empty.
+              Text(
+                'v$kAppVersion'
+                '${kChinaMode ? ' · ${uiStrings['chinaBuildTag']?[locale] ?? 'China build'}' : ''}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              SizedBox(height: 6 * s),
+              const ContactLine(),
+              SizedBox(height: 8 * s),
+              // Round 56 day-3 (2026-05-06): button into the full
+              // Attributions / Licensing / Takedown page. Copyright
+              // audit prompted listing every bundled third-party
+              // resource + per-item licence + a prominent takedown
+              // contact, which doesn't fit on the existing _AboutCard.
+              OutlinedButton.icon(
+                icon: const Icon(Icons.gavel_rounded, size: 18),
+                label: Text(
+                  uiStrings['aboutOpenButton']?[locale] ??
+                      'Attributions & licensing',
+                ),
+                onPressed: () =>
+                    pushPage(const AboutPage(), routeName: '/about'),
+              ),
+              SizedBox(height: 10 * s),
+            ],
+            if (showTools) ...[
+              // Clear-cache button — wipes service workers + browser
+              // Cache Storage + the build-stamp localStorage entry,
+              // then reloads. Local profile data (highlights / notes /
+              // bookmarks in SharedPreferences / IndexedDB) is NOT
+              // touched. Useful when the app is stuck on a stale
+              // build and the automatic kill-switch reload didn't
+              // catch it.
+              //
+              // Web only: on the native builds there is no service worker
+              // or Cache Storage, and the button did nothing after its
+              // confirm dialog.
+              if (kIsWeb) ...[
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.cleaning_services_outlined, size: 18),
+                  label: Text(
+                    uiStrings['clearCache']?[locale] ?? 'Clear cache & reload',
+                  ),
+                  onPressed: () => _confirmClearCache(context, locale),
+                ),
+                SizedBox(height: 4 * s),
+                Text(
+                  uiStrings['clearCacheNote']?[locale] ??
+                      'Wipes browser cache + service workers. Your profile '
+                          'data (highlights, notes, bookmarks) stays put.',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: settings.fontFamily,
                     fontFamilyFallback: kCjkFontFallback,
-                    fontSize: settings.fontSize + 2,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
+                    fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
+                    color: scheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
                   ),
-                )),
+                ),
               ],
-            ),
-            SizedBox(height: 4 * s),
-            Text(
-              uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
+              SizedBox(height: 16 * s),
+              // ── Offline Pack (Round 56) ─────────────────────────
+              // Bulk pre-fetch every Bible / sermon / tool the user
+              // checks so the app launches instantly + works without
+              // network. Lives in its own card section because the
+              // download flow (categories + progress + clear) needs
+              // its own state surface.
+              _OfflinePackCard(settings: settings, s: s),
+              SizedBox(height: 12 * s),
+              // Show-tour-again — clears the v2 onboarding-seen flag and
+              // immediately shows the dialog so the user can re-walk the
+              // 5-slide tour without leaving Settings. Useful for users
+              // who skipped the tour on first run.
+              OutlinedButton.icon(
+                icon: const Icon(Icons.school_outlined, size: 18),
+                label: Text(
+                  uiStrings['showTourAgain']?[locale] ?? 'Show tour again',
+                ),
+                onPressed: () => _showTour(context, locale),
               ),
-            ),
-            SizedBox(height: 4 * s),
-            // 2026-06-29: surface the running version HERE on the Settings
-            // About card. It used to live ONLY on the AboutPage sub-page (its
-            // app-bar title + a footer buried under a long scroll), so a user
-            // on the Settings screen saw no version at all — reported as
-            // "version number not showing" on the Mi Pad. kAppVersion is
-            // guarded against a blank dart-define, so this never renders empty.
-            Text(
-              'v$kAppVersion'
-              '${kChinaMode ? ' · ${uiStrings['chinaBuildTag']?[locale] ?? 'China build'}' : ''}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 3).clamp(11.0, 14.0),
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurfaceVariant,
+              SizedBox(height: 12 * s),
+              // Reset settings — wipes visual / preference state back to
+              // defaults but leaves user CONTENT alone. Locale is also
+              // preserved so we don't yank the user out of their language.
+              // Wrapped in a confirm dialog because there's no undo.
+              OutlinedButton.icon(
+                icon: Icon(Icons.restart_alt_rounded,
+                    size: 18, color: scheme.error),
+                label: Text(
+                  uiStrings['resetSettings']?[locale] ?? 'Reset settings',
+                  style: TextStyle(color: scheme.error),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: scheme.error.withValues(alpha: 0.5)),
+                ),
+                onPressed: () => _confirmResetSettings(context, locale),
               ),
-            ),
-            SizedBox(height: 6 * s),
-            const ContactLine(),
-            SizedBox(height: 8 * s),
-            // Round 56 day-3 (2026-05-06): button into the full
-            // Attributions / Licensing / Takedown page. Copyright
-            // audit prompted listing every bundled third-party
-            // resource + per-item licence + a prominent takedown
-            // contact, which doesn't fit on the existing _AboutCard.
-            OutlinedButton.icon(
-              icon: const Icon(Icons.gavel_rounded, size: 18),
-              label: Text(
-                uiStrings['aboutOpenButton']?[locale] ??
-                    'Attributions & licensing',
+              SizedBox(height: 4 * s),
+              Text(
+                uiStrings['resetSettingsNote']?[locale] ??
+                    'Restores fonts, theme, color, Home sections, and '
+                        'other preferences. Your bookmarks, notes, '
+                        'highlights, profile, and language are kept.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
+                  fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
+                  color: scheme.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-              onPressed: () => pushPage(const AboutPage(), routeName: '/about'),
-            ),
-            SizedBox(height: 10 * s),
-            // Clear-cache button — wipes service workers + browser
-            // Cache Storage + the build-stamp localStorage entry,
-            // then reloads. Local profile data (highlights / notes /
-            // bookmarks in SharedPreferences / IndexedDB) is NOT
-            // touched. Useful when the app is stuck on a stale
-            // build and the automatic kill-switch reload didn't
-            // catch it.
-            //
-            // Web only: on the native builds there is no service worker
-            // or Cache Storage, and the button did nothing after its
-            // confirm dialog.
-            if (kIsWeb) ...[
-            OutlinedButton.icon(
-              icon: const Icon(Icons.cleaning_services_outlined, size: 18),
-              label: Text(
-                uiStrings['clearCache']?[locale] ??
-                    'Clear cache & reload',
-              ),
-              onPressed: () => _confirmClearCache(context, locale),
-            ),
-            SizedBox(height: 4 * s),
-            Text(
-              uiStrings['clearCacheNote']?[locale] ??
-                  'Wipes browser cache + service workers. Your profile '
-                      'data (highlights, notes, bookmarks) stays put.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
             ],
-            SizedBox(height: 16 * s),
-            // ── Offline Pack (Round 56) ─────────────────────────
-            // Bulk pre-fetch every Bible / sermon / tool the user
-            // checks so the app launches instantly + works without
-            // network. Lives in its own card section because the
-            // download flow (categories + progress + clear) needs
-            // its own state surface.
-            _OfflinePackCard(settings: settings, s: s),
-            SizedBox(height: 12 * s),
-            // Show-tour-again — clears the v2 onboarding-seen flag and
-            // immediately shows the dialog so the user can re-walk the
-            // 5-slide tour without leaving Settings. Useful for users
-            // who skipped the tour on first run.
-            OutlinedButton.icon(
-              icon: const Icon(Icons.school_outlined, size: 18),
-              label: Text(
-                uiStrings['showTourAgain']?[locale] ?? 'Show tour again',
-              ),
-              onPressed: () => _showTour(context, locale),
-            ),
-            SizedBox(height: 12 * s),
-            // Reset settings — wipes visual / preference state back to
-            // defaults but leaves user CONTENT alone. Locale is also
-            // preserved so we don't yank the user out of their language.
-            // Wrapped in a confirm dialog because there's no undo.
-            OutlinedButton.icon(
-              icon: Icon(Icons.restart_alt_rounded,
-                  size: 18, color: scheme.error),
-              label: Text(
-                uiStrings['resetSettings']?[locale] ?? 'Reset settings',
-                style: TextStyle(color: scheme.error),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: scheme.error.withValues(alpha: 0.5)),
-              ),
-              onPressed: () => _confirmResetSettings(context, locale),
-            ),
-            SizedBox(height: 4 * s),
-            Text(
-              uiStrings['resetSettingsNote']?[locale] ??
-                  'Restores fonts, theme, color, Home sections, and '
-                      'other preferences. Your bookmarks, notes, '
-                      'highlights, profile, and language are kept.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 6).clamp(11.0, 13.0),
-                color: scheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
           ],
         ),
       ),
@@ -4244,8 +4380,7 @@ class _AboutCard extends StatelessWidget {
     ));
   }
 
-  Future<void> _confirmClearCache(
-      BuildContext context, String locale) async {
+  Future<void> _confirmClearCache(BuildContext context, String locale) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -4310,7 +4445,8 @@ class _StylePresetCard extends StatelessWidget {
               child: Text(
                 uiStrings['stylePresetTitle']?[locale] ?? 'Style preset',
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
                   fontSize: settings.fontSize + 2,
                   fontWeight: FontWeight.w600,
                 ),
@@ -4326,12 +4462,12 @@ class _StylePresetCard extends StatelessWidget {
                             'Active: {name}')
                         .replaceAll(
                             '{name}',
-                            uiStrings[
-                                        'stylePreset_${active.name}_label']
+                            uiStrings['stylePreset_${active.name}_label']
                                     ?[locale] ??
                                 active.name),
                 style: TextStyle(
-                  fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                  fontFamily: settings.fontFamily,
+                  fontFamilyFallback: kCjkFontFallback,
                   fontSize: (settings.fontSize - 4).clamp(11.0, 13.0),
                   color: scheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
@@ -4343,8 +4479,8 @@ class _StylePresetCard extends StatelessWidget {
               final label = uiStrings['stylePreset_${preset.name}_label']
                       ?[locale] ??
                   preset.name;
-              final desc = uiStrings[
-                      'stylePreset_${preset.name}_description']?[locale] ??
+              final desc = uiStrings['stylePreset_${preset.name}_description']
+                      ?[locale] ??
                   '';
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: 2 * s),
@@ -4374,8 +4510,7 @@ class _StylePresetCard extends StatelessWidget {
                               size: 20,
                               color: selected
                                   ? scheme.onPrimary
-                                  : scheme.onSurface
-                                      .withValues(alpha: 0.7),
+                                  : scheme.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -4386,7 +4521,8 @@ class _StylePresetCard extends StatelessWidget {
                                 Text(
                                   label,
                                   style: TextStyle(
-                                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                    fontFamily: settings.fontFamily,
+                                    fontFamilyFallback: kCjkFontFallback,
                                     fontSize:
                                         (settings.fontSize).clamp(14.0, 18.0),
                                     fontWeight: FontWeight.w600,
@@ -4398,7 +4534,8 @@ class _StylePresetCard extends StatelessWidget {
                                   Text(
                                     desc,
                                     style: TextStyle(
-                                      fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
+                                      fontFamily: settings.fontFamily,
+                                      fontFamilyFallback: kCjkFontFallback,
                                       fontSize: (settings.fontSize - 4)
                                           .clamp(11.0, 13.0),
                                       color: scheme.onSurface
@@ -4484,7 +4621,9 @@ List<_FontOption> _availableFonts(String locale) {
     // ── System English / Latin fonts ──────────────────────────
     _FontOption(
       value: 'Times New Roman',
-      label: isZh ? 'Times New Roman（衬线 / 经典）' : 'Times New Roman (serif / classic)',
+      label: isZh
+          ? 'Times New Roman（衬线 / 经典）'
+          : 'Times New Roman (serif / classic)',
     ),
     _FontOption(
       value: 'Georgia',
@@ -4633,9 +4772,9 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
       final eta = svc.etaSeconds;
       if (eta != null && eta > 0) {
         final etaText = _formatEta(eta, locale);
-        etaPart = (uiStrings['offlinePackEtaSuffix']?[locale] ??
-                ' · ~{eta} left')
-            .replaceAll('{eta}', etaText);
+        etaPart =
+            (uiStrings['offlinePackEtaSuffix']?[locale] ?? ' · ~{eta} left')
+                .replaceAll('{eta}', etaText);
       }
       return tmpl
           .replaceAll('{done}', '${svc.done}')
@@ -4644,9 +4783,8 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
           .replaceAll('{eta}', etaPart);
     }
     if (svc.lastCompletedAt != null && svc.lastDownloaded.isNotEmpty) {
-      final cats = svc.lastDownloaded
-          .map((c) => _categoryLabel(c, locale))
-          .join(' · ');
+      final cats =
+          svc.lastDownloaded.map((c) => _categoryLabel(c, locale)).join(' · ');
       final tmpl = uiStrings['offlinePackReady']?[locale] ??
           'Ready offline · {categories}';
       return tmpl.replaceAll('{categories}', cats);
@@ -4662,12 +4800,16 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
   String _formatEta(int sec, String locale) {
     final isZh = locale.startsWith('zh');
     if (sec < 10) {
-      return isZh ? _zhScript(locale, '不到 10 秒', '不到 10 秒') : 'less than 10 sec';
+      return isZh
+          ? _zhScript(locale, '不到 10 秒', '不到 10 秒')
+          : 'less than 10 sec';
     }
     if (sec < 60) {
       // round to nearest 10 seconds for stability
       final rounded = ((sec + 5) ~/ 10) * 10;
-      return isZh ? _zhScript(locale, '$rounded 秒', '$rounded 秒') : '$rounded sec';
+      return isZh
+          ? _zhScript(locale, '$rounded 秒', '$rounded 秒')
+          : '$rounded sec';
     }
     if (sec < 3600) {
       final mins = (sec / 60).round();
@@ -4745,8 +4887,7 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
                   _statusLine(locale, svc),
                   style: TextStyle(
                     fontFamily: widget.settings.fontFamily,
-                    fontSize:
-                        (widget.settings.fontSize - 5).clamp(11.0, 13.0),
+                    fontSize: (widget.settings.fontSize - 5).clamp(11.0, 13.0),
                     color: !svc.downloading &&
                             svc.lastCompletedAt != null &&
                             svc.lastDownloaded.isNotEmpty
@@ -4790,8 +4931,7 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
                     .replaceAll('{n}', '${svc.failed}'),
                 style: TextStyle(
                   fontFamily: widget.settings.fontFamily,
-                  fontSize:
-                      (widget.settings.fontSize - 6).clamp(10.0, 12.0),
+                  fontSize: (widget.settings.fontSize - 6).clamp(10.0, 12.0),
                   color: scheme.error,
                 ),
               ),
@@ -4856,9 +4996,9 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
                   if (_selected.isEmpty) {
                     return FilledButton.icon(
                       icon: const Icon(Icons.download_rounded, size: 18),
-                      label: Text(
-                          uiStrings['offlinePackPickCategory']?[locale] ??
-                              'Pick a category'),
+                      label: Text(uiStrings['offlinePackPickCategory']
+                              ?[locale] ??
+                          'Pick a category'),
                       onPressed: null,
                     );
                   }
@@ -4879,8 +5019,7 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
                   if (allDownloaded) {
                     return OutlinedButton.icon(
                       icon: const Icon(Icons.refresh_rounded, size: 18),
-                      label: Text(uiStrings['offlinePackRedownload']
-                              ?[locale] ??
+                      label: Text(uiStrings['offlinePackRedownload']?[locale] ??
                           'Re-download to refresh'),
                       onPressed: () => svc.download(categories: _selected),
                     );
@@ -4923,8 +5062,7 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.cloud_outlined,
-                    size: 14, color: scheme.tertiary),
+                Icon(Icons.cloud_outlined, size: 14, color: scheme.tertiary),
                 SizedBox(width: 6 * s),
                 Expanded(
                   child: Text(
@@ -4934,8 +5072,8 @@ class _OfflinePackCardState extends State<_OfflinePackCard> {
                             'load of any non-Roboto font.',
                     style: TextStyle(
                       fontFamily: widget.settings.fontFamily,
-                      fontSize: (widget.settings.fontSize - 6)
-                          .clamp(10.0, 12.0),
+                      fontSize:
+                          (widget.settings.fontSize - 6).clamp(10.0, 12.0),
                       color: scheme.onSurface.withValues(alpha: 0.78),
                       height: 1.45,
                     ),
@@ -5024,9 +5162,12 @@ class _InstallAppCardState extends State<_InstallAppCard> {
 
     switch (_flow) {
       case InstallFlowKind.nativePrompt:
-        title = isZh ? _zhScript(locale, '安装雅伟之言', '安裝雅偉之言') : "Install Yahweh's Words";
+        title = isZh
+            ? _zhScript(locale, '安装雅伟之言', '安裝雅偉之言')
+            : "Install Yahweh's Words";
         body = isZh
-            ? _zhScript(locale, '把雅伟之言安装到主屏幕，获得更快的启动速度和离线访问。', '把雅偉之言安裝到主畫面，獲得更快的啟動速度和離線存取。')
+            ? _zhScript(locale, '把雅伟之言安装到主屏幕，获得更快的启动速度和离线访问。',
+                '把雅偉之言安裝到主畫面，獲得更快的啟動速度和離線存取。')
             : 'Install Yahweh\'s Words to your home screen for faster launch + offline access.';
         action = FilledButton.icon(
           onPressed: _busy ? null : _onInstallPressed,
@@ -5035,9 +5176,13 @@ class _InstallAppCardState extends State<_InstallAppCard> {
         );
         break;
       case InstallFlowKind.iosManual:
-        title = isZh ? _zhScript(locale, '添加到主屏幕', '加入主畫面') : 'Add to Home Screen';
+        title =
+            isZh ? _zhScript(locale, '添加到主屏幕', '加入主畫面') : 'Add to Home Screen';
         body = isZh
-            ? _zhScript(locale, '1. 点击 Safari 底部的「分享」按钮（⬆️）\n2. 选择「添加到主屏幕」\n3. 点击「添加」 — 雅伟之言就会像原生 App 一样运行。', '1. 點擊 Safari 底部的「分享」按鈕（⬆️）\n2. 選擇「加入主畫面」\n3. 點擊「加入」—— 雅偉之言就會像原生 App 一樣運行。')
+            ? _zhScript(
+                locale,
+                '1. 点击 Safari 底部的「分享」按钮（⬆️）\n2. 选择「添加到主屏幕」\n3. 点击「添加」 — 雅伟之言就会像原生 App 一样运行。',
+                '1. 點擊 Safari 底部的「分享」按鈕（⬆️）\n2. 選擇「加入主畫面」\n3. 點擊「加入」—— 雅偉之言就會像原生 App 一樣運行。')
             : '1. Tap the Safari Share button at the bottom (⬆️)\n2. Choose "Add to Home Screen"\n3. Tap "Add" — Yahweh\'s Words runs like a native app.';
         break;
       case InstallFlowKind.desktopManual:
@@ -5045,7 +5190,10 @@ class _InstallAppCardState extends State<_InstallAppCard> {
             ? _zhScript(locale, '安装雅伟之言桌面版', '安裝雅偉之言桌面版')
             : "Install Yahweh's Words as a desktop app";
         body = isZh
-            ? _zhScript(locale, '在地址栏右侧找到「安装」图标（⊕），或者打开浏览器菜单 →「安装雅伟之言」。安装后雅伟之言会有自己的窗口和 Dock / 开始菜单图标。', '在網址列右側找到「安裝」圖示（⊕），或者打開瀏覽器選單 →「安裝雅偉之言」。安裝後雅偉之言會有自己的視窗和 Dock / 開始選單圖示。')
+            ? _zhScript(
+                locale,
+                '在地址栏右侧找到「安装」图标（⊕），或者打开浏览器菜单 →「安装雅伟之言」。安装后雅伟之言会有自己的窗口和 Dock / 开始菜单图标。',
+                '在網址列右側找到「安裝」圖示（⊕），或者打開瀏覽器選單 →「安裝雅偉之言」。安裝後雅偉之言會有自己的視窗和 Dock / 開始選單圖示。')
             : 'Look for the install icon (⊕) on the right side of the address bar, or open the browser menu → "Install Yahweh\'s Words". Once installed Yahweh\'s Words gets its own window + Dock / Start Menu icon.';
         break;
       case InstallFlowKind.alreadyInstalled:
@@ -5069,8 +5217,7 @@ class _InstallAppCardState extends State<_InstallAppCard> {
                     style: TextStyle(
                       fontFamily: settings.fontFamily,
                       fontFamilyFallback: kCjkFontFallback,
-                      fontSize:
-                          (settings.fontSize - 1).clamp(13.0, 16.0),
+                      fontSize: (settings.fontSize - 1).clamp(13.0, 16.0),
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
                     ),
@@ -5119,17 +5266,17 @@ class _ExportDataCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.download_outlined,
-                    size: 18, color: scheme.primary),
+                Icon(Icons.download_outlined, size: 18, color: scheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    isZh ? _zhScript(locale, '导出我的数据', '匯出我的資料') : 'Export my data',
+                    isZh
+                        ? _zhScript(locale, '导出我的数据', '匯出我的資料')
+                        : 'Export my data',
                     style: TextStyle(
                       fontFamily: settings.fontFamily,
                       fontFamilyFallback: kCjkFontFallback,
-                      fontSize:
-                          (settings.fontSize - 1).clamp(13.0, 16.0),
+                      fontSize: (settings.fontSize - 1).clamp(13.0, 16.0),
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
                     ),
@@ -5140,7 +5287,10 @@ class _ExportDataCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               isZh
-                  ? _zhScript(locale, '导出全部标记、书签和笔记。Markdown 格式可粘贴到 Notion / Obsidian / Apple Notes 等；JSON 格式是结构化备份。', '匯出全部標記、書籤和筆記。Markdown 格式可貼到 Notion / Obsidian / Apple Notes 等；JSON 格式是結構化備份。')
+                  ? _zhScript(
+                      locale,
+                      '导出全部标记、书签和笔记。Markdown 格式可粘贴到 Notion / Obsidian / Apple Notes 等；JSON 格式是结构化备份。',
+                      '匯出全部標記、書籤和筆記。Markdown 格式可貼到 Notion / Obsidian / Apple Notes 等；JSON 格式是結構化備份。')
                   : 'Export all highlights, bookmarks, and notes. Markdown pastes cleanly into Notion / Obsidian / Apple Notes / Google Docs. JSON is a structured backup.',
               style: TextStyle(
                 fontFamily: settings.fontFamily,
@@ -5213,15 +5363,15 @@ class _ExportDialogState extends State<_ExportDialog> {
             ? '${(bytes / 1024).toStringAsFixed(1)} KB'
             : '${(bytes / (1024 * 1024)).toStringAsFixed(2)} MB';
     return AlertDialog(
-      title: Text(isZh ? _zhScript(locale, '导出我的数据', '匯出我的資料') : 'Export my data'),
+      title:
+          Text(isZh ? _zhScript(locale, '导出我的数据', '匯出我的資料') : 'Export my data'),
       content: SizedBox(
         // v1.3.x responsive fix: a fixed 560 overflowed the dialog on
         // phones (≈390 dp). On narrow screens fill the dialog's own
         // (smaller) width via double.maxFinite; cap at 560 on tablet /
         // desktop so the export panel doesn't stretch too wide.
-        width: MediaQuery.of(context).size.width < 640
-            ? double.maxFinite
-            : 560.0,
+        width:
+            MediaQuery.of(context).size.width < 640 ? double.maxFinite : 560.0,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -5252,8 +5402,7 @@ class _ExportDialogState extends State<_ExportDialog> {
             Container(
               constraints: const BoxConstraints(maxHeight: 280),
               decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest
-                    .withValues(alpha: 0.5),
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                     color: scheme.outlineVariant.withValues(alpha: 0.6)),
@@ -5279,7 +5428,9 @@ class _ExportDialogState extends State<_ExportDialog> {
             ),
             const SizedBox(height: 6),
             Text(
-              isZh ? _zhScript(locale, '大小：$sizeLabel', '大小：$sizeLabel') : 'Size: $sizeLabel',
+              isZh
+                  ? _zhScript(locale, '大小：$sizeLabel', '大小：$sizeLabel')
+                  : 'Size: $sizeLabel',
               style: TextStyle(
                 fontSize: 11,
                 color: scheme.onSurface.withValues(alpha: 0.6),
@@ -5298,8 +5449,9 @@ class _ExportDialogState extends State<_ExportDialog> {
             await ClipboardHelper.copyWithFeedback(
               context,
               _content,
-              messageOverride:
-                  isZh ? _zhScript(locale, '已复制到剪贴板', '已複製到剪貼簿') : 'Copied to clipboard',
+              messageOverride: isZh
+                  ? _zhScript(locale, '已复制到剪贴板', '已複製到剪貼簿')
+                  : 'Copied to clipboard',
             );
           },
           icon: const Icon(Icons.content_copy_outlined, size: 16),
@@ -5336,17 +5488,17 @@ class _ImportDataCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.upload_outlined,
-                    size: 18, color: scheme.primary),
+                Icon(Icons.upload_outlined, size: 18, color: scheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    isZh ? _zhScript(locale, '导入我的数据', '匯入我的資料') : 'Import my data',
+                    isZh
+                        ? _zhScript(locale, '导入我的数据', '匯入我的資料')
+                        : 'Import my data',
                     style: TextStyle(
                       fontFamily: settings.fontFamily,
                       fontFamilyFallback: kCjkFontFallback,
-                      fontSize:
-                          (settings.fontSize - 1).clamp(13.0, 16.0),
+                      fontSize: (settings.fontSize - 1).clamp(13.0, 16.0),
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
                     ),
@@ -5357,7 +5509,10 @@ class _ImportDataCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               isZh
-                  ? _zhScript(locale, '粘贴之前导出的 JSON 备份，恢复标记、书签和笔记。同一节经文的数据会被导入的内容覆盖，其余数据保持不变。', '貼上之前匯出的 JSON 備份，恢復標記、書籤和筆記。同一節經文的資料會被匯入的內容覆蓋，其餘資料保持不變。')
+                  ? _zhScript(
+                      locale,
+                      '粘贴之前导出的 JSON 备份，恢复标记、书签和笔记。同一节经文的数据会被导入的内容覆盖，其余数据保持不变。',
+                      '貼上之前匯出的 JSON 備份，恢復標記、書籤和筆記。同一節經文的資料會被匯入的內容覆蓋，其餘資料保持不變。')
                   : 'Paste a previously exported JSON backup to restore highlights, bookmarks, and notes. Imported entries overwrite existing data for the same verse; everything else is left untouched.',
               style: TextStyle(
                 fontFamily: settings.fontFamily,
@@ -5471,12 +5626,12 @@ class _ImportDialogState extends State<_ImportDialog> {
     final parsed = _parsed;
 
     return AlertDialog(
-      title: Text(isZh ? _zhScript(locale, '导入我的数据', '匯入我的資料') : 'Import my data'),
+      title:
+          Text(isZh ? _zhScript(locale, '导入我的数据', '匯入我的資料') : 'Import my data'),
       content: SizedBox(
         // Same responsive rule as _ExportDialog.
-        width: MediaQuery.of(context).size.width < 640
-            ? double.maxFinite
-            : 560.0,
+        width:
+            MediaQuery.of(context).size.width < 640 ? double.maxFinite : 560.0,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -5486,14 +5641,15 @@ class _ImportDialogState extends State<_ImportDialog> {
               child: TextButton.icon(
                 onPressed: _pasteFromClipboard,
                 icon: const Icon(Icons.content_paste_outlined, size: 16),
-                label: Text(isZh ? _zhScript(locale, '从剪贴板粘贴', '從剪貼簿貼上') : 'Paste from clipboard'),
+                label: Text(isZh
+                    ? _zhScript(locale, '从剪贴板粘贴', '從剪貼簿貼上')
+                    : 'Paste from clipboard'),
               ),
             ),
             Container(
               constraints: const BoxConstraints(maxHeight: 280, minHeight: 140),
               decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest
-                    .withValues(alpha: 0.5),
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                     color: scheme.outlineVariant.withValues(alpha: 0.6)),
@@ -5526,7 +5682,10 @@ class _ImportDialogState extends State<_ImportDialog> {
             else if (parsed != null)
               Text(
                 isZh
-                    ? _zhScript(locale, '找到 ${parsed.highlights.length} 条高亮、${parsed.bookmarks.length} 条书签、${parsed.notes.length} 条笔记——将覆盖同一节经文的本地数据。', '找到 ${parsed.highlights.length} 條高亮、${parsed.bookmarks.length} 條書籤、${parsed.notes.length} 條筆記——將覆蓋同一節經文的本機資料。')
+                    ? _zhScript(
+                        locale,
+                        '找到 ${parsed.highlights.length} 条高亮、${parsed.bookmarks.length} 条书签、${parsed.notes.length} 条笔记——将覆盖同一节经文的本地数据。',
+                        '找到 ${parsed.highlights.length} 條高亮、${parsed.bookmarks.length} 條書籤、${parsed.notes.length} 條筆記——將覆蓋同一節經文的本機資料。')
                     : 'Found ${parsed.highlights.length} highlights · ${parsed.bookmarks.length} bookmarks · ${parsed.notes.length} notes — will overwrite existing data for the same verse.',
                 style: TextStyle(
                   fontSize: 11,
@@ -5554,7 +5713,10 @@ class _ImportDialogState extends State<_ImportDialog> {
                   showFloatingToast(
                     widget.pageContext,
                     message: isZh
-                        ? _zhScript(locale, '已导入 ${result.highlights} 条高亮、${result.bookmarks} 条书签、${result.notes} 条笔记', '已匯入 ${result.highlights} 條高亮、${result.bookmarks} 條書籤、${result.notes} 條筆記')
+                        ? _zhScript(
+                            locale,
+                            '已导入 ${result.highlights} 条高亮、${result.bookmarks} 条书签、${result.notes} 条笔记',
+                            '已匯入 ${result.highlights} 條高亮、${result.bookmarks} 條書籤、${result.notes} 條筆記')
                         : 'Imported ${result.highlights} highlights, ${result.bookmarks} bookmarks, ${result.notes} notes',
                     icon: Icons.check_circle_rounded,
                     background: scheme.primary,

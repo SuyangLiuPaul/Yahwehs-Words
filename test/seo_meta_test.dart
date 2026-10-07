@@ -140,7 +140,7 @@ void main() {
     test('structured data parses, and claims nothing it cannot back', () {
       final m =
           RegExp(r'<script type="application/ld\+json">([\s\S]*?)</script>')
-              .firstMatch(markup);
+              .firstMatch(html);
       expect(m, isNotNull, reason: 'JSON-LD block is gone');
 
       // A JSON-LD block that does not parse is worse than none: Search

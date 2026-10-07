@@ -1,3 +1,16 @@
+## October8 — Basic/Advanced web Settings prepared
+
+Owner authorized paired dev/prod WEBSITE deployment and GitHub/documentation updates. No version bump, release tag, native build, store submission or admin database mutation.
+
+Web Settings defaults to Basic: account, interface language, font/menu size, light/dark/system theme, reading mode, update check and diagnosis ID. Advanced expands on demand: detailed appearance, copy formats, projection, reading tools/cache, notification preferences, import/export; Words also contains Home layout and AI configuration. Sword has no AI or companion settings introduced by this change.
+
+The original control widgets and handlers are retained. Original section links auto-expand Advanced when needed, including later changes to the initial section. A simple disclosure avoids animated height estimation that previously destabilized Settings scrolling. Native Settings keeps its original order through kIsWeb gating; installed packages are untouched.
+
+Both changed Settings files passed Flutter 3.44.2 static analysis. Deployment and browser verification results will be appended after completion. About/CN official badge layout from the prior mobile pass is included in Words. Portal mobile CSS remains separately committed locally, pending explicit portal deployment.
+
+Evidence/log folder: /Users/pliu0036/Downloads/Yahweh-Settings-Tiers-20261008/.
+
+
 ## October6 22:00 Melbourne — Microsoft1.7.12 published and final cache cleanup
 
 Fresh authorized visible Partner Center reload confirms Words Submission12/1152921505702053845 PUBLISHED: Congrats your product is now updated, latest product available, Store presence Submission12, Start update enabled. This supersedes earlier certification checkpoints. Validated immutable1.7.12.0 package identity/source/hash preserved; no duplicate submission. Screenshot microsoft-words-1712-published.png in /Users/pliu0036/Downloads/Yahweh-Release-1711. Admin Microsoft latest12 saved after publication; Web/GitHub12 remain verified. Apple/Google review/test qualification gates remain separate.
