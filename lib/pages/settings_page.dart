@@ -294,6 +294,25 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
   }
 
   @override
+  void didUpdateWidget(covariant _SettingsPageBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialSection != oldWidget.initialSection) {
+      if (kIsWeb && _needsAdvanced(widget.initialSection)) {
+        _advancedExpanded = true;
+      }
+      final target = _keyFor(widget.initialSection);
+      if (target != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            Scrollable.ensureVisible(target.currentContext ?? context,
+                duration: AppMotion.slow, alignment: 0.05);
+          }
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<AppSettings>(
       builder: (context, settings, _) {
@@ -1626,9 +1645,9 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                               'Advanced settings')),
                           subtitle: Text(_tierText(
                               settings.locale,
-                              '显示细调、阅读工具、通知与数据管理',
-                              '顯示細調、閱讀工具、通知與資料管理',
-                              'Appearance details, reading tools, notifications and data')),
+                              '字体、复制与投影、首页布局、AI、通知及数据',
+                              '字體、複製與投影、首頁版面、AI、通知及資料',
+                              'Fonts, copy and projection, Home layout, AI, notifications and data')),
                           trailing: Icon(_advancedExpanded
                               ? Icons.expand_less
                               : Icons.expand_more),
