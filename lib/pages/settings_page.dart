@@ -1,3 +1,4 @@
+import '../widgets/settings_utility_theme.dart';
 import '../widgets/diagnosis_tile.dart';
 // 2026-05-20 (v1.2.67): `dart:js_interop` was here. See
 // `lib/utils/clear_cache_helper.dart` for the conditional-import
@@ -1484,13 +1485,12 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
             if (!UpdateService.isSupported) ...[
               SizedBox(height: 8 * s),
               Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16 * s),
-                  child: ManualUpdateTile(locale: settings.locale),
-                ),
+                child: ManualUpdateTile(locale: settings.locale),
               ),
             ],
+            SizedBox(height: 12 * s),
             DiagnosisTile(locale: settings.locale),
+            SizedBox(height: 12 * s),
           ],
           'companionPreferences': <Widget>[
             // 2026-05-06: Account section moved to TOP of Settings
@@ -1617,25 +1617,36 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                     ...sections['theme']!,
                     ...sections['readingHeader']!,
                     ...sections['readingMode']!,
-                    ...sections['updates']!,
-                    Card(
-                      child: Semantics(
-                        expanded: _advancedExpanded,
-                        child: ListTile(
-                          key: const Key('settings.advanced.toggle'),
-                          leading: const Icon(Icons.tune_outlined),
-                          title: Text(_tierText(settings.locale, '高级设置', '進階設定',
-                              'Advanced settings')),
-                          subtitle: Text(_tierText(
-                              settings.locale,
-                              '字体、复制与投影、首页布局、AI、通知及数据',
-                              '字體、複製與投影、首頁版面、AI、通知及資料',
-                              'Fonts, copy and projection, Home layout, AI, notifications and data')),
-                          trailing: Icon(_advancedExpanded
-                              ? Icons.expand_less
-                              : Icons.expand_more),
-                          onTap: () => setState(
-                              () => _advancedExpanded = !_advancedExpanded),
+                    SettingsUtilityTheme(
+                      fontSize: settings.fontSize,
+                      fontFamily: settings.fontFamily,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: sections['updates']!,
+                      ),
+                    ),
+                    SettingsUtilityTheme(
+                      fontSize: settings.fontSize,
+                      fontFamily: settings.fontFamily,
+                      child: Card(
+                        child: Semantics(
+                          expanded: _advancedExpanded,
+                          child: ListTile(
+                            key: const Key('settings.advanced.toggle'),
+                            leading: const Icon(Icons.tune_outlined),
+                            title: Text(_tierText(settings.locale, '高级设置',
+                                '進階設定', 'Advanced settings')),
+                            subtitle: Text(_tierText(
+                                settings.locale,
+                                '字体、复制与投影、首页布局、AI、通知及数据',
+                                '字體、複製與投影、首頁版面、AI、通知及資料',
+                                'Fonts, copy and projection, Home layout, AI, notifications and data')),
+                            trailing: Icon(_advancedExpanded
+                                ? Icons.expand_less
+                                : Icons.expand_more),
+                            onTap: () => setState(
+                                () => _advancedExpanded = !_advancedExpanded),
+                          ),
                         ),
                       ),
                     ),

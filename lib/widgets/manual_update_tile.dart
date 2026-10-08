@@ -291,7 +291,7 @@ class _ManualUpdateTileState extends State<ManualUpdateTile> {
     }
     return ListTile(
       key: const ValueKey('manual-update.tile'),
-      contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       leading: _busy
           ? const SizedBox(
               width: 24,

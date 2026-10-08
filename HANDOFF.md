@@ -1,3 +1,13 @@
+## 2026-10-08 — UI maintenance delivered to dev/prod websites
+
+Owner-authorized rollout completed on all six Words international/China sites, with full built-file SHA-256 verification and live Settings inspection. Version stays 1.7.16; native/store artifacts and tags are unchanged. See `docs/ui-consistency-2026-10-08.md` deployment addendum and `Yahweh-UI-Consistency-20261008` evidence. The earlier source-only entry below describes the initial scope before the later deployment request.
+
+## 2026-10-08 — UI consistency maintenance (source only)
+
+Typography, icons, utility-card alignment and spacing corrections are on
+`fix/ui-consistency-20261008`. See `docs/ui-consistency-2026-10-08.md` for
+coverage and validation limits. No new release, tag or website deployment.
+
 ## October8 — Basic/Advanced web Settings delivered
 
 Web-only Settings now defaults to Basic; Advanced expands on demand and existing section links open the required group. Maintenance/offline/reset controls are inside Advanced; the About summary remains compact. All six Words international/China dev, QAT and production sites were deployed with the canonical no-bump wrapper and re-fetched successfully, including matching full main.dart.js and startup manifests. Version remains 1.7.15; native/store packages and immutable release tags are unchanged.

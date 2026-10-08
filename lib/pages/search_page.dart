@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/search_testament_scope.dart';
 import '../widgets/search_options_bar.dart';
 import 'package:yahwehs_words/widgets/search_book_chart.dart';
 import 'package:get/get.dart';
@@ -78,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
   /// type without hammering the for-loop on every character.
   Timer? _liveSearchDebounce;
 
-  (bool, bool)? _searchFlags;
+  bool? _searchFlags;
   int _textSearchGeneration = 0;
   bool _textSearchBusy = false;
 
@@ -304,7 +305,7 @@ class _SearchPageState extends State<SearchPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final settings = Provider.of<AppSettings>(context);
-    final flags = (settings.fuzzySearch, settings.pinyinSearch);
+    final flags = settings.fuzzySearch;
     final previous = _searchFlags;
     _searchFlags = flags;
     if (previous == null || previous == flags) return;
@@ -830,7 +831,7 @@ class _SearchPageState extends State<SearchPage> {
     int outOfScope = 0;
     for (final ref in result.refs) {
       // Filter scope: book mismatch → count and skip.
-      if (scopeEnglishBook != null && ref.book != scopeEnglishBook) {
+      if (!matchesSearchBookScope(ref.book, scopeEnglishBook)) {
         outOfScope += 1;
         continue;
       }
@@ -857,7 +858,7 @@ class _SearchPageState extends State<SearchPage> {
     for (final ref in result.refs) {
       // Drop refs that fall outside the user's filter scope (we
       // already counted them as `outOfScope` above).
-      if (scopeEnglishBook != null && ref.book != scopeEnglishBook) {
+      if (!matchesSearchBookScope(ref.book, scopeEnglishBook)) {
         continue;
       }
       keptRefs.add(ref);
@@ -1278,7 +1279,7 @@ class _SearchPageState extends State<SearchPage> {
     int scanCount = 0;
     if (!mounted || generation != _textSearchGeneration) return;
     final searchSettings = context.read<AppSettings>();
-    final expanded = searchSettings.fuzzySearch || searchSettings.pinyinSearch;
+    final expanded = searchSettings.fuzzySearch;
     if (expanded) setState(() => _textSearchBusy = true);
     try {
     for (int i = 0; i < verses.length; i++) {
@@ -1290,7 +1291,7 @@ class _SearchPageState extends State<SearchPage> {
         }
       }
       final verse = verses[i];
-      if (useFilter && verse.book != filterTarget) continue;
+      if (useFilter && !matchesSearchBookScope(verse.book, filterTarget)) { continue; }
       if (useCurBook && verse.book != filterTarget) continue;
       scanCount++;
       // Literal first, always. While the fuzzy switch is off this is
@@ -1632,45 +1633,7 @@ class _SearchPageState extends State<SearchPage> {
               icon: const Icon(Icons.filter_list, size: 22),
               padding: const EdgeInsets.all(6),
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              onSelected: (value) async {
-                // 2026-05-07 (post-fix v3): replay the LAST search
-                // mode (text / Strong's / YsWords AI) with the new
-                // filter, instead of always defaulting to text
-                // search. Without this, a user who got AI results
-                // and changed the filter saw their AI results
-                // replaced with a (probably empty) text search.
-                final wasAi = _lastResultsFromAi;
-                final hadStrongs = _strongsKey != null;
-                setState(() {
-                  _results.clear();
-                  bookCounts.clear();
-                  if (value is bool) {
-                    searchAll = value;
-                    filterBook = null;
-                  } else if (value is String) {
-                    filterBook = value;
-                    searchAll = false;
-                  }
-                });
-                if (wasAi) {
-                  // Re-run YsWords AI in the new scope. The
-                  // post-resolve filter inside _askAi() drops refs
-                  // outside the active filterBook / searchAll, with
-                  // a notice line so the user can see how many were
-                  // dropped.
-                  await _askAi();
-                } else if (hadStrongs) {
-                  // Strong's mode: just rebuild — _buildStrongsRefList
-                  // re-applies the filter at render time. No need to
-                  // re-fetch the concordance.
-                  setState(() {});
-                } else {
-                  await search();
-                }
-                if (_scrollController.hasClients) {
-                  _scrollController.jumpTo(0.0);
-                }
-              },
+              onSelected: _changeSearchScope,
               itemBuilder: (_) {
                 // base scope items
                 final items = <PopupMenuEntry<Object>>[
@@ -1679,13 +1642,13 @@ class _SearchPageState extends State<SearchPage> {
                       child: Text(
                           uiStrings['searchCurrentBook']?[settings.locale] ??
                               'Search Current Book',
-                          style: TextStyle(fontSize: settings.fontSize))),
+                          style: Theme.of(context).textTheme.bodyMedium)),
                   PopupMenuItem<bool>(
                       value: true,
                       child: Text(
                           uiStrings['searchEntireBible']?[settings.locale] ??
                               'Search Entire Bible',
-                          style: TextStyle(fontSize: settings.fontSize))),
+                          style: Theme.of(context).textTheme.bodyMedium)),
                 ];
                 // divider
                 items.add(const PopupMenuDivider());
@@ -1695,7 +1658,7 @@ class _SearchPageState extends State<SearchPage> {
                     PopupMenuItem<String>(
                       value: book,
                       child: Text('$book ($count)',
-                          style: TextStyle(fontSize: settings.fontSize)),
+                          style: Theme.of(context).textTheme.bodyMedium),
                     ),
                   );
                 });
@@ -1727,11 +1690,21 @@ class _SearchPageState extends State<SearchPage> {
             ),
             child: Column(
           children: [
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Wrap(spacing: 8, runSpacing: 4, children: [
+                for (final scope in [true, hebrewBibleScope, greekBibleScope])
+                  ChoiceChip(
+                    label: Text(scope == true
+                      ? (uiStrings['searchScopeWhole']?[settings.locale] ?? 'Entire Bible')
+                      : searchBookScopeLabel(scope as String, settings.locale)),
+                    selected: scope == true ? searchAll && filterBook == null : filterBook == scope,
+                    onSelected: _isLoadingVerses || _aiBusy ? null : (_) => _changeSearchScope(scope),
+                  ),
+              ])),
             SearchOptionsBar(locale: settings.locale,
-              fuzzy: settings.fuzzySearch, pinyin: settings.pinyinSearch,
+              fuzzy: settings.fuzzySearch,
               plainQuery: _plainTextQuery, busy: _isLoadingVerses || _aiBusy,
-              onFuzzyChanged: settings.setFuzzySearch,
-              onPinyinChanged: settings.setPinyinSearch),
+              onFuzzyChanged: settings.setFuzzySearch),
             if (_textSearchBusy) const LinearProgressIndicator(),
             // v1.3.91: AND / OR / ✶ operator bar — appears once the query
             // contains a Strong's token, so users can build combined
@@ -1837,7 +1810,7 @@ class _SearchPageState extends State<SearchPage> {
               SearchBookChart(
                 counts: bookCounts,
                 locale: settings.locale,
-                scope: filterBook ?? (!searchAll ? Provider.of<MainProvider>(context, listen: false).currentBook : null),
+                scope: filterBook != null ? searchBookScopeLabel(filterBook!, settings.locale) : (!searchAll ? Provider.of<MainProvider>(context, listen: false).currentBook : null),
                 bookLabel: (book) => book,
               ),
             if (_results.isNotEmpty)
@@ -2203,7 +2176,9 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> _runBooleanSearch(StrongsBooleanQuery query) async {
     // Read before the first await: the occurrence labels are numbered
     // for the version they will be opened in.
-    final version = context.read<MainProvider>().currentVersion;
+    final mp = context.read<MainProvider>();
+    final version = mp.currentVersion;
+    final scope = filterBook ?? (!searchAll ? mp.currentBook : null);
     setState(() {
       _resetSearchState();
       _booleanQuery = query;
@@ -2233,7 +2208,7 @@ class _SearchPageState extends State<SearchPage> {
     final refs = <ConcordanceRef>[];
     for (final label in resultLabels) {
       final parsed = ConcordanceRef.tryParse(label);
-      if (parsed != null) refs.add(parsed);
+      if (parsed != null && matchesSearchBookScope(parsed.englishBook, scope)) refs.add(parsed);
     }
     refs.sort((a, b) {
       final ai = standardBookOrder.indexOf(a.englishBook);
@@ -2361,6 +2336,46 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Future<void> _changeSearchScope(Object value) async {
+                // 2026-05-07 (post-fix v3): replay the LAST search
+                // mode (text / Strong's / YsWords AI) with the new
+                // filter, instead of always defaulting to text
+                // search. Without this, a user who got AI results
+                // and changed the filter saw their AI results
+                // replaced with a (probably empty) text search.
+                final wasAi = _lastResultsFromAi;
+                final hadStrongs = _strongsKey != null;
+                setState(() {
+                  _results.clear();
+                  bookCounts.clear();
+                  if (value is bool) {
+                    searchAll = value;
+                    filterBook = null;
+                  } else if (value is String) {
+                    filterBook = value;
+                    searchAll = false;
+                  }
+                });
+                if (wasAi) {
+                  // Re-run YsWords AI in the new scope. The
+                  // post-resolve filter inside _askAi() drops refs
+                  // outside the active filterBook / searchAll, with
+                  // a notice line so the user can see how many were
+                  // dropped.
+                  await _askAi();
+                } else if (hadStrongs) {
+                  // Strong's mode: just rebuild — _buildStrongsRefList
+                  // re-applies the filter at render time. No need to
+                  // re-fetch the concordance.
+                  setState(() {});
+                } else {
+                  await search();
+                }
+                if (_scrollController.hasClients) {
+                  _scrollController.jumpTo(0.0);
+                }
+                }
+
   Widget _strongsChart(BuildContext context, AppSettings settings) {
     final mp = Provider.of<MainProvider>(context, listen: false);
     final activeBook = filterBook ?? (!searchAll ? mp.currentBook : null);
@@ -2368,10 +2383,10 @@ class _SearchPageState extends State<SearchPage> {
     // The index's byBook map is uncapped; tallying its capped verse list
     // would incorrectly put a common word's peak near the start of the Bible.
     final counts = {for (final e in _strongsResult!.byBook.entries)
-      if (english == null || e.key == english) e.key: e.value};
+      if (matchesSearchBookScope(e.key, english)) e.key: e.value};
     return SearchBookChart(
       counts: counts, locale: settings.locale, occurrences: true,
-      scope: activeBook,
+      scope: activeBook == null ? null : searchBookScopeLabel(activeBook, settings.locale),
       bookLabel: (book) => localeAwareBookName(book, settings.locale, mp.currentVersion),
     );
   }
@@ -2387,8 +2402,12 @@ class _SearchPageState extends State<SearchPage> {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-    final total = result?.total ?? 0;
-    final shown = result?.refs.length ?? 0;
+    final mp = context.read<MainProvider>();
+    final scope = filterBook ?? (!searchAll ? mp.currentBook : null);
+    final total = result == null ? 0 : result.byBook.entries
+        .where((e) => matchesSearchBookScope(e.key, scope))
+        .fold<int>(0, (sum, e) => sum + e.value);
+    final shown = result?.refs.where((r) => matchesSearchBookScope(r.englishBook, scope)).length ?? 0;
     final usedTemplate = uiStrings['concordanceUsed']?[settings.locale] ??
         'Used {count} times';
     final usedLabel = usedTemplate.replaceAll('{count}', total.toString());
@@ -2531,7 +2550,7 @@ class _SearchPageState extends State<SearchPage> {
             ? (toEnglish(mainProv.currentBook!) ?? mainProv.currentBook!)
             : null);
     final List<ConcordanceRef> refs = scopeEnglishBook != null
-        ? result.refs.where((r) => r.englishBook == scopeEnglishBook).toList()
+        ? result.refs.where((r) => matchesSearchBookScope(r.englishBook, scopeEnglishBook)).toList()
         : result.refs;
     if (refs.isEmpty) {
       return Center(
@@ -2978,7 +2997,7 @@ class _ScopeBanner extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final isWhole = filterBook == null && searchAll;
     final scopeLabel = filterBook != null
-        ? filterBook!
+        ? searchBookScopeLabel(filterBook!, locale)
         : (searchAll
             ? (uiStrings['searchScopeWhole']?[locale] ?? 'Entire Bible')
             : (uiStrings['searchScopeCurrentBook']?[locale] ??
