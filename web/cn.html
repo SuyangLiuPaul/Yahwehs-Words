@@ -157,12 +157,6 @@
   /* ── the three ────────────────────────────────────────────── */
   .apps { display: grid; gap: 1rem; grid-template-columns: 1fr; align-items: start;
     margin: 0 0 3.25rem; }
-  @media (min-width: 44rem) { .apps { grid-template-columns: 1fr 1fr; } }
-  /* Three cards in two columns: the odd one out takes the whole row
-     rather than sitting beside an empty cell. */
-  @media (min-width: 44rem) {
-    .apps > .app:last-child:nth-child(odd) { grid-column: 1 / -1; }
-  }
   .app {
     background: var(--card); border: 1px solid var(--outline);
     border-radius: 16px; padding: 1.375rem; box-shadow: var(--shadow);
@@ -205,6 +199,11 @@
   @media(max-width:360px) {.store-links {grid-template-columns:1fr;} .app {padding:1rem;} }
   .links { margin-top: 0; padding-top: 1.125rem; display: flex;
     gap: .5rem; flex-wrap: wrap; align-items: center; }
+  @media (min-width: 44rem) {
+    .app { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 1.5rem; align-items: start; }
+    .app-intro { min-width: 0; }
+    .app .links { padding-top: 0; padding-left: 1.5rem; border-left: 1px solid var(--outline); min-width: 0; }
+  }
   a.go, a.dl {
     text-decoration: none; font-size: .875rem; border-radius: 999px;
     padding: .35rem .95rem; white-space: nowrap;
@@ -443,6 +442,7 @@
   <div class="apps">
 
     <article class="app">
+      <div class="app-intro">
       <div class="app-head">
         <img class="ico" src="/logo/logo-256.png" alt="" width="44" height="44" loading="lazy" decoding="async">
         <h3 class="zh">雅伟之言</h3>
@@ -455,6 +455,7 @@
         
       </p>
       <p class="host">yahwehword.com</p>
+      </div>
       <div class="links">
         <a class="go" href="https://yahwehword.com/">打开</a>
         <a class="dl" href="/dl/words">下载 APK</a>
@@ -469,6 +470,7 @@
     </article>
 
     <article class="app">
+      <div class="app-intro">
       <div class="app-head">
         <img class="ico" src="/app-icons/sword.png" alt="" width="44" height="44" loading="lazy" decoding="async">
         <h3 class="zh">雅伟之剑</h3>
@@ -481,6 +483,7 @@
         
       </p>
       <p class="host">sword.yahwehword.com</p>
+      </div>
       <div class="links">
         <a class="go" href="https://sword.yahwehword.com/">打开</a>
         <a class="dl" href="/dl/sword">下载 APK</a>
@@ -495,6 +498,7 @@
     </article>
 
     <article class="app">
+      <div class="app-intro">
       <div class="app-head">
         <img class="ico" src="/app-icons/world.png" alt="" width="44" height="44" loading="lazy" decoding="async">
         <h3 class="zh">雅伟之界</h3>
@@ -516,6 +520,7 @@
         
       </p>
       <p class="host">world.yahwehword.com</p>
+      </div>
       <div class="links">
         <a class="go" href="https://world.yahwehword.com/">打开</a>
         <!-- 2026-09-17: this card said 「网页版」 because the globe had no

@@ -19,3 +19,7 @@
 证据与部署日志：/Users/pliu0036/Downloads/Yahweh-Portal-About-Mobile-20261008/。
 
 源码：Words 变更 cba61f46 已 push 到 fix/ui-consistency-20261008；primary 同步提交 058a7695。Admin 本地提交 7ccea00，仓库没有配置远程；prod 已部署。
+
+## Owner 桌面反馈后的最终布局
+
+旧的双卡并列仍有卡片底边高低不齐，owner 明确反馈桌面右侧空缺不舒适。桌面（44rem 以上）改为每个应用一个完整横向卡片，左侧品牌/介绍、右侧下载入口，使用细分隔线。手机保持介绍和下载自然单列。三个应用均使用同一结构；CN 再次由共享源生成。检查 CN 手机 DOM：三个卡片各一个 intro 与 downloads，没有横向溢出。此前并列卡片截图与 gap 数值属于前一检查点，不代表最终桌面布局。
