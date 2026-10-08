@@ -155,7 +155,7 @@
   h2::after { content: ""; flex: 1; height: 1px; background: var(--outline); }
 
   /* ── the three ────────────────────────────────────────────── */
-  .apps { display: grid; gap: 1rem; grid-template-columns: 1fr;
+  .apps { display: grid; gap: 1rem; grid-template-columns: 1fr; align-items: start;
     margin: 0 0 3.25rem; }
   @media (min-width: 44rem) { .apps { grid-template-columns: 1fr 1fr; } }
   /* Three cards in two columns: the odd one out takes the whole row
@@ -194,12 +194,16 @@
   }
   .host { font-size: .75rem; color: var(--faint); margin: 0;
     word-break: break-all; }
-  .store-badge {display:inline-flex; padding:10px;align-items:center;background:transparent;border:0;}
-  .store-badge img {height:44px;width:auto;max-width:100%;}
+  .store-badge {display:flex;justify-content:center;align-items:center;min-height:64px;padding:0;background:transparent;border:0;}
+  .store-badge img {height:44px;width:auto;max-width:100%;object-fit:contain;}
   .store-badge img[src$=".png"] {height:60px;}
-  .store-option {display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px;}
-  .store-option small {font-size:14px;}
-  .links { margin-top: auto; padding-top: 1.125rem; display: flex;
+  .store-option {display:contents;}
+  .store-option small {font-size:14px;grid-column:1/-1;line-height:1.5;color:var(--muted);}
+  .store-links {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;flex-basis:100%;padding:12px 0;border-top:1px solid var(--outline);margin-top:8px;}
+  .links a.go,.links a.dl {min-height:44px;display:inline-flex;align-items:center;justify-content:center;white-space:normal;text-align:center;}
+  .links a.gh {flex-basis:100%;min-height:44px;display:flex;align-items:center;}
+  @media(max-width:360px) {.store-links {grid-template-columns:1fr;} .app {padding:1rem;} }
+  .links { margin-top: 0; padding-top: 1.125rem; display: flex;
     gap: .5rem; flex-wrap: wrap; align-items: center; }
   a.go, a.dl {
     text-decoration: none; font-size: .875rem; border-radius: 999px;
@@ -456,11 +460,12 @@
         <a class="dl" href="/dl/words">下载 APK</a>
         <a class="dl" href="/dl/words-mac">下载 Mac 版</a>
         <a class="dl" href="/dl/words-win">下载 Windows 版</a>
-        <a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
-        <a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
-        <span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span>
-      </div>
+        <a class="dl" href="/beta#words-apple">TestFlight · iPhone / Mac</a>
+
+
+        <div class="store-links"><a class="store-badge" href="https://apps.apple.com/app/id6817557892"><img src="/store-badges/app-store-en.svg" height="44" alt="Download on the App Store" loading="lazy"></a><a class="store-badge" href="https://apps.microsoft.com/detail/9NVJ28XSKP67"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a><span class="store-option"><a class="store-badge" href="/beta#words-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span></div>
       <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>
+      </div>
     </article>
 
     <article class="app">
@@ -481,11 +486,12 @@
         <a class="dl" href="/dl/sword">下载 APK</a>
         <a class="dl" href="/dl/sword-mac">下载 Mac 版</a>
         <a class="dl" href="/dl/sword-win">下载 Windows 版</a>
-        <a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a>
+
         <a class="dl" href="/beta#sword-apple">TestFlight · iPhone / Mac</a>
-        <span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span>
-      </div>
+
+        <div class="store-links"><a class="store-badge" href="https://apps.microsoft.com/detail/9P93XHHFP6H3"><img src="/store-badges/microsoft-en.svg" height="44" alt="Get it from Microsoft Store" loading="lazy"></a><span class="store-option"><a class="store-badge" href="/beta#sword-android"><img src="/store-badges/google-play-en.png" height="44" alt="Google Play" loading="lazy"></a><small>Google Play · 需加入测试群组</small></span></div>
       <p class="host">Mac 版首次打开：在“访达”里右键点应用 → 打开。Windows 版若弹出蓝色提示，点“更多信息 → 仍要运行”。</p>
+      </div>
     </article>
 
     <article class="app">
