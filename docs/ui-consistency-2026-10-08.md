@@ -95,3 +95,12 @@ These are source inspection entries, not individual screenshot approvals.
 - `lib/pages/study_testaments_page.dart`
 - `lib/pages/videos_page.dart`
 - `lib/pages/world_history_wheel_page.dart`
+
+## Owner-authorized dev/prod rollout — 2026-10-08
+
+The owner subsequently requested dev/prod deployment of this maintenance patch.
+Words source `9f6f85974724d86e7ccf12d2f5883737678b2a3f` now serves on all six international/China dev, qat and prod sites; public domain `yahwehword.com` also matched. Version remains 1.7.16.
+
+Canonical no-bump international/China builds were used. Slow Netlify uploads required same-build CLI recovery; no runtime edits were made during deployment. Full SHA-256 checks of main.dart.js, flutter_bootstrap.js and version.json matched each site's corresponding build. International main SHA-256: `79da49f1e7021eac7aa1ec1dbaa2468f6220763b029bfa566da3ee89fd71b1b1`; China main: `61275bd5de2601766a94c3bafe5a0640f74c1c1281566c34fafdafa91971cde5`. Startup asset manifest verification passed.
+
+Live Settings was visually checked on international dev/prod and China prod. Evidence: `/Users/pliu0036/Downloads/Yahweh-UI-Consistency-20261008/web-live-verification-words.json`, deployment logs and live screenshots. This is a web maintenance delivery; immutable release tags and native/store packages remain unchanged. Source branch was pushed; no remote CI or main merge is claimed for this branch.
