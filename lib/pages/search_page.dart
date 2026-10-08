@@ -1690,8 +1690,8 @@ class _SearchPageState extends State<SearchPage> {
             ),
             child: Column(
           children: [
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Wrap(spacing: 8, runSpacing: 4, children: [
+            Padding(padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+              child: Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 4, children: [
                 for (final scope in [true, hebrewBibleScope, greekBibleScope])
                   ChoiceChip(
                     label: Text(scope == true

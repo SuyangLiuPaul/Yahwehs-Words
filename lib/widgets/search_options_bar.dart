@@ -16,20 +16,25 @@ class SearchOptionsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        FilterChip(
-            label: Text(searchOptionText('fuzzy', locale)),
-            tooltip: searchOptionText('fuzzyHelp', locale),
-            selected: fuzzy,
-            onSelected: plainQuery && !busy ? onFuzzyChanged : null),
-        Text(
-            searchOptionText(
-                !plainQuery
-                    ? 'plainOnly'
-                    : fuzzy
-                        ? 'fuzzyHelp'
-                        : 'modeHelp',
-                locale),
-            style: Theme.of(context).textTheme.bodySmall),
-      ]));
+      child: SizedBox(
+          width: double.infinity,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            FilterChip(
+                label: Text(searchOptionText('fuzzy', locale)),
+                tooltip: searchOptionText('fuzzyHelp', locale),
+                selected: fuzzy,
+                onSelected: plainQuery && !busy ? onFuzzyChanged : null),
+            const SizedBox(height: 4),
+            Text(
+                searchOptionText(
+                    !plainQuery
+                        ? 'plainOnly'
+                        : fuzzy
+                            ? 'fuzzyHelp'
+                            : 'modeHelp',
+                    locale),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall),
+          ])));
 }
