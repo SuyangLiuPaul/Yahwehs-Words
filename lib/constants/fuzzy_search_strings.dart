@@ -47,11 +47,11 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
   },
   'fuzzySearchSettingSubtitle': {
     'zh-Hans':
-        '匹配简繁写法、近义词和英文词形，例如 磯法 / 矶法、loved / love。扩展结果会标示原因；开启模糊搜索会关闭拼音搜索。',
+        '匹配简繁写法、圣经名称别称和英文词形，例如 磯法 / 矶法、loved / love。扩展结果会标示原因。',
     'zh-Hant':
-        '匹配簡繁寫法、近義詞和英文詞形，例如 磯法 / 矶法、loved / love。擴展結果會標示原因；開啟模糊搜尋會關閉拼音搜尋。',
+        '匹配簡繁寫法、聖經名稱別稱和英文詞形，例如 磯法 / 矶法、loved / love。擴展結果會標示原因。',
     'en':
-        'Adds script variants, synonyms and English inflections, such as 磯法 / 矶法 and loved / love. Expanded hits are labelled. Enabling fuzzy search turns pinyin search off.',
+        'Adds script variants, Bible name aliases and English inflections, such as 磯法 / 矶法 and loved / love. Expanded hits are labelled.',
   },
 
   // ── Row labels, one per rung ────────────────────────────────────────
@@ -73,7 +73,7 @@ const Map<String, Map<String, String>> fuzzySearchStrings = {
   },
 
   /// Another spelling of the same name or word, from the synonym groups
-  /// in `search_synonyms.dart` — 上帝 matching 神, 弥赛亚 matching
+  /// in `search_Bible name aliases.dart` — 上帝 matching 神, 弥赛亚 matching
   /// 基督. The English reads "other spelling" and not "synonym" because
   /// every group in that file is one thing under two names, never two
   /// things that mean roughly the same.

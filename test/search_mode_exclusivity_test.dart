@@ -25,23 +25,11 @@ void main() {
     expect(pinyin.pinyinSearchEnabled, p);
   }
 
-  test('switches are mutually exclusive before any listener runs', () async {
+  test('retired pinyin cannot be enabled by a legacy caller', () async {
     final s = AppSettings();
     await s.loadSettings();
-    s.addListener(() {
-      expect(s.fuzzySearch && s.pinyinSearch, isFalse);
-      expectMode(s, s.fuzzySearch, s.pinyinSearch);
-    });
-    expectMode(s, false, false);
     await s.setFuzzySearch(true);
-    expectMode(s, true, false);
     await s.setPinyinSearch(true);
-    expectMode(s, false, true);
-    await s.setFuzzySearch(false); // disabling an inactive option keeps pinyin
-    expectMode(s, false, true);
-    await s.setFuzzySearch(true);
-    expectMode(s, true, false);
-    await s.setPinyinSearch(false);
     expectMode(s, true, false);
     await s.setFuzzySearch(false);
     expectMode(s, false, false);
@@ -55,9 +43,9 @@ void main() {
             {'fuzzySearch': f, 'pinyinSearch': p});
         final s = AppSettings();
         await s.loadSettings();
-        expectMode(s, f, p && !f);
+        expectMode(s, f, false);
         final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getBool('pinyinSearch'), p && !f);
+        expect(prefs.getBool('pinyinSearch'), false);
         s.dispose();
       });
     }
@@ -72,23 +60,18 @@ void main() {
     s.dispose();
   });
 
-  for (final finalMode in ['fuzzy', 'pinyin', 'exact']) {
-    test('rapid mode changes persist $finalMode across restart', () async {
+  for (final finalFuzzy in [true, false]) {
+    test('rapid fuzzy changes persist across restart', () async {
       final s = AppSettings();
       await s.loadSettings();
-      final writes = <Future<void>>[
+      await Future.wait([
         s.setFuzzySearch(true),
-        s.setPinyinSearch(true),
-        s.setFuzzySearch(true),
-        s.setPinyinSearch(true),
-        if (finalMode == 'fuzzy') s.setFuzzySearch(true),
-        if (finalMode == 'exact') s.setPinyinSearch(false),
-      ];
-      await Future.wait(writes);
-      expectMode(s, finalMode == 'fuzzy', finalMode == 'pinyin');
+        s.setFuzzySearch(false),
+        s.setFuzzySearch(finalFuzzy)
+      ]);
       final next = AppSettings();
       await next.loadSettings();
-      expectMode(next, finalMode == 'fuzzy', finalMode == 'pinyin');
+      expectMode(next, finalFuzzy, false);
       s.dispose();
       next.dispose();
     });
@@ -97,7 +80,7 @@ void main() {
   test('reset while a write is queued preserves exact mode', () async {
     final s = AppSettings();
     await s.loadSettings();
-    final write = s.setPinyinSearch(true);
+    final write = s.setFuzzySearch(true);
     await s.resetAllSettings();
     await write;
     expectMode(s, false, false);
@@ -125,24 +108,14 @@ void main() {
           child: SearchOptionsBar(
               locale: 'en',
               fuzzy: s.fuzzySearch,
-              pinyin: s.pinyinSearch,
-              onFuzzyChanged: s.setFuzzySearch,
-              onPinyinChanged: s.setPinyinSearch),
+              onFuzzyChanged: s.setFuzzySearch),
         ),
       ))));
       await tester.tap(find.widgetWithText(FilterChip, 'Fuzzy search'));
       await tester.pumpAndSettle();
       expectMode(s, true, false);
-      await tester.tap(find.widgetWithText(FilterChip, 'Pinyin search'));
-      await tester.pumpAndSettle();
-      expectMode(s, false, true);
-      expect(
-          tester
-              .widget<FilterChip>(
-                  find.widgetWithText(FilterChip, 'Fuzzy search'))
-              .selected,
-          isFalse);
-      await tester.tap(find.widgetWithText(FilterChip, 'Pinyin search'));
+      expect(find.text('Pinyin search'), findsNothing);
+      await tester.tap(find.widgetWithText(FilterChip, 'Fuzzy search'));
       await tester.pumpAndSettle();
       expectMode(s, false, false);
       expect(tester.takeException(), isNull);

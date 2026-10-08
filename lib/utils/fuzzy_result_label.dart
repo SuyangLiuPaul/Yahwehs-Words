@@ -130,13 +130,6 @@ String fuzzySearchStemKey(String scriptureText) =>
     stemSearchKey(sanitizeForSearch(scriptureText).toLowerCase())
         .replaceAll(' ', '');
 
-// Before persisted settings are loaded, retain the old matcher API's
-// shared switch. AppSettings explicitly configures the independent
-// preference on load, including migration for existing pinyin users.
-bool get _pinyinActive =>
-    pinyinSearchConfigured ? pinyinSearchEnabled : fuzzySearchEnabled;
-bool _pinyinMatches(String text, String query) =>
-    pinyinMatches(sanitizeForSearch(text), query);
 void resetPinyinMatchForTest() => resetPinyinSearchForTest();
 
 // ── The ladder ──────────────────────────────────────────────────────
@@ -278,10 +271,7 @@ FuzzyMatch fuzzySearchMatchKind(
 /// `key.contains(query)` it replaced while the switch is off — which is
 /// the shipped default.
 ///
-/// Tries the pinyin rung after the ported ladder comes back empty —
-/// [fuzzySearchMatchKind] cannot say so itself, since [FuzzyMatch] is
-/// `fuzzy_search.dart`'s own closed enum and gains no sixth case for a
-/// rung that only exists on this side of the file boundary.
+/// Expansion never falls back to romanized Chinese.
 bool fuzzySearchMatches(
   String key,
   List<String> segments, {
@@ -291,10 +281,7 @@ bool fuzzySearchMatches(
       FuzzyMatch.none) {
     return true;
   }
-  if (scriptureText == null || segments.isEmpty || !_pinyinActive) {
-    return false;
-  }
-  return _pinyinMatches(scriptureText, _literalOf(segments));
+  return false;
 }
 
 // ── What the row says ───────────────────────────────────────────────
@@ -343,7 +330,7 @@ String fuzzyLabelledReference(
   required String scriptureText,
   required String locale,
 }) {
-  if (!fuzzySearchEnabled && !_pinyinActive) return reference;
+  if (!fuzzySearchEnabled) return reference;
   if (query.trim().isEmpty) return reference;
   final segments = fuzzySearchSegments(query);
   if (segments.isEmpty) return reference;
@@ -352,16 +339,7 @@ String fuzzyLabelledReference(
     segments,
     scriptureText: scriptureText,
   );
-  // Same fallback `fuzzySearchMatches` makes below the ladder: nothing
-  // on `FuzzyMatch` names this rung, so a `none` from the ported five
-  // gets one more question asked of it before this row is called
-  // literal (or, if it truly is, given no label at all).
-  final key = fuzzyMatchStringKey(kind) ??
-      (kind == FuzzyMatch.none &&
-              _pinyinActive &&
-              _pinyinMatches(scriptureText, _literalOf(segments))
-          ? 'fuzzyLabelPinyin'
-          : null);
+  final key = fuzzyMatchStringKey(kind);
   if (key == null) return reference;
   final label =
       fuzzySearchStrings[key]?[locale] ?? fuzzySearchStrings[key]?['en'] ?? '';
