@@ -23,8 +23,11 @@ guesses. The original wording is recorded in docs/pastor-reviews-2026-10-03
 so nothing is lost.
 
 NOT done here, on purpose:
-  * H7307 — EV KEEPS 「三一神的第三位…」 there; Sword's Hebrew lexicon never
-    had it, and following EV would ADD doctrinal wording. Left for the owner.
+  * H7307 — the original EV package contained 「三一神的第三位…」, but the
+    apps' Hebrew entries never had it. The author approved correction on
+    2026-10-09; apply_ev_author_corrections.py guards against importing it.
+  * G2304 — its author-authorized English correction is maintained by
+    apply_ev_author_corrections.py; this older tool leaves that entry alone.
   * Wholesale replacement of the lexicon by EV's file: different schema, no
     Traditional layer. A separate decision.
 
