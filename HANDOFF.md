@@ -1,3 +1,7 @@
+## 2026-10-09 — EV author-approved G2304 / H7307 correction (local)
+
+Applied the EV author's approval supplied by the owner to both apps. G2304 English item 2 omits `, trinity`, with a labeled provenance note. Current H7307 Simplified/Traditional Hebrew definitions already lack the rejected EV clause and are unchanged. Nave's, Bible editions and all other lexicon entries are preserved. See [correction record](docs/ev-author-corrections-2026-10-09.md) and `tools/apply_ev_author_corrections.py`. This is locally committed source preparation, not a deployed website or store package; version remains 1.7.16.
+
 ## 2026-10-08 — UI maintenance delivered to dev/prod websites
 
 Owner-authorized rollout completed on all six Words international/China sites, with full built-file SHA-256 verification and live Settings inspection. Version stays 1.7.16; native/store artifacts and tags are unchanged. See `docs/ui-consistency-2026-10-08.md` deployment addendum and `Yahweh-UI-Consistency-20261008` evidence. The earlier source-only entry below describes the initial scope before the later deployment request.

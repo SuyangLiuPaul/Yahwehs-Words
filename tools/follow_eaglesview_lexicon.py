@@ -23,8 +23,11 @@ guesses. The original wording is recorded in docs/pastor-reviews-2026-10-03
 so nothing is lost.
 
 NOT done here, on purpose:
-  * H7307 — EV KEEPS 「三一神的第三位…」 there; Sword's Hebrew lexicon never
-    had it, and following EV would ADD doctrinal wording. Left for the owner.
+  * H7307 — the original EV package contained 「三一神的第三位…」, but the
+    apps' Hebrew entries never had it. The author approved correction on
+    2026-10-09; apply_ev_author_corrections.py guards against importing it.
+  * G2304 — its author-authorized English correction is maintained by
+    apply_ev_author_corrections.py; this older tool leaves that entry alone.
   * Wholesale replacement of the lexicon by EV's file: different schema, no
     Traditional layer. A separate decision.
 
@@ -35,6 +38,7 @@ Usage:
 import json
 import os
 import sys
+import subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GREEK = os.path.join(ROOT, 'assets', 'strongs', 'greek.json')
@@ -107,6 +111,9 @@ ZH_FOOTNOTES = {  # (simplified, traditional)
 
 def main():
     write = '--write' in sys.argv
+    correction = os.path.join(ROOT, 'tools', 'apply_ev_author_corrections.py')
+    # Validate author-approved entries before this older tool writes anything.
+    subprocess.run([sys.executable, correction], check=True)
     greek = json.load(open(GREEK, encoding='utf-8'))
     thayer = json.load(open(THAYER, encoding='utf-8')) if os.path.exists(THAYER) else None
     bad = 0
@@ -207,6 +214,7 @@ def main():
         with open(path, 'w', encoding='utf-8') as f:
             f.write(out)
         print('WROTE %s' % path)
+    subprocess.run([sys.executable, correction, '--write'], check=True)
 
 
 if __name__ == '__main__':
