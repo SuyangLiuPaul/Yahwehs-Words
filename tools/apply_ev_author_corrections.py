@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OLD = "2) spoken of the only and true God, trinity"
 NEW = "2) spoken of the only and true God"
-MARK = "[Eagle's View version]"
+EXPECTED_ORIGINAL = 'theios \n\n from 2316; TDNT - 3:122,322; adj\n\n AV - divine 2\n\n1) a general name of deities or divinities as used by the Greeks\n\n2) spoken of the only and true God, trinity\n\n2a) of Christ\n\n2b) Holy Spirit\n\n2c) the Father'
 NOTE = ("[Eagle's View version] With the author's permission, the word "
         "“trinity” was removed from item 2 of the EV package's outline.")
 
@@ -26,17 +26,18 @@ def main():
     # entries already lack the rejected EV clause: never import it to fix it.
     for relative in ('assets/strongs/hebrew.json', 'assets/strongs/bdb_zh.json'):
         entry = json.loads((ROOT / relative).read_text())['H7307']
-        text = json.dumps(entry, ensure_ascii=False)
-        if any(term in text for term in ('三一神', '三位一體', '三位一体', '同荣', '同榮', '同尊')):
+        text = json.dumps(entry, ensure_ascii=False).casefold()
+        if any(term in text for term in ('三一神', '三位一體', '三位一体', '同荣', '同榮', '同尊', 'trinity', 'triune', 'coequal', 'coeternal')):
             raise SystemExit(f'Unexpected H7307 wording in {relative}; inspect before editing.')
         print(f'H7307: rejected EV clause absent in {relative}; retained unchanged')
     path = ROOT / 'assets/thayer.json'
     raw = path.read_text()
     obj = json.loads(raw)
     current = obj['entries']['G2304']
-    if current.count(OLD) == 1 and MARK not in current:
-        updated = current.replace(OLD, NEW) + '\n\n' + NOTE
-    elif OLD not in current and current.endswith(NOTE) and current.split(MARK)[0].count(NEW) == 1:
+    updated = EXPECTED_ORIGINAL.replace(OLD, NEW) + '\n\n' + NOTE
+    if current == EXPECTED_ORIGINAL:
+        pass
+    elif current == updated:
         print('G2304: already corrected')
         return
     else:

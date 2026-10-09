@@ -38,6 +38,7 @@ Usage:
 import json
 import os
 import sys
+import subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GREEK = os.path.join(ROOT, 'assets', 'strongs', 'greek.json')
@@ -110,6 +111,9 @@ ZH_FOOTNOTES = {  # (simplified, traditional)
 
 def main():
     write = '--write' in sys.argv
+    correction = os.path.join(ROOT, 'tools', 'apply_ev_author_corrections.py')
+    # Validate author-approved entries before this older tool writes anything.
+    subprocess.run([sys.executable, correction], check=True)
     greek = json.load(open(GREEK, encoding='utf-8'))
     thayer = json.load(open(THAYER, encoding='utf-8')) if os.path.exists(THAYER) else None
     bad = 0
@@ -210,6 +214,7 @@ def main():
         with open(path, 'w', encoding='utf-8') as f:
             f.write(out)
         print('WROTE %s' % path)
+    subprocess.run([sys.executable, correction, '--write'], check=True)
 
 
 if __name__ == '__main__':

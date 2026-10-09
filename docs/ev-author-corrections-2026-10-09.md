@@ -15,8 +15,8 @@ The owner supplied the EV author's response: “Thank you for picking up errors 
 
 `python3 tools/apply_ev_author_corrections.py` performs a guarded dry run; `--write` applies the single entry correction. Unknown or conflicting text causes refusal. The original EV source evidence and the historical report are preserved; their descriptions of the old package remain historical evidence.
 
-This is an application correction authorized by the author, not an assertion that a new EV upstream package has been published. The existing import-following tool does not overwrite G2304; reimporting the original EV package must be followed by this guarded correction.
+This is an application correction authorized by the author, not an assertion that a new EV upstream package has been published. The existing import-following tool now validates this correction before writing and applies it after its own updates. G2304 must exactly match either the recorded original or the corrected entry; unexpected wording fails rather than being silently replaced. Reimporting the original EV package must also run the guarded correction.
 
 ## Delivery state
 
-Applied to the maintenance and primary local workspaces of both apps. Version remains 1.7.16. Local source commits only; no website deployment, new tag, native rebuild or store upload is claimed by this change.
+Applied to the maintenance and primary local workspaces of both apps. Version remains 1.7.16. The owner subsequently authorized GitHub PRs, main merges and dev/prod web delivery. These are tracked in the delivery evidence; a source commit alone is not proof of deployment. No new tag, native rebuild or store upload is part of this correction.
