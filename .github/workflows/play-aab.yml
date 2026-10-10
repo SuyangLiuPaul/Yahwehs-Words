@@ -157,16 +157,14 @@ jobs:
       # Optional store push. Never runs on its own: it needs the checkbox AND
       # the service-account secret. Default is a DRAFT on the internal track,
       # so nothing reaches testers until someone presses Release in Play Console.
-      - name: Upload to Google Play
+      - name: Install Play API dependencies
         if: ${{ inputs.upload_to_play }}
-        uses: r0adkll/upload-google-play@935ef9c68bb393a8e6116b1575626a7f5be3a7fb # v1.1.3
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.yahwehword.words
-          releaseFiles: build/app/outputs/bundle/intlRelease/app-intl-release.aab
-          track: ${{ inputs.track }}
-          status: ${{ inputs.release_status }}
-          changesNotSentForReview: true
+        run: python -m pip install google-auth requests
+      - name: Upload phone bundle as preserved draft
+        if: ${{ inputs.upload_to_play }}
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: python tools/play_store_upload.py '${{ inputs.track }}' build/app/outputs/bundle/intlRelease/app-intl-release.aab
 
       - name: Build Wear OS AAB (same Play package and upload key)
         working-directory: android

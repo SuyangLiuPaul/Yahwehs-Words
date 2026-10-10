@@ -1,6 +1,6 @@
 # Store API draft uploads — 2026-10-11
 
-Play phone AAB upload is optional and draft-only on internal/alpha/beta. Phone and Wear artifacts remain separate. The Play uploader is pinned to a reviewed commit ID; changesNotSentForReview is explicit.
+Play phone AAB upload is optional and draft-only on internal/alpha/beta. Phone and Wear artifacts remain separate. The Play REST upload preserves existing track releases, refuses existing drafts and commits with changesNotSentForReview=true only. There is no fallback that sends review.
 
 Microsoft optional MSIX upload uses the create-only REST API and refuses existing pending submissions. The official CLI publish command can replace drafts, so it is not invoked. Listing/localization fields from the cloned draft are retained; no DELETE or certification commit is issued.
 
