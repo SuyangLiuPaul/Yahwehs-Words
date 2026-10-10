@@ -1,3 +1,7 @@
+## 2026-10-10 — Offline media web delivery complete
+
+Downloads and cold-start fixes merged; Words then Sword websites published, all eight Ready with full build/live hashes matched. See docs/offline-media-downloads-2026-10-10.md and offline-media-web-delivery-2026-10-10.json. No version/tag/native store upload; physical device checks remain explicitly listed.
+
 ## 2026-10-10 — Offline song and sermon downloads
 
 Words song queue/cancellation and visible download entry improved; both apps now download sermon recordings with progress/retry/delete and saved-audio playback. Web cache cleanup preserves downloaded media; Sword has a network-first shell and Windows audio plugin. See [implementation and test limits](docs/offline-media-downloads-2026-10-10.md). Version stays 1.7.16; no native package/tag changed. Website deployment evidence will be added after verification.
