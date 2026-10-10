@@ -1,3 +1,7 @@
+## 2026-10-10 — Consolidated verse image sharing
+
+Words selected-verses toolbar drops its duplicate image icon. Share still offers link and image; all existing callbacks/tools stay intact. See docs/selection-share-entry-2026-10-10.md for checks and delivery scope. Version remains 1.7.16; no native package/tag changed.
+
 ## 2026-10-10 — Offline media web delivery complete
 
 Downloads and cold-start fixes merged; Words then Sword websites published, all eight Ready with full build/live hashes matched. See docs/offline-media-downloads-2026-10-10.md and offline-media-web-delivery-2026-10-10.json. No version/tag/native store upload; physical device checks remain explicitly listed.

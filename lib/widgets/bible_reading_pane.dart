@@ -3121,21 +3121,6 @@ class _SelectionActionBar extends StatelessWidget {
         // tappable on phones.
         visualDensity: VisualDensity.standard,
       ),
-      // 2026-09-08: the verse-image card. It sits at the end of the
-      // action row rather than beside Copy/Share because those two are
-      // the row's fixed furniture — the count and the Copy button are
-      // the flexible children whose widths the layout below is
-      // budgeting, and a ninth fixed icon among them is what pushed
-      // the bar into its degraded state the last time (see the 2026-08-23
-      // note further down). In the icon list it is just another entry
-      // the scrollable narrow row already knows how to carry.
-      IconButton(
-        tooltip:
-            uiStrings['verseCardAction']?[settings.locale] ?? 'Verse image',
-        onPressed: onImage,
-        icon: const Icon(Icons.image_outlined),
-        visualDensity: VisualDensity.standard,
-      ),
       // 2026-09-13: 「按了verse之后有一个按键for projector 可以按一个或者
       // 多个 然后就project」. Opens the projection ON the selection: one
       // verse, or a contiguous block. Last in the row rather than first
