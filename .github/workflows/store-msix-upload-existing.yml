@@ -1,0 +1,43 @@
+name: Upload existing verified MSIX draft
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: 'Existing Windows Store MSIX build run, same repository'
+        required: true
+        type: string
+      artifact_source_sha:
+        description: 'Exact source SHA used by that package build'
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  draft:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify source run and download its retained package
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.artifact_run_id }}
+          EXPECTED_SOURCE: ${{ inputs.artifact_source_sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] && [[ "$EXPECTED_SOURCE" =~ ^[0-9a-f]{40}$ ]]
+          actual=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq .head_sha)
+          [[ "$actual" == "$EXPECTED_SOURCE" ]] || { echo 'Source run mismatch'; exit 1; }
+          path=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq .path)
+          [[ "$path" == '.github/workflows/windows-store-msix.yml' ]] || { echo 'Wrong artifact workflow'; exit 1; }
+          gh run download "$RUN_ID" --repo "$REPO" --name Yahwehs-Words-msix --dir build/windows/x64/runner/Release
+      - name: Save draft with package identity verification
+        shell: bash
+        env:
+          MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+          PACKAGE_SOURCE_SHA: ${{ inputs.artifact_source_sha }}
+        run: python tools/windows_store_upload.py

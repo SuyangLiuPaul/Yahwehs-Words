@@ -49,8 +49,8 @@ def main():
             raise SystemExit("Uploaded bundle SHA-256 mismatch or unavailable")
         print(json.dumps({"package": package, "versionCode": code, "sha256": digest,
             "sourceSha": os.environ.get("GITHUB_SHA"), "bundleAccepted": True}))
-        name = Path("pubspec.yaml").read_text().split("\nversion:", 1)[1].splitlines()[0].strip().split("+")[0]
-        read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text())), timeout=30))
+        name = Path("pubspec.yaml").read_text(encoding="utf-8").split("\nversion:", 1)[1].splitlines()[0].strip().split("+")[0]
+        read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text(encoding="utf-8"))), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
         # Never retry with this flag removed, even when the server rejects it.
         read(session.post(base + "/" + edit + ":commit", params={"changesNotSentForReview": "true"}, timeout=60))

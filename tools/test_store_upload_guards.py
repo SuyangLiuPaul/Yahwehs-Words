@@ -62,5 +62,16 @@ class GuardTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     verify_package(package, SPEC.replace(original, wrong))
 
+class UnicodeConfigurationTests(unittest.TestCase):
+    def test_uploaders_read_configuration_as_utf8(self):
+        import ast
+        from pathlib import Path
+        for name in ['windows_store_upload.py', 'play_store_upload.py']:
+            tree = ast.parse((Path(__file__).parent / name).read_text(encoding='utf-8'))
+            reads = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == 'read_text']
+            self.assertTrue(reads)
+            for node in reads:
+                self.assertTrue(any(k.arg == 'encoding' and isinstance(k.value, ast.Constant) and k.value.value == 'utf-8' for k in node.keywords))
+
 if __name__ == "__main__":
     unittest.main()
