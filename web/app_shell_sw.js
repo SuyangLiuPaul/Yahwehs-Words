@@ -155,6 +155,10 @@ self.addEventListener('activate', (event) => {
       try {
         await self.clients.claim();
       } catch (_) {}
+      // The first page can fetch main.dart.js before this worker controls it.
+      // Claim first, then fill the boot files explicitly: otherwise a completed
+      // audio download can still reopen as a blank page without network.
+      await warmBootFiles();
       // Deliberately NO client.navigate() here. That is what Flutter's
       // unregistering stub does, and doing it on activate turns every
       // worker replacement into a forced reload mid-read.
@@ -240,4 +244,17 @@ function copyToCache(request, response, isNavigation) {
       .then((cache) => cache.put(key, copy))
       .catch(() => {});
   } catch (_) {}
+}
+
+async function warmBootFiles() {
+  await Promise.all(['main.dart.js', 'flutter_bootstrap.js', 'version.json'].map(async (path) => {
+    try {
+      const request = new Request(new URL(path, self.location.href), { cache: 'reload' });
+      const response = await fetch(request);
+      if (response && response.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(request, response);
+      }
+    } catch (_) { /* Offline/quota failure cannot break online activation. */ }
+  }));
 }

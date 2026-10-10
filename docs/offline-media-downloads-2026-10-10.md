@@ -23,3 +23,11 @@ Physical iPhone/TestFlight, Android, Windows, Safari and installed iOS PWA are n
 This task ships websites only, without a version bump or native store upload. Source remains version 1.7.16; existing tags are immutable. Native device fixes require a later built/installed release.
 
 Evidence: `/Users/pliu0036/Downloads/Yahweh-Offline-Media-20261010/`.
+
+## Cold-start follow-up
+
+Actual Sword browser testing downloaded both real Sermon 004 parts (17.5 MB), but first-load offline navigation then failed fetching main.dart.js. Cause: initial boot may finish before the new service worker claims the page. Both workers now claim clients first and explicitly warm main.dart.js, flutter_bootstrap.js and version.json. A Node lifecycle regression checks claim order, all three cache entries, offline main-script fallback and retention of media caches. Final real-browser cold-start outcomes are recorded after this fix.
+
+Actual entry paths: Words Home/Songs → Downloads (`#/songs/downloads`); Words sermon detail `#/sermons/004` → Download audio / Sermon downloads. Sword `?sermon=004` → Enter if the welcome screen appears → Download audio / Sermon downloads. Sword download manager is an in-app screen, not a new public route. Valid Sword mobile screenshots use `sword-verified-*`; earlier `sword-sermons-*` and `sword-manager-mobile.png` captured failed test navigation and are not UI verification evidence.
+
+The reported PHP/Laravel camera_proxy email is outside this Flutter download test stack. No such request was intentionally issued by this task; its source is unconfirmed and no PHP/camera repair was performed.

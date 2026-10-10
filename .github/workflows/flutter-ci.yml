@@ -59,6 +59,9 @@ jobs:
       - name: Diagnostic feedback privacy and failure checks
         run: node tools/test_diagnostic_feedback.mjs
 
+      - name: Offline app-shell lifecycle tests
+        run: node tools/test_offline_app_shell.mjs
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
