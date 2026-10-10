@@ -8,4 +8,4 @@ Apple local tools/apple_upload.sh supports ios IPA and macos PKG. It uses the ex
 
 Store API preflight reads Play tracks/bundles in a temporary edit and deletes only that edit without committing. It reads Microsoft application/pending state. Output contains identifiers/status only, no secrets or upload URLs. Credential names alone do not establish permissions or upload acceptance.
 
-Checks: workflow YAML parsed, shell syntax valid, pending-submission unit tests passed. Actual API/workflow outcomes are recorded separately. No new version/tag/publication is implied by these automation changes.
+Checks: workflow YAML parsed, shell syntax valid, seven upload guard tests passed, including preserved tracks/listings, official applicationPackages schema, read-back validation, package identity/version and stopping after Apple validation failure. Live Xcode27.0.5 altool help and a missing-file probe confirm positional validation syntax; the bundled legacy man7 page describes an older implementation. Actual API/workflow outcomes are recorded separately. No new version/tag/publication is implied by these automation changes.

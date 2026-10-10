@@ -1,5 +1,6 @@
 """Upload a phone AAB into a preserved test-track draft, never send review."""
 import copy
+import hashlib
 import json
 import os
 import sys
@@ -43,7 +44,11 @@ def main():
                 "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/" + package + "/edits/" + edit + "/bundles?uploadType=media",
                 data=bundle, headers={"Content-Type": "application/octet-stream"}, timeout=600))
         code = uploaded["versionCode"]
-        print("Phone bundle accepted, versionCode " + str(code))
+        digest = hashlib.file_digest(Path(file).open("rb"), "sha256").hexdigest()
+        if uploaded.get("sha256", "").lower() != digest:
+            raise SystemExit("Uploaded bundle SHA-256 mismatch or unavailable")
+        print(json.dumps({"package": package, "versionCode": code, "sha256": digest,
+            "sourceSha": os.environ.get("GITHUB_SHA"), "bundleAccepted": True}))
         name = Path("pubspec.yaml").read_text().split("\nversion:", 1)[1].splitlines()[0].strip().split("+")[0]
         read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text())), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))

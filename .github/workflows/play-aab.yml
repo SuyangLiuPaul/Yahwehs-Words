@@ -127,11 +127,8 @@ jobs:
         # STORE_BUILD switches off the GitHub self-updater
         # (UpdateService.isSupported): a Play install is updated by Play,
         # and downloading an APK from elsewhere is a Play policy violation.
-        # android/app/build.gradle.kts derives the code from versionName:
-        # major * 1,000,000 + minor * 1,000 + patch. Flutter --build-number
-        # does not override that formula. Play verified 1.6.35 as 1006035,
-        # above the previously published 1006032; bump the app version for
-        # another phone upload rather than suggesting an ignored override.
+        # Phone versionCode = (major*1,000,000 + minor*1,000 + patch)*10
+        # plus build-number 1..9 (default 1); keep below the Wear range.
         run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
 
       - name: Check the bundle carries the Play application id
@@ -148,23 +145,18 @@ jobs:
             echo "::error::AAB still declares REQUEST_INSTALL_PACKAGES (a plugin manifest adds it?)"; exit 1
           fi
 
+      - name: Verify signed phone bundle
+        run: |
+          f=build/app/outputs/bundle/intlRelease/app-intl-release.aab
+          jarsigner -verify "$f" > "$RUNNER_TEMP/phone-aab-signature.txt"
+          grep -q 'jar verified' "$RUNNER_TEMP/phone-aab-signature.txt"
+          sha256sum "$f"
+
       - uses: actions/upload-artifact@v7
         with:
           name: Yahwehs-Words-play-aab
           path: build/app/outputs/bundle/intlRelease/app-intl-release.aab
           if-no-files-found: error
-
-      # Optional store push. Never runs on its own: it needs the checkbox AND
-      # the service-account secret. Default is a DRAFT on the internal track,
-      # so nothing reaches testers until someone presses Release in Play Console.
-      - name: Install Play API dependencies
-        if: ${{ inputs.upload_to_play }}
-        run: python -m pip install google-auth requests
-      - name: Upload phone bundle as preserved draft
-        if: ${{ inputs.upload_to_play }}
-        env:
-          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: python tools/play_store_upload.py '${{ inputs.track }}' build/app/outputs/bundle/intlRelease/app-intl-release.aab
 
       - name: Build Wear OS AAB (same Play package and upload key)
         working-directory: android
@@ -182,3 +174,16 @@ jobs:
           name: Yahwehs-Words-wear-play-aab
           path: build/wear/outputs/bundle/release/wear-release.aab
           if-no-files-found: error
+
+      # Optional store push. Never runs on its own: it needs the checkbox AND
+      # the service-account secret. Default is a DRAFT on the internal track,
+      # so nothing reaches testers until someone presses Release in Play Console.
+      - name: Install Play API dependencies
+        if: ${{ inputs.upload_to_play }}
+        run: python -m pip install google-auth requests
+      - name: Upload phone bundle as preserved draft
+        if: ${{ inputs.upload_to_play }}
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: python tools/play_store_upload.py '${{ inputs.track }}' build/app/outputs/bundle/intlRelease/app-intl-release.aab
+

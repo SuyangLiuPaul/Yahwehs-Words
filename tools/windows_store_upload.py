@@ -1,5 +1,7 @@
 """Create-only draft upload. No DELETE, commit, review or certification API."""
 import json
+import copy
+import hashlib
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -40,6 +42,21 @@ def verify_package(package, specification):
     return identity.get("Name")
 
 
+def package_payload(submission, filename):
+    result = copy.deepcopy(submission)
+    result.setdefault("applicationPackages", []).append({
+        "fileName": filename, "fileStatus": "PendingUpload",
+        "minimumDirectXVersion": "None", "minimumSystemRam": "None"})
+    return result
+
+
+def confirm_saved_package(submission, filename):
+    matches = [p for p in submission.get("applicationPackages", []) if p.get("fileName") == filename]
+    if len(matches) != 1:
+        raise ValueError("New package missing or duplicated in read-back submission")
+    return matches[0]
+
+
 def main():
     paths = list(Path("build/windows/x64/runner/Release").glob("*.msix"))
     if len(paths) != 1:
@@ -61,6 +78,11 @@ def main():
     submission_id = submission["id"]
     print("Created draft " + submission_id + "; certification not submitted")
     package_name = paths[0].name
+    submission = package_payload(submission, package_name)
+    saved_url = base + "/submissions/" + submission_id
+    updated = request(saved_url, "PUT", submission, headers)
+    if updated.get("id") != submission_id:
+        raise SystemExit("Draft save identity mismatch")
     with tempfile.TemporaryDirectory() as directory:
         archive = Path(directory) / "packages.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
@@ -70,12 +92,16 @@ def main():
         with urllib.request.urlopen(req, timeout=600) as response:
             if response.status != 201:
                 raise SystemExit("Package storage did not accept upload")
-    # Preserve existing listing/localization/pricing fields verbatim.
-    submission.setdefault("appPackages", []).append({"fileName": package_name, "fileStatus": "PendingUpload"})
-    updated = request(base + "/submissions/" + submission_id, "PUT", submission, headers)
-    if updated.get("id") != submission_id:
-        raise SystemExit("Draft save identity mismatch")
-    print("Package uploaded and draft saved. Store validation, review and publication not claimed.")
+    verified = request(saved_url, headers=headers)
+    saved_package = confirm_saved_package(verified, package_name)
+    print(json.dumps({"product": product, "submission": submission_id,
+        "sourceSha": os.environ.get("GITHUB_SHA"), "filename": package_name,
+        "sha256": hashlib.file_digest(paths[0].open("rb"), "sha256").hexdigest(),
+        "draftPackageReadBack": True, "serverPackageVersion": saved_package.get("version"),
+        "serverPackageStatus": saved_package.get("fileStatus"), "submissionStatus": verified.get("status"),
+        "reviewSubmitted": False, "published": False}))
+    print("ZIP accepted and package entry read back. Store processing/validation not claimed.")
+
 
 
 if __name__ == "__main__":
