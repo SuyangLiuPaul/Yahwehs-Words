@@ -27,7 +27,22 @@ def main():
     if app.get("id") != product:
         raise SystemExit("Application identity mismatch")
     if "--check-only" in sys.argv:
-        print(json.dumps({"app": product, "auth": "verified", "pending": bool(app.get("pendingApplicationSubmission"))}))
+        pending = app.get("pendingApplicationSubmission")
+        result = {"app": product, "auth": "verified", "pending": bool(pending)}
+        if pending:
+            submission_id = pending["id"]
+            req = urllib.request.Request(
+                "https://manage.devcenter.microsoft.com/v1.0/my/applications/" + product
+                + "/submissions/" + submission_id,
+                headers={"Authorization": "Bearer " + token})
+            with urllib.request.urlopen(req, timeout=30) as res:
+                submission = json.load(res)
+            result.update({"submission": submission_id, "status": submission.get("status"),
+                "packages": [{k: package.get(k) for k in
+                    ("id", "fileName", "fileStatus", "version", "architecture")}
+                    for package in submission.get("applicationPackages", [])]})
+        # Explicit allowlist: upload URLs, token and listing contents stay private.
+        print(json.dumps(result))
         return
     if not may_create_draft(app):
         raise SystemExit("Existing pending submission preserved; upload stopped")
