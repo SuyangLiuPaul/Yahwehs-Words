@@ -73,6 +73,14 @@ class UnicodeConfigurationTests(unittest.TestCase):
             for node in reads:
                 self.assertTrue(any(k.arg == 'encoding' and isinstance(k.value, ast.Constant) and k.value.value == 'utf-8' for k in node.keywords))
 
+class MicrosoftRequestTests(unittest.TestCase):
+    def test_create_submission_has_no_json_body(self):
+        import ast
+        tree = ast.parse((Path(__file__).parent / 'windows_store_upload.py').read_text(encoding='utf-8'))
+        posts = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == 'request' and len(n.args) == 4 and isinstance(n.args[1], ast.Constant) and n.args[1].value == 'POST']
+        self.assertEqual(len(posts), 1)
+        self.assertIsNone(posts[0].args[2].value)
+
 class PlayIsolationTests(unittest.TestCase):
     def test_workflows_serialize_play_edits(self):
         from pathlib import Path
