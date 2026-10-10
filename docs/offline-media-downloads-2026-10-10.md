@@ -26,8 +26,10 @@ Evidence: `/Users/pliu0036/Downloads/Yahweh-Offline-Media-20261010/`.
 
 ## Cold-start follow-up
 
-Actual Sword browser testing downloaded both real Sermon 004 parts (17.5 MB), but first-load offline navigation then failed fetching main.dart.js. Cause: initial boot may finish before the new service worker claims the page. Both workers now claim clients first and explicitly warm main.dart.js, flutter_bootstrap.js and version.json. A Node lifecycle regression checks claim order, all three cache entries, offline main-script fallback and retention of media caches. Final real-browser cold-start outcomes are recorded after this fix.
+Actual Sword browser testing downloaded both real Sermon 004 parts (17.5 MB), but first-load offline navigation then failed fetching main.dart.js. Cause: initial boot may finish before the new service worker claims the page. Both workers now claim clients first and explicitly warm main.dart.js, flutter_bootstrap.js and version.json. A Node lifecycle regression checks claim order, boot/renderer/font cache entries, offline main-script fallback and retention of media caches. Final real-browser cold-start outcomes are recorded after this fix.
 
 Actual entry paths: Words Home/Songs → Downloads (`#/songs/downloads`); Words sermon detail `#/sermons/004` → Download audio / Sermon downloads. Sword `?sermon=004` → Enter if the welcome screen appears → Download audio / Sermon downloads. Sword download manager is an in-app screen, not a new public route. Valid Sword mobile screenshots use `sword-verified-*`; earlier `sword-sermons-*` and `sword-manager-mobile.png` captured failed test navigation and are not UI verification evidence.
 
 The reported PHP/Laravel camera_proxy email is outside this Flutter download test stack. No such request was intentionally issued by this task; its source is unconfirmed and no PHP/camera repair was performed.
+
+The next actual Chrome cold-start check passed: both real Sermon 004 parts restored after closing the page and disconnecting network; saved blob audio advanced to 2.27 s. Initial persistent WebKit cold navigation identified additional first-claim renderer/font misses, now explicitly warmed. Runtime cache writes also extend fetch-event lifetime so closing a page does not abandon pending writes. WebKit final cold-start result remains separately recorded, not inferred from Chrome.

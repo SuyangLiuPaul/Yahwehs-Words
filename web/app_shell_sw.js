@@ -198,10 +198,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  event.respondWith(networkFirst(request, request.mode === 'navigate'));
+  event.respondWith(networkFirst(request, request.mode === 'navigate', event));
 });
 
-async function networkFirst(request, isNavigation) {
+async function networkFirst(request, isNavigation, event) {
   // NETWORK FIRST. The fetch comes before any cache read on purpose —
   // see the header comment. An online user always gets the bytes the
   // server just handed us, deploy-fresh, exactly as if this worker did
@@ -209,7 +209,8 @@ async function networkFirst(request, isNavigation) {
   try {
     const response = await fetch(request);
     if (response && response.ok) {
-      copyToCache(request, response, isNavigation);
+      const write = copyToCache(request, response, isNavigation);
+      if (event) event.waitUntil(write);
     }
     return response;
   } catch (err) {
@@ -234,27 +235,45 @@ function copyToCache(request, response, isNavigation) {
   try {
     // 'basic' == same-origin and readable. Opaque/CORS responses have
     // no useful body for us and count fully against the quota.
-    if (response.type !== 'basic') return;
+    if (response.type !== 'basic') return Promise.resolve();
     const declared = Number(response.headers.get('content-length') || '0');
-    if (declared > RUNTIME_MAX_BYTES) return;
+    if (declared > RUNTIME_MAX_BYTES) return Promise.resolve();
     const copy = response.clone();
     const key = isNavigation ? INDEX_URL : request;
-    caches
+    return caches
       .open(CACHE_NAME)
       .then((cache) => cache.put(key, copy))
       .catch(() => {});
-  } catch (_) {}
+  } catch (_) { return Promise.resolve(); }
 }
 
 async function warmBootFiles() {
-  await Promise.all(['main.dart.js', 'flutter_bootstrap.js', 'version.json'].map(async (path) => {
+  async function save(path) {
     try {
       const request = new Request(new URL(path, self.location.href), { cache: 'reload' });
       const response = await fetch(request);
       if (response && response.ok) {
         const cache = await caches.open(CACHE_NAME);
-        await cache.put(request, response);
+        await cache.put(request, response.clone());
+        return response;
       }
     } catch (_) { /* Offline/quota failure cannot break online activation. */ }
-  }));
+    return null;
+  }
+  // Flutter requests the regular renderer on WebKit and the Chromium variant
+  // on desktop Chrome/Edge. Both renderer and fonts can race first claim.
+  const ua = self.navigator ? self.navigator.userAgent : '';
+  const chromium = /Chrome|Chromium|Edg/.test(ua) && !/iPhone|iPad|iPod/.test(ua);
+  const renderer = chromium ? 'canvaskit/chromium/' : 'canvaskit/';
+  await Promise.all(['main.dart.js', 'flutter_bootstrap.js', 'version.json',
+    'assets/AssetManifest.bin', 'assets/AssetManifest.bin.json',
+    renderer + 'canvaskit.js', renderer + 'canvaskit.wasm'].map(save));
+  const manifest = await save('assets/FontManifest.json');
+  if (manifest) {
+    try {
+      const families = await manifest.json();
+      await Promise.all(families.flatMap(family => family.fonts || [])
+        .map(font => save('assets/' + font.asset)));
+    } catch (_) {}
+  }
 }
