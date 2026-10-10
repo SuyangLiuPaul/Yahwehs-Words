@@ -31,6 +31,12 @@ def main():
     base = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + package + "/edits"
     def read(response):
         if not response.ok:
+            try:
+                err = response.json().get("error", {})
+                message = str(err.get("message", ""))[:800]
+            except (ValueError, AttributeError):
+                message = "No structured API error"
+            print(json.dumps({"operation": response.request.method + " " + response.request.url.split("/edits", 1)[-1].split("?", 1)[0], "httpStatus": response.status_code, "apiMessage": message}))
             raise SystemExit("Play API HTTP " + str(response.status_code))
         return response.json()
     edit = read(session.post(base, json={}, timeout=30))["id"]
@@ -39,16 +45,27 @@ def main():
         track_url = base + "/" + edit + "/tracks/" + track_name
         track = read(session.get(track_url, timeout=30))
         append_draft(track, 0, "preflight")  # Refuse any existing draft before upload.
-        with Path(file).open("rb") as bundle:
-            uploaded = read(session.post(
-                "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/" + package + "/edits/" + edit + "/bundles?uploadType=media",
-                data=bundle, headers={"Content-Type": "application/octet-stream"}, timeout=600))
+        recovery_code = os.environ.get("PLAY_REUSE_VERSION_CODE")
+        uploaded = None
+        if recovery_code:
+            library = read(session.get(base + "/" + edit + "/bundles", timeout=30))
+            uploaded = next((b for b in library.get("bundles", []) if str(b["versionCode"]) == recovery_code), None)
+            print(json.dumps({"recoveryVersionCode": recovery_code, "alreadyInBundleLibrary": uploaded is not None}))
+            if uploaded is None and os.environ.get("ALLOW_MISSING_BUNDLE_UPLOAD") != "true":
+                raise SystemExit("Bundle absent from committed library; explicit retained-package recovery required")
+        if uploaded is None:
+            with Path(file).open("rb") as bundle:
+                uploaded = read(session.post(
+                    "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/" + package + "/edits/" + edit + "/bundles?uploadType=media",
+                    data=bundle, headers={"Content-Type": "application/octet-stream"}, timeout=600))
+        if recovery_code and str(uploaded["versionCode"]) != recovery_code:
+            raise SystemExit("Recovery package version code mismatch")
         code = uploaded["versionCode"]
         digest = hashlib.file_digest(Path(file).open("rb"), "sha256").hexdigest()
         if uploaded.get("sha256", "").lower() != digest:
             raise SystemExit("Uploaded bundle SHA-256 mismatch or unavailable")
         print(json.dumps({"package": package, "versionCode": code, "sha256": digest,
-            "sourceSha": os.environ.get("GITHUB_SHA"), "bundleAccepted": True}))
+            "sourceSha": os.environ.get("PACKAGE_SOURCE_SHA", os.environ.get("GITHUB_SHA")), "bundleAccepted": True}))
         name = Path("pubspec.yaml").read_text(encoding="utf-8").split("\nversion:", 1)[1].splitlines()[0].strip().split("+")[0]
         read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text(encoding="utf-8"))), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
@@ -59,6 +76,7 @@ def main():
     finally:
         if not committed:
             response = session.delete(base + "/" + edit, timeout=30)
+            print(json.dumps({"ownTemporaryEditCleanupStatus": response.status_code}))
             if response.status_code not in {200, 204, 404}:
                 raise SystemExit("Temporary edit cleanup HTTP " + str(response.status_code))
 

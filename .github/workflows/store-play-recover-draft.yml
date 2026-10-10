@@ -1,0 +1,61 @@
+name: Recover retained Play test draft
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        required: true
+        type: string
+      artifact_source_sha:
+        required: true
+        type: string
+      version_code:
+        required: true
+        type: string
+      sha256:
+        required: true
+        type: string
+      track:
+        type: choice
+        options: [beta, internal, alpha]
+        default: beta
+      allow_missing_bundle_upload:
+        description: 'Reuse original signed artifact only after confirming its code is absent from committed library'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify retained build provenance and bundle hash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.artifact_run_id }}
+          EXPECTED_SOURCE: ${{ inputs.artifact_source_sha }}
+          EXPECTED_HASH: ${{ inputs.sha256 }}
+          REPO: ${{ github.repository }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] && [[ "$EXPECTED_SOURCE" =~ ^[0-9a-f]{40}$ ]] && [[ "$EXPECTED_HASH" =~ ^[0-9a-f]{64}$ ]]
+          actual=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq .head_sha)
+          [[ "$actual" == "$EXPECTED_SOURCE" ]] || { echo 'Source run mismatch'; exit 1; }
+          path=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq .path)
+          [[ "$path" == '.github/workflows/play-aab.yml' ]] || { echo 'Wrong artifact workflow'; exit 1; }
+          gh run download "$RUN_ID" --repo "$REPO" --name Yahwehs-Words-play-aab --dir retained
+          bundle=$(find retained -name '*.aab')
+          [[ $(find retained -name '*.aab' | wc -l) == 1 ]]
+          [[ $(sha256sum "$bundle" | cut -d ' ' -f 1) == "$EXPECTED_HASH" ]]
+          jarsigner -verify "$bundle" > "$RUNNER_TEMP/bundle-signature.txt"
+          grep -q 'jar verified' "$RUNNER_TEMP/bundle-signature.txt"
+      - run: python -m pip install google-auth requests
+      - name: Preserve all existing tracks and save only a test draft
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_REUSE_VERSION_CODE: ${{ inputs.version_code }}
+          PACKAGE_SOURCE_SHA: ${{ inputs.artifact_source_sha }}
+          ALLOW_MISSING_BUNDLE_UPLOAD: ${{ inputs.allow_missing_bundle_upload }}
+          TRACK: ${{ inputs.track }}
+        run: python tools/play_store_upload.py "$TRACK" "$(find retained -name '*.aab')"
