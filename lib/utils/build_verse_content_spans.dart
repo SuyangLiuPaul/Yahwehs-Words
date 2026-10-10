@@ -427,7 +427,7 @@ List<InlineSpan> buildVerseContentSpans({
         final previous = spans.isEmpty ? null : spans.last;
         // Keep inline note circles subordinate to scripture at every reading size.
         final markerStyle = TextStyle(
-          fontSize: settings.fontSize * 0.65,
+          fontSize: settings.fontSize * 0.55,
           height: 1.0,
           fontWeight: FontWeight.w600,
           fontFamily: settings.fontFamily,

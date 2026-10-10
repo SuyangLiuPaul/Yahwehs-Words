@@ -1,3 +1,7 @@
+## 2026-10-10 — Words footnotes, photo framing and lexical AI
+
+Smaller inline circled notes; draggable/zoomable own-photo framing shared with PNG export; top/lower lexical AI now tracks displayed entry and actual source verse, rejecting late results and duplicate taps. See docs/words-photo-framing-lexicon-context-2026-10-10.md for checks, evidence and deployment scope. Words website maintenance only, version 1.7.16, no native package/tag/Sword changes.
+
 ## 2026-10-10 — Consolidated verse image sharing
 
 Words selected-verses toolbar drops its duplicate image icon. Share still offers link and image; all existing callbacks/tools stay intact. See docs/selection-share-entry-2026-10-10.md for checks and delivery scope. Version remains 1.7.16; no native package/tag changed.

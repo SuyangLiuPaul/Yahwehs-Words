@@ -19,21 +19,11 @@
 // from the reader's own theme seed, times light/dark, is six cards —
 // enough that it does not feel canned, few enough that it is one tap.
 //
-// 2026-09-09: the owner asked for photos — 「很多没有自然的图片或者可爱
-// 的图片可以加这个选项吗」, then 「没有地方选自己手机的图啊」 — and half
-// of the paragraph above still stands. What is NOT reopened is the
-// licensing problem, because the photo comes out of the reader's own
-// camera roll: there is no bundled image set, no stock-photo terms to
-// read, and nothing shipped in the app that somebody else owns. What
-// IS conceded is the slider count, and only to zero — [photo] adds no
-// controls at all. The scrim is fixed, the type is not resized, and
-// the existing Light/Dark toggle does the only work a photo card
-// needs it to do (dark veil + white type, or light veil + dark type).
-// A reader who does not like how their photo looks changes the photo,
-// which is a decision they can make by looking rather than by
-// dragging four sliders and comparing.
+// The reader can frame their own photograph; preview and export share
+// the same normalised framing and cover-fit background widget.
 
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/verse_photo_framing.dart';
 
 import 'package:yahwehs_words/utils/font_catalog.dart' show kCjkFontFallback;
 import 'package:yahwehs_words/utils/theme_accent.dart';
@@ -320,8 +310,8 @@ class VerseCardPalette {
           border: ink.withValues(alpha: 0.24),
           shadows: [
             Shadow(
-              color: (dark ? Colors.black : Colors.white)
-                  .withValues(alpha: 0.45),
+              color:
+                  (dark ? Colors.black : Colors.white).withValues(alpha: 0.45),
               blurRadius: 12,
             ),
           ],
@@ -372,9 +362,10 @@ class VerseCard extends StatelessWidget {
   /// style — because `RenderRepaintBoundary.toImage` captures the
   /// last painted frame and a still-decoding photograph is not in it.
   final ImageProvider? photo;
-  
+
   /// See [VerseCardPalette.of]. Only [VerseCardStyle.photo] reads it.
   final double? photoLuminance;
+  final VersePhotoFraming photoFraming;
 
   const VerseCard({
     super.key,
@@ -388,13 +379,14 @@ class VerseCard extends StatelessWidget {
     this.fontFamily,
     this.photo,
     this.photoLuminance,
+    this.photoFraming = const VersePhotoFraming(),
   });
 
   @override
   Widget build(BuildContext context) {
     final palette =
         VerseCardPalette.of(style, scheme, photoLuminance: photoLuminance);
-    return Container(
+    final content = Container(
       width: kVerseCardWidth,
       constraints: const BoxConstraints(minHeight: kVerseCardMinHeight),
       decoration: BoxDecoration(
@@ -404,17 +396,10 @@ class VerseCard extends StatelessWidget {
         // that fails to decode leaves the whole card transparent, and
         // a transparent PNG is the one export outcome nobody can see
         // is wrong until they have already sent it.
-        color: palette.gradient == null ? palette.background : null,
+        color: style == VerseCardStyle.photo && photo != null
+            ? Colors.transparent
+            : (palette.gradient == null ? palette.background : null),
         gradient: palette.gradient,
-        image: style == VerseCardStyle.photo && photo != null
-            ? DecorationImage(
-                image: photo!,
-                fit: BoxFit.cover,
-                colorFilter: palette.scrim == null
-                    ? null
-                    : ColorFilter.mode(palette.scrim!, BlendMode.srcOver),
-              )
-            : null,
         border: Border.all(color: palette.border),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -445,6 +430,19 @@ class VerseCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+    if (style != VerseCardStyle.photo || photo == null) return content;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(children: [
+        Positioned.fill(
+            child: VersePhotoBackground(
+                photo: photo!,
+                framing: photoFraming,
+                background: palette.background,
+                scrim: palette.scrim)),
+        content,
+      ]),
     );
   }
 }
