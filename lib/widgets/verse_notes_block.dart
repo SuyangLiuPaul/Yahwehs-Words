@@ -147,6 +147,11 @@ bool isNoteMarkerText(String text) =>
         (r >= 0x32B1 && r <= 0x32BF) ||
         '⁰¹²³⁴⁵⁶⁷⁸⁹⁻\u2060'.runes.contains(r));
 
+// One size/weight for the same footnote number in prose and its note card.
+// The note explanation keeps its separate 85% reading size.
+const double kFootnoteNumberSizeFactor = 0.55;
+const FontWeight kFootnoteNumberWeight = FontWeight.w600;
+
 class _VerseNotesBlockState extends State<VerseNotesBlock> {
   bool _expanded = false;
 
@@ -213,7 +218,9 @@ class _VerseNotesBlockState extends State<VerseNotesBlock> {
                 child: Text(
                   superscriptNumber(i + 1),
                   style: style.copyWith(
-                      color: scheme.primary, fontWeight: FontWeight.w800),
+                      fontSize: fs * kFootnoteNumberSizeFactor,
+                      color: scheme.primary,
+                      fontWeight: kFootnoteNumberWeight),
                 ),
               ),
               Padding(
