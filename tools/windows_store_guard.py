@@ -1,0 +1,42 @@
+"""Read-only guard: protect existing pending Microsoft submissions."""
+import json
+import os
+import sys
+import urllib.parse
+import urllib.request
+
+
+def may_create_draft(application):
+    return not application.get("pendingApplicationSubmission")
+
+
+def main():
+    data = urllib.parse.urlencode({
+        "grant_type": "client_credentials", "client_id": os.environ["MS_CLIENT"],
+        "client_secret": os.environ["MS_SECRET"],
+        "resource": "https://manage.devcenter.microsoft.com",
+    }).encode()
+    token_url = "https://login.microsoftonline.com/" + os.environ["MS_TENANT"] + "/oauth2/token"
+    with urllib.request.urlopen(urllib.request.Request(token_url, data=data), timeout=30) as res:
+        token = json.load(res)["access_token"]
+    product = "9NVJ28XSKP67"
+    req = urllib.request.Request("https://manage.devcenter.microsoft.com/v1.0/my/applications/" + product,
+        headers={"Authorization": "Bearer " + token})
+    with urllib.request.urlopen(req, timeout=30) as res:
+        app = json.load(res)
+    if app.get("id") != product:
+        raise SystemExit("Application identity mismatch")
+    if "--check-only" in sys.argv:
+        print(json.dumps({"app": product, "auth": "verified", "pending": bool(app.get("pendingApplicationSubmission"))}))
+        return
+    if not may_create_draft(app):
+        raise SystemExit("Existing pending submission preserved; upload stopped")
+    print("App access verified; no pending submission. Draft upload may proceed.")
+
+
+if __name__ == "__main__":
+    # Never print response bodies: they can contain upload URLs or credentials.
+    try:
+        main()
+    except urllib.error.HTTPError as error:
+        raise SystemExit("Microsoft API HTTP " + str(error.code)) from None
