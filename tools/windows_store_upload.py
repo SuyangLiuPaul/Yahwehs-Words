@@ -1,6 +1,8 @@
 """Create-only draft upload. No DELETE, commit, review or certification API."""
 import json
 import os
+import re
+import xml.etree.ElementTree as ET
 import sys
 import tempfile
 import urllib.error
@@ -21,10 +23,28 @@ def request(url, method="GET", payload=None, headers=None):
         return json.load(res)
 
 
+def verify_package(package, specification):
+    def value(key):
+        match = re.search(r"^\s*" + key + r":\s*(.+)$", specification, re.M)
+        if match is None:
+            raise ValueError("Missing package identity configuration")
+        return match.group(1).strip().strip("\"'")
+    expected = {"Name": value("identity_name"), "Publisher": value("publisher"),
+        "Version": value("version").split("+")[0] + ".0", "ProcessorArchitecture": "x64"}
+    with zipfile.ZipFile(package) as archive:
+        if archive.testzip() is not None:
+            raise ValueError("Corrupt MSIX archive")
+        identity = ET.fromstring(archive.read("AppxManifest.xml")).find("{*}Identity")
+    if identity is None or any(identity.get(k) != v for k, v in expected.items()):
+        raise ValueError("MSIX identity, publisher, architecture or version mismatch")
+    return identity.get("Name")
+
+
 def main():
     paths = list(Path("build/windows/x64/runner/Release").glob("*.msix"))
     if len(paths) != 1:
         raise SystemExit("Expected exactly one MSIX")
+    identity = verify_package(paths[0], Path("pubspec.yaml").read_text())
     credentials = urllib.parse.urlencode({"grant_type": "client_credentials",
         "client_id": os.environ["MS_CLIENT"], "client_secret": os.environ["MS_SECRET"],
         "resource": "https://manage.devcenter.microsoft.com"}).encode()
@@ -34,7 +54,7 @@ def main():
         token = json.load(response)["access_token"]
     headers = {"Authorization": "Bearer " + token}
     app = request(base, headers=headers)
-    if app.get("id") != product or not may_create_draft(app):
+    if app.get("id") != product or app.get("packageIdentityName") != identity or not may_create_draft(app):
         raise SystemExit("Identity mismatch or existing pending submission; no changes made")
     # Unlike msstore publish, this endpoint is create-only: never delete drafts.
     submission = request(base + "/submissions", "POST", {}, headers)
