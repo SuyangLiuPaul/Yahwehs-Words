@@ -20,12 +20,12 @@ on:
       track:
         description: 'Play track when uploading'
         type: choice
-        options: [internal, alpha, beta, production]
+        options: [internal, alpha, beta]
         default: internal
       release_status:
-        description: 'draft = stays unpublished until you press Release in Play Console; completed = goes live on the track'
+        description: 'Draft upload only; publishing requires a separate reviewed action'
         type: choice
-        options: [draft, completed]
+        options: [draft]
         default: draft
 
 jobs:
@@ -159,7 +159,7 @@ jobs:
       # so nothing reaches testers until someone presses Release in Play Console.
       - name: Upload to Google Play
         if: ${{ inputs.upload_to_play }}
-        uses: r0adkll/upload-google-play@v1.1.3
+        uses: r0adkll/upload-google-play@935ef9c68bb393a8e6116b1575626a7f5be3a7fb # v1.1.3
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.yahwehword.words
