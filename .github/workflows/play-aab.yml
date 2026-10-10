@@ -12,6 +12,21 @@ name: Play AAB
 
 on:
   workflow_dispatch:
+    inputs:
+      upload_to_play:
+        description: 'Upload the phone AAB to Google Play (needs the PLAY_SERVICE_ACCOUNT_JSON secret). Off = artifact only.'
+        type: boolean
+        default: false
+      track:
+        description: 'Play track when uploading'
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+      release_status:
+        description: 'draft = stays unpublished until you press Release in Play Console; completed = goes live on the track'
+        type: choice
+        options: [draft, completed]
+        default: draft
 
 jobs:
   aab:
@@ -138,6 +153,19 @@ jobs:
           name: Yahwehs-Words-play-aab
           path: build/app/outputs/bundle/intlRelease/app-intl-release.aab
           if-no-files-found: error
+
+      # Optional store push. Never runs on its own: it needs the checkbox AND
+      # the service-account secret. Default is a DRAFT on the internal track,
+      # so nothing reaches testers until someone presses Release in Play Console.
+      - name: Upload to Google Play
+        if: ${{ inputs.upload_to_play }}
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.yahwehword.words
+          releaseFiles: build/app/outputs/bundle/intlRelease/app-intl-release.aab
+          track: ${{ inputs.track }}
+          status: ${{ inputs.release_status }}
 
       - name: Build Wear OS AAB (same Play package and upload key)
         working-directory: android
