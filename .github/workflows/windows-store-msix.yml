@@ -11,6 +11,15 @@ name: Windows Store MSIX
 
 on:
   workflow_dispatch:
+    inputs:
+      send_to_store:
+        description: 'Create a Partner Center submission with this MSIX (needs the MS_STORE_* secrets). Off = artifact only.'
+        type: boolean
+        default: false
+      commit_submission:
+        description: 'Also send it to certification. Off = leaves an uncommitted draft submission you finish in Partner Center.'
+        type: boolean
+        default: false
 
 jobs:
   msix:
@@ -35,3 +44,24 @@ jobs:
           name: Yahwehs-Words-msix
           path: build/windows/x64/runner/Release/*.msix
           if-no-files-found: error
+
+      # Optional store push. Needs the checkbox AND the four secrets below.
+      # Product id 9NVJ28XSKP67 is this app's Store id. Without
+      # commit_submission the submission stays a draft in Partner Center.
+      - name: Install Microsoft Store CLI
+        if: ${{ inputs.send_to_store }}
+        uses: microsoft/setup-msstore-cli@v1
+      - name: Publish to Partner Center
+        if: ${{ inputs.send_to_store }}
+        shell: bash
+        env:
+          MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+          MS_SELLER: ${{ secrets.MS_STORE_SELLER_ID }}
+        run: |
+          msstore reconfigure --tenantId "$MS_TENANT" --clientId "$MS_CLIENT" --clientSecret "$MS_SECRET" --sellerId "$MS_SELLER"
+          pkg="$(find build/windows/x64/runner/Release -name '*.msix' | head -1)"
+          flag=""
+          [ "${{ inputs.commit_submission }}" = "true" ] || flag="--noCommit"
+          msstore publish "$pkg" --appId 9NVJ28XSKP67 $flag
