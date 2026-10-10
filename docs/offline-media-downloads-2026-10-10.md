@@ -10,7 +10,7 @@
 ## Verification
 
 - Flutter analysis: clean in both apps.
-- Words full suite: 4,116 passed, 36 skipped. Sword full suite: 6,154 passed, 10 skipped; final additional proxy test passed separately.
+- Words full suite: 4,116 passed, 36 skipped. Sword final full suite: 6,155 passed, 10 skipped.
 - Shared queue/storage tests cover duplicate requests, cancellation/late writes, retry, cold restore, eviction, deletion, HTML/empty/truncated replies, disconnection and simulated quota/write failure. Words additionally tests the actual song native service and Windows local-path recognition.
 - Both browser Cache Storage suites: 4 tests passed in Chrome each. Chrome controlled audio fixture also restored after cold offline navigation, played without network and deleted successfully.
 - Mobile-width screenshots of Words song entries and both sermon pages reviewed. These are browser checks, not physical iPhone checks.
@@ -33,3 +33,7 @@ Actual entry paths: Words Home/Songs → Downloads (`#/songs/downloads`); Words 
 The reported PHP/Laravel camera_proxy email is outside this Flutter download test stack. No such request was intentionally issued by this task; its source is unconfirmed and no PHP/camera repair was performed.
 
 The next actual Chrome cold-start check passed: both real Sermon 004 parts restored after closing the page and disconnecting network; saved blob audio advanced to 2.27 s. Initial persistent WebKit cold navigation identified additional first-claim renderer/font misses, now explicitly warmed. Runtime cache writes also extend fetch-event lifetime so closing a page does not abandon pending writes. WebKit final cold-start result remains separately recorded, not inferred from Chrome.
+
+Final persistent WebKit **actual Sword app** test passed: download real Sermon 004, close page, stop the owned HTTP server and block HTTPS requests, then reopen at `?sermon=004`. Saved audio restored and played from a blob URL, advancing to 2.06 s. This uses no simulated-offline flag. Evidence: `sword-webkit-actual-offline-proof.json` and its screenshot. It does not certify physical Safari or installed iOS PWA. The background online admin/version requests still fail without network, as expected; sermon reading and saved playback succeeded.
+
+Minimal device recheck: in the actual Safari browser or installed PWA you intend to use offline, open Songs → Downloads (Words) or a sermon → Download audio (both). Wait for completion, close it, enable airplane mode, reopen and play; then delete/retry. Repeat separately in Safari and PWA because their caches may differ. TestFlight/native install does not receive this website deployment; its native source changes await a separately authorized build/release.
