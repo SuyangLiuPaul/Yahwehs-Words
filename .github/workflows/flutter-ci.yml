@@ -387,6 +387,9 @@ jobs:
       - name: Test
         run: flutter test --reporter expanded
 
+      - name: Browser offline audio cache tests
+        run: flutter test --platform chrome test/offline_audio_storage_web_test.dart
+
       # gitleaks-action@v3 reads the LIVE PR commit list at scan time.
       # Three Oct 1 runs scanned a newer head absent from their earlier
       # checkout and failed with Invalid revision range. Use the same

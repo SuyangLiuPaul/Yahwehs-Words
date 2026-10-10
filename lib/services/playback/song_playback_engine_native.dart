@@ -1,3 +1,4 @@
+import '../../utils/local_audio_path.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:audio_session/audio_session.dart';
@@ -99,7 +100,7 @@ class SongPlaybackEngine {
     });
   }
 
-  ap.Source _sourceFor(String url) => url.startsWith('/')
+  ap.Source _sourceFor(String url) => isLocalAudioPath(url)
       ? ap.DeviceFileSource(url)
       : ap.UrlSource(url) as ap.Source;
 

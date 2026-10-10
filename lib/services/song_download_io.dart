@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'offline_audio_storage_io.dart';
+import 'offline_audio_types.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -41,7 +43,17 @@ import 'package:yahwehs_words/services/song_player_service.dart';
 ///    `.part` and renamed on success, so an interrupted download is
 ///    never mistaken for a finished one.
 class SongDownloadService extends ChangeNotifier {
-  SongDownloadService._();
+  SongDownloadService._()
+      : _directory = getApplicationSupportDirectory,
+        _clientFactory = http.Client.new;
+  @visibleForTesting
+  SongDownloadService.forTesting(
+      {required Future<Directory> Function() directory,
+      required http.Client Function() clientFactory})
+      : _directory = directory,
+        _clientFactory = clientFactory;
+  final Future<Directory> Function() _directory;
+  final http.Client Function() _clientFactory;
 
   static final SongDownloadService instance = SongDownloadService._();
 
@@ -56,7 +68,9 @@ class SongDownloadService extends ChangeNotifier {
   final Map<String, SongDownloadStatus> _status = {};
   final List<Song> _queue = [];
   final Set<String> _active = {};
-  final Map<String, http.Client> _clients = {};
+  final Map<String, DownloadCancellation> _tokens = {};
+  final Set<Future<void>> _tasks = {};
+  Future<void>? _cancelFuture, _initFuture;
 
   Directory? _dir;
   bool _loaded = false;
@@ -65,9 +79,10 @@ class SongDownloadService extends ChangeNotifier {
   // ── Lifecycle ───────────────────────────────────────────────────
 
   /// Reads the on-disk index. Safe to call repeatedly.
-  Future<void> init() async {
-    if (_loaded || !isSupported) return;
-    _loaded = true;
+  Future<void> init() => _loaded ? Future.value() : (_initFuture ??= _load());
+
+  Future<void> _load() async {
+    if (!isSupported) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_indexKey);
@@ -99,9 +114,14 @@ class SongDownloadService extends ChangeNotifier {
           bytes: entry.value.bytes,
         );
       }
+      _loaded = true;
       notifyListeners();
     } catch (e) {
       debugPrint('[SongDownloadService] init failed: $e');
+      _lastError = 'Download storage unavailable: $e';
+      notifyListeners();
+    } finally {
+      _initFuture = null;
     }
   }
 
@@ -110,7 +130,7 @@ class SongDownloadService extends ChangeNotifier {
     // Application *support*, not documents: this is a reproducible
     // cache the user did not author, so it should not show up in
     // file browsers or iCloud backups.
-    final base = await getApplicationSupportDirectory();
+    final base = await _directory();
     final dir = Directory('${base.path}/song_media');
     if (!dir.existsSync()) dir.createSync(recursive: true);
     _dir = dir;
@@ -119,10 +139,12 @@ class SongDownloadService extends ChangeNotifier {
 
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _indexKey,
-      json.encode({for (final e in _index.entries) e.key: e.value.toJson()}),
-    );
+    if (!await prefs.setString(
+        _indexKey,
+        json.encode(
+            {for (final e in _index.entries) e.key: e.value.toJson()}))) {
+      throw StateError('Could not save download index');
+    }
   }
 
   // ── Queries ─────────────────────────────────────────────────────
@@ -162,8 +184,8 @@ class SongDownloadService extends ChangeNotifier {
   /// Counts the scores too — this figure is what the Downloads page
   /// reports as space used, and it has to match what is actually on
   /// disk or the page is lying about the user's storage.
-  int get totalBytes => _index.values
-      .fold<int>(0, (sum, r) => sum + r.bytes + r.scoreBytes);
+  int get totalBytes =>
+      _index.values.fold<int>(0, (sum, r) => sum + r.bytes + r.scoreBytes);
 
   int get pendingCount => _queue.length + _active.length;
 
@@ -194,7 +216,6 @@ class SongDownloadService extends ChangeNotifier {
   String? _lastError;
 
   /// How long to wait for a server to start answering.
-  static const _headersTimeout = Duration(seconds: 15);
 
   /// What [songs] would cost to download, in bytes.
   ///
@@ -231,20 +252,22 @@ class SongDownloadService extends ChangeNotifier {
   /// re-run after a partial failure only retries what is missing.
   Future<void> enqueue(Iterable<Song> songs) async {
     if (!isSupported) return;
+    await _cancelFuture;
     await init();
     _cancelled = false;
 
+    final seen = <String>{};
     final toAdd = songs
         .where((s) => s.hasPlayableAudio)
         .where((s) => !_index.containsKey(s.id))
         .where((s) => !_active.contains(s.id))
         .where((s) => !_queue.any((q) => q.id == s.id))
+        .where((s) => seen.add(s.id))
         .toList();
     if (toAdd.isEmpty) return;
 
     for (final s in toAdd) {
-      _status[s.id] = const SongDownloadStatus(
-          state: SongDownloadState.queued);
+      _status[s.id] = const SongDownloadStatus(state: SongDownloadState.queued);
     }
     _queue.addAll(toAdd);
     _batchTotal += toAdd.length;
@@ -254,25 +277,26 @@ class SongDownloadService extends ChangeNotifier {
 
   /// Stop the batch. In-flight downloads are aborted and their partial
   /// files removed; completed ones stay.
-  Future<void> cancelAll() async {
+  Future<void> cancelAll() => _cancelFuture ??= _cancel().whenComplete(() {
+        _cancelFuture = null;
+      });
+  Future<void> _cancel() async {
     _cancelled = true;
+    for (final song in _queue) {
+      _status.remove(song.id);
+    }
     _queue.clear();
-    for (final client in _clients.values) {
-      client.close();
+    for (final token in _tokens.values.toList()) {
+      token.cancel();
     }
-    _clients.clear();
-    for (final id in _active.toList()) {
-      _status[id] = const SongDownloadStatus();
-    }
-    _active.clear();
-    _batchTotal = 0;
-    _batchDone = 0;
-    _batchFailed = 0;
+    await Future.wait(_tasks.toList());
+    _batchTotal = _batchDone = _batchFailed = 0;
     _lastError = null;
     notifyListeners();
   }
 
   Future<void> delete(Song song) async {
+    await cancelAll();
     final rec = _index.remove(song.id);
     if (rec != null) {
       try {
@@ -311,25 +335,23 @@ class SongDownloadService extends ChangeNotifier {
   // ── Worker ──────────────────────────────────────────────────────
 
   void _pump() {
+    if (_cancelled) return;
     while (_active.length < _maxConcurrent && _queue.isNotEmpty) {
       final song = _queue.removeAt(0);
       _active.add(song.id);
-      // ignore: unawaited_futures
-      _download(song).whenComplete(() {
+      late Future<void> task;
+      task = _download(song).whenComplete(() {
         _active.remove(song.id);
+        _tasks.remove(task);
         _batchDone++;
         if (_queue.isEmpty && _active.isEmpty) {
-          _batchTotal = 0;
-          _batchDone = 0;
-          // _batchFailed and _lastError deliberately survive the reset:
-          // a batch that failed entirely finishes by clearing its
-          // counters, and wiping the reason at the same moment would
-          // leave the screen looking exactly like a batch that never
-          // ran.
+          _batchTotal = _batchDone = 0;
         }
         notifyListeners();
         if (!_cancelled) _pump();
       });
+      _tasks.add(task);
+      unawaited(task);
     }
   }
 
@@ -337,99 +359,52 @@ class SongDownloadService extends ChangeNotifier {
     final url = song.audioUrl ??
         (song.audioTracks.isNotEmpty ? song.audioTracks.first.url : null);
     if (url == null) return;
-
+    final token = DownloadCancellation();
+    _tokens[song.id] = token;
+    final name = _filenameFor(song.id, url);
+    final storage = PlatformOfflineAudioStorage(
+        directory: _mediaDir,
+        directoryName: '',
+        fileName: name,
+        clientFactory: _clientFactory);
     _status[song.id] = const SongDownloadStatus(
         state: SongDownloadState.downloading, progress: 0);
     notifyListeners();
-
-    final client = http.Client();
-    _clients[song.id] = client;
-    File? partial;
     try {
-      final dir = await _mediaDir();
-      final name = _filenameFor(song.id, url);
-      partial = File('${dir.path}/$name.part');
-      final target = File('${dir.path}/$name');
-
-      final request = http.Request('GET', Uri.parse(url));
-      // A host that never answers must fail in seconds, not minutes.
-      //
-      // 2026-08-11: the user queued 495 songs and the progress sat at
-      // "0 / 495" indefinitely. Nothing was broken in the queue — 495
-      // of the 559 songs live on fydt.org and
-      // www.christiandiscipleschurch.org, which accept no TCP
-      // connection at all from their network, and `send` had no
-      // timeout. Each song therefore held a worker for the OS default
-      // (~75s on iOS) before failing, so with a handful of workers the
-      // batch could not visibly advance. The 63 that DID download were
-      // all cgdc.hk, the one reachable host.
-      //
-      // This bounds the wait for the response HEADERS only; a slow but
-      // live download keeps streaming below without a deadline, so a
-      // large file on a poor connection is not cut off.
-      final response = await client
-          .send(request)
-          .timeout(_headersTimeout, onTimeout: () {
-        throw TimeoutException(
-            'no response from ${Uri.parse(url).host}', _headersTimeout);
+      final bytes = await storage.download(
+          AudioDownloadItem(
+              id: song.id, title: song.title, url: url, sermonId: ''),
+          token, (n, total) {
+        if (token.cancelled) return;
+        _status[song.id] = SongDownloadStatus(
+            state: SongDownloadState.downloading,
+            progress: total > 0 ? (n / total).clamp(0, 1) : null,
+            bytes: n);
+        notifyListeners();
       });
-      if (response.statusCode != 200) {
-        throw HttpException('HTTP ${response.statusCode}');
-      }
-
-      final expected = response.contentLength ?? 0;
-      var received = 0;
-      final sink = partial.openWrite();
-      try {
-        await for (final chunk in response.stream) {
-          if (_cancelled) throw const _Cancelled();
-          sink.add(chunk);
-          received += chunk.length;
-          if (expected > 0) {
-            _status[song.id] = SongDownloadStatus(
-              state: SongDownloadState.downloading,
-              progress: received / expected,
-              bytes: received,
-            );
-            notifyListeners();
-          }
-        }
-      } finally {
-        await sink.close();
-      }
-
-      // Rename only after the stream completes, so a killed process
-      // can never leave a truncated file looking like a finished one.
-      await partial.rename(target.path);
-      _index[song.id] = _DownloadRecord(filename: name, bytes: received);
-      _status[song.id] = SongDownloadStatus(
-          state: SongDownloadState.done, bytes: received);
+      token.check();
+      _index[song.id] = _DownloadRecord(filename: name, bytes: bytes);
       await _persist();
-
-      // The score rides along AFTER the audio is safely committed, and
-      // its failure is not the song's failure: 579 of 606 songs publish
-      // a PDF, and an offline song without its music is the thing being
-      // fixed here — but a 404 on the PDF must not turn a perfectly
-      // downloaded song red in the Downloads list, nor put it in the
-      // "Retry" batch. Errors are swallowed inside [_downloadScore].
-      await _downloadScore(song);
-    } on _Cancelled {
-      _status[song.id] = const SongDownloadStatus();
+      token.check();
+      _status[song.id] =
+          SongDownloadStatus(state: SongDownloadState.done, bytes: bytes);
+      if (!token.cancelled) await _downloadScore(song, token);
     } catch (e) {
-      _status[song.id] = SongDownloadStatus(
-        state: SongDownloadState.failed,
-        error: e.toString(),
-      );
-      _batchFailed++;
-      _lastError = e is TimeoutException
-          ? 'unreachable: ${Uri.tryParse(url)?.host ?? url}'
-          : e.toString();
-      debugPrint('[SongDownloadService] ${song.id} failed: $e');
-    } finally {
-      _clients.remove(song.id)?.close();
+      _index.remove(song.id);
       try {
-        if (partial != null && partial.existsSync()) partial.deleteSync();
+        await storage.remove(song.id);
+        await _persist();
       } catch (_) {}
+      if (token.cancelled || e is DownloadCancelled) {
+        _status.remove(song.id);
+      } else {
+        _status[song.id] =
+            SongDownloadStatus(state: SongDownloadState.failed, error: '$e');
+        _batchFailed++;
+        _lastError = '$e';
+      }
+    } finally {
+      _tokens.remove(song.id);
       notifyListeners();
     }
   }
@@ -441,14 +416,18 @@ class SongDownloadService extends ChangeNotifier {
   /// audio, so there is no progress worth reporting and a plain `get`
   /// keeps the failure surface small. It is also not cancellable, for
   /// the same reason — by the time it runs the expensive part is done.
-  Future<void> _downloadScore(Song song) async {
+  Future<void> _downloadScore(Song song, DownloadCancellation token) async {
     final url = song.scoreUrl;
     final rec = _index[song.id];
     if (url == null || rec == null || rec.scoreFilename != null) return;
+    final client = _clientFactory();
+    token.abort = client.close;
+    File? partial;
     try {
-      final resp = await http
-          .get(Uri.parse(url))
-          .timeout(const Duration(seconds: 30));
+      token.check();
+      final resp =
+          await client.get(Uri.parse(url)).timeout(const Duration(seconds: 30));
+      token.check();
       if (resp.statusCode != 200 || resp.bodyBytes.isEmpty) return;
       // The churches' sites answer a missing file with an HTML page and
       // a 200, so a "successful" fetch can be the site's 404 page. A
@@ -456,7 +435,10 @@ class SongDownloadService extends ChangeNotifier {
       // storing it would show the user a broken viewer later.
       final b = resp.bodyBytes;
       if (b.length < 5 ||
-          b[0] != 0x25 || b[1] != 0x50 || b[2] != 0x44 || b[3] != 0x46) {
+          b[0] != 0x25 ||
+          b[1] != 0x50 ||
+          b[2] != 0x44 ||
+          b[3] != 0x46) {
         debugPrint('[SongDownloadService] ${song.id} score is not a PDF — '
             'the site probably served an error page with HTTP 200');
         return;
@@ -464,13 +446,21 @@ class SongDownloadService extends ChangeNotifier {
       final dir = await _mediaDir();
       final name = '${sha1.convert(utf8.encode(song.id))}.pdf';
       final tmp = File('${dir.path}/$name.part');
+      partial = tmp;
       await tmp.writeAsBytes(b, flush: true);
+      token.check();
       await tmp.rename('${dir.path}/$name');
       _index[song.id] = rec.withScore(name, b.length);
       await _persist();
       notifyListeners();
     } catch (e) {
       debugPrint('[SongDownloadService] ${song.id} score failed: $e');
+    } finally {
+      client.close();
+      token.abort = null;
+      if (partial != null && await partial.exists()) {
+        await partial.delete();
+      }
     }
   }
 
@@ -479,7 +469,9 @@ class SongDownloadService extends ChangeNotifier {
   /// the source extension.
   static String _filenameFor(String songId, String url) {
     final digest = sha1.convert(utf8.encode(songId)).toString();
-    final ext = url.toLowerCase().endsWith('.m4a') ? 'm4a' : 'mp3';
+    final ext = (Uri.tryParse(url)?.path.toLowerCase() ?? '').endsWith('.m4a')
+        ? 'm4a'
+        : 'mp3';
     return '$digest.$ext';
   }
 }
@@ -515,8 +507,7 @@ class _DownloadRecord {
         if (scoreBytes > 0) 'sb': scoreBytes,
       };
 
-  factory _DownloadRecord.fromJson(Map<String, dynamic> j) =>
-      _DownloadRecord(
+  factory _DownloadRecord.fromJson(Map<String, dynamic> j) => _DownloadRecord(
         filename: j['f'] as String,
         bytes: (j['b'] as num?)?.toInt() ?? 0,
         scoreFilename: j['s'] as String?,
@@ -531,10 +522,6 @@ class _DownloadRecord {
       );
 }
 
-class _Cancelled implements Exception {
-  const _Cancelled();
-}
-
 /// Resolve what the player should actually open for [song].
 ///
 /// A downloaded file wins over the network every time — that is the
@@ -545,7 +532,9 @@ String? resolveSongSource(Song song, String url) {
     final local = SongDownloadService.instance.localPathFor(song);
     // Only the primary audio is downloaded, so an alternate mix still
     // streams even when the song shows as downloaded.
-    if (local != null && url == song.audioUrl) return local;
+    final primary = song.audioUrl ??
+        (song.audioTracks.isEmpty ? null : song.audioTracks.first.url);
+    if (local != null && url == primary) return local;
   }
   return SongPlayerService.resolvePlaybackUrl(url);
 }

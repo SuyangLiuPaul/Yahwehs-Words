@@ -1,3 +1,4 @@
+import 'offline_audio_downloads.dart';
 import 'installation_diagnostics.dart';
 import 'companion_theme.dart';
 import 'dart:async';
@@ -518,7 +519,11 @@ class SermonAudioService extends ChangeNotifier implements RemoteAudioSource {
     _pendingSeek = resumeAt;
     _awaitingFirstPlaying = true;
     try {
-      await _player.play(urlFor(parts[_partIndex]));
+      final part = parts[_partIndex];
+      final source =
+          OfflineAudioDownloads.instance.sourceFor('$_sermonId:${part.part}');
+      await _player.play(
+          source ?? (kIsWeb ? mediaProxyPath(urlFor(part)) : urlFor(part)));
     } on PlaybackBlockedException catch (e) {
       // The browser refused to START — not a dead file (see
       // `playback_blocked.dart`'s own doc comment on why that

@@ -1,3 +1,7 @@
+## 2026-10-10 — Offline song and sermon downloads
+
+Words song queue/cancellation and visible download entry improved; both apps now download sermon recordings with progress/retry/delete and saved-audio playback. Web cache cleanup preserves downloaded media; Sword has a network-first shell and Windows audio plugin. See [implementation and test limits](docs/offline-media-downloads-2026-10-10.md). Version stays 1.7.16; no native package/tag changed. Website deployment evidence will be added after verification.
+
 ## 2026-10-09 — EV author-approved G2304 / H7307 correction (local)
 
 Applied the EV author's approval supplied by the owner to both apps. G2304 English item 2 omits `, trinity`, with a labeled provenance note. Current H7307 Simplified/Traditional Hebrew definitions already lack the rejected EV clause and are unchanged. Nave's, Bible editions and all other lexicon entries are preserved. See [correction record](docs/ev-author-corrections-2026-10-09.md) and `tools/apply_ev_author_corrections.py`. This is locally committed source preparation, not a deployed website or store package; version remains 1.7.16.
