@@ -21,8 +21,22 @@ base = "https://manage.devcenter.microsoft.com/v1.0/my/applications/" + product
 def request(url, method="GET", payload=None, headers=None):
     data = None if payload is None else json.dumps(payload).encode()
     h = {"Content-Type": "application/json", **(headers or {})}
-    with urllib.request.urlopen(urllib.request.Request(url, data=data, method=method, headers=h), timeout=60) as res:
-        return json.load(res)
+    print(json.dumps({"operation": method + " " + urllib.parse.urlsplit(url).path}))
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, data=data, method=method, headers=h), timeout=60) as res:
+            return json.load(res)
+    except urllib.error.HTTPError as error:
+        try:
+            payload = json.load(error)
+            details = payload.get("error", payload)
+            message = str(details.get("message", details.get("errorDescription", "No structured API message")))[:800]
+            # Do not expose URL queries (including SAS signatures) from an API message.
+            message = re.sub(r"(https?://[^\s?]+)\?[^\s]+", r"\1?[redacted]", message)
+            code = details.get("code", details.get("errorCode"))
+        except (ValueError, AttributeError):
+            code, message = None, "No structured API message"
+        print(json.dumps({"httpStatus": error.code, "apiCode": code, "apiMessage": message}))
+        raise
 
 
 def verify_package(package, specification):
@@ -74,7 +88,7 @@ def main():
     if app.get("id") != product or app.get("packageIdentityName") != identity or not may_create_draft(app):
         raise SystemExit("Identity mismatch or existing pending submission; no changes made")
     # Unlike msstore publish, this endpoint is create-only: never delete drafts.
-    submission = request(base + "/submissions", "POST", {}, headers)
+    submission = request(base + "/submissions", "POST", None, headers)
     submission_id = submission["id"]
     print("Created draft " + submission_id + "; certification not submitted")
     package_name = paths[0].name
