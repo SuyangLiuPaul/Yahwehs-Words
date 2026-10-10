@@ -1,3 +1,7 @@
+## 2026-10-10 — Consistent footnote numbers
+
+Inline and note-card circled numbers now share 55% of the local scripture font size and w600; explanation text remains85%. Sword comparison markers use the same rule without reducing the tooltip hit area. See docs/footnote-number-parity-2026-10-10.md for checks, today’s feature comparison and delivery evidence. Maintenance1.7.16 only; no native/tag update.
+
 ## 2026-10-10 — Words footnotes, photo framing and lexical AI
 
 Smaller inline circled notes; draggable/zoomable own-photo framing shared with PNG export; top/lower lexical AI now tracks displayed entry and actual source verse, rejecting late results and duplicate taps. See docs/words-photo-framing-lexicon-context-2026-10-10.md for checks, evidence and deployment scope. Words website maintenance only, version 1.7.16, no native package/tag/Sword changes.
