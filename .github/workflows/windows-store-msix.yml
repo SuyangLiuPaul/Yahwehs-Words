@@ -42,10 +42,7 @@ jobs:
           if-no-files-found: error
 
       # Optional store push. Needs the checkbox AND the four secrets below.
-      # Product id 9NVJ28XSKP67 is this app's Store id. The submission stays a draft; this workflow never commits certification.
-      - name: Install Microsoft Store CLI
-        if: ${{ inputs.send_to_store }}
-        uses: microsoft/microsoft-store-apppublisher@cc9910a8d59f2eb55cbb83df0a3800cf3b5300e0 # v1.4
+      # Product id 9NVJ28XSKP67 is this app's Store id. The create-only API keeps a draft; it never deletes or commits certification.
       - name: Publish to Partner Center
         if: ${{ inputs.send_to_store }}
         shell: bash
@@ -55,8 +52,4 @@ jobs:
           MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
           MS_SELLER: ${{ secrets.MS_STORE_SELLER_ID }}
         run: |
-          msstore reconfigure --tenantId "$MS_TENANT" --clientId "$MS_CLIENT" --clientSecret "$MS_SECRET" --sellerId "$MS_SELLER"
-          python tools/windows_store_guard.py
-          mapfile -t packages < <(find build/windows/x64/runner/Release -name '*.msix')
-          [ "${#packages[@]}" -eq 1 ] || { echo 'Expected exactly one MSIX'; exit 2; }
-          msstore publish "${packages[0]}" --appId 9NVJ28XSKP67 --noCommit
+          python tools/windows_store_upload.py

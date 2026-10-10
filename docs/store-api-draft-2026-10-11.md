@@ -1,8 +1,8 @@
 # Store API draft uploads — 2026-10-11
 
-Play phone AAB upload is optional and draft-only on internal/alpha/beta. Phone and Wear artifacts remain separate. Third-party uploader and official Microsoft installer are pinned to reviewed commit IDs.
+Play phone AAB upload is optional and draft-only on internal/alpha/beta. Phone and Wear artifacts remain separate. The Play uploader is pinned to a reviewed commit ID; changesNotSentForReview is explicit.
 
-Microsoft optional MSIX upload refuses an existing pending submission before invoking publish --noCommit. The official CLI replaces pending drafts, so the guard preserves pending copy/packages. A certification commit is never issued by this workflow.
+Microsoft optional MSIX upload uses the create-only REST API and refuses existing pending submissions. The official CLI publish command can replace drafts, so it is not invoked. Listing/localization fields from the cloned draft are retained; no DELETE or certification commit is issued.
 
 Apple local tools/apple_upload.sh supports ios IPA and macos PKG. It uses the existing local ASC key, validates via Apple before uploading, and never submits review. Acceptance and processing require separate checks. Existing uploaded build numbers must not be reused. No credential is copied to GitHub.
 

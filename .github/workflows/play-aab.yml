@@ -166,6 +166,7 @@ jobs:
           releaseFiles: build/app/outputs/bundle/intlRelease/app-intl-release.aab
           track: ${{ inputs.track }}
           status: ${{ inputs.release_status }}
+          changesNotSentForReview: true
 
       - name: Build Wear OS AAB (same Play package and upload key)
         working-directory: android
