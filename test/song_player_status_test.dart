@@ -38,8 +38,10 @@ void main() {
             width: 34, height: 34, child: SongArtworkFallback(source: 'cdc'))));
     expect(
         tester.widget<Image>(find.byType(Image)).image,
-        isA<AssetImage>().having((image) => image.assetName, 'source',
-            'assets/song_sources/cdc.png'));
+        isA<ResizeImage>()
+            .having((image) => image.imageProvider, 'source',
+                const AssetImage('assets/song_sources/cdc.png'))
+            .having((image) => image.width, 'decode width', 102));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

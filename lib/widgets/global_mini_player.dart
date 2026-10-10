@@ -421,6 +421,8 @@ class SongArtworkFallback extends StatelessWidget {
         : Image.asset(
             asset,
             fit: BoxFit.contain,
+            cacheWidth: 102,
+            cacheHeight: 102,
             errorBuilder: (_, error, stack) => placeholder,
           );
   }
