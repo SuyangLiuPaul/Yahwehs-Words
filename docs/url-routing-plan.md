@@ -134,6 +134,7 @@ accept the parameter that would make it so (documented per-row).
 
 | Page class | Proposed path | Params | Durable identifier | Cold-load reconstructable |
 |---|---|---|---|---|
+| `SermonDownloadsPage` | in-app only | none | Local offline audio list | no |
 | `DashboardPage` | `/` (empty hash) | none | n/a | yes — frozen, already works |
 | `HomePage` | `/<bookSlug>/<chapter>[:verse][?v=]` | see §1 | book+chapter (+verse, +version) | yes — frozen, already works |
 | `SettingsPage` | `/settings` + `/settings/:section` | `initialSection` (enum) | slug, e.g. `ai`, `display`, `dashboard` | yes |

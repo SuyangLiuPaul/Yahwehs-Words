@@ -278,6 +278,7 @@ class _SongsPageState extends State<SongsPage> {
               constraints: BoxConstraints(maxWidth: maxW),
               child: Column(
                 children: [
+                  Align(alignment:Alignment.centerRight,child:TextButton.icon(icon:const Icon(Icons.download_for_offline_outlined),label:Text(uiStrings['songsDownloads']?[locale] ?? 'Offline downloads'),onPressed:()=>pushPage(const SongDownloadsPage(),routeName:'/songs/downloads'))),
                   Expanded(
                     child: ScrollToTopOnStatusBarTap(
                       controller: _scrollCtrl,

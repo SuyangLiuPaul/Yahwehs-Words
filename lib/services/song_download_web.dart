@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'offline_audio_storage_web.dart';
+import 'offline_audio_types.dart';
 import 'dart:convert';
 import 'dart:js_interop';
 // For `has` — Cache Storage is absent in non-secure contexts, so its
@@ -90,6 +92,9 @@ class SongDownloadService extends ChangeNotifier {
   final List<Song> _queue = [];
   final Set<String> _active = {};
 
+  final _tokens = <String, DownloadCancellation>{};
+  final _tasks = <Future<void>>{};
+  Future<void>? _cancelFuture, _initFuture;
   bool _loaded = false;
   bool _cancelled = false;
   int _batchTotal = 0;
@@ -97,9 +102,9 @@ class SongDownloadService extends ChangeNotifier {
   int _batchFailed = 0;
   String? _lastError;
 
-  Future<void> init() async {
-    if (_loaded || !isSupported) return;
-    _loaded = true;
+  Future<void> init() => _loaded ? Future.value() : (_initFuture ??= _load());
+  Future<void> _load() async {
+    if (!isSupported) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_indexKey);
@@ -110,6 +115,7 @@ class SongDownloadService extends ChangeNotifier {
           _index[e.key] = _WebDownload(
             url: m['url'] as String,
             bytes: (m['bytes'] as num?)?.toInt() ?? 0,
+            scoreUrl: m['scoreUrl'] as String?,
           );
         }
       }
@@ -135,10 +141,23 @@ class SongDownloadService extends ChangeNotifier {
           bytes: e.value.bytes,
         );
         await _makeBlobUrl(e.key, e.value.url, cache);
+        final scoreUrl = e.value.scoreUrl;
+        if (scoreUrl != null) {
+          final hit = await cache.match(scoreUrl.toJS).toDart;
+          if (hit != null) {
+            _scoreBlobUrls[e.key] =
+                web.URL.createObjectURL(await hit.blob().toDart);
+          }
+        }
       }
+      _loaded = true;
       notifyListeners();
     } catch (e) {
       debugPrint('[SongDownloadService/web] init failed: $e');
+      _lastError = 'Download storage unavailable: $e';
+      notifyListeners();
+    } finally {
+      _initFuture = null;
     }
   }
 
@@ -172,20 +191,58 @@ class SongDownloadService extends ChangeNotifier {
 
   /// Cache [song]'s sheet music alongside its audio. Never throws — the
   /// score is a bonus and its failure must not touch the song's status.
-  Future<void> _downloadScore(Song song) async {
+  Future<void> _downloadScore(Song song, DownloadCancellation token) async {
     final source = song.scoreUrl;
     if (source == null || _scoreBlobUrls.containsKey(song.id)) return;
+    final url = SongPlayerService.resolvePlaybackUrl(source);
     try {
-      final url = SongPlayerService.resolvePlaybackUrl(source);
-      final res = await web.window.fetch(url.toJS).toDart;
+      final controller = web.AbortController();
+      token.abort = () => controller.abort();
+      token.check();
+      final res = await web.window
+          .fetch(url.toJS, web.RequestInit(signal: controller.signal))
+          .toDart
+          .timeout(const Duration(seconds: 15), onTimeout: () {
+        controller.abort();
+        throw TimeoutException('Score download stalled');
+      });
       if (!res.ok) return;
-      final blob = await res.blob().toDart;
+      final blob = await res.blob().toDart.timeout(const Duration(seconds: 30),
+          onTimeout: () {
+        controller.abort();
+        throw TimeoutException('Score download stalled');
+      });
+      token.check();
       if (blob.size.toInt() < 5) return;
+      final prefix =
+          (await blob.slice(0, 5).arrayBuffer().toDart).toDart.asUint8List();
+      if (!String.fromCharCodes(prefix).startsWith('%PDF-')) return;
       final cache = await _cache();
       await cache.put(url.toJS, web.Response(blob as JSAny, _pdfInit())).toDart;
+      token.check();
       _scoreBlobUrls[song.id] = web.URL.createObjectURL(blob);
+      final audio = _index[song.id];
+      if (audio != null) {
+        _index[song.id] =
+            _WebDownload(url: audio.url, bytes: audio.bytes, scoreUrl: url);
+        await _persist();
+      }
     } catch (e) {
       debugPrint('[SongDownloadService/web] ${song.id} score failed: $e');
+    } finally {
+      token.abort = null;
+      if (token.cancelled) {
+        final old = _scoreBlobUrls.remove(song.id);
+        if (old != null) web.URL.revokeObjectURL(old);
+        try {
+          await (await _cache()).delete(url.toJS).toDart;
+          final audio = _index[song.id];
+          if (audio != null) {
+            _index[song.id] = _WebDownload(url: audio.url, bytes: audio.bytes);
+            await _persist();
+          }
+        } catch (_) {/* Cancellation must finish even if storage is full. */}
+      }
     }
   }
 
@@ -207,13 +264,20 @@ class SongDownloadService extends ChangeNotifier {
 
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
+    final saved = await prefs.setString(
       _indexKey,
       json.encode({
         for (final e in _index.entries)
-          e.key: {'url': e.value.url, 'bytes': e.value.bytes},
+          e.key: {
+            'url': e.value.url,
+            'bytes': e.value.bytes,
+            'scoreUrl': e.value.scoreUrl
+          },
       }),
     );
+    if (!saved) {
+      throw StateError('Could not save download index');
+    }
   }
 
   // ── Queries ─────────────────────────────────────────────────────
@@ -239,8 +303,7 @@ class SongDownloadService extends ChangeNotifier {
   bool hasOfflineScore(Song song) => _scoreBlobUrls.containsKey(song.id);
 
   int get downloadedCount => _index.length;
-  int get totalBytes =>
-      _index.values.fold(0, (sum, d) => sum + d.bytes);
+  int get totalBytes => _index.values.fold(0, (sum, d) => sum + d.bytes);
   int get pendingCount => _queue.length + _active.length;
   bool get isBusy => pendingCount > 0;
   int get batchTotal => _batchTotal;
@@ -278,6 +341,7 @@ class SongDownloadService extends ChangeNotifier {
 
   Future<void> enqueue(Iterable<Song> songs) async {
     if (!isSupported) return;
+    await _cancelFuture;
     await init();
     _cancelled = false;
 
@@ -297,8 +361,7 @@ class SongDownloadService extends ChangeNotifier {
     _queue.addAll(wanted);
     _batchTotal += wanted.length;
     for (final s in wanted) {
-      _status[s.id] = const SongDownloadStatus(
-          state: SongDownloadState.queued);
+      _status[s.id] = const SongDownloadStatus(state: SongDownloadState.queued);
     }
     notifyListeners();
     _pump();
@@ -307,19 +370,26 @@ class SongDownloadService extends ChangeNotifier {
   bool _isQueued(Song song) =>
       _active.contains(song.id) || _queue.any((s) => s.id == song.id);
 
-  Future<void> cancelAll() async {
+  Future<void> cancelAll() => _cancelFuture ??= _cancel().whenComplete(() {
+        _cancelFuture = null;
+      });
+  Future<void> _cancel() async {
     _cancelled = true;
-    for (final s in _queue) {
-      _status.remove(s.id);
+    for (final song in _queue) {
+      _status.remove(song.id);
     }
     _queue.clear();
-    _batchTotal = _batchDone = 0;
-    _batchFailed = 0;
+    for (final token in _tokens.values.toList()) {
+      token.cancel();
+    }
+    await Future.wait(_tasks.toList());
+    _batchTotal = _batchDone = _batchFailed = 0;
     _lastError = null;
     notifyListeners();
   }
 
   Future<void> delete(Song song) async {
+    await cancelAll();
     final entry = _index.remove(song.id);
     _status.remove(song.id);
     _revoke(song.id);
@@ -327,6 +397,9 @@ class SongDownloadService extends ChangeNotifier {
       try {
         final cache = await _cache();
         await cache.delete(entry.url.toJS).toDart;
+        if (entry.scoreUrl != null) {
+          await cache.delete(entry.scoreUrl!.toJS).toDart;
+        }
       } catch (e) {
         debugPrint('[SongDownloadService/web] delete failed: $e');
       }
@@ -336,7 +409,13 @@ class SongDownloadService extends ChangeNotifier {
   }
 
   Future<void> deleteAll() async {
-    final urls = [for (final d in _index.values) d.url];
+    await cancelAll();
+    final urls = [
+      for (final d in _index.values) ...[
+        d.url,
+        if (d.scoreUrl != null) d.scoreUrl!
+      ]
+    ];
     for (final id in _index.keys.toList()) {
       _revoke(id);
     }
@@ -361,15 +440,19 @@ class SongDownloadService extends ChangeNotifier {
       if (_cancelled) return;
       final song = _queue.removeAt(0);
       _active.add(song.id);
-      unawaited(_download(song).whenComplete(() {
+      late Future<void> task;
+      task = _download(song).whenComplete(() {
         _active.remove(song.id);
+        _tasks.remove(task);
         _batchDone++;
         if (_queue.isEmpty && _active.isEmpty) {
           _batchTotal = _batchDone = 0;
         }
         notifyListeners();
-        _pump();
-      }));
+        if (!_cancelled) _pump();
+      });
+      _tasks.add(task);
+      unawaited(task);
     }
   }
 
@@ -377,75 +460,61 @@ class SongDownloadService extends ChangeNotifier {
     final source = song.audioUrl ??
         (song.audioTracks.isEmpty ? null : song.audioTracks.first.url);
     if (source == null) return;
-
-    // The same rewrite playback uses, so what we store is keyed by the
-    // URL the player will later ask for. Caching the upstream URL
-    // instead would store a file the Service Worker never matches.
     final url = SongPlayerService.resolvePlaybackUrl(source);
-
-    _status[song.id] = const SongDownloadStatus(
-        state: SongDownloadState.downloading);
+    final storage =
+        PlatformOfflineAudioStorage(cacheName: _cacheName, keyFor: (id) => id);
+    final token = DownloadCancellation();
+    _tokens[song.id] = token;
+    _status[song.id] =
+        const SongDownloadStatus(state: SongDownloadState.downloading);
     notifyListeners();
-
     try {
-      final res = await web.window.fetch(url.toJS).toDart;
-      if (!res.ok) {
-        throw StateError('HTTP ${res.status}');
-      }
-      // Read to a blob rather than streaming chunk-by-chunk: the
-      // per-song ring is a nicety, but a partially-written cache entry
-      // that the Service Worker would happily serve as a whole song is
-      // not. One complete response, stored in one step.
-      final blob = await res.blob().toDart;
-      final bytes = blob.size.toInt();
-
-      final cache = await _cache();
-      await cache
-          .put(url.toJS, web.Response(blob as JSAny, _audioInit()))
-          .toDart;
-
+      final bytes = await storage.download(
+          AudioDownloadItem(
+              id: url, title: song.title, url: source, sermonId: ''),
+          token, (n, total) {
+        if (token.cancelled) return;
+        _status[song.id] = SongDownloadStatus(
+            state: SongDownloadState.downloading,
+            bytes: n,
+            progress: total > 0 ? (n / total).clamp(0, 1) : null);
+        notifyListeners();
+      });
+      token.check();
       _index[song.id] = _WebDownload(url: url, bytes: bytes);
-      _status[song.id] = SongDownloadStatus(
-          state: SongDownloadState.done, bytes: bytes);
-      _blobUrls[song.id] = web.URL.createObjectURL(blob);
+      _status[song.id] =
+          SongDownloadStatus(state: SongDownloadState.done, bytes: bytes);
+      _blobUrls[song.id] = storage.sourceFor(url)!;
       await _persist();
-
-      // Sheet music, after the audio is committed and outside its
-      // failure path — a missing PDF must not mark a downloaded song
-      // as failed. See the native service for the same reasoning.
-      await _downloadScore(song);
+      token.check();
+      if (!token.cancelled) await _downloadScore(song, token);
     } catch (e) {
-      debugPrint('[SongDownloadService/web] ${song.id} failed: $e');
-      _status[song.id] = SongDownloadStatus(
-        state: SongDownloadState.failed,
-        error: '$e',
-      );
-      _batchFailed++;
-      // A browser reports a refused connection as an opaque
-      // "Failed to fetch", so the host has to come from the URL we
-      // asked for rather than from the error.
-      final host = Uri.tryParse(song.audioUrl ?? '')?.host;
-      _lastError = (host != null && host.isNotEmpty)
-          ? 'unreachable: $host'
-          : '$e';
+      _index.remove(song.id);
+      _revoke(song.id);
+      try {
+        await storage.remove(url);
+        await _persist();
+      } catch (_) {}
+      if (token.cancelled || e is DownloadCancelled) {
+        _status.remove(song.id);
+      } else {
+        _status[song.id] =
+            SongDownloadStatus(state: SongDownloadState.failed, error: '$e');
+        _batchFailed++;
+        _lastError = '$e';
+      }
+    } finally {
+      _tokens.remove(song.id);
+      notifyListeners();
     }
-    notifyListeners();
   }
-
-  /// Content-Type matters: the cached response is what the audio
-  /// element receives, and a blob stored without it can come back as
-  /// `application/octet-stream`, which Safari refuses to decode.
-  static web.ResponseInit _audioInit() => web.ResponseInit(
-        status: 200,
-        statusText: 'OK',
-        headers: {'Content-Type': 'audio/mpeg'}.jsify() as JSObject,
-      );
 }
 
 class _WebDownload {
   final String url;
   final int bytes;
-  const _WebDownload({required this.url, required this.bytes});
+  final String? scoreUrl;
+  const _WebDownload({required this.url, required this.bytes, this.scoreUrl});
 }
 
 /// Where playback should read [song] from.
@@ -454,6 +523,11 @@ class _WebDownload {
 /// no network, so it plays with the tab offline. Everything else
 /// resolves to the same-origin proxy path, which is what makes web
 /// playback possible at all (the church servers send no CORS headers).
-String? resolveSongSource(Song song, String url) =>
-    SongDownloadService.instance.offlineSourceFor(song) ??
-    SongPlayerService.resolvePlaybackUrl(url);
+String? resolveSongSource(Song song, String url) {
+  final primary = song.audioUrl ??
+      (song.audioTracks.isEmpty ? null : song.audioTracks.first.url);
+  return (url == primary
+          ? SongDownloadService.instance.offlineSourceFor(song)
+          : null) ??
+      SongPlayerService.resolvePlaybackUrl(url);
+}

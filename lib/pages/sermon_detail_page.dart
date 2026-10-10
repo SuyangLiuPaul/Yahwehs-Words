@@ -1,3 +1,4 @@
+import '../widgets/sermon_offline_downloads.dart';
 import 'dart:async';
 
 import 'package:flutter/gestures.dart';
@@ -573,7 +574,8 @@ class _SermonDetailPageState extends State<SermonDetailPage> {
               ],
             ),
             const SizedBox(height: 14),
-            _LanguageToggle(
+            Wrap(children: [SermonOfflineButton(sermonId:s.id,title:s.title,locale:settings.locale),SermonDownloadsLink(locale:settings.locale)]),
+              _LanguageToggle(
               sermon: s,
               currentLang: _lang,
               appLocale: settings.locale,

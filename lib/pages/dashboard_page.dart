@@ -1,3 +1,4 @@
+import 'song_downloads_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yahwehs_words/services/release_registry.dart';
 import 'package:yahwehs_words/services/admin_content.dart';
@@ -1108,6 +1109,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ],
                               // From the admin portal (links added for this group).
+                _LinkTile(icon:Icons.download_for_offline_outlined,label:uiStrings['songsDownloads']?[locale] ?? 'Offline downloads',onTap:()=>pushPage(const SongDownloadsPage(),routeName:'/songs/downloads')),
                 ..._adminLinkTiles('frequent'),
               ],
             ),

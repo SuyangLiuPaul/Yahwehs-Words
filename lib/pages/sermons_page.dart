@@ -1,3 +1,4 @@
+import '../widgets/sermon_offline_downloads.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -348,7 +349,7 @@ class _SermonsPageState extends State<SermonsPage> {
             ),
           ],
         ),
-        actions: const [LanguageSwitcherButton(), HomeIconButton()],
+        actions: [SermonDownloadsLink(locale:locale,compact:true),const LanguageSwitcherButton(), const HomeIconButton()],
       ),
       body: FutureBuilder<_PageData>(
         future: _future,

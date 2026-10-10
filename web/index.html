@@ -428,7 +428,7 @@
         ? caches.keys().then(function(keys) {
             return Promise.all(keys
               .filter(function(k) {
-                return k.indexOf(MEDIA_CACHE_PREFIX) !== 0 &&
+                return k.indexOf(MEDIA_CACHE_PREFIX) !== 0 && k.indexOf('sermon-media-') !== 0 &&
                        k.indexOf(SHELL_CACHE_PREFIX) !== 0;
               })
               .map(function(k) {
@@ -680,7 +680,7 @@
             // recovery, so silently destroying someone's offline music
             // to repair a shell would be a harm the user never agreed
             // to and would never connect to what they did.
-            .filter(function(k) { return k.indexOf('song-media-') !== 0; })
+            .filter(function(k) { return k.indexOf('song-media-') !== 0 && k.indexOf('sermon-media-') !== 0; })
             .map(function(k) {
               return caches.delete(k).catch(function() {});
             }));

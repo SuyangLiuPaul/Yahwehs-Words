@@ -1,3 +1,4 @@
+import 'services/offline_audio_downloads.dart';
 import 'package:yahwehs_words/services/media_companion_service.dart';
 import 'package:yahwehs_words/services/watch_reading_snapshot.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
@@ -165,6 +166,7 @@ Future<void> _startMediaSession() async {
   // handler, so downloaded vocal tracks work on a cold offline launch.
   try {
     await SongDownloadService.instance.init();
+    await OfflineAudioDownloads.instance.init();
   } catch (error) {
     debugPrint('[Audio] download index unavailable: $error');
   }

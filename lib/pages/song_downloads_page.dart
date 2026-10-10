@@ -1,3 +1,4 @@
+import '../widgets/sermon_offline_downloads.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +17,7 @@ import 'package:yahwehs_words/widgets/localized_back_button.dart';
 /// Manage downloaded songs: what is stored, how much space it uses,
 /// and removing it again.
 ///
-/// On web this page states plainly that downloads are unavailable
-/// rather than hiding — someone who went looking for the feature
-/// deserves to know why it is not there.
+/// Web downloads use this browser’s storage and may be evicted.
 class SongDownloadsPage extends StatefulWidget {
   const SongDownloadsPage({super.key});
 
@@ -93,6 +92,7 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                           padding:
                               const EdgeInsets.fromLTRB(16, 12, 16, 24),
                           children: [
+                            SermonDownloadsLink(locale:locale),
                             _SummaryCard(
                               count: downloaded.length,
                               bytes: _service.totalBytes,
@@ -110,6 +110,8 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                   : () => _confirmDeleteAll(locale),
                             ),
                             const SizedBox(height: 12),
+                            for(final song in catalogue.where((s)=>_service.statusOf(s).isBusy))
+                              ListTile(title:Text(song.title),subtitle:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[LinearProgressIndicator(value:_service.statusOf(song).progress),Text(formatDownloadBytes(_service.statusOf(song).bytes))])),
                             if (failed.isNotEmpty) ...[
                               Row(
                                 children: [
