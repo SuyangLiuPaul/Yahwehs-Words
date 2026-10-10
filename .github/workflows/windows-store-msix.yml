@@ -11,6 +11,11 @@ name: Windows Store MSIX
 
 on:
   workflow_dispatch:
+    inputs:
+      send_to_store:
+        description: 'Create a Partner Center submission with this MSIX (needs the MS_STORE_* secrets). Off = artifact only.'
+        type: boolean
+        default: false
 
 jobs:
   msix:
@@ -35,3 +40,16 @@ jobs:
           name: Yahwehs-Words-msix
           path: build/windows/x64/runner/Release/*.msix
           if-no-files-found: error
+
+      # Optional store push. Needs the checkbox AND the four secrets below.
+      # Product id 9NVJ28XSKP67 is this app's Store id. The create-only API keeps a draft; it never deletes or commits certification.
+      - name: Publish to Partner Center
+        if: ${{ inputs.send_to_store }}
+        shell: bash
+        env:
+          MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+          MS_SELLER: ${{ secrets.MS_STORE_SELLER_ID }}
+        run: |
+          python tools/windows_store_upload.py
