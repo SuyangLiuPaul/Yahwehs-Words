@@ -11,7 +11,9 @@ Only the obsolete icon and its dedicated comment were removed. The `onImage` cal
 - Flutter 3.44.2 analysis: no findings.
 - Existing share chooser, verse-card and verse-photo tests: 38 passed.
 - Actual compiled browser UI: English and Simplified Chinese selection, chooser dismissal, copied verse text/link, multi-verse preview and saved PNG verified at phone width, including larger Chinese menu/text sizing.
-- Landscape/desktop checks and final deployment evidence are recorded in the delivery addendum after completion.
+- Landscape (844×390) and desktop (1440×900): chooser cancellation, copied text/link, multi-verse preview/PNG and return to the reader passed.
+- Additional English single-verse PNG export passed. Exported English/Chinese cards were visually inspected; no content/reference clipping observed.
+- Final CI and website delivery receipt: `/Users/pliu0036/Downloads/Yahweh-Share-Entry-20261010/delivery-final.json` (written only after verified deployment).
 
 Browser evidence: `/Users/pliu0036/Downloads/Yahweh-Share-Entry-20261010/`. Browser viewport checks are not physical iPhone, Android or Mac application verification.
 
