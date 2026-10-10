@@ -1,6 +1,11 @@
 name: Store API preflight
 on:
   workflow_dispatch:
+# Same service account may have only one active Play edit per app.
+concurrency:
+  group: store-play-edit-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   credentials:
     runs-on: ubuntu-latest

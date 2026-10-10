@@ -28,6 +28,11 @@ on:
         options: [draft]
         default: draft
 
+# Same service account may have only one active Play edit per app.
+concurrency:
+  group: store-play-edit-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   aab:
     runs-on: ubuntu-latest

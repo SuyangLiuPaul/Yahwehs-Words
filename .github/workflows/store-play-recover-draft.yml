@@ -25,6 +25,11 @@ on:
 permissions:
   contents: read
   actions: read
+# Same service account may have only one active Play edit per app.
+concurrency:
+  group: store-play-edit-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   draft:
     runs-on: ubuntu-latest

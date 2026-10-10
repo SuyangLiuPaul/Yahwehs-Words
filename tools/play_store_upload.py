@@ -40,6 +40,7 @@ def main():
             raise SystemExit("Play API HTTP " + str(response.status_code))
         return response.json()
     edit = read(session.post(base, json={}, timeout=30))["id"]
+    print(json.dumps({"openedOwnEdit": edit}))
     committed = False
     try:
         track_url = base + "/" + edit + "/tracks/" + track_name
@@ -70,15 +71,21 @@ def main():
         read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text(encoding="utf-8"))), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
         # Never retry with this flag removed, even when the server rejects it.
-        read(session.post(base + "/" + edit + ":commit", params={"changesNotSentForReview": "true"}, timeout=60))
+        read(session.post(base + "/" + edit + ":commit", params={"changesNotSentForReview": "true", "changesInReviewBehavior": "ERROR_IF_IN_REVIEW"}, timeout=60))
         committed = True
         print("Draft saved without sending review; existing releases preserved. Not published.")
     finally:
         if not committed:
-            response = session.delete(base + "/" + edit, timeout=30)
-            print(json.dumps({"ownTemporaryEditCleanupStatus": response.status_code}))
-            if response.status_code not in {200, 204, 404}:
-                raise SystemExit("Temporary edit cleanup HTTP " + str(response.status_code))
+            primary_failed = sys.exc_info()[0] is not None
+            try:
+                response = session.delete(base + "/" + edit, timeout=30)
+                print(json.dumps({"ownTemporaryEditCleanupStatus": response.status_code}))
+                if response.status_code not in {200, 204, 404} and not primary_failed:
+                    raise SystemExit("Temporary edit cleanup HTTP " + str(response.status_code))
+            except Exception:
+                print("Own temporary edit cleanup network failure")
+                if not primary_failed:
+                    raise
 
 
 if __name__ == "__main__":

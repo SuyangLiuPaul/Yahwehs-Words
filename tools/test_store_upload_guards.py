@@ -73,5 +73,19 @@ class UnicodeConfigurationTests(unittest.TestCase):
             for node in reads:
                 self.assertTrue(any(k.arg == 'encoding' and isinstance(k.value, ast.Constant) and k.value.value == 'utf-8' for k in node.keywords))
 
+class PlayIsolationTests(unittest.TestCase):
+    def test_workflows_serialize_play_edits(self):
+        from pathlib import Path
+        root = Path(__file__).parent.parent
+        for name in ['play-aab.yml', 'store-api-preflight.yml', 'store-play-recover-draft.yml']:
+            text = (root / '.github/workflows' / name).read_text(encoding='utf-8')
+            self.assertIn('group: store-play-edit-${{ github.repository }}', text)
+            self.assertIn('cancel-in-progress: false', text)
+    def test_commit_never_sends_or_cancels_review(self):
+        from pathlib import Path
+        text = (Path(__file__).parent / 'play_store_upload.py').read_text(encoding='utf-8')
+        self.assertIn('"changesNotSentForReview": "true"', text)
+        self.assertIn('"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"', text)
+
 if __name__ == "__main__":
     unittest.main()
