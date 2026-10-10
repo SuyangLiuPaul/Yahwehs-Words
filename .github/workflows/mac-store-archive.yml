@@ -6,7 +6,7 @@ permissions:
 jobs:
   archive:
     runs-on: macos-latest
-    timeout-minutes: 40
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
         with:
@@ -22,7 +22,9 @@ jobs:
           channel: stable
           cache: true
       - name: Configure store runtime without moving signing credentials
-        run: flutter build macos --config-only --release --build-name=1.7.17 --build-number=1070017 --dart-define=STORE_BUILD=true
+        run: |
+          flutter config --no-enable-swift-package-manager
+          flutter build macos --config-only --release --build-name=1.7.17 --build-number=1070017 --dart-define=STORE_BUILD=true
       - name: Archive universal macOS11 app without signing on runner
         run: |
           xcodebuild -workspace macos/Runner.xcworkspace -scheme Runner -configuration Release \
