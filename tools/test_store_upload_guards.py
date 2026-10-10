@@ -35,6 +35,14 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(record["minimumSystemRam"], "None")
         with self.assertRaises(ValueError):
             confirm_saved_package(original, "new.msix")
+    def test_windows_cloned_filename_selects_only_new_pending_entry(self):
+        pending = {"fileName": "same.msix", "fileStatus": "PendingUpload"}
+        old = {"fileName": "same.msix", "fileStatus": "Uploaded", "version": "1.7.16.0"}
+        self.assertEqual(confirm_saved_package({"applicationPackages": [old, pending]}, "same.msix"), pending)
+        with self.assertRaises(ValueError):
+            confirm_saved_package({"applicationPackages": [pending, pending]}, "same.msix")
+        with self.assertRaises(ValueError):
+            confirm_saved_package({"applicationPackages": [old]}, "same.msix")
     def test_apple_validation_failure_never_uploads(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
