@@ -62,5 +62,30 @@ class GuardTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     verify_package(package, SPEC.replace(original, wrong))
 
+class UnicodeConfigurationTests(unittest.TestCase):
+    def test_uploaders_read_configuration_as_utf8(self):
+        import ast
+        from pathlib import Path
+        for name in ['windows_store_upload.py', 'play_store_upload.py']:
+            tree = ast.parse((Path(__file__).parent / name).read_text(encoding='utf-8'))
+            reads = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == 'read_text']
+            self.assertTrue(reads)
+            for node in reads:
+                self.assertTrue(any(k.arg == 'encoding' and isinstance(k.value, ast.Constant) and k.value.value == 'utf-8' for k in node.keywords))
+
+class PlayIsolationTests(unittest.TestCase):
+    def test_workflows_serialize_play_edits(self):
+        from pathlib import Path
+        root = Path(__file__).parent.parent
+        for name in ['play-aab.yml', 'store-api-preflight.yml', 'store-play-recover-draft.yml']:
+            text = (root / '.github/workflows' / name).read_text(encoding='utf-8')
+            self.assertIn('group: store-play-edit-${{ github.repository }}', text)
+            self.assertIn('cancel-in-progress: false', text)
+    def test_commit_never_sends_or_cancels_review(self):
+        from pathlib import Path
+        text = (Path(__file__).parent / 'play_store_upload.py').read_text(encoding='utf-8')
+        self.assertIn('"changesNotSentForReview": "true"', text)
+        self.assertIn('"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"', text)
+
 if __name__ == "__main__":
     unittest.main()

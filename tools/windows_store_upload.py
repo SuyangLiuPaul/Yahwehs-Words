@@ -61,7 +61,7 @@ def main():
     paths = list(Path("build/windows/x64/runner/Release").glob("*.msix"))
     if len(paths) != 1:
         raise SystemExit("Expected exactly one MSIX")
-    identity = verify_package(paths[0], Path("pubspec.yaml").read_text())
+    identity = verify_package(paths[0], Path("pubspec.yaml").read_text(encoding="utf-8"))
     credentials = urllib.parse.urlencode({"grant_type": "client_credentials",
         "client_id": os.environ["MS_CLIENT"], "client_secret": os.environ["MS_SECRET"],
         "resource": "https://manage.devcenter.microsoft.com"}).encode()
@@ -95,7 +95,7 @@ def main():
     verified = request(saved_url, headers=headers)
     saved_package = confirm_saved_package(verified, package_name)
     print(json.dumps({"product": product, "submission": submission_id,
-        "sourceSha": os.environ.get("GITHUB_SHA"), "filename": package_name,
+        "sourceSha": os.environ.get("PACKAGE_SOURCE_SHA", os.environ.get("GITHUB_SHA")), "filename": package_name,
         "sha256": hashlib.file_digest(paths[0].open("rb"), "sha256").hexdigest(),
         "draftPackageReadBack": True, "serverPackageVersion": saved_package.get("version"),
         "serverPackageStatus": saved_package.get("fileStatus"), "submissionStatus": verified.get("status"),
