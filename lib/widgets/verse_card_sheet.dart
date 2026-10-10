@@ -10,13 +10,8 @@
 // already in the app's palette, none of them a choice you can get
 // wrong.
 //
-// 2026-09-09: a fourth chip, the reader's own photograph, and the
-// count above is now eight cards rather than six. It cost one control,
-// not five, because the chip IS the picker — tapping it opens the
-// camera roll instead of selecting an empty style, so there is no
-// state in which the sheet shows a "Photo" background with no photo
-// in it and no explanation of how to put one there. The sliders
-// YouVersion hangs off this are still refused; see `verse_card.dart`.
+// The photo remains local to this sheet. Framing uses the same card
+// widget as preview/export, so saving preserves the chosen area.
 
 import 'dart:async';
 import 'dart:typed_data';
@@ -32,6 +27,8 @@ import 'package:yahwehs_words/services/verse_photo_picker.dart';
 import 'package:yahwehs_words/utils/floating_toast.dart' show showFloatingToast;
 import 'package:yahwehs_words/utils/font_catalog.dart' show kCjkFontFallback;
 import 'package:yahwehs_words/widgets/verse_card.dart';
+import 'package:yahwehs_words/widgets/verse_photo_framing.dart';
+import 'package:yahwehs_words/widgets/verse_photo_framing_dialog.dart';
 
 /// Bottom sheet showing a live [VerseCard] with the handful of
 /// presentation choices the feature offers, plus the one button that
@@ -124,6 +121,8 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
   /// and back to null if they clear it.
   MemoryImage? _photo;
   double? _photoLuminance;
+  Size? _photoSize;
+  VersePhotoFraming _photoFraming = const VersePhotoFraming();
 
   /// True while the camera roll is open. Separate from [_busy], which
   /// disables the export button: picking does not block the export of
@@ -140,10 +139,6 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
     // toggle is for choosing a card that suits where they are sending
     // it, not for correcting a bad default.
     final brightness = _brightness ?? Theme.of(context).brightness;
-    final cardScheme = verseCardScheme(
-      seed: settings.primaryColor,
-      brightness: brightness,
-    );
 
     return SafeArea(
       top: false,
@@ -183,19 +178,7 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
                 fit: BoxFit.scaleDown,
                 child: RepaintBoundary(
                   key: _boundaryKey,
-                  child: VerseCard(
-                    reference: widget.reference,
-                    body: widget.body,
-                    versionLabel: widget.versionLabel,
-                    licence: verseCardLicence(widget.version, locale),
-                    appName: uiStrings['appName']?[locale] ??
-                        "Yahweh's Words",
-                    scheme: cardScheme,
-                    style: _style,
-                    fontFamily: settings.fontFamily,
-                    photo: _photo,
-                    photoLuminance: _photoLuminance,
-                  ),
+                  child: _buildCard(_photoFraming),
                 ),
               ),
             ),
@@ -210,9 +193,23 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
               onClearPhoto: () => setState(() {
                 _photo = null;
                 _photoLuminance = null;
+                _photoSize = null;
+                _photoFraming = const VersePhotoFraming();
                 _style = VerseCardStyle.plain;
               }),
             ),
+            if (_style == VerseCardStyle.photo && _photo != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: OutlinedButton.icon(
+                  onPressed: _busy || _picking || _photoSize == null
+                      ? null
+                      : _framePhoto,
+                  icon: const Icon(Icons.crop_rounded),
+                  label: Text(
+                      uiStrings['versePhotoFrame']?[locale] ?? 'Adjust photo'),
+                ),
+              ),
             const SizedBox(height: 10),
             _BrightnessToggle(
               locale: locale,
@@ -295,6 +292,43 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
     );
   }
 
+  VerseCard _buildCard(VersePhotoFraming framing) {
+    final settings = context.read<AppSettings>();
+    final locale = settings.locale;
+    final cardScheme = verseCardScheme(
+        seed: settings.primaryColor,
+        brightness: _brightness ?? Theme.of(context).brightness);
+    return VerseCard(
+      reference: widget.reference,
+      body: widget.body,
+      versionLabel: widget.versionLabel,
+      licence: verseCardLicence(widget.version, locale),
+      appName: uiStrings['appName']?[locale] ?? "Yahweh's Words",
+      scheme: cardScheme,
+      style: _style,
+      fontFamily: settings.fontFamily,
+      photo: _photo,
+      photoLuminance: _photoLuminance,
+      photoFraming: framing,
+    );
+  }
+
+  Future<void> _framePhoto() async {
+    final size = _boundaryKey.currentContext?.size;
+    if (_photoSize == null || size == null || size.isEmpty) return;
+    final result = await showDialog<VersePhotoFraming>(
+      context: context,
+      builder: (_) => VersePhotoFramingDialog(
+        initial: _photoFraming,
+        photoSize: _photoSize!,
+        cardSize: size,
+        locale: context.read<AppSettings>().locale,
+        cardBuilder: _buildCard,
+      ),
+    );
+    if (mounted && result != null) setState(() => _photoFraming = result);
+  }
+
   /// Open the camera roll, and switch to the photo style only once
   /// the picture is decoded and in the image cache.
   ///
@@ -357,8 +391,25 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
       return;
     }
     if (!mounted) return;
+    // Read dimensions from the already decoded image, avoiding a second
+    // full-resolution decode and its memory cost on a phone.
+    final stream = image.resolve(createLocalImageConfiguration(context));
+    final sizeReady = Completer<Size>();
+    final listener = ImageStreamListener((info, _) {
+      if (!sizeReady.isCompleted) {
+        sizeReady.complete(
+            Size(info.image.width.toDouble(), info.image.height.toDouble()));
+      }
+      info.dispose();
+    });
+    stream.addListener(listener);
+    final photoSize = await sizeReady.future;
+    stream.removeListener(listener);
+    if (!mounted) return;
     setState(() {
       _photo = image;
+      _photoSize = photoSize;
+      _photoFraming = const VersePhotoFraming();
       _photoLuminance = null;
       _style = VerseCardStyle.photo;
       _picking = false;

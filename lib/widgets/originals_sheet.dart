@@ -87,6 +87,12 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   /// preference and reloads.
   late InterlinearChoice _choice;
   OriginalWord? _selectedWord;
+  Verse? _selectedVerse;
+  Verse? _rootVerse;
+
+  Verse? get _displayedVerse => _rootEntry != null
+      ? (_rootVerse ?? _selectedVerse ?? widget.verses.firstOrNull)
+      : (_selectedVerse ?? widget.verses.firstOrNull);
   StrongsEntry? _selectedEntry;
   ConcordanceResult? _selectedConcordance;
   // When non-null, the user is browsing a root entry instead of the
@@ -344,12 +350,14 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     return results;
   }
 
-  Future<void> _onWordTap(OriginalWord w) async {
+  Future<void> _onWordTap(OriginalWord w, Verse verse) async {
     final myGen = ++_lookupGen;
     _clearTapRecognizers();
     _pivotFromNumber = null;
     setState(() {
       _selectedWord = w;
+      _selectedVerse = verse;
+      _rootVerse = null;
       // A chip tap is a different question from a Chinese-word tap, so
       // the implied-coverage line for the previous run stops applying —
       // and with it the grammar codes, which belong to that run's form
@@ -586,6 +594,15 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   /// file says so where a reader will look for it.
   Future<void> _loadRootEntry(String strongsNumber,
       {String? pivotFromNumber, TaggedRun? grammarFrom}) async {
+    final verse = grammarFrom == null
+        ? _displayedVerse
+        : (_verseOriginals
+                ?.where((vo) =>
+                    vo.tagged?.any((run) => identical(run, grammarFrom)) ??
+                    false)
+                .firstOrNull
+                ?.verse ??
+            _displayedVerse);
     final myGen = ++_lookupGen;
     _pivotFromNumber = pivotFromNumber;
     _clearTapRecognizers();
@@ -622,6 +639,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     _clearTapRecognizers();
     setState(() {
       _rootEntry = entry;
+      _rootVerse = verse;
       _rootConcordance = concordance;
       _loadingEntry = false;
       _expandedConcordanceBook = null;
@@ -721,8 +739,13 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   void _clearRoot() {
     _clearTapRecognizers();
     _pivotFromNumber = null;
+    final myGen = ++_lookupGen;
     setState(() {
       _rootEntry = null;
+      _rootVerse = null;
+      _loadingEntry = false;
+      _zhEntry = null;
+      _zhGrammar = const [];
       _rootConcordance = null;
       // Backing out of the entry backs out of the coverage line with
       // it: the line describes the span whose entry is being dismissed.
@@ -749,8 +772,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       // v1.2.30: bump gen so the new relations chain participates in
       // the staleness check (otherwise a fast tap of clear → tap a
       // different word could see clearRoot's relations land afterwards).
-      final myGen = ++_lookupGen;
       unawaited(_loadRelations(_selectedWord!.strongs, gen: myGen));
+      unawaited(_loadChinese(_selectedWord!.strongs, gen: myGen));
     }
   }
 
@@ -776,9 +799,17 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // _selectedEntry as the fallback for the original word view.
     final entry = _rootEntry ?? _selectedEntry;
     if (entry == null) return;
-    final v = widget.verses.isNotEmpty ? widget.verses.first : null;
-    if (v == null) return;
+    final v = _displayedVerse;
+    if (v == null || _aiLoading) return;
+    final requestGen = _lookupGen;
     if (!await ensureGeminiKey(context) || !mounted) return;
+    // The key dialog and the request can both outlive entry navigation.
+    if (_aiLoading ||
+        requestGen != _lookupGen ||
+        _displayedVerse != v ||
+        (_rootEntry ?? _selectedEntry)?.number != entry.number) {
+      return;
+    }
     final englishBook = toEnglish(v.book) ?? v.book;
     final entryNumber = entry.number;
     setState(() {
@@ -813,7 +844,12 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // were waiting for Gemini, drop the response on the floor — the
     // displayed entry no longer matches what we asked about.
     final stillCurrent = (_rootEntry ?? _selectedEntry)?.number == entryNumber;
-    if (!mounted || !stillCurrent) return;
+    if (!mounted ||
+        requestGen != _lookupGen ||
+        _displayedVerse != v ||
+        !stillCurrent) {
+      return;
+    }
     setState(() {
       _aiLoading = false;
       if (result.unavailable) {
@@ -865,11 +901,11 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   /// — labeled headers separated by blank lines so it pastes well
   /// into Notes / Word / chat.
   String _aiTranscript() {
-    final w = _selectedWord;
-    final v = widget.verses.isNotEmpty ? widget.verses.first : null;
-    if (w == null || v == null || _aiChunks.isEmpty) return '';
+    final entry = _rootEntry ?? _selectedEntry;
+    final v = _displayedVerse;
+    if (entry == null || v == null || _aiChunks.isEmpty) return '';
     final ref =
-        '${v.book} ${v.chapter}:${v.verseLabel} · ${w.text} (${w.strongs})';
+        '${v.book} ${v.chapter}:${v.verseLabel} · ${entry.lemma} (${entry.number})';
     final buf = StringBuffer()
       ..writeln(ref)
       ..writeln();
@@ -1365,6 +1401,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
                       englishBook: englishBook,
                       chapter: vo.verse.chapter,
                       verse: vo.verse.verse,
+                      sourceVerse: vo.verse,
                     ),
                 ],
               ),
@@ -1417,6 +1454,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     required String englishBook,
     required int chapter,
     required int verse,
+    required Verse sourceVerse,
   }) {
     final isSelected =
         _selectedWord?.strongs == w.strongs && _selectedWord?.text == w.text;
@@ -1456,7 +1494,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       borderColor = Colors.transparent;
     }
     return InkWell(
-      onTap: () => _onWordTap(w),
+      onTap: () => _onWordTap(w, sourceVerse),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -2131,9 +2169,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // race or a future code path that updates state without going
     // through those helpers.
     final entry = _rootEntry ?? _selectedEntry;
-    final w = _selectedWord;
-    final v = widget.verses.isNotEmpty ? widget.verses.first : null;
-    if (entry == null || w == null || v == null) {
+    final v = _displayedVerse;
+    if (entry == null || v == null) {
       return const SizedBox.shrink();
     }
     final ref = '${v.book} ${v.chapter}:${v.verseLabel}';

@@ -8327,6 +8327,36 @@ const uiStrings = {
     'zh-Hant': '移除照片',
     'en': 'Remove photo',
   },
+  'versePhotoFrame': {
+    'zh-Hans': '调整照片取景',
+    'zh-Hant': '調整照片取景',
+    'en': 'Adjust photo',
+  },
+  'versePhotoFrameHint': {
+    'zh-Hans': '拖动调整位置。双指缩放，或使用下方缩放控件。',
+    'zh-Hant': '拖動調整位置。雙指縮放，或使用下方縮放控制。',
+    'en': 'Drag to move the photo. Pinch or use the zoom controls.',
+  },
+  'versePhotoFrameReset': {
+    'zh-Hans': '重置取景',
+    'zh-Hant': '重設取景',
+    'en': 'Reset framing',
+  },
+  'versePhotoFrameApply': {
+    'zh-Hans': '使用此取景',
+    'zh-Hant': '使用此取景',
+    'en': 'Use this framing',
+  },
+  'versePhotoZoomIn': {
+    'zh-Hans': '放大',
+    'zh-Hant': '放大',
+    'en': 'Zoom in',
+  },
+  'versePhotoZoomOut': {
+    'zh-Hans': '缩小',
+    'zh-Hant': '縮小',
+    'en': 'Zoom out',
+  },
   'versePhotoFailed': {
     'zh-Hans': '这张照片读不了，换一张试试。',
     'zh-Hant': '這張照片讀不了，換一張試試。',
