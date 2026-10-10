@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/ui_strings.dart';
+import 'package:yahwehs_words/constants/song_source_icons.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/pages/now_playing_page.dart';
 import 'package:yahwehs_words/services/song_player_service.dart';
@@ -248,7 +249,7 @@ class _Strip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               LinearProgressIndicator(
-                value: progress,
+                value: player.isLoading ? null : progress,
                 minHeight: 2,
                 backgroundColor: scheme.surfaceContainerHighest,
               ),
@@ -281,11 +282,7 @@ class _Strip extends StatelessWidget {
                           cacheWidth: 102,
                           cacheHeight: 102,
                           fit: BoxFit.cover,
-                          fallback: (_) => ColoredBox(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(Icons.music_note_rounded,
-                                size: 18, color: scheme.onSurfaceVariant),
-                          ),
+                          fallback: (_) => SongArtworkFallback(source: song.source),
                         ),
                       ),
                     ),
@@ -306,8 +303,7 @@ class _Strip extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${SongPlayerService.formatDuration(pos)}'
-                            ' / ${SongPlayerService.formatDuration(total)}'
+                            '${songPlaybackTimeLabel(position: pos, duration: total, loading: player.isLoading, locale: locale)}'
                             '${queue.length > 1 ? '  ·  ${queue.index + 1}/${queue.length}' : ''}',
                             style: TextStyle(
                               fontSize: 11,
@@ -381,5 +377,51 @@ class _Strip extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Unknown duration is not a zero-length recording. Keep elapsed time visible
+/// after playback starts, and distinguish initial loading from an unknown total.
+String songPlaybackTimeLabel({
+  required Duration position,
+  required Duration duration,
+  required bool loading,
+  required String locale,
+}) {
+  if (loading && position == Duration.zero) {
+    return uiStrings['loading']?[locale] ?? 'Loading…';
+  }
+  final elapsed = SongPlayerService.formatDuration(position);
+  final total = duration > Duration.zero
+      ? SongPlayerService.formatDuration(duration)
+      : '—';
+  return '$elapsed / $total';
+}
+
+/// Use the same bundled source mark as the catalogue when artwork is absent
+/// or unreachable. Bundled marks work without a network connection.
+class SongArtworkFallback extends StatelessWidget {
+  const SongArtworkFallback({super.key, required this.source});
+  final String? source;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final asset = songSourceIcon(source);
+    final placeholder = ColoredBox(
+      color: scheme.surfaceContainerHighest,
+      child: Icon(
+        Icons.music_note_rounded,
+        size: 18,
+        color: scheme.onSurfaceVariant,
+      ),
+    );
+    return asset == null
+        ? placeholder
+        : Image.asset(
+            asset,
+            fit: BoxFit.contain,
+            errorBuilder: (_, error, stack) => placeholder,
+          );
   }
 }

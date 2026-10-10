@@ -176,7 +176,7 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                               ),
                               const SizedBox(height: 12),
                             ],
-                            if (downloaded.isEmpty)
+                            if (downloaded.isEmpty && !_service.isBusy && failed.isEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 40),
                                 child: Text(
@@ -190,7 +190,7 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                             // Distinct from "nothing downloaded yet":
                             // the songs ARE here, this search just did
                             // not reach them.
-                            else if (shown.isEmpty)
+                            else if (downloaded.isNotEmpty && shown.isEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 40),
                                 child: Text(
@@ -320,7 +320,7 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.download_done_rounded, color: scheme.primary),
+              Icon(pending > 0 ? Icons.downloading_rounded : Icons.download_done_rounded, color: scheme.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -342,7 +342,7 @@ class _SummaryCard extends StatelessWidget {
           ),
           if (pending > 0) ...[
             const SizedBox(height: 12),
-            LinearProgressIndicator(value: progress),
+            LinearProgressIndicator(value: batchDone == 0 ? null : progress),
             const SizedBox(height: 6),
             Row(
               children: [
