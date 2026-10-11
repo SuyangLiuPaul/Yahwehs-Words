@@ -35,6 +35,7 @@
 library;
 
 import 'dart:convert';
+import '../utils/strongs_inline.dart' show isLexicalStrongsNumber;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -48,6 +49,7 @@ class TaggedRun {
     required this.text,
     required this.strongs,
     this.implied = const [],
+    this.additional = const [],
     this.grammar = const [],
     this.transliteration,
     this.originalText,
@@ -77,6 +79,9 @@ class TaggedRun {
   /// and anything the lexicon cannot answer are not printed.
   final List<String> implied;
 
+  /// Additional lexical numbers explicitly recorded by the source as s2.
+  final List<String> additional;
+
   /// Grammar codes: Hebrew stem/aspect, Greek tense-voice-mood.
   final List<String> grammar;
 
@@ -88,6 +93,12 @@ class TaggedRun {
 
   bool get isTagged => strongs.isNotEmpty;
 
+  /// Navigation candidates, preserving source identity and excluding sentinels.
+  List<String> get lexicalNumbers => <String>{
+        for (final n in [strongs, ...additional, ...implied])
+          if (isLexicalStrongsNumber(n)) n,
+      }.toList(growable: false);
+
   factory TaggedRun.fromJson(Map<String, dynamic> j) => TaggedRun(
         text: (j['w'] ?? '') as String,
         transliteration: j['t'] as String?,
@@ -96,6 +107,7 @@ class TaggedRun {
             ? ''
             : (j['s'] ?? '') as String,
         implied: ((j['i'] as List?) ?? const []).cast<String>(),
+        additional: ((j['s2'] as List?) ?? const []).cast<String>(),
         grammar: ((j['g'] as List?) ?? const []).cast<String>(),
       );
 

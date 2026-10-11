@@ -1,3 +1,4 @@
+import '../widgets/verse_share_layout_controls.dart';
 import '../widgets/settings_utility_theme.dart';
 import '../widgets/diagnosis_tile.dart';
 // 2026-05-20 (v1.2.67): `dart:js_interop` was here. See
@@ -1657,6 +1658,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                           icon: Icons.palette_outlined),
                       ...sections['displayDetails']!,
                       ...sections['readingDetails']!,
+                      const VerseShareLayoutControls(),
                       ...sections['companionPreferences']!,
                       _SectionHeader(_tierText(settings.locale, '离线与维护',
                           '離線與維護', 'Offline and maintenance')),

@@ -48,6 +48,15 @@ class StrongsNumberToken {
   final String text;
   final StrongsNumberKind kind;
 
+  /// A grammar token is never a lexical navigation target.
+  String? get lexicalNumber {
+    if (kind == StrongsNumberKind.grammar) return null;
+    final raw = kind == StrongsNumberKind.implied
+        ? text.substring(1, text.length - 1)
+        : text;
+    return isLexicalStrongsNumber(raw) ? raw : null;
+  }
+
   @override
   bool operator ==(Object other) =>
       other is StrongsNumberToken && other.text == text && other.kind == kind;
@@ -57,6 +66,14 @@ class StrongsNumberToken {
 
   @override
   String toString() => '$text(${kind.name})';
+}
+
+/// Higher H/G ranges encode TVM grammar, not dictionary headwords.
+/// These are the same bounds used by the source importer.
+bool isLexicalStrongsNumber(String number) {
+  if (!RegExp(r'^[HG][1-9][0-9]*$').hasMatch(number)) return false;
+  final n = int.parse(number.substring(1));
+  return n <= (number.startsWith('H') ? 8674 : 5624);
 }
 
 /// The numbers to print after one tagged word, in print order.
@@ -71,15 +88,26 @@ List<StrongsNumberToken> inlineStrongsNumbers({
   required String strongs,
   List<String> grammar = const [],
   List<String> implied = const [],
-}) =>
-    [
-      for (final i in implied)
-        if (i.isNotEmpty) StrongsNumberToken('($i)', StrongsNumberKind.implied),
-      if (strongs.isNotEmpty)
-        StrongsNumberToken(strongs, StrongsNumberKind.lexical),
-      for (final g in grammar)
-        if (g.isNotEmpty) StrongsNumberToken(g, StrongsNumberKind.grammar),
-    ];
+  List<String> additional = const [],
+}) {
+  final lexical = <String>{
+    if (strongs.isNotEmpty && strongs != 'H0' && strongs != 'G0') strongs,
+    ...additional.where((n) => n.isNotEmpty && n != 'H0' && n != 'G0'),
+  };
+  final seen = <String>{};
+  return [
+    for (final i in implied)
+      if (i.isNotEmpty &&
+          i != 'H0' &&
+          i != 'G0' &&
+          !lexical.contains(i) &&
+          seen.add(i))
+        StrongsNumberToken('($i)', StrongsNumberKind.implied),
+    for (final n in lexical) StrongsNumberToken(n, StrongsNumberKind.lexical),
+    for (final g in grammar.toSet())
+      if (g.isNotEmpty) StrongsNumberToken(g, StrongsNumberKind.grammar),
+  ];
+}
 
 /// The Chinese closing/separator marks split off a tagged run's trailing
 /// edge — comma, full stop, semicolon, colon, exclamation, question,

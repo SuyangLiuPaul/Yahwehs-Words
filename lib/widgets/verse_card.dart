@@ -23,6 +23,7 @@
 // the same normalised framing and cover-fit background widget.
 
 import 'package:flutter/material.dart';
+import '../models/verse_share_layout.dart';
 import 'package:yahwehs_words/widgets/verse_photo_framing.dart';
 
 import 'package:yahwehs_words/utils/font_catalog.dart' show kCjkFontFallback;
@@ -366,6 +367,7 @@ class VerseCard extends StatelessWidget {
   /// See [VerseCardPalette.of]. Only [VerseCardStyle.photo] reads it.
   final double? photoLuminance;
   final VersePhotoFraming photoFraming;
+  final VerseShareLayout layout;
 
   const VerseCard({
     super.key,
@@ -380,6 +382,7 @@ class VerseCard extends StatelessWidget {
     this.photo,
     this.photoLuminance,
     this.photoFraming = const VersePhotoFraming(),
+    this.layout = const VerseShareLayout(),
   });
 
   @override
@@ -403,32 +406,38 @@ class VerseCard extends StatelessWidget {
         border: Border.all(color: palette.border),
         borderRadius: BorderRadius.circular(20),
       ),
-      padding: const EdgeInsets.all(kVerseCardPadding),
-      // Two children and `spaceBetween`, so a short verse sits under
-      // the reference with the footer pinned to the bottom edge, and a
-      // long one simply pushes the footer down. An `Expanded` in the
-      // middle would be the obvious alternative and cannot work: the
-      // card's height is intrinsic, so there is no free space to
-      // expand into.
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _Passage(
-            reference: reference,
-            body: body,
-            palette: palette,
-            fontFamily: fontFamily,
-          ),
-          _Footer(
-            versionLabel: versionLabel,
-            licence: licence,
-            appName: appName,
-            palette: palette,
-            fontFamily: fontFamily,
-          ),
-        ],
+      padding: EdgeInsets.all(layout.padding),
+      // Intrinsic height permits long passages to grow; only unused space
+      // around short passages follows the selected vertical position.
+      child: IntrinsicHeight(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Align(
+                alignment: switch (layout.position) {
+                  VerseSharePosition.top => Alignment.topCenter,
+                  VerseSharePosition.center => Alignment.center,
+                  VerseSharePosition.bottom => Alignment.bottomCenter,
+                },
+                child: _Passage(
+                    reference: reference,
+                    body: body,
+                    palette: palette,
+                    fontFamily: fontFamily,
+                    layout: layout),
+              ),
+            ),
+            _Footer(
+                versionLabel: versionLabel,
+                licence: licence,
+                appName: appName,
+                palette: palette,
+                fontFamily: fontFamily,
+                showVersion: layout.showVersion),
+          ],
+        ),
       ),
     );
     if (style != VerseCardStyle.photo || photo == null) return content;
@@ -448,12 +457,14 @@ class VerseCard extends StatelessWidget {
 }
 
 class _Passage extends StatelessWidget {
+  final VerseShareLayout layout;
   final String reference;
   final String body;
   final VerseCardPalette palette;
   final String? fontFamily;
 
   const _Passage({
+    required this.layout,
     required this.reference,
     required this.body,
     required this.palette,
@@ -464,33 +475,47 @@ class _Passage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          reference,
-          style: TextStyle(
-            fontFamily: fontFamily,
-            fontFamilyFallback: kCjkFontFallback,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.4,
-            color: palette.accent,
-            shadows: palette.shadows,
+        if (layout.showReference)
+          Text(
+            reference,
+            textAlign: switch (layout.alignment) {
+              VerseShareAlignment.left => TextAlign.left,
+              VerseShareAlignment.center => TextAlign.center,
+              VerseShareAlignment.right => TextAlign.right
+            },
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontFamilyFallback: kCjkFontFallback,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.4,
+              color: palette.accent,
+              shadows: palette.shadows,
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
+        if (layout.showReference) const SizedBox(height: 16),
         // No maxLines and no overflow handling anywhere on this Text.
         // That is the point: the only two outcomes available to it are
         // "wrap" and "make the card taller", which is what the type
         // ladder in [verseCardBodyFontSize] is built around.
         Text(
           body,
+          textAlign: switch (layout.alignment) {
+            VerseShareAlignment.left => TextAlign.left,
+            VerseShareAlignment.center => TextAlign.center,
+            VerseShareAlignment.right => TextAlign.right
+          },
           style: verseCardBodyStyle(
             characters: body.characters.length,
             color: palette.foreground,
             fontFamily: fontFamily,
             shadows: palette.shadows,
-          ),
+          ).copyWith(
+              fontSize: verseCardBodyFontSize(body.characters.length) *
+                  layout.fontScale,
+              height: layout.lineHeight),
         ),
         const SizedBox(height: 24),
       ],
@@ -499,6 +524,7 @@ class _Passage extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
+  final bool showVersion;
   final String versionLabel;
   final String? licence;
   final String appName;
@@ -506,6 +532,7 @@ class _Footer extends StatelessWidget {
   final String? fontFamily;
 
   const _Footer({
+    this.showVersion = true,
     required this.versionLabel,
     required this.appName,
     required this.palette,
@@ -526,7 +553,7 @@ class _Footer extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                versionLabel,
+                showVersion ? versionLabel : '',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

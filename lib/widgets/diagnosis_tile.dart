@@ -111,8 +111,19 @@ class _DiagnosisTileState extends State<DiagnosisTile> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(t('Diagnosis ID', '诊断编号', '診斷編號'),
-                            style: Theme.of(context).textTheme.titleMedium),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(Icons.bug_report_outlined,
+                                color: Theme.of(context).colorScheme.primary),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(t('Diagnosis ID', '诊断编号', '診斷編號'),
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 8),
                         SelectableText(data?['diagnosisId'] as String? ?? '…',
                             scrollPhysics: kSelectableTextPhysics,
