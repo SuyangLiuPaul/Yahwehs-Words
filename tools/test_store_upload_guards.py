@@ -11,6 +11,52 @@ from play_store_upload import append_draft
 SPEC = "version: 1.7.17\nmsix_config:\n  identity_name: Test.App\n  publisher: CN=TEST\n"
 
 class GuardTests(unittest.TestCase):
+    def test_staged_storage_rejects_changed_draft_before_network(self):
+        from ms_verify_staged import verify_staged
+        from unittest.mock import patch
+        with patch("urllib.request.urlopen") as network:
+            with self.assertRaises(SystemExit):
+                verify_staged({"id": "other", "status": "PendingCommit"}, "9NVJ28XSKP67")
+            network.assert_not_called()
+    def test_staged_storage_rejects_untrusted_url_before_network(self):
+        from ms_verify_staged import verify_staged
+        from unittest.mock import patch
+        with patch("urllib.request.urlopen") as network:
+            with self.assertRaises(SystemExit):
+                verify_staged({"id": "1152921505702093995", "status": "PendingCommit",
+                    "fileUploadUrl": "https://untrusted.example/package?sig=fixture"}, "9NVJ28XSKP67")
+            network.assert_not_called()
+    def test_staged_storage_verifies_zip_msix_and_read_only_requests(self):
+        import io, hashlib, base64
+        import ms_verify_staged as staged
+        from unittest.mock import patch
+        msix = io.BytesIO()
+        manifest = '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"><Identity Name="YahwehsPeople.YahwehsWords" Publisher="CN=C4997401-2CEE-44B6-9803-4775768C89A5" Version="1.7.17.0" ProcessorArchitecture="x64" /></Package>'
+        with zipfile.ZipFile(msix, "w") as archive:
+            archive.writestr("AppxManifest.xml", manifest)
+        data = msix.getvalue()
+        container = io.BytesIO()
+        with zipfile.ZipFile(container, "w") as archive:
+            archive.writestr("yahwehs_words.msix", data)
+        blob = container.getvalue()
+        md5 = base64.b64encode(hashlib.md5(blob, usedforsecurity=False).digest()).decode()
+        class Response(io.BytesIO):
+            status = 200
+            headers = {"Content-Length": str(len(blob)), "Content-MD5": md5}
+        fixture = {"9NVJ28XSKP67": ("yahwehs_words.msix", len(data), hashlib.sha256(data).hexdigest(), "YahwehsPeople.YahwehsWords", "draft")}
+        submission = {"id": "draft", "status": "PendingCommit", "fileUploadUrl": "https://fixture.blob.core.windows.net/blob?sig=fixture"}
+        with patch.dict(staged.EXPECTED, fixture), patch("urllib.request.urlopen", side_effect=[Response(), Response(blob)]) as network:
+            result = staged.verify_staged(submission, "9NVJ28XSKP67")
+            self.assertTrue(result["verified"])
+            self.assertTrue(result["contentMD5Matched"])
+            self.assertEqual(result["zipSHA256"], hashlib.sha256(blob).hexdigest())
+            head = network.call_args_list[0].args[0]
+            self.assertEqual(head.get_method(), "HEAD")
+            self.assertFalse(head.has_header("Authorization"))
+            self.assertIsInstance(network.call_args_list[1].args[0], str)
+        with patch.dict(staged.EXPECTED, fixture), patch("urllib.request.urlopen", side_effect=[Response(), Response(blob + b"wrong")]):
+            with self.assertRaises(SystemExit):
+                staged.verify_staged(submission, "9NVJ28XSKP67")
     def test_no_pending(self):
         self.assertTrue(may_create_draft({"pendingApplicationSubmission": None}))
     def test_preserve_pending(self):
