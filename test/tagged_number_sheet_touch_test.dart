@@ -57,6 +57,21 @@ void main() {
       expect(f, findsOneWidget);
       final p = tester.renderObject<RenderParagraph>(f);
       final text = p.text.toPlainText();
+      // Each numeric span is atomic: a line-wrapped leading space otherwise
+      // makes Flutter web's semantic rectangle cover intervening numbers.
+      void checkNumbers(InlineSpan span) {
+        if (span is TextSpan) {
+          if (span.recognizer != null &&
+              RegExp(r'[GH]\d').hasMatch(span.text ?? '')) {
+            expect(span.text, startsWith('\u00a0'));
+          }
+          for (final child in span.children ?? <InlineSpan>[]) {
+            checkNumbers(child);
+          }
+        }
+      }
+
+      checkNumbers(p.text);
       final daily = text.indexOf('每日');
       final start = text.indexOf(number, daily);
       final box = p

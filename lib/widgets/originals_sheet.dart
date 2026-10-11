@@ -459,17 +459,8 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   /// The word's own number is part of the word's tap target — the
   /// grammar and implied numbers beside it are not.
   ///
-  /// It shipped inert, on the reasoning that at 10 pt a bare `H776` is
-  /// well under the 44 pt a finger needs and tapping the word opens
-  /// exactly what tapping the number would. The premise was right and
-  /// left a dead zone inside one visual unit: `摩西 H4872` reads as one
-  /// thing, and the half of it a reader is likeliest to aim at answered
-  /// nothing. Extending the WORD's recognizer over its own number costs
-  /// nothing and asks no new question — same run, same lemma. The
-  /// grammar codes and implied numbers stay inert because they are
-  /// different numbers, and opening the run's lemma from `(H853)` would
-  /// answer a question the reader did not ask; those are what
-  /// `ImpliedCoverageLine` is for.
+  /// Each lexical number opens its own entry; tapping a translated phrase
+  /// chooses among its distinct lexical numbers. Grammar remains nonlexical.
   Widget _taggedVerseLine(List<TaggedRun> runs, ColorScheme scheme) {
     final base = TextStyle(
       fontSize: kTaggedVerseFontSize,
@@ -490,21 +481,16 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       fontWeight: FontWeight.w400,
       color: scheme.onSurfaceVariant,
     );
-    return Text.rich(
-      TextSpan(
-        children: [
-          // A run with no text carries a number for a Hebrew word this
-          // translation did not render. Emitted, each is a zero-width span
-          // with a tap recognizer on it — an invisible target that opens a
-          // lexicon entry for a word that is not on the line. Ten shipped
-          // that way; the bracket repair emptied two more whose only
-          // character was the stray brace, so the guard is what keeps the
-          // repair from adding to a fault it was meant to remove.
-          for (final run in runs.where((r) => r.text.isNotEmpty))
-            ..._taggedRunSpans(run, base, lexical, secondary, scheme,
-                showNumbers: showNumbers),
-        ],
-      ),
+    // One run per layout box prevents multi-line RichText semantics from
+    // spanning intervening links when a word/number crosses a line break.
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        for (final run in runs.where((r) => r.text.isNotEmpty))
+          Text.rich(TextSpan(
+              children: _taggedRunSpans(run, base, lexical, secondary, scheme,
+                  showNumbers: showNumbers))),
+      ],
     );
   }
 
@@ -554,7 +540,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       ),
       for (final n in numbers)
         TextSpan(
-          text: ' ${n.text}',
+          // Keep the leading separator with its number. A wrapped space
+          // creates a paragraph-wide web semantics hit box over other links.
+          text: '\u00a0${n.text}',
           style: n.kind == StrongsNumberKind.lexical ? lexical : secondary,
           recognizer: n.lexicalNumber == null
               ? null
