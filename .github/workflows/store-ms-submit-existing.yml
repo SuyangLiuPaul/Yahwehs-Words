@@ -1,0 +1,30 @@
+name: Submit verified existing Microsoft draft
+on:
+  workflow_dispatch:
+    inputs:
+      submit_for_review:
+        description: Commit the already verified 1.7.17 draft for review and existing automatic publication
+        type: boolean
+        default: false
+concurrency:
+  group: store-microsoft-submission-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install google-auth requests
+      - name: Verify guards
+        run: python tools/test_store_upload_guards.py
+      - name: Read existing draft and optionally submit
+        env:
+          MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+        run: python tools/windows_store_commit_existing.py ${{ inputs.submit_for_review && '--submit-for-review' || '' }}

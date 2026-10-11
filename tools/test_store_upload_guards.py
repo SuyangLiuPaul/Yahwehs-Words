@@ -57,6 +57,43 @@ class GuardTests(unittest.TestCase):
         with patch.dict(staged.EXPECTED, fixture), patch("urllib.request.urlopen", side_effect=[Response(), Response(blob + b"wrong")]):
             with self.assertRaises(SystemExit):
                 staged.verify_staged(submission, "9NVJ28XSKP67")
+    def test_existing_ms_commit_requires_explicit_flag_and_automatic_policy(self):
+        import io, json
+        import windows_store_commit_existing as commit
+        from unittest.mock import patch
+        expected = commit.EXPECTED[commit.product]
+        app = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": expected[4]}}
+        draft = {"id": expected[4], "status": "PendingCommit", "targetPublishMode": "Immediate"}
+        env = {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, env), patch("sys.argv", ["commit"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", side_effect=[app, draft]) as api, patch.object(commit, "verify_staged", return_value={"verified": True}):
+            commit.main()
+            self.assertEqual(api.call_count, 2)
+        changed = {**draft, "targetPublishMode": "Manual"}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, env), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", side_effect=[app, changed]) as api, patch.object(commit, "verify_staged", return_value={"verified": True}):
+            with self.assertRaises(SystemExit):
+                commit.main()
+            self.assertEqual(api.call_count, 2)
+    def test_existing_ms_commit_preserves_submission_and_sends_no_body(self):
+        import io, json
+        import windows_store_commit_existing as commit
+        from unittest.mock import patch
+        expected = commit.EXPECTED[commit.product]
+        app = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": expected[4]}}
+        draft = {"id": expected[4], "status": "PendingCommit", "targetPublishMode": "Immediate"}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", side_effect=[app, draft, {"status": "CommitStarted"}, {"status": "PreProcessing"}]) as api, patch.object(commit, "verify_staged", return_value={"verified": True}):
+            commit.main()
+            self.assertEqual(api.call_args_list[2].args[1:3], ("POST", None))
+            self.assertTrue(api.call_args_list[2].args[0].endswith('/' + expected[4] + '/commit'))
+    def test_existing_ms_commit_never_repeats_progressed_submission(self):
+        import io, json
+        import windows_store_commit_existing as commit
+        from unittest.mock import patch
+        expected = commit.EXPECTED[commit.product]
+        app = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": expected[4]}}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", side_effect=[app, {"id": expected[4], "status": "Certification"}]) as api, patch.object(commit, "verify_staged") as storage:
+            commit.main()
+            self.assertEqual(api.call_count, 2)
+            storage.assert_not_called()
     def test_no_pending(self):
         self.assertTrue(may_create_draft({"pendingApplicationSubmission": None}))
     def test_preserve_pending(self):

@@ -2,6 +2,10 @@ name: Store API preflight
 on:
   workflow_dispatch:
     inputs:
+      submit_ms_1717:
+        description: Submit only the already verified existing 1.7.17 Microsoft draft for review
+        type: boolean
+        default: false
       verify_staged_1717:
         description: Read only the existing 1.7.17 Microsoft staged ZIP
         type: boolean
@@ -34,4 +38,9 @@ jobs:
           MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
           MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
           MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
-        run: python tools/windows_store_guard.py --check-only ${{ inputs.verify_staged_1717 && '--verify-staged' || '' }}
+        run: |
+          if [ '${{ inputs.submit_ms_1717 }}' = 'true' ]; then
+            python tools/windows_store_commit_existing.py --submit-for-review
+          else
+            python tools/windows_store_guard.py --check-only ${{ inputs.verify_staged_1717 && '--verify-staged' || '' }}
+          fi
