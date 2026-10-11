@@ -261,7 +261,9 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
 
   Future<void> _confirmDeleteSong(Song song, String locale) async {
     if (!await showSongDownloadDeleteConfirmation(context,
-        title: song.title, locale: locale)) return;
+        title: song.title, locale: locale)) {
+      return;
+    }
     try {
       await _service.delete(song);
     } catch (_) {
