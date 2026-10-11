@@ -139,15 +139,73 @@ class SermonDownloadsLink extends StatelessWidget {
 }
 
 class SermonDownloadsPage extends StatefulWidget {
-  const SermonDownloadsPage({super.key, required this.locale});
+  const SermonDownloadsPage({super.key, required this.locale, this.service});
+  final OfflineAudioDownloads? service;
   final String locale;
   @override
   State<SermonDownloadsPage> createState() => _SermonDownloadsPageState();
 }
 
 class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
-  final _svc = OfflineAudioDownloads.instance;
+  late final _svc = widget.service ?? OfflineAudioDownloads.instance;
   String? _error;
+  String _query = '', _filter = 'all';
+  final _selected = <String>{};
+  List<AudioDownloadItem> get _visible => _svc.items.where((p) {
+        final state = _svc.status(p.id)?.state;
+        final matches = switch (_filter) {
+          'ready' => state == AudioDownloadState.downloaded,
+          'failed' => state == AudioDownloadState.failed,
+          'pending' => [
+              AudioDownloadState.queued,
+              AudioDownloadState.downloading,
+              AudioDownloadState.paused
+            ].contains(state),
+          _ => true,
+        };
+        return matches &&
+            '${p.title} ${p.sermonId}'
+                .toLowerCase()
+                .contains(_query.toLowerCase());
+      }).toList();
+  Future<void> _act(Future<void> Function() action) async {
+    try {
+      await action();
+      if (mounted) setState(() => _error = null);
+    } catch (e) {
+      if (mounted) setState(() => _error = '$e');
+    }
+  }
+
+  Future<void> _deleteSelected() async {
+    final ids = _selected.toList();
+    final yes = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+                title: Text(offlineLabel(
+                    widget.locale,
+                    'Delete ${ids.length} downloads?',
+                    '删除 ${ids.length} 个下载？',
+                    '刪除 ${ids.length} 個下載？')),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(
+                          offlineLabel(widget.locale, 'Cancel', '取消', '取消'))),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(
+                          offlineLabel(widget.locale, 'Delete', '删除', '刪除')))
+                ]));
+    if (yes != true) return;
+    await _act(() async {
+      for (final id in ids) {
+        await _svc.delete(id);
+        _selected.remove(id);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -174,7 +232,26 @@ class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
   @override
   Widget build(BuildContext context) {
     final locale = widget.locale;
-    String l(String en, String zh) => offlineLabel(locale, en, zh, zh);
+    String l(String en, String zh) => offlineLabel(
+        locale,
+        en,
+        zh,
+        const {
+              '讲道离线下载': '講道離線下載',
+              '搜索下载': '搜尋下載',
+              '已下载': '已下載',
+              '待下载': '待下載',
+              '失败': '失敗',
+              '继续': '繼續',
+              '暂停': '暫停',
+              '取消队列': '取消佇列',
+              '检查已保存文件': '檢查已儲存檔案',
+              '重试失败项': '重試失敗項目',
+              '选择当前结果': '選擇目前結果',
+              '清除选择': '清除選擇',
+              '删除所选': '刪除所選',
+            }[zh] ??
+            zh);
     return Scaffold(
         appBar: AppBar(title: Text(l('Sermon downloads', '讲道离线下载'))),
         body: Align(
@@ -197,6 +274,67 @@ class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
                                     '网页下载属于当前网站／浏览器，安装后的 PWA 可能使用独立存储。空间不足时浏览器可能清除下载；离线使用前请先联网打开应用。'))),
                           Text(
                               '${_svc.records.length} · ${(_svc.totalBytes / 1048576).toStringAsFixed(1)} MB'),
+                          TextField(
+                              decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.search),
+                                  labelText: l('Search downloads', '搜索下载')),
+                              onChanged: (v) => setState(() => _query = v)),
+                          Wrap(spacing: 8, children: [
+                            for (final f in [
+                              ('all', l('All', '全部')),
+                              ('ready', l('Ready', '已下载')),
+                              ('pending', l('Pending', '待下载')),
+                              ('failed', l('Failed', '失败'))
+                            ])
+                              ChoiceChip(
+                                  label: Text(f.$2),
+                                  selected: _filter == f.$1,
+                                  onSelected: (_) =>
+                                      setState(() => _filter = f.$1)),
+                          ]),
+                          Wrap(spacing: 8, children: [
+                            if (_svc.pendingCount > 0) ...[
+                              Text(
+                                  '${_svc.pendingCount} ${l('pending', '待下载')}'),
+                              TextButton.icon(
+                                  icon: Icon(_svc.paused
+                                      ? Icons.play_arrow
+                                      : Icons.pause),
+                                  label: Text(_svc.paused
+                                      ? l('Resume', '继续')
+                                      : l('Pause', '暂停')),
+                                  onPressed: () => _act(_svc.paused
+                                      ? _svc.resumeAll
+                                      : _svc.pauseAll)),
+                              TextButton(
+                                  onPressed: () => _act(_svc.cancelAll),
+                                  child: Text(l('Cancel queue', '取消队列'))),
+                            ],
+                            TextButton.icon(
+                                icon: const Icon(Icons.refresh),
+                                onPressed: () => _act(_svc.refresh),
+                                label: Text(l('Check saved files', '检查已保存文件'))),
+                            if (_svc.items.any((p) =>
+                                _svc.status(p.id)?.state ==
+                                AudioDownloadState.failed))
+                              TextButton(
+                                  onPressed: () => _act(_svc.retryFailed),
+                                  child: Text(l('Retry failed', '重试失败项'))),
+                            TextButton(
+                                onPressed: () => setState(() => _selected
+                                    .addAll(_visible.map((p) => p.id))),
+                                child: Text(l('Select visible', '选择当前结果'))),
+                            if (_selected.isNotEmpty) ...[
+                              TextButton(
+                                  onPressed: () => setState(_selected.clear),
+                                  child: Text(l('Clear selection', '清除选择'))),
+                              TextButton.icon(
+                                  icon: const Icon(Icons.delete_outline),
+                                  onPressed: _deleteSelected,
+                                  label: Text(
+                                      '${l('Delete selected', '删除所选')} (${_selected.length})')),
+                            ],
+                          ]),
                           if (_error != null)
                             Text(_error!,
                                 style: TextStyle(
@@ -208,14 +346,7 @@ class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
                                 child: Text(l(
                                     'No recordings downloaded yet. Open a sermon with audio and tap Download audio.',
                                     '尚无录音下载。打开有录音的讲道，点击「下载录音」。'))),
-                          if (_svc.items.any((p) => [
-                                AudioDownloadState.queued,
-                                AudioDownloadState.downloading
-                              ].contains(_svc.status(p.id)?.state)))
-                            TextButton(
-                                onPressed: _svc.cancelAll,
-                                child: Text(l('Cancel downloads', '取消下载'))),
-                          for (final item in _svc.items) _row(item, locale),
+                          for (final item in _visible) _row(item, locale),
                         ])))));
   }
 
@@ -229,7 +360,19 @@ class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
             padding: const EdgeInsets.all(12),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(item.title, style: Theme.of(context).textTheme.titleMedium),
+              CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(item.title,
+                      style: Theme.of(context).textTheme.titleMedium),
+                  value: _selected.contains(item.id),
+                  onChanged: (v) => setState(() {
+                        if (v == true) {
+                          _selected.add(item.id);
+                        } else {
+                          _selected.remove(item.id);
+                        }
+                      })),
               if (busy)
                 LinearProgressIndicator(
                     value: st?.state == AudioDownloadState.queued
@@ -238,10 +381,13 @@ class _SermonDownloadsPageState extends State<SermonDownloadsPage> {
               if (st != null)
                 Text(ready
                     ? offlineLabel(locale, 'Ready offline', '可离线播放', '可離線播放')
-                    : st.state == AudioDownloadState.failed
-                        ? offlineLabel(locale, 'Download failed — retry',
-                            '下载失败，请重试', '下載失敗，請重試')
-                        : '${(st.received / 1048576).toStringAsFixed(1)} MB'),
+                    : st.state == AudioDownloadState.paused
+                        ? offlineLabel(locale, 'Paused — resume queue',
+                            '已暂停，继续队列', '已暫停，繼續佇列')
+                        : st.state == AudioDownloadState.failed
+                            ? offlineLabel(locale, 'Download failed — retry',
+                                '下载失败，请重试', '下載失敗，請重試')
+                            : '${(st.received / 1048576).toStringAsFixed(1)} MB'),
               if (st?.error != null)
                 Text(st!.error!, style: Theme.of(context).textTheme.bodySmall),
               Wrap(spacing: 8, children: [

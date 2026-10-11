@@ -41,6 +41,37 @@ void main() {
     await s.remove('a');
     expect(await s.contains('a'), false);
   });
+  test('legacy validation reports incomplete or error data without deleting it',
+      () async {
+    final s = storage(MockClient(
+        (r) async => http.Response.bytes([73, 68, 51, 0, 1, 2], 200)));
+    await s.download(item, DownloadCancellation(), (received, total) {});
+    final file = File(s.sourceFor(item.id)!);
+    expect(await s.validate(item.id, 6), true);
+    expect(await s.validate(item.id, 8), false);
+    expect(await file.length(), 6);
+    await file.writeAsString('<html>error</html>');
+    expect(await s.validate(item.id, 0), false);
+    expect(await file.exists(), true);
+  });
+  test(
+      'replacement rollback restores exact original bytes; commit removes only backup',
+      () async {
+    final s = storage(MockClient(
+        (r) async => http.Response.bytes([73, 68, 51, 0, 1, 2], 200)));
+    await s.download(item, DownloadCancellation(), (received, total) {});
+    final file = File(s.sourceFor(item.id)!);
+    final original = await file.readAsBytes();
+    await s.protect(item.id);
+    await file.writeAsBytes([73, 68, 51, 8, 9, 10]);
+    await s.rollback(item.id);
+    expect(await file.readAsBytes(), original);
+    await s.protect(item.id);
+    await file.writeAsBytes([73, 68, 51, 8, 9, 10]);
+    await s.commit(item.id);
+    expect(await File('${file.path}.previous').exists(), false);
+    expect(await file.readAsBytes(), [73, 68, 51, 8, 9, 10]);
+  });
   test('HTML, empty and truncated HTTP 200 are rejected with no partial file',
       () async {
     for (final body in ['<html>error</html>', '', 'ID3']) {
@@ -88,15 +119,24 @@ void main() {
         throwsStateError);
     expect(await s.contains('a'), false);
   });
-  test('native blocked origin retries through existing media proxy',()async{
-    final requests=<String>[];
-    final s=storage(MockClient((r)async{
+  test('native blocked origin retries through existing media proxy', () async {
+    final requests = <String>[];
+    final s = storage(MockClient((r) async {
       requests.add(r.url.toString());
-      return requests.length==1?http.Response('blocked',403):http.Response.bytes([73,68,51,0],200);
+      return requests.length == 1
+          ? http.Response('blocked', 403)
+          : http.Response.bytes([73, 68, 51, 0], 200);
     }));
-    const cdc=AudioDownloadItem(id:'cdc',title:'CDC',url:'https://www.christiandiscipleschurch.org/audio.mp3',sermonId:'talk');
-    expect(await s.download(cdc,DownloadCancellation(),(received,total){}),4);
-    expect(requests,['https://www.christiandiscipleschurch.org/audio.mp3','https://yahwehword.com/song-media/cdc/audio.mp3']);
+    const cdc = AudioDownloadItem(
+        id: 'cdc',
+        title: 'CDC',
+        url: 'https://www.christiandiscipleschurch.org/audio.mp3',
+        sermonId: 'talk');
+    expect(
+        await s.download(cdc, DownloadCancellation(), (received, total) {}), 4);
+    expect(requests, [
+      'https://www.christiandiscipleschurch.org/audio.mp3',
+      'https://yahwehword.com/song-media/cdc/audio.mp3'
+    ]);
   });
-
 }

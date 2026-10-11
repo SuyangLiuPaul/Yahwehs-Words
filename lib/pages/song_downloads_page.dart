@@ -67,9 +67,8 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                     return ListenableBuilder(
                       listenable: _service,
                       builder: (context, _) {
-                        final downloaded = catalogue
-                            .where(_service.isDownloaded)
-                            .toList();
+                        final downloaded =
+                            catalogue.where(_service.isDownloaded).toList();
                         // The search narrows the LIST only. The summary
                         // card keeps reporting the real totals — a
                         // "12 songs, 48 MB" that shrank as you typed
@@ -89,10 +88,9 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                 SongDownloadState.failed)
                             .toList();
                         return ListView(
-                          padding:
-                              const EdgeInsets.fromLTRB(16, 12, 16, 24),
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                           children: [
-                            SermonDownloadsLink(locale:locale),
+                            SermonDownloadsLink(locale: locale),
                             _SummaryCard(
                               count: downloaded.length,
                               bytes: _service.totalBytes,
@@ -109,9 +107,49 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                   ? null
                                   : () => _confirmDeleteAll(locale),
                             ),
+                            if (_service.pendingCount > 0)
+                              Wrap(spacing: 8, children: [
+                                TextButton.icon(
+                                    icon: Icon(_service.paused
+                                        ? Icons.play_arrow
+                                        : Icons.pause),
+                                    label: Text(locale.startsWith('zh')
+                                        ? (_service.paused
+                                            ? '继续下载（未完成录音重新开始）'
+                                            : '暂停下载')
+                                        : (_service.paused
+                                            ? 'Resume (unfinished audio restarts)'
+                                            : 'Pause downloads')),
+                                    onPressed: _service.paused
+                                        ? _service.resumeAll
+                                        : _service.pauseAll),
+                              ]),
                             const SizedBox(height: 12),
-                            for(final song in catalogue.where((s)=>_service.statusOf(s).isBusy))
-                              ListTile(title:Text(song.title),subtitle:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[LinearProgressIndicator(value:_service.statusOf(song).progress),Text(formatDownloadBytes(_service.statusOf(song).bytes))])),
+                            for (final song in catalogue.where((s) =>
+                                _service.statusOf(s).isBusy ||
+                                _service.statusOf(s).state ==
+                                    SongDownloadState.paused))
+                              ListTile(
+                                  title: Text(song.title),
+                                  subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (_service.statusOf(song).state ==
+                                            SongDownloadState.paused)
+                                          Text(locale == 'zh-Hant'
+                                              ? '已暫停；繼續時重新下載未完成錄音'
+                                              : locale.startsWith('zh')
+                                                  ? '已暂停；继续时重新下载未完成录音'
+                                                  : 'Paused; unfinished audio restarts on resume')
+                                        else
+                                          LinearProgressIndicator(
+                                              value: _service
+                                                  .statusOf(song)
+                                                  .progress),
+                                        Text(formatDownloadBytes(
+                                            _service.statusOf(song).bytes))
+                                      ])),
                             if (failed.isNotEmpty) ...[
                               Row(
                                 children: [
@@ -132,10 +170,9 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                   ),
                                   TextButton(
                                     onPressed: () => _service.enqueue(failed),
-                                    child: Text(
-                                        uiStrings['songsRetryDownload']
-                                                ?[locale] ??
-                                            'Retry'),
+                                    child: Text(uiStrings['songsRetryDownload']
+                                            ?[locale] ??
+                                        'Retry'),
                                   ),
                                 ],
                               ),
@@ -154,15 +191,14 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                             if (downloaded.length >= 8) ...[
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: uiStrings[
-                                              'songsSearchDownloadsHint']
-                                          ?[locale] ??
-                                      'Search downloads…',
+                                  hintText:
+                                      uiStrings['songsSearchDownloadsHint']
+                                              ?[locale] ??
+                                          'Search downloads…',
                                   prefixIcon: const Icon(Icons.search),
                                   isDense: true,
                                   border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
                                 onChanged: (v) => setState(
@@ -170,21 +206,23 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                 style: TextStyle(
                                   fontFamily: settings.fontFamily,
                                   fontFamilyFallback: kCjkFontFallback,
-                                  fontSize: (settings.fontSize - 1)
-                                      .clamp(13.0, 17.0),
+                                  fontSize:
+                                      (settings.fontSize - 1).clamp(13.0, 17.0),
                                 ),
                               ),
                               const SizedBox(height: 12),
                             ],
-                            if (downloaded.isEmpty && !_service.isBusy && failed.isEmpty)
+                            if (downloaded.isEmpty &&
+                                !_service.isBusy &&
+                                failed.isEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 40),
                                 child: Text(
                                   uiStrings['songsNoDownloads']?[locale] ??
                                       'Nothing downloaded yet.',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: scheme.onSurfaceVariant),
+                                  style:
+                                      TextStyle(color: scheme.onSurfaceVariant),
                                 ),
                               )
                             // Distinct from "nothing downloaded yet":
@@ -194,12 +232,11 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 40),
                                 child: Text(
-                                  uiStrings['songsNoSearchMatch']
-                                          ?[locale] ??
+                                  uiStrings['songsNoSearchMatch']?[locale] ??
                                       'No downloaded song matches that.',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: scheme.onSurfaceVariant),
+                                  style:
+                                      TextStyle(color: scheme.onSurfaceVariant),
                                 ),
                               ),
                             for (final s in shown)
@@ -320,7 +357,11 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(pending > 0 ? Icons.downloading_rounded : Icons.download_done_rounded, color: scheme.primary),
+              Icon(
+                  pending > 0
+                      ? Icons.downloading_rounded
+                      : Icons.download_done_rounded,
+                  color: scheme.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -354,10 +395,7 @@ class _SummaryCard extends StatelessWidget {
                       Text(
                         batchFailed > 0
                             ? '$batchDone / $batchTotal'
-                                '  ·  ${(uiStrings['songsDownloadFailedCount']
-                                        ?[locale] ??
-                                    '{n} failed')
-                                .replaceFirst('{n}', '$batchFailed')}'
+                                '  ·  ${(uiStrings['songsDownloadFailedCount']?[locale] ?? '{n} failed').replaceFirst('{n}', '$batchFailed')}'
                             : '$batchDone / $batchTotal',
                         style: TextStyle(
                           fontSize: 12,
@@ -381,10 +419,11 @@ class _SummaryCard extends StatelessWidget {
                             (uiStrings['songsDownloadUnreachable']?[locale] ??
                                     'No answer from {host}. Those songs '
                                         'cannot download on this network.')
-                                .replaceFirst('{host}',
-                                    lastError!.substring('unreachable: '.length)),
-                            style: TextStyle(
-                                fontSize: 11, color: scheme.error),
+                                .replaceFirst(
+                                    '{host}',
+                                    lastError!
+                                        .substring('unreachable: '.length)),
+                            style: TextStyle(fontSize: 11, color: scheme.error),
                           ),
                         ),
                     ],

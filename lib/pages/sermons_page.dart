@@ -1,3 +1,4 @@
+import '../widgets/sermon_bulk_download_button.dart';
 import '../widgets/sermon_offline_downloads.dart';
 import 'dart:async';
 
@@ -349,7 +350,11 @@ class _SermonsPageState extends State<SermonsPage> {
             ),
           ],
         ),
-        actions: [SermonDownloadsLink(locale:locale,compact:true),const LanguageSwitcherButton(), const HomeIconButton()],
+        actions: [
+          SermonDownloadsLink(locale: locale, compact: true),
+          const LanguageSwitcherButton(),
+          const HomeIconButton()
+        ],
       ),
       body: FutureBuilder<_PageData>(
         future: _future,
@@ -376,6 +381,11 @@ class _SermonsPageState extends State<SermonsPage> {
           final groups = _filtered(data, _query, locale);
           return Column(
             children: [
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: SermonBulkDownloadButton(
+                      sermons: groups.values.expand((g) => g).toList(),
+                      locale: locale)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                 child: Row(
@@ -998,6 +1008,10 @@ class _TopicGroup extends StatelessWidget {
         initiallyExpanded:
             lastReadId != null && sermons.any((s) => s.id == lastReadId),
         children: [
+          Align(
+              alignment: Alignment.centerRight,
+              child:
+                  SermonBulkDownloadButton(sermons: sermons, locale: locale)),
           for (final s in sermons)
             _SermonRow(
               key: s.id == lastReadId ? currentRowKey : ValueKey(s.id),
@@ -1070,75 +1084,80 @@ class _SermonRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      child: Material(color: Colors.transparent, borderRadius: BorderRadius.circular(8), child: ListTile(
-        dense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-        title: Builder(
-          builder: (ctx) {
-            final locale = ctx.watch<AppSettings>().locale;
-            return Text(
-              sermon.localizedTitle(locale),
-              style: const TextStyle(fontWeight: FontWeight.w500),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            );
-          },
-        ),
-        subtitle: Builder(
-          builder: (ctx) {
-            final locale = ctx.watch<AppSettings>().locale;
-            return Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text(
-                    '#${sermon.id}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: scheme.onSurface.withValues(alpha: 0.55),
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                  if (sermon.displayDate != '—')
-                    Text(
-                      sermon.displayDate,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: scheme.onSurface.withValues(alpha: 0.55),
-                      ),
-                    ),
-                  // Multi-passage sermons (e.g. "Mt 3:15 and Mt 4:17")
-                  // render as one badge per ref so each reads cleanly
-                  // and the user isn't confused by an "and" tag.
-                  for (final seg in _splitSermonPassage(sermon.passage))
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 1),
-                      decoration: BoxDecoration(
-                        color: scheme.primaryContainer.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        localizePassage(seg, locale),
+      child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          child: ListTile(
+            dense: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            title: Builder(
+              builder: (ctx) {
+                final locale = ctx.watch<AppSettings>().locale;
+                return Text(
+                  sermon.localizedTitle(locale),
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+            subtitle: Builder(
+              builder: (ctx) {
+                final locale = ctx.watch<AppSettings>().locale;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(
+                        '#${sermon.id}',
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: scheme.onPrimaryContainer,
+                          color: scheme.onSurface.withValues(alpha: 0.55),
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
-        trailing: Icon(Icons.chevron_right,
-            size: 20, color: scheme.onSurface.withValues(alpha: 0.4)),
-        onTap: onTap,
-      )),
+                      if (sermon.displayDate != '—')
+                        Text(
+                          sermon.displayDate,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: scheme.onSurface.withValues(alpha: 0.55),
+                          ),
+                        ),
+                      // Multi-passage sermons (e.g. "Mt 3:15 and Mt 4:17")
+                      // render as one badge per ref so each reads cleanly
+                      // and the user isn't confused by an "and" tag.
+                      for (final seg in _splitSermonPassage(sermon.passage))
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 1),
+                          decoration: BoxDecoration(
+                            color:
+                                scheme.primaryContainer.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            localizePassage(seg, locale),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: scheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            trailing: Icon(Icons.chevron_right,
+                size: 20, color: scheme.onSurface.withValues(alpha: 0.4)),
+            onTap: onTap,
+          )),
     );
   }
 }
