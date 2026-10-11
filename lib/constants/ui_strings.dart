@@ -6496,6 +6496,21 @@ const uiStrings = {
     'zh-Hant': '下載到本機',
     'en': 'Download for offline',
   },
+  'songsDeleteOne': {
+    'zh-Hans': '删除下载',
+    'zh-Hant': '刪除下載',
+    'en': 'Remove download',
+  },
+  'songsDeleteOneBody': {
+    'zh-Hans': '从本机删除这首已保存的诗歌？随时可以重新下载。',
+    'zh-Hant': '從本機刪除這首已儲存的詩歌？隨時可以重新下載。',
+    'en': 'Remove this saved song from this device? You can download it again.',
+  },
+  'songsDeleteFailed': {
+    'zh-Hans': '无法删除此下载，已保留。请重试。',
+    'zh-Hant': '無法刪除此下載，已保留。請重試。',
+    'en': 'Could not remove this download. It has been kept; try again.',
+  },
   'songsDeleteDownload': {
     'zh-Hans': '已下载 · 点按删除',
     'zh-Hant': '已下載 · 點按刪除',
