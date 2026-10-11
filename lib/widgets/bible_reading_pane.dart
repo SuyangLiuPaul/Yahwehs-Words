@@ -87,7 +87,7 @@ import 'package:yahwehs_words/widgets/google_g_logo.dart';
 import 'package:yahwehs_words/widgets/illustration_image.dart';
 import 'package:yahwehs_words/utils/floating_toast.dart' show showFloatingToast;
 import 'package:yahwehs_words/utils/version_mapper.dart'
-    show translateBookName, toEnglish, localeAwareBookName;
+    show translateBookName, toEnglish, localeAwareBookName, sameBookName;
 import 'package:yahwehs_words/widgets/highlights_sheet.dart';
 import 'package:yahwehs_words/widgets/originals_sheet.dart';
 import 'package:yahwehs_words/widgets/verse_widget.dart';
@@ -4487,7 +4487,7 @@ void _navigateToBibleReference({
   final localBook =
       translateBookName(ref.englishBook, mainProvider.currentVersion);
   final chapterMatches = mainProvider.verses
-      .where((v) => v.book == localBook && v.chapter == ref.chapter)
+      .where((v) => sameBookName(v.book, localBook) && v.chapter == ref.chapter)
       .toList()
     ..sort((a, b) => a.verse.compareTo(b.verse));
   if (chapterMatches.isEmpty) return;
@@ -5623,7 +5623,7 @@ void _showHighlightsSheet({
         final localBook =
             translateBookName(englishBook, mainProvider.currentVersion);
         final match = mainProvider.verses.where(
-          (v) => v.book == localBook &&
+          (v) => sameBookName(v.book, localBook) &&
               v.chapter == chapter &&
               v.verse == verse,
         );
@@ -5648,7 +5648,7 @@ void _navigateToConcordanceRef({
   final localBook =
       translateBookName(ref.englishBook, mainProvider.currentVersion);
   final match = mainProvider.verses.where(
-    (v) => v.book == localBook &&
+    (v) => sameBookName(v.book, localBook) &&
         v.chapter == ref.chapter &&
         v.verse == ref.verse,
   );
