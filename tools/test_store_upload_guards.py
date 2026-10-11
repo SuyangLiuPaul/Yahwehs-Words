@@ -99,11 +99,16 @@ class GuardTests(unittest.TestCase):
         import windows_store_commit_existing as commit
         from unittest.mock import patch
         expected = commit.EXPECTED[commit.product]
-        wrong = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": "other-draft"}}
-        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", return_value=wrong) as api:
-            with self.assertRaises(SystemExit):
-                commit.main()
-            self.assertEqual(api.call_count, 1)
+        wrongs = [
+            {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": "other-draft"}},
+            {"id": "other-product", "packageIdentityName": expected[3]},
+            {"id": commit.product, "packageIdentityName": "Other.Identity"},
+        ]
+        for wrong in wrongs:
+            with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", return_value=wrong) as api:
+                with self.assertRaises(SystemExit):
+                    commit.main()
+                self.assertEqual(api.call_count, 1)
     def test_existing_ms_commit_stops_after_storage_hash_mismatch(self):
         import io, json
         import windows_store_commit_existing as commit
