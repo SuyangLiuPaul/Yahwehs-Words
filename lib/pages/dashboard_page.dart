@@ -73,7 +73,7 @@ import 'package:yahwehs_words/utils/passage_localizer.dart'
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/responsive.dart';
 import 'package:yahwehs_words/utils/version_mapper.dart'
-    show translateBookName, localizedReferenceLabel;
+    show translateBookName, localizedReferenceLabel, sameBookName;
 import 'package:yahwehs_words/widgets/left_accent_card.dart';
 import 'package:yahwehs_words/utils/boot_uri.dart';
 import 'package:yahwehs_words/widgets/onboarding_dialog.dart';
@@ -412,7 +412,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final targetVerse = parsed.verseStart ?? 1;
     Verse? match;
     for (final v in mp.verses) {
-      if (v.book == localBook &&
+      if (sameBookName(v.book, localBook) &&
           v.chapter == parsed.chapter &&
           v.verse == targetVerse) {
         match = v;

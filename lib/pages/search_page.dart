@@ -22,7 +22,7 @@ import 'package:yahwehs_words/utils/fuzzy_result_label.dart';
 import 'package:yahwehs_words/utils/jump_to_reference.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/version_mapper.dart'
-    show localeAwareBookName, toEnglish, translateBookName;
+    show localeAwareBookName, toEnglish, translateBookName, sameBookName;
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:yahwehs_words/constants/ui_strings.dart';
@@ -2643,7 +2643,7 @@ class _SearchPageState extends State<SearchPage> {
     final localBook =
         translateBookName(ref.englishBook, mainProv.currentVersion);
     final match = mainProv.verses.where(
-      (v) => v.book == localBook &&
+      (v) => sameBookName(v.book, localBook) &&
           v.chapter == ref.chapter &&
           v.verse == ref.verse,
     );
@@ -2668,7 +2668,7 @@ class _SearchPageState extends State<SearchPage> {
         translateBookName(ref.englishBook, mainProv.currentVersion);
     // Find candidate verses in the requested book + chapter.
     final chapterMatches = mainProv.verses
-        .where((v) => v.book == localBook && v.chapter == ref.chapter)
+        .where((v) => sameBookName(v.book, localBook) && v.chapter == ref.chapter)
         .toList()
       ..sort((a, b) => a.verse.compareTo(b.verse));
     if (chapterMatches.isEmpty) return false;
@@ -2776,7 +2776,7 @@ class _SearchPageState extends State<SearchPage> {
                   translateBookName(ref.book, mp.currentVersion);
               final chapterMatches = mp.verses
                   .where((v) =>
-                      v.book == localBook &&
+                      sameBookName(v.book, localBook) &&
                       v.chapter == ref.chapter &&
                       v.verse >= ref.verseStart &&
                       v.verse <= ref.verseEnd)

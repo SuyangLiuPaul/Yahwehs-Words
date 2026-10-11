@@ -19,3 +19,7 @@ Owner authorized latest source, dev/prod websites and APK delivery on October 11
 ## Verification limits
 
 Previously checked source/CI and browser recovery do not prove the original owner's lost-audio failure cause, the full 575-song physical iPhone batch, or audible vehicle/watch behavior. Preserve existing audio, download records, signing and archives. Chinese Genesis aliases remain accepted; scripture text is unchanged.
+
+## Genesis compatibility repair
+
+Initial release CI caught obsolete display expectations and a real daily-verse lookup regression: frozen bundle keys retain the old Genesis spelling. Book comparisons now use canonical identity in reference jumps, daily verses and reading/search previews, preserving bundled text and saved keys. Traditional testament grouping accepts the corrected spelling and retains old aliases.

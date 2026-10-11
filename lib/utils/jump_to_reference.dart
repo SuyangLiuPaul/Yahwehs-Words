@@ -10,7 +10,7 @@ import 'package:yahwehs_words/services/fetch_books.dart' show bookNameToEnglish;
 import 'package:yahwehs_words/services/fetch_verses.dart';
 import 'package:yahwehs_words/utils/log_diag.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart' show translateBookName;
+import 'package:yahwehs_words/utils/version_mapper.dart' show translateBookName, sameBookName;
 
 /// Result of a [resolveAndPrepareJump] call. Carries everything the
 /// caller needs to navigate (or knows enough to abort + tell the user
@@ -72,7 +72,7 @@ Future<JumpResolution> resolveAndPrepareJump({
   List<Verse> findMatches() {
     final localBook = translateBookName(reference.englishBook, mp.currentVersion);
     return mp.verses
-        .where((v) => v.book == localBook && v.chapter == reference.chapter)
+        .where((v) => sameBookName(v.book, localBook) && v.chapter == reference.chapter)
         .toList()
       ..sort((a, b) => a.verse.compareTo(b.verse));
   }

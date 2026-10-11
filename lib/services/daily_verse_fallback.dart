@@ -4,7 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:yahwehs_words/constants/bible_versions.dart';
 import 'package:yahwehs_words/models/verse.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart' show translateBookName;
+import 'package:yahwehs_words/utils/version_mapper.dart' show translateBookName, sameBookName;
 
 /// Looks up a single daily-verse reference against a *fallback* Bible
 /// bundle (e.g. CUVS-YHWH) when the user's currently-selected version
@@ -43,7 +43,7 @@ class DailyVerseFallback {
     if (bundle.isEmpty) return null;
     final localBook = translateBookName(englishBook, fallbackVersion);
     for (final v in bundle) {
-      if (v.book == localBook &&
+      if (sameBookName(v.book, localBook) &&
           v.chapter == chapter &&
           v.verse == verseNumber) {
         return (verse: v, fromVersion: fallbackVersion);

@@ -3,6 +3,11 @@ import 'package:yahwehs_words/constants/book_name_mapping.dart'
 import 'package:yahwehs_words/utils/reference_parser.dart'
     show BibleReference, parseReference;
 
+/// Display spelling may differ from frozen bundle keys or saved references.
+/// Compare their canonical identity without rewriting scripture or saved data.
+bool sameBookName(String left, String right) =>
+    left == right || toEnglish(left) == toEnglish(right);
+
 String translateBookName(String? book, String version) {
   if (book == null) return '';
   final en = zhToEn(book) ?? book;

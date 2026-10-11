@@ -98,8 +98,8 @@ void main() {
     test('the book name is still localized', () {
       // Guards against the trivial way of passing everything above:
       // returning the raw string untouched.
-      expect(localizedReferenceLabel('Genesis 6-9', 'zh-Hans'), '创世纪 6-9');
-      expect(localizedReferenceLabel('Genesis 6-9', 'zh-Hant'), '創世紀 6-9');
+      expect(localizedReferenceLabel('Genesis 6-9', 'zh-Hans'), '创世记 6-9');
+      expect(localizedReferenceLabel('Genesis 6-9', 'zh-Hant'), '創世記 6-9');
       expect(localizedReferenceLabel('Genesis 6-9', 'en'), 'Genesis 6-9');
     });
   });
