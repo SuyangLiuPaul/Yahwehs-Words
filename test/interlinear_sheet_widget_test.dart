@@ -50,10 +50,7 @@ void main() {
       tester.runAsync(() async {
         await OriginalsService.forVerse('Genesis', 1, 1, version: version);
         await TaggedTextService.forVerse(
-            version: version,
-            englishBook: 'Genesis',
-            chapter: 1,
-            verse: 1);
+            version: version, englishBook: 'Genesis', chapter: 1, verse: 1);
         for (final n in ['H7225', 'H430', 'H1254', 'H8064', 'H776']) {
           await StrongsService.lookup(n);
           await ConcordanceService.lookup(n, version: version);
@@ -78,8 +75,7 @@ void main() {
         ),
       );
 
-  /// Every string in the tree, flattened — the tagged line is one
-  /// `Text.rich`, so its numbers are not findable as separate widgets.
+  /// Every string in the tree, flattened across the independent tagged runs.
   String renderedText(WidgetTester tester) {
     final buffer = StringBuffer();
     for (final w in tester.widgetList<RichText>(find.byType(RichText))) {
@@ -111,7 +107,8 @@ void main() {
     expect(find.textContaining('沒有原文編號對照'), findsNothing);
   });
 
-  testWidgets('the numbers go behind showStrongsInOriginals, the switch '
+  testWidgets(
+      'the numbers go behind showStrongsInOriginals, the switch '
       'that already governs this sheet\'s other badges', (tester) async {
     await warmCaches(tester, 'cuvs-yhwh-tr');
     final settings = AppSettings();
@@ -142,7 +139,8 @@ void main() {
     expect(off, isNot(contains('H7225')));
   });
 
-  testWidgets('a reader on an untagged edition is told whose translation '
+  testWidgets(
+      'a reader on an untagged edition is told whose translation '
       'the line is', (tester) async {
     await warmCaches(tester, 'cuvs-yhwh-tr');
     await tester.runAsync(() async {
@@ -165,23 +163,23 @@ void main() {
   /// test that reaches into the span and calls `onTap` itself would
   /// pass on the day the line stopped receiving taps at all.
   Future<void> tapInLine(WidgetTester tester, String word) async {
-    // The line, not the H7225 badge under the רֵאשִׁית chip in the
+    // The tagged run, not the H7225 badge under the רֵאשִׁית chip in the
     // grid — both are `RichText` and both carry the number.
     final finder = find.byWidgetPredicate((w) =>
         w is RichText &&
         w.text.toPlainText().contains('H7225') &&
-        w.text.toPlainText().contains('H430'));
-    expect(finder, findsOneWidget, reason: 'the tagged line should be on screen');
+        w.text.toPlainText().contains('起初'));
+    expect(finder, findsOneWidget,
+        reason: 'the 起初/H7225 tagged run should be on screen');
     final paragraph = tester.renderObject<RenderParagraph>(finder);
     final plain = paragraph.text.toPlainText();
     final start = plain.indexOf(word);
     expect(start, isNonNegative, reason: '$word should be in the line');
-    final a = paragraph.getOffsetForCaret(
-        TextPosition(offset: start), Rect.zero);
+    final a =
+        paragraph.getOffsetForCaret(TextPosition(offset: start), Rect.zero);
     final b = paragraph.getOffsetForCaret(
         TextPosition(offset: start + word.length), Rect.zero);
-    final height =
-        paragraph.getFullHeightForCaret(TextPosition(offset: start));
+    final height = paragraph.getFullHeightForCaret(TextPosition(offset: start));
     final local = Offset((a.dx + b.dx) / 2, a.dy + height / 2);
     await tester.tapAt(paragraph.localToGlobal(local));
     await tester.pumpAndSettle();
@@ -255,7 +253,7 @@ void main() {
       final line = find.byWidgetPredicate((w) =>
           w is RichText &&
           w.text.toPlainText().contains('H7225') &&
-          w.text.toPlainText().contains('H430'));
+          w.text.toPlainText().contains('起初'));
       final paragraph = tester.renderObject<RenderParagraph>(line);
       final at = paragraph.text.toPlainText().indexOf(word);
       final span = paragraph.text.getSpanForPosition(TextPosition(offset: at));
