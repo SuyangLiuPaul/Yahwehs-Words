@@ -11,7 +11,14 @@ bool sameBookName(String left, String right) =>
 String translateBookName(String? book, String version) {
   if (book == null) return '';
   final en = zhToEn(book) ?? book;
-  return toLocale(en, version);
+  final localized = toLocale(en, version);
+  // Frozen Chinese bundles and saved reader state still use the legacy key.
+  // Presentation uses localeAwareBookName; lookups accept both via sameBookName.
+  if (en == 'Genesis') {
+    if (localized == '创世记') return '创世纪';
+    if (localized == '創世記') return '創世紀';
+  }
+  return localized;
 }
 
 /// Returns the book name to display in cross-reference / aggregate
@@ -29,7 +36,7 @@ String translateBookName(String? book, String version) {
 String localeAwareBookName(String englishBook, String locale,
     [String? currentVersion]) {
   if (currentVersion != null && currentVersion.isNotEmpty) {
-    return translateBookName(englishBook, currentVersion);
+    return toLocale(zhToEn(englishBook) ?? englishBook, currentVersion);
   }
   if (locale == 'zh-Hant') {
     return toLocale(englishBook, 'cuvs-tr');
