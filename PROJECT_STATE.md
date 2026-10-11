@@ -2584,3 +2584,8 @@ Words six canonical websites delivered from tested merged main66c3e853; full fil
 ## October11 additional owner download-status regression
 
 Words actualdev1.7.18 reproduces incorrect “Nothing downloaded yet” after re-downloading an already-saved selection. Shared UI batch planning now distinguishes all saved/no audio/already queued and avoids recounting active/paused jobs. Website-only1.7.19 is being prepared; source/CI/browser/delivery evidence must be completed before production claims. See docs/song-download-status-2026-10-11.md. Owner575/3GB untouched; screenshot origin/version and physical playback remain unverified. Sword no Songs module, website1.7.18 unchanged.
+
+
+### 2026-10-11 Words网页1.7.19交付
+
+PR76完整CI38119038130通过，合并8834acf6；六个网站线上七文件SHA256一致。已保存／排队／无音频提示分开，网页存储域名说明已上线。Sword18及原生／商店17保持现有交付。详见docs/song-download-status-2026-10-11.md，尤其正式站同上下文旧测试音频不可用、保留记录及重试恢复的异常；不能将直接18→19保留列为通过，575／563来源仍待确认。
