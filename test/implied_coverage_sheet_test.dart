@@ -125,7 +125,7 @@ void main() {
   // number tagged the comma. So the tappable span is the stem and the
   // trailing 。/，/」 is a span of its own with no recogniser. See
   // `splitTrailingCjkPunctuation`.
-  Future<void> tapRun(WidgetTester tester, String run) async {
+  Future<void> tapRun(WidgetTester tester, String run, {String? choice}) async {
     final (stem, _) = splitTrailingCjkPunctuation(run);
     TextSpan? target;
     for (final text in tester.widgetList<Text>(find.byType(Text))) {
@@ -143,6 +143,14 @@ void main() {
         reason: 'no tappable run "$run" on the tagged line');
     (target!.recognizer! as TapGestureRecognizer).onTap!();
     await settle(tester);
+    if (choice != null) {
+      // Multi-number phrases now offer actual source numbers first. Exercise
+      // the user's primary choice before the unchanged coverage assertions.
+      final option = find.widgetWithText(ListTile, choice);
+      expect(option, findsOneWidget);
+      await tester.tap(option);
+      await settle(tester);
+    }
   }
 
   const genesis11 = Verse(
@@ -163,9 +171,10 @@ void main() {
     await warm(tester, 'Genesis', genesis11);
     await open(tester, genesis11);
     expect(find.byType(ImpliedCoverageLine), findsNothing,
-        reason: 'nothing is tapped yet, so there is nothing to be secondary to');
+        reason:
+            'nothing is tapped yet, so there is nothing to be secondary to');
 
-    await tapRun(tester, '天');
+    await tapRun(tester, '天', choice: 'H8064');
 
     expect(find.byType(ImpliedCoverageLine), findsOneWidget);
     expect(find.textContaining('「天」这段译文一并涵盖的其他原文词'), findsOneWidget);
@@ -182,7 +191,7 @@ void main() {
       (tester) async {
     await warm(tester, 'Genesis', genesis11);
     await open(tester, genesis11);
-    await tapRun(tester, '天');
+    await tapRun(tester, '天', choice: 'H8064');
 
     // 天 renders H8064 שָׁמַיִם, and the sheet says so twice above the
     // coverage line: the word chip for שָׁמַיִם carries H8064 with its
@@ -236,9 +245,8 @@ void main() {
     // βασιλεία were reachable nowhere; the repair inverted it. ὁ is
     // reachable again now, labelled as coverage rather than as the
     // word's own identity.
-    await tapRun(tester, '的国。');
-    expect(find.textContaining('「的国。」这段译文一并涵盖的其他原文词'),
-        findsOneWidget);
+    await tapRun(tester, '的国。', choice: 'G932');
+    expect(find.textContaining('「的国。」这段译文一并涵盖的其他原文词'), findsOneWidget);
     expect(
       find.descendant(
           of: find.byType(ImpliedCoverageLine), matching: find.text('G3588')),
