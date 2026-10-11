@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../utils/app_scroll_behavior.dart' show kSelectableTextPhysics;
 import '../services/song_storage_inspection.dart';
 import '../widgets/sermon_offline_downloads.dart';
 import 'package:flutter/material.dart';
@@ -347,7 +348,8 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                       child: Semantics(
                           label: text,
                           excludeSemantics: true,
-                          child: SelectableText(text)))),
+                          child: SelectableText(text,
+                              scrollPhysics: kSelectableTextPhysics)))),
               actions: [
                 TextButton(
                     onPressed: _service.pendingCount > 0
