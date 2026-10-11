@@ -90,6 +90,33 @@ void main() {
     expect(restored.isDownloaded(song), true);
     expect(calls, 1);
   });
+  test('already-saved batch planning preserves native index and audio bytes',
+      () async {
+    var requests = 0;
+    final service = SongDownloadService.forTesting(
+        directory: () async => dir,
+        clientFactory: () => MockClient((r) async {
+              requests++;
+              return http.Response.bytes([73, 68, 51, 0, 1], 200);
+            }));
+    await service.enqueue([song]);
+    await idle(service);
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString('songs.downloads.v1');
+    final path = service.localPathFor(song)!;
+    final cold = SongDownloadService.forTesting(
+        directory: () async => dir,
+        clientFactory: () => throw StateError('No new download expected'));
+    await cold.init();
+    final plan = SongDownloadBatchPlan([song],
+        isDownloaded: cold.isDownloaded, statusOf: cold.statusOf);
+    expect(plan.pending, isEmpty);
+    expect(plan.emptyMessageKey, 'songsDownloadsAlreadySaved');
+    expect(cold.downloadedCount, 1);
+    expect(prefs.getString('songs.downloads.v1'), raw);
+    expect(await File(path).readAsBytes(), [73, 68, 51, 0, 1]);
+    expect(requests, 1);
+  });
   test(
       'corrupt saved song is not ready and its bytes and recovery index remain intact',
       () async {

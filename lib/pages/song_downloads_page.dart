@@ -1,5 +1,6 @@
 import '../widgets/sermon_offline_downloads.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/ui_strings.dart';
@@ -91,6 +92,15 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                           children: [
                             SermonDownloadsLink(locale: locale),
+                            if (kIsWeb)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  '${uiStrings['songsWebDownloadScope']?[locale] ?? uiStrings['songsWebDownloadScope']!['en']!}\n${Uri.base.host}',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(color: scheme.onSurfaceVariant),
+                                ),
+                              ),
                             _SummaryCard(
                               count: downloaded.length,
                               bytes: _service.totalBytes,

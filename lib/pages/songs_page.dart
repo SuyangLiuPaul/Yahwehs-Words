@@ -442,14 +442,21 @@ class _SongsPageState extends State<SongsPage> {
   Future<void> _downloadFiltered(List<Song> filtered, String locale) async {
     final service = SongDownloadService.instance;
     await service.init();
-    final pending =
-        filtered.where((s) => s.hasPlayableAudio && !service.isDownloaded(s));
+    final plan = SongDownloadBatchPlan(filtered,
+        isDownloaded: service.isDownloaded, statusOf: service.statusOf);
+    final pending = plan.pending;
     final count = pending.length;
     if (count == 0) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(uiStrings['songsNoDownloads']?[locale] ??
+        content: Text(uiStrings[plan.emptyMessageKey]?[locale] ??
             'Nothing to download.'),
+        action: plan.playableCount == 0
+            ? null
+            : SnackBarAction(
+                label: uiStrings['songsDownloads']?[locale] ?? 'Downloads',
+                onPressed: () => pushPage(const SongDownloadsPage(),
+                    routeName: '/songs/downloads')),
       ));
       return;
     }
