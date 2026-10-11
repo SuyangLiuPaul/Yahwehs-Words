@@ -65,7 +65,10 @@ def package_payload(submission, filename):
 
 
 def confirm_saved_package(submission, filename):
-    matches = [p for p in submission.get("applicationPackages", []) if p.get("fileName") == filename]
+    # Cloned submissions retain old Uploaded packages with the same basename.
+    # Select the exact new PendingUpload entry; duplicate new entries still fail.
+    matches = [p for p in submission.get("applicationPackages", [])
+        if p.get("fileName") == filename and p.get("fileStatus") == "PendingUpload"]
     if len(matches) != 1:
         raise ValueError("New package missing or duplicated in read-back submission")
     return matches[0]

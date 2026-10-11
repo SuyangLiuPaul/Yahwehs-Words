@@ -27,7 +27,27 @@ def main():
     if app.get("id") != product:
         raise SystemExit("Application identity mismatch")
     if "--check-only" in sys.argv:
-        print(json.dumps({"app": product, "auth": "verified", "pending": bool(app.get("pendingApplicationSubmission"))}))
+        pending = app.get("pendingApplicationSubmission")
+        if "--verify-staged" in sys.argv and not pending:
+            raise SystemExit("Expected staged draft missing; verification failed")
+        result = {"app": product, "auth": "verified", "pending": bool(pending)}
+        if pending:
+            submission_id = pending["id"]
+            req = urllib.request.Request(
+                "https://manage.devcenter.microsoft.com/v1.0/my/applications/" + product
+                + "/submissions/" + submission_id,
+                headers={"Authorization": "Bearer " + token})
+            with urllib.request.urlopen(req, timeout=30) as res:
+                submission = json.load(res)
+            result.update({"submission": submission_id, "status": submission.get("status"),
+                "packages": [{k: package.get(k) for k in
+                    ("id", "fileName", "fileStatus", "version", "architecture")}
+                    for package in submission.get("applicationPackages", [])]})
+            if "--verify-staged" in sys.argv:
+                from ms_verify_staged import verify_staged
+                result["stagedStorage"] = verify_staged(submission, product)
+        # Explicit allowlist: upload URLs, token and listing contents stay private.
+        print(json.dumps(result))
         return
     if not may_create_draft(app):
         raise SystemExit("Existing pending submission preserved; upload stopped")
@@ -40,3 +60,5 @@ if __name__ == "__main__":
         main()
     except urllib.error.HTTPError as error:
         raise SystemExit("Microsoft API HTTP " + str(error.code)) from None
+    except (urllib.error.URLError, OSError):
+        raise SystemExit("Microsoft read-only request failed; sensitive endpoint omitted") from None

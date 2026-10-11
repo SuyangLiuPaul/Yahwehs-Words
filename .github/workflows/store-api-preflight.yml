@@ -1,6 +1,11 @@
 name: Store API preflight
 on:
   workflow_dispatch:
+    inputs:
+      verify_staged_1717:
+        description: Read only the existing 1.7.17 Microsoft staged ZIP
+        type: boolean
+        default: false
 # Same service account may have only one active Play edit per app.
 concurrency:
   group: store-play-edit-${{ github.repository }}
@@ -29,4 +34,4 @@ jobs:
           MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
           MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
           MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
-        run: python tools/windows_store_guard.py --check-only
+        run: python tools/windows_store_guard.py --check-only ${{ inputs.verify_staged_1717 && '--verify-staged' || '' }}
