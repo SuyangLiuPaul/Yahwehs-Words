@@ -162,10 +162,12 @@ class SongDownloadService extends ChangeNotifier {
             state: SongDownloadState.done, bytes: e.value.bytes);
         // Reuse the body just validated: a second Cache.match/read used to
         // silently fail after the UI had already marked this recording ready.
-        _revoke(e.key);
-        _blobUrls[e.key] = web.URL.createObjectURL(probe.blob!);
+        _blobUrls.putIfAbsent(
+            e.key, () => web.URL.createObjectURL(probe.blob!));
         final scoreUrl = e.value.scoreUrl;
-        if (scoreUrl != null && cache != null) {
+        if (scoreUrl != null &&
+            cache != null &&
+            !_scoreBlobUrls.containsKey(e.key)) {
           try {
             final hit = await cache.match(scoreUrl.toJS).toDart;
             if (hit != null) {
