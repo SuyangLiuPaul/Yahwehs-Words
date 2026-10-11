@@ -4775,3 +4775,7 @@ git -c core.hooksPath=/dev/null commit -m "message"
 # Check for unused imports/code
 /Users/pliu0036/flutter/bin/flutter analyze --no-fatal-infos
 ```
+
+## October11 website1.7.18 delivery
+
+Words six canonical websites delivered from tested merged main66c3e853; full file SHA256 and real dev download retention/prod smoke verified. See docs/web-recovery-1.7.18-2026-10-11.md for evidence and explicit physical/offline limitations. Native/store1.7.17 remains separate and unchanged.
