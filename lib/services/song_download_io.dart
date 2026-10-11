@@ -65,9 +65,17 @@ class SongDownloadService extends ChangeNotifier {
 
   /// songId → relative filename of the completed download.
   final Map<String, _DownloadRecord> _index = {};
+  final Map<String, _DownloadRecord> _retained = {};
   final Map<String, SongDownloadStatus> _status = {};
   final List<Song> _queue = [];
   final Set<String> _active = {};
+  final Map<String, Song> _items = {};
+  final Map<String, Future<void>> _tasksById = {};
+  Future<void>? _pausing;
+  Future<void> _queueWrites = Future.value();
+  bool _paused = false;
+  bool get paused => _paused;
+  static const _queueKey = "$_indexKey.queue";
   final Map<String, DownloadCancellation> _tokens = {};
   final Set<Future<void>> _tasks = {};
   Future<void>? _cancelFuture, _initFuture;
@@ -87,26 +95,46 @@ class SongDownloadService extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_indexKey);
       if (raw != null) {
+        if (!prefs.containsKey('$_indexKey.pre-recovery')) {
+          await prefs.setString('$_indexKey.pre-recovery', raw);
+        }
         final decoded = json.decode(raw) as Map<String, dynamic>;
         for (final entry in decoded.entries) {
-          _index[entry.key] = _DownloadRecord.fromJson(
-              (entry.value as Map).cast<String, dynamic>());
+          try {
+            final record = _DownloadRecord.fromJson(
+                (entry.value as Map).cast<String, dynamic>());
+            _index[entry.key] = record;
+            _retained[entry.key] = record;
+          } catch (_) {/* Original malformed row remains in the backup. */}
         }
       }
       // Reconcile against reality: a user can clear app storage, and
       // the OS can evict caches. An index entry whose file is gone
       // would otherwise render as "downloaded" and then fail to play.
-      final dir = await _mediaDir();
+      await _mediaDir();
       final missing = <String>[];
       for (final entry in _index.entries) {
-        if (!File('${dir.path}/${entry.value.filename}').existsSync()) {
+        final storage = PlatformOfflineAudioStorage(
+            directory: _mediaDir,
+            directoryName: '',
+            fileName: entry.value.filename);
+        try {
+          if (!await storage.validate(entry.key, entry.value.bytes)) {
+            missing.add(entry.key);
+          }
+        } catch (_) {
+          // Retain this record; a per-file read error must not hide others.
           missing.add(entry.key);
         }
       }
       for (final id in missing) {
         _index.remove(id);
+        _status[id] = const SongDownloadStatus(
+            state: SongDownloadState.failed,
+            error:
+                'Saved audio is missing or incomplete; its original record is retained.');
       }
-      if (missing.isNotEmpty) await _persist();
+      // Do not rewrite the legacy index because a file is unavailable.
 
       for (final entry in _index.entries) {
         _status[entry.key] = SongDownloadStatus(
@@ -114,6 +142,26 @@ class SongDownloadService extends ChangeNotifier {
           bytes: entry.value.bytes,
         );
       }
+      final queueRaw = prefs.getString(_queueKey);
+      if (queueRaw != null) {
+        try {
+          for (final row in jsonDecode(queueRaw) as List) {
+            try {
+              final song = Song.fromJson((row as Map).cast<String, dynamic>());
+              if (_index.containsKey(song.id) ||
+                  _queue.any((s) => s.id == song.id)) {
+                continue;
+              }
+              _items[song.id] = song;
+              _queue.add(song);
+              _status[song.id] =
+                  const SongDownloadStatus(state: SongDownloadState.paused);
+            } catch (_) {/* Keep malformed queue rows on disk. */}
+          }
+        } catch (_) {/* Do not erase a damaged queue during startup. */}
+      }
+      _paused = _queue.isNotEmpty;
+      _batchTotal = _queue.length;
       _loaded = true;
       notifyListeners();
     } catch (e) {
@@ -137,12 +185,71 @@ class SongDownloadService extends ChangeNotifier {
     return dir;
   }
 
+  Future<void> _persistQueue() {
+    final raw = jsonEncode([
+      for (final id in {..._active, ..._queue.map((s) => s.id)})
+        if (_items[id] != null && !_index.containsKey(id))
+          songQueueRecord(_items[id]!),
+    ]);
+    return _queueWrites =
+        _queueWrites.catchError((Object _) {}).then((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      if (!await prefs.setString(_queueKey, raw)) {
+        throw StateError('Could not save pending songs');
+      }
+    });
+  }
+
+  Future<void> pauseAll() => _pausing ??= _pause().whenComplete(() {
+        _pausing = null;
+      });
+  Future<void> _pause() async {
+    await _cancelFuture;
+    await init();
+    _paused = true;
+    final interrupted = [for (final id in _active) _items[id]!];
+    for (final token in _tokens.values.toList()) {
+      token.cancel();
+    }
+    await Future.wait(_tasks.toList());
+    for (final song in interrupted) {
+      if (!_index.containsKey(song.id) && !_queue.any((s) => s.id == song.id)) {
+        _queue.insert(0, song);
+      }
+    }
+    for (final song in _queue) {
+      _status[song.id] =
+          const SongDownloadStatus(state: SongDownloadState.paused);
+    }
+    _batchTotal = _queue.length;
+    _batchDone = 0;
+    await _persistQueue();
+    notifyListeners();
+  }
+
+  Future<void> resumeAll() async {
+    await _pausing;
+    await _cancelFuture;
+    await init();
+    _paused = false;
+    _cancelled = false;
+    for (final song in _queue) {
+      _status[song.id] =
+          const SongDownloadStatus(state: SongDownloadState.queued);
+    }
+    await _persistQueue();
+    notifyListeners();
+    _pump();
+  }
+
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
     if (!await prefs.setString(
         _indexKey,
-        json.encode(
-            {for (final e in _index.entries) e.key: e.value.toJson()}))) {
+        json.encode({
+          for (final e in {..._retained, ..._index}.entries)
+            e.key: e.value.toJson()
+        }))) {
       throw StateError('Could not save download index');
     }
   }
@@ -253,7 +360,11 @@ class SongDownloadService extends ChangeNotifier {
   Future<void> enqueue(Iterable<Song> songs) async {
     if (!isSupported) return;
     await _cancelFuture;
+    await _pausing;
     await init();
+    if (!_loaded) {
+      throw StateError(_lastError ?? 'Download storage unavailable');
+    }
     _cancelled = false;
 
     final seen = <String>{};
@@ -267,11 +378,14 @@ class SongDownloadService extends ChangeNotifier {
     if (toAdd.isEmpty) return;
 
     for (final s in toAdd) {
-      _status[s.id] = const SongDownloadStatus(state: SongDownloadState.queued);
+      _items[s.id] = s;
+      _status[s.id] = SongDownloadStatus(
+          state: _paused ? SongDownloadState.paused : SongDownloadState.queued);
     }
     _queue.addAll(toAdd);
     _batchTotal += toAdd.length;
     notifyListeners();
+    await _persistQueue();
     _pump();
   }
 
@@ -281,7 +395,10 @@ class SongDownloadService extends ChangeNotifier {
         _cancelFuture = null;
       });
   Future<void> _cancel() async {
+    await _pausing;
+    await init();
     _cancelled = true;
+    _paused = false;
     for (final song in _queue) {
       _status.remove(song.id);
     }
@@ -291,50 +408,69 @@ class SongDownloadService extends ChangeNotifier {
     }
     await Future.wait(_tasks.toList());
     _batchTotal = _batchDone = _batchFailed = 0;
+    await _persistQueue();
     _lastError = null;
     notifyListeners();
   }
 
   Future<void> delete(Song song) async {
-    await cancelAll();
-    final rec = _index.remove(song.id);
-    if (rec != null) {
-      try {
-        final dir = await _mediaDir();
-        for (final name in [rec.filename, rec.scoreFilename]) {
-          if (name == null) continue;
-          final f = File('${dir.path}/$name');
-          if (f.existsSync()) f.deleteSync();
-        }
-      } catch (e) {
-        debugPrint('[SongDownloadService] delete failed: $e');
-      }
-      await _persist();
-    }
-    _status[song.id] = const SongDownloadStatus();
+    await _pausing;
+    await _cancelFuture;
+    await init();
+    _queue.removeWhere((s) => s.id == song.id);
+    _tokens[song.id]?.cancel();
+    await _tasksById[song.id];
+    await _deleteId(song.id);
+    _items.remove(song.id);
+    _status.remove(song.id);
+    await _persistQueue();
     notifyListeners();
   }
 
-  /// Remove every downloaded file.
-  Future<void> deleteAll() async {
-    await cancelAll();
+  Future<void> _deleteId(String id) async {
+    final rec = _index[id] ?? _retained[id];
+    if (rec == null) return;
     try {
       final dir = await _mediaDir();
-      if (dir.existsSync()) dir.deleteSync(recursive: true);
-      _dir = null;
-      await _mediaDir();
+      for (final name in [rec.filename, rec.scoreFilename]) {
+        if (name == null) continue;
+        final file = File('${dir.path}/$name');
+        final type = await FileSystemEntity.type(file.path, followLinks: false);
+        if (type == FileSystemEntityType.directory) {
+          throw FileSystemException(
+              'Expected an audio file, found a directory', file.path);
+        }
+        if (type != FileSystemEntityType.notFound) await file.delete();
+      }
+      _index.remove(id);
+      _retained.remove(id);
+      await _persist();
+      _status.remove(id);
     } catch (e) {
-      debugPrint('[SongDownloadService] deleteAll failed: $e');
+      _retained[id] = rec;
+      _status[id] = SongDownloadStatus(
+          state: SongDownloadState.failed,
+          error: 'Could not finish deleting download: $e');
+      _lastError = '$e';
+      notifyListeners();
+      rethrow;
     }
-    _index.clear();
-    _status.clear();
-    await _persist();
     notifyListeners();
+  }
+
+  /// Delete known downloaded media only; never erase an index after a
+  /// filesystem error or recursively sweep unindexed files.
+  Future<void> deleteAll() async {
+    await cancelAll();
+    for (final id in {..._retained.keys, ..._index.keys}) {
+      await _deleteId(id);
+    }
   }
 
   // ── Worker ──────────────────────────────────────────────────────
 
   void _pump() {
+    if (_paused) return;
     if (_cancelled) return;
     while (_active.length < _maxConcurrent && _queue.isNotEmpty) {
       final song = _queue.removeAt(0);
@@ -343,6 +479,11 @@ class SongDownloadService extends ChangeNotifier {
       task = _download(song).whenComplete(() {
         _active.remove(song.id);
         _tasks.remove(task);
+        _tasksById.remove(song.id);
+        unawaited(_persistQueue().catchError((Object e) {
+          _lastError = '$e';
+          notifyListeners();
+        }));
         _batchDone++;
         if (_queue.isEmpty && _active.isEmpty) {
           _batchTotal = _batchDone = 0;
@@ -351,6 +492,7 @@ class SongDownloadService extends ChangeNotifier {
         if (!_cancelled) _pump();
       });
       _tasks.add(task);
+      _tasksById[song.id] = task;
       unawaited(task);
     }
   }

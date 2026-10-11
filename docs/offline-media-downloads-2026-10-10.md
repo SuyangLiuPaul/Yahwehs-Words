@@ -35,3 +35,11 @@ Words completed before Sword deployment. All eight sites are Ready; full live SH
 - https://yswords-cn-dev.netlify.app: deploy `6ac9d8b39ec633877377ca41`.
 - https://yswords-qat.netlify.app: deploy `6ac9d8272bf071f84ac329ca`.
 - https://yahwehword.com: deploy `6ac9d827e323c8e1e6577f66`.
+
+## 2026-10-11 source follow-up（尚未发布）
+
+Words 讲道支持当前筛选／系列的批量选择、已保存跳过、未知体积提示；下载管理页可搜索、筛选、选择删除、暂停／继续和重试。队列重开后保持暂停，未完成录音继续时从头下载，不宣称断点续传。单项删除不取消其他下载。
+旧索引和恢复备份保留；文件缺失、读错误和损坏不重写原索引。替换录音先保护旧文件，并记录恢复日志；下载失败或中断可回退。Web 检查截断响应，删除失败保留有效播放 URL。网页更新仅删除已知 Flutter shell 缓存，保留音频和其他缓存。
+本地下载相关测试 36 项通过，flutter analyze 无问题；Node 缓存保留检查通过。管理页覆盖 390px、1.4 倍文字、中英文；这是自动化检查，不是实体设备／完整浏览器网络故障验证。
+这批修改独立于不可变 1.7.17；没有新商店包、标签或网页部署。提交后仍需当前 head CI 通过再合并。
+Words 诗歌另增加持久化待下载队列、显式暂停／继续和暂停行提示；重开不会自行触发大批网络下载。原有歌曲、乐谱和完成记录保留。

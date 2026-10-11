@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'offline_audio_types.dart';
 
-class PlatformOfflineAudioStorage implements OfflineAudioStorage {
+class PlatformOfflineAudioStorage
+    implements OfflineAudioStorage, RecoverableAudioStorage {
   PlatformOfflineAudioStorage(
       {Future<Directory> Function()? directory,
       http.Client Function()? clientFactory,
@@ -34,6 +35,42 @@ class PlatformOfflineAudioStorage implements OfflineAudioStorage {
     await init();
     final f = File(_path(id));
     return await f.exists() && await f.length() > 0;
+  }
+
+  @override
+  Future<bool> validate(String id, int expectedBytes) async {
+    await init();
+    final file = File(_path(id));
+    if (!await file.exists()) return false;
+    final length = await file.length();
+    if (length == 0 || (expectedBytes > 0 && length != expectedBytes)) {
+      return false;
+    }
+    final reader = await file.open();
+    try {
+      return validAudioPrefix(await reader.read(64));
+    } finally {
+      await reader.close();
+    }
+  }
+
+  @override
+  Future<void> protect(String id) async {
+    await init();
+    final file = File(_path(id));
+    if (await file.exists()) await file.copy('${file.path}.previous');
+  }
+
+  @override
+  Future<void> rollback(String id) async {
+    final backup = File('${_path(id)}.previous');
+    if (await backup.exists()) await backup.rename(_path(id));
+  }
+
+  @override
+  Future<void> commit(String id) async {
+    final backup = File('${_path(id)}.previous');
+    if (await backup.exists()) await backup.delete();
   }
 
   @override

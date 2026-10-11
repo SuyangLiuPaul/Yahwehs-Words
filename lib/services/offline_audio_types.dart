@@ -37,7 +37,7 @@ class AudioDownloadRecord {
           (j['bytes'] as num).toInt());
 }
 
-enum AudioDownloadState { queued, downloading, downloaded, failed }
+enum AudioDownloadState { queued, downloading, paused, downloaded, failed }
 
 class AudioDownloadStatus {
   const AudioDownloadStatus(this.state,
@@ -75,6 +75,14 @@ abstract interface class OfflineAudioStorage {
       DownloadCancellation cancellation,
       void Function(int received, int total) progress);
   Future<void> remove(String id);
+}
+
+/// Optional capabilities implemented by actual disk/cache storage.
+abstract interface class RecoverableAudioStorage {
+  Future<bool> validate(String id, int expectedBytes);
+  Future<void> protect(String id);
+  Future<void> rollback(String id);
+  Future<void> commit(String id);
 }
 
 /// Reject HTTP-200 error pages before they can become a green download.

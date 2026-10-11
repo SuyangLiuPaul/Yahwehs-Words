@@ -427,6 +427,7 @@
       var cachePromise = (window.caches && caches.keys)
         ? caches.keys().then(function(keys) {
             return Promise.all(keys
+              .filter(function(k) { return ['flutter-app-cache', 'flutter-temp-cache', 'flutter-app-manifest'].indexOf(k) !== -1; })
               .filter(function(k) {
                 return k.indexOf(MEDIA_CACHE_PREFIX) !== 0 && k.indexOf('sermon-media-') !== 0 &&
                        k.indexOf(SHELL_CACHE_PREFIX) !== 0;
@@ -671,6 +672,7 @@
         if (window.caches && caches.keys) {
           const keys = await caches.keys();
           await Promise.all(keys
+              .filter(function(k) { return ['flutter-app-cache', 'flutter-temp-cache', 'flutter-app-manifest'].indexOf(k) !== -1; })
             // 2026-08-31: `song-media-` is now spared, as the boot-time
             // self-heal above has always spared it. That bucket holds
             // the songs a user DOWNLOADED for offline listening; it has

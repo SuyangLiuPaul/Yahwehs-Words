@@ -2506,6 +2506,11 @@ class _SongDownloadButton extends StatelessWidget {
               tooltip: uiStrings['songsDeleteDownload']?[locale],
               onPressed: () => _confirmDelete(context, service),
             );
+          case SongDownloadState.paused:
+            return IconButton(
+                icon: const Icon(Icons.play_arrow_rounded),
+                tooltip: locale.startsWith('zh') ? '继续下载' : 'Resume download',
+                onPressed: service.resumeAll);
           case SongDownloadState.queued:
           case SongDownloadState.downloading:
             return IconButton(
@@ -2590,6 +2595,9 @@ class _DownloadIndicator extends StatelessWidget {
                 ),
               ),
             );
+          case SongDownloadState.paused:
+            return Icon(Icons.pause_rounded,
+                size: 16, color: scheme.onSurfaceVariant);
           case SongDownloadState.queued:
             return Padding(
               padding: const EdgeInsets.only(right: 4),

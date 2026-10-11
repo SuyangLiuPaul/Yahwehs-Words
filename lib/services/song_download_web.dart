@@ -72,6 +72,7 @@ class SongDownloadService extends ChangeNotifier {
   static const _maxConcurrent = 1;
 
   final Map<String, _WebDownload> _index = {};
+  final Map<String, _WebDownload> _retained = {};
 
   /// songId → object URL for its cached audio.
   ///
@@ -91,6 +92,13 @@ class SongDownloadService extends ChangeNotifier {
   final Map<String, SongDownloadStatus> _status = {};
   final List<Song> _queue = [];
   final Set<String> _active = {};
+  final Map<String, Song> _items = {};
+  final Map<String, Future<void>> _tasksById = {};
+  Future<void>? _pausing;
+  Future<void> _queueWrites = Future.value();
+  bool _paused = false;
+  bool get paused => _paused;
+  static const _queueKey = "$_indexKey.queue";
 
   final _tokens = <String, DownloadCancellation>{};
   final _tasks = <Future<void>>{};
@@ -109,14 +117,20 @@ class SongDownloadService extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_indexKey);
       if (raw != null) {
+        if (!prefs.containsKey('$_indexKey.pre-recovery')) {
+          await prefs.setString('$_indexKey.pre-recovery', raw);
+        }
         final decoded = json.decode(raw) as Map<String, dynamic>;
         for (final e in decoded.entries) {
-          final m = e.value as Map<String, dynamic>;
-          _index[e.key] = _WebDownload(
-            url: m['url'] as String,
-            bytes: (m['bytes'] as num?)?.toInt() ?? 0,
-            scoreUrl: m['scoreUrl'] as String?,
-          );
+          try {
+            final m = e.value as Map<String, dynamic>;
+            _index[e.key] = _WebDownload(
+              url: m['url'] as String,
+              bytes: (m['bytes'] as num?)?.toInt() ?? 0,
+              scoreUrl: m['scoreUrl'] as String?,
+            );
+            _retained[e.key] = _index[e.key]!;
+          } catch (_) {/* Keep malformed rows in the original backup. */}
         }
       }
 
@@ -127,13 +141,34 @@ class SongDownloadService extends ChangeNotifier {
       final cache = await _cache();
       final gone = <String>[];
       for (final e in _index.entries) {
-        final hit = await cache.match(e.value.url.toJS).toDart;
-        if (hit == null) gone.add(e.key);
+        try {
+          final hit = await cache.match(e.value.url.toJS).toDart;
+          if (hit == null) {
+            gone.add(e.key);
+            continue;
+          }
+          final blob = await hit.blob().toDart;
+          final prefix = (await blob.slice(0, 64).arrayBuffer().toDart)
+              .toDart
+              .asUint8List();
+          if ((e.value.bytes > 0 && blob.size.toInt() != e.value.bytes) ||
+              !validAudioPrefix(prefix)) {
+            gone.add(e.key);
+          }
+        } catch (_) {
+          // A damaged or temporarily unreadable cache entry must not erase
+          // its record or prevent other saved recordings from loading.
+          gone.add(e.key);
+        }
       }
       for (final id in gone) {
         _index.remove(id);
+        _status[id] = const SongDownloadStatus(
+            state: SongDownloadState.failed,
+            error:
+                'Browser audio is unavailable; its original record is retained.');
       }
-      if (gone.isNotEmpty) await _persist();
+      // Initialization never erases unavailable download metadata.
 
       for (final e in _index.entries) {
         _status[e.key] = SongDownloadStatus(
@@ -150,6 +185,26 @@ class SongDownloadService extends ChangeNotifier {
           }
         }
       }
+      final queueRaw = prefs.getString(_queueKey);
+      if (queueRaw != null) {
+        try {
+          for (final row in jsonDecode(queueRaw) as List) {
+            try {
+              final song = Song.fromJson((row as Map).cast<String, dynamic>());
+              if (_index.containsKey(song.id) ||
+                  _queue.any((s) => s.id == song.id)) {
+                continue;
+              }
+              _items[song.id] = song;
+              _queue.add(song);
+              _status[song.id] =
+                  const SongDownloadStatus(state: SongDownloadState.paused);
+            } catch (_) {/* Keep malformed queue rows on disk. */}
+          }
+        } catch (_) {/* Do not erase a damaged queue during startup. */}
+      }
+      _paused = _queue.isNotEmpty;
+      _batchTotal = _queue.length;
       _loaded = true;
       notifyListeners();
     } catch (e) {
@@ -262,12 +317,69 @@ class SongDownloadService extends ChangeNotifier {
   Future<web.Cache> _cache() async =>
       (await web.window.caches.open(_cacheName).toDart);
 
+  Future<void> _persistQueue() {
+    final raw = jsonEncode([
+      for (final id in {..._active, ..._queue.map((s) => s.id)})
+        if (_items[id] != null && !_index.containsKey(id))
+          songQueueRecord(_items[id]!),
+    ]);
+    return _queueWrites =
+        _queueWrites.catchError((Object _) {}).then((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      if (!await prefs.setString(_queueKey, raw)) {
+        throw StateError('Could not save pending songs');
+      }
+    });
+  }
+
+  Future<void> pauseAll() => _pausing ??= _pause().whenComplete(() {
+        _pausing = null;
+      });
+  Future<void> _pause() async {
+    await _cancelFuture;
+    await init();
+    _paused = true;
+    final interrupted = [for (final id in _active) _items[id]!];
+    for (final token in _tokens.values.toList()) {
+      token.cancel();
+    }
+    await Future.wait(_tasks.toList());
+    for (final song in interrupted) {
+      if (!_index.containsKey(song.id) && !_queue.any((s) => s.id == song.id)) {
+        _queue.insert(0, song);
+      }
+    }
+    for (final song in _queue) {
+      _status[song.id] =
+          const SongDownloadStatus(state: SongDownloadState.paused);
+    }
+    _batchTotal = _queue.length;
+    _batchDone = 0;
+    await _persistQueue();
+    notifyListeners();
+  }
+
+  Future<void> resumeAll() async {
+    await _pausing;
+    await _cancelFuture;
+    await init();
+    _paused = false;
+    _cancelled = false;
+    for (final song in _queue) {
+      _status[song.id] =
+          const SongDownloadStatus(state: SongDownloadState.queued);
+    }
+    await _persistQueue();
+    notifyListeners();
+    _pump();
+  }
+
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = await prefs.setString(
       _indexKey,
       json.encode({
-        for (final e in _index.entries)
+        for (final e in {..._retained, ..._index}.entries)
           e.key: {
             'url': e.value.url,
             'bytes': e.value.bytes,
@@ -342,7 +454,11 @@ class SongDownloadService extends ChangeNotifier {
   Future<void> enqueue(Iterable<Song> songs) async {
     if (!isSupported) return;
     await _cancelFuture;
+    await _pausing;
     await init();
+    if (!_loaded) {
+      throw StateError(_lastError ?? 'Download storage unavailable');
+    }
     _cancelled = false;
 
     // Ask to be exempt from routine eviction. Best-effort: Firefox
@@ -361,9 +477,12 @@ class SongDownloadService extends ChangeNotifier {
     _queue.addAll(wanted);
     _batchTotal += wanted.length;
     for (final s in wanted) {
-      _status[s.id] = const SongDownloadStatus(state: SongDownloadState.queued);
+      _items[s.id] = s;
+      _status[s.id] = SongDownloadStatus(
+          state: _paused ? SongDownloadState.paused : SongDownloadState.queued);
     }
     notifyListeners();
+    await _persistQueue();
     _pump();
   }
 
@@ -374,7 +493,10 @@ class SongDownloadService extends ChangeNotifier {
         _cancelFuture = null;
       });
   Future<void> _cancel() async {
+    await _pausing;
+    await init();
     _cancelled = true;
+    _paused = false;
     for (final song in _queue) {
       _status.remove(song.id);
     }
@@ -384,58 +506,60 @@ class SongDownloadService extends ChangeNotifier {
     }
     await Future.wait(_tasks.toList());
     _batchTotal = _batchDone = _batchFailed = 0;
+    await _persistQueue();
     _lastError = null;
     notifyListeners();
   }
 
   Future<void> delete(Song song) async {
-    await cancelAll();
-    final entry = _index.remove(song.id);
+    await _pausing;
+    await _cancelFuture;
+    await init();
+    _queue.removeWhere((s) => s.id == song.id);
+    _tokens[song.id]?.cancel();
+    await _tasksById[song.id];
+    await _deleteId(song.id);
+    _items.remove(song.id);
     _status.remove(song.id);
-    _revoke(song.id);
-    if (entry != null) {
-      try {
-        final cache = await _cache();
-        await cache.delete(entry.url.toJS).toDart;
-        if (entry.scoreUrl != null) {
-          await cache.delete(entry.scoreUrl!.toJS).toDart;
-        }
-      } catch (e) {
-        debugPrint('[SongDownloadService/web] delete failed: $e');
+    await _persistQueue();
+    notifyListeners();
+  }
+
+  Future<void> _deleteId(String id) async {
+    final entry = _index[id] ?? _retained[id];
+    if (entry == null) return;
+    try {
+      final cache = await _cache();
+      await cache.delete(entry.url.toJS).toDart;
+      if (entry.scoreUrl != null) {
+        await cache.delete(entry.scoreUrl!.toJS).toDart;
       }
+      _index.remove(id);
+      _retained.remove(id);
+      _revoke(id);
       await _persist();
+      _status.remove(id);
+    } catch (e) {
+      _retained[id] = entry;
+      _status[id] = SongDownloadStatus(
+          state: SongDownloadState.failed,
+          error: 'Could not finish deleting download: $e');
+      _lastError = '$e';
+      notifyListeners();
+      rethrow;
     }
     notifyListeners();
   }
 
   Future<void> deleteAll() async {
     await cancelAll();
-    final urls = [
-      for (final d in _index.values) ...[
-        d.url,
-        if (d.scoreUrl != null) d.scoreUrl!
-      ]
-    ];
-    for (final id in _index.keys.toList()) {
-      _revoke(id);
+    for (final id in {..._retained.keys, ..._index.keys}) {
+      await _deleteId(id);
     }
-    _index.clear();
-    _status.clear();
-    try {
-      final cache = await _cache();
-      for (final u in urls) {
-        await cache.delete(u.toJS).toDart;
-      }
-    } catch (e) {
-      debugPrint('[SongDownloadService/web] deleteAll failed: $e');
-    }
-    await _persist();
-    notifyListeners();
   }
 
-  // ── Worker ──────────────────────────────────────────────────────
-
   void _pump() {
+    if (_paused) return;
     while (_active.length < _maxConcurrent && _queue.isNotEmpty) {
       if (_cancelled) return;
       final song = _queue.removeAt(0);
@@ -444,6 +568,11 @@ class SongDownloadService extends ChangeNotifier {
       task = _download(song).whenComplete(() {
         _active.remove(song.id);
         _tasks.remove(task);
+        _tasksById.remove(song.id);
+        unawaited(_persistQueue().catchError((Object e) {
+          _lastError = '$e';
+          notifyListeners();
+        }));
         _batchDone++;
         if (_queue.isEmpty && _active.isEmpty) {
           _batchTotal = _batchDone = 0;
@@ -452,6 +581,7 @@ class SongDownloadService extends ChangeNotifier {
         if (!_cancelled) _pump();
       });
       _tasks.add(task);
+      _tasksById[song.id] = task;
       unawaited(task);
     }
   }

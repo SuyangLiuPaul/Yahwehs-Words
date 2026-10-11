@@ -5,8 +5,10 @@
 /// conditional façade, and never a platform-specific file directly.
 library;
 
+import '../models/song.dart';
+
 /// What a song's audio is doing right now.
-enum SongDownloadState { none, queued, downloading, done, failed }
+enum SongDownloadState { none, queued, paused, downloading, done, failed }
 
 /// A song's offline status, as the UI needs to render it.
 class SongDownloadStatus {
@@ -44,3 +46,18 @@ String formatDownloadBytes(int bytes) {
   if (bytes < 1024 * mb) return '${(bytes / mb).round()} MB';
   return '${(bytes / (1024 * mb)).toStringAsFixed(1)} GB';
 }
+
+/// Public catalogue fields required to recover an interrupted song download.
+Map<String, dynamic> songQueueRecord(Song song) => {
+      'id': song.id,
+      'title': song.title,
+      'language': song.language,
+      'source': song.source,
+      'sourceLabel': song.sourceLabel,
+      'url': song.url,
+      'audioUrl': song.audioUrl ??
+          (song.audioTracks.isNotEmpty ? song.audioTracks.first.url : null),
+      'scoreUrl': song.scoreUrl,
+      'artworkUrl': song.artworkUrl,
+      'durationSec': song.durationSec,
+    };
