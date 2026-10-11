@@ -204,6 +204,16 @@ void main() {
     final label = shortBibleVersionLabel('cuvs-yhwh');
     await tester.runAsync(() => settings.setFontFamily('Roboto'));
     final reference = '${verse['book']} 1:4';
+    // Each export test loads the production fonts itself, including when
+    // selected alone with --plain-name.
+    await (FontLoader('Roboto')
+          ..addFont(rootBundle
+              .load('assets/fonts/Roboto-VariableFont_wdth,wght.ttf')))
+        .load();
+    await (FontLoader('NotoSansSC-YahwehsWords')
+          ..addFont(
+              rootBundle.load('assets/fonts/NotoSansSC-YahwehsWords.otf')))
+        .load();
     await (FontLoader('NotoSansExt-Sub')
           ..addFont(rootBundle.load('assets/fonts/NotoSansExt-Sub.ttf')))
         .load();
