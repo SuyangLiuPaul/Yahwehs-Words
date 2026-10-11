@@ -2,6 +2,7 @@ import 'dart:async' show unawaited;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'tagged_number_picker.dart';
 import 'package:yahwehs_words/widgets/eagles_view_thayer_button.dart';
 import 'package:provider/provider.dart';
 
@@ -135,7 +136,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   // does not override `==`, and the run lists are built once per load
   // and cached, so the map is stable while the sheet is open. Cleared
   // in [_loadAll], which is what a picker change re-runs.
-  final Map<TaggedRun, TapGestureRecognizer> _runRecognizers = {};
+  final Map<(TaggedRun, String), TapGestureRecognizer> _runRecognizers = {};
 
   // The entry card, so a tap can scroll it into view — see
   // [_revealEntryCard] for why a tap needs to.
@@ -339,6 +340,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
       for (final run in r.tagged ?? const <TaggedRun>[]) {
         if (run.strongs.isNotEmpty) uniqueNums.add(run.strongs);
         uniqueNums.addAll(run.implied);
+        uniqueNums.addAll(run.additional);
       }
     }
     uniqueNums.removeWhere((n) => n.isEmpty || TaggedRun.isSuppliedMarker(n));
@@ -523,16 +525,17 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     ColorScheme scheme, {
     required bool showNumbers,
   }) {
-    final numbers = showNumbers && run.isTagged
+    final numbers = showNumbers
         ? inlineStrongsNumbers(
             strongs: run.strongs,
             grammar: run.grammar,
             implied: run.implied,
+            additional: run.additional,
           )
         : const <StrongsNumberToken>[];
     if (numbers.isEmpty) {
       return [
-        if (!run.isTagged)
+        if (!run.isTagged && run.implied.isEmpty && run.additional.isEmpty)
           TextSpan(text: run.text, style: base)
         else
           TextSpan(
@@ -553,8 +556,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         TextSpan(
           text: ' ${n.text}',
           style: n.kind == StrongsNumberKind.lexical ? lexical : secondary,
-          recognizer:
-              n.kind == StrongsNumberKind.lexical ? _runRecognizer(run) : null,
+          recognizer: n.lexicalNumber == null
+              ? null
+              : _runRecognizer(run, n.lexicalNumber),
         ),
       // Chinese sets no space between words, so without this the next
       // run's first character butts against the number: 地H776是.
@@ -572,14 +576,20 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
         decorationColor: scheme.primary.withValues(alpha: 0.45),
       );
 
-  TapGestureRecognizer _runRecognizer(TaggedRun run) =>
-      _runRecognizers.putIfAbsent(
-          run,
-          () => TapGestureRecognizer()
-            ..onTap = () {
-              setState(() => _impliedRun = run);
-              _loadRootEntry(run.strongs, grammarFrom: run);
-            });
+  TapGestureRecognizer? _runRecognizer(TaggedRun run, [String? number]) {
+    if (run.lexicalNumbers.isEmpty) return null;
+    return _runRecognizers.putIfAbsent(
+        (run, number ?? ''),
+        () => TapGestureRecognizer()
+          ..onTap = () async {
+            final selected = number ??
+                await chooseTaggedNumber(context,
+                    text: run.text, numbers: run.lexicalNumbers);
+            if (!mounted || selected == null) return;
+            setState(() => _impliedRun = run);
+            await _loadRootEntry(selected, grammarFrom: run);
+          });
+  }
 
   /// [grammarFrom] is the tagged run the reader tapped, when they
   /// reached this entry by tapping the Chinese line. Passed explicitly
@@ -651,8 +661,9 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     // visible immediately — saves an extra tap.
     unawaited(_loadRelations(strongsNumber,
         pivotFromNumber: pivotFromNumber, gen: myGen));
-    unawaited(
-        _loadChinese(strongsNumber, grammarFrom: grammarFrom, gen: myGen));
+    unawaited(_loadChinese(strongsNumber,
+        grammarFrom: grammarFrom?.strongs == strongsNumber ? grammarFrom : null,
+        gen: myGen));
   }
 
   /// Scroll the entry card into view.
@@ -1426,7 +1437,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
               run: run,
               lexicon: _glossCache,
               locale: widget.locale,
-              onTapNumber: _loadRootEntry,
+              onTapNumber: (number) => _loadRootEntry(number, grammarFrom: run),
             ),
         ],
       ),
@@ -1714,6 +1725,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     }
 
     return Container(
+      key: ValueKey('lexicon-entry-$displayNumber'),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),

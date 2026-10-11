@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'verse_share_layout.dart';
 
 import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 import 'package:flutter/material.dart';
@@ -292,6 +293,16 @@ class AppSettings extends ChangeNotifier {
   /// system's typography out of the box. `'Roboto'` remains a
   /// pickable option in Settings if a user prefers it explicitly.
   String _fontSelection = 'system';
+  VerseShareLayout _verseShareLayout = const VerseShareLayout();
+  VerseShareLayout get verseShareLayout => _verseShareLayout;
+  Future<void> setVerseShareLayout(VerseShareLayout value) async {
+    _verseShareLayout = VerseShareLayout.fromJson(value.toJson());
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        'verseShareLayout', jsonEncode(_verseShareLayout.toJson()));
+  }
+
   /// Resolved family name passed to TextStyle's `fontFamily`. For
   /// bundled fonts this equals [_fontSelection]; for Google Fonts
   /// it's the registered family name (e.g. `'EBGaramond_regular'`)
@@ -1358,6 +1369,7 @@ class AppSettings extends ChangeNotifier {
     // chain "user setting → system detect → app fallback". On
     // every platform the system token resolves via the CSS font
     // stack to the OS UI font.
+    _verseShareLayout = const VerseShareLayout();
     _fontSelection = 'system';
     _fontFamily = '-apple-system';
     _fontSize = 20.0;
@@ -1407,6 +1419,7 @@ class AppSettings extends ChangeNotifier {
     // safest implementation — additions to AppSettings won't drift
     // out of sync the way an explicit list would.
     final managedKeys = <String>{
+      'verseShareLayout',
       _kFontFamily,
       _kFontSize,
       _kLineSpacing,
@@ -1512,6 +1525,12 @@ class AppSettings extends ChangeNotifier {
       // also fail-soft so functionality degrades gracefully.
       notifyListeners();
       return;
+    }
+    try {
+      _verseShareLayout = VerseShareLayout.fromJson(
+          jsonDecode(prefs.getString('verseShareLayout') ?? '{}'));
+    } catch (_) {
+      _verseShareLayout = const VerseShareLayout();
     }
     // Round 56: migrate legacy keys (Times New Roman, Garamond, …)
     // before resolving — DropdownButton would otherwise crash on a
@@ -1843,6 +1862,7 @@ class AppSettings extends ChangeNotifier {
   /// setup while a service is running on it. An operator moving to a new
   /// laptop re-does one setup once, which is the right price for that.
   Map<String, dynamic> _userPrefsSnapshot() => {
+        'verseShareLayout': _verseShareLayout.toJson(),
         'fontFamily': _fontSelection,
         'fontSize': _fontSize,
         'lineSpacing': _lineSpacing,
@@ -1908,6 +1928,9 @@ class AppSettings extends ChangeNotifier {
   void _applyUserPrefsBlob(Map<String, dynamic> m) {
     _suppressUserPrefsWrite = true;
     try {
+      if (m.containsKey('verseShareLayout')) {
+        _verseShareLayout = VerseShareLayout.fromJson(m['verseShareLayout']);
+      }
       if (m['fontFamily'] is String) {
         _fontSelection = m['fontFamily'] as String;
         _fontFamily = resolveFontFamily(_fontSelection);

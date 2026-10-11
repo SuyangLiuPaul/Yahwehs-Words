@@ -14,6 +14,7 @@
 // widget as preview/export, so saving preserves the chosen area.
 
 import 'dart:async';
+import 'verse_share_layout_controls.dart';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -216,6 +217,11 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
               brightness: brightness,
               onChanged: (b) => setState(() => _brightness = b),
             ),
+            const SizedBox(height: 8),
+            ExpansionTile(
+              title: Text(locale.startsWith('zh') ? '分享图片排版' : 'Image layout'),
+              children: const [VerseShareLayoutControls(showPreview: false)],
+            ),
             const SizedBox(height: 18),
             // iOS and Android are told before they tap, not after. The
             // card is already on screen at full size, which is what
@@ -310,6 +316,7 @@ class _VerseCardSheetState extends State<VerseCardSheet> {
       photo: _photo,
       photoLuminance: _photoLuminance,
       photoFraming: framing,
+      layout: settings.verseShareLayout,
     );
   }
 
