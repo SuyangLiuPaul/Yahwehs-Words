@@ -245,7 +245,8 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                                 settings: settings,
                                 scheme: scheme,
                                 bytes: _service.statusOf(s).bytes,
-                                onDelete: () => _service.delete(s),
+                                locale: locale,
+                                onDelete: () => _confirmDeleteSong(s, locale),
                               ),
                           ],
                         );
@@ -256,6 +257,20 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteSong(Song song, String locale) async {
+    if (!await showSongDownloadDeleteConfirmation(context,
+        title: song.title, locale: locale)) return;
+    try {
+      await _service.delete(song);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(uiStrings['songsDeleteFailed']?[locale] ??
+            'Could not remove this download. It has been kept; try again.'),
+      ));
+    }
   }
 
   void _confirmDeleteAll(String locale) {
@@ -448,6 +463,7 @@ class _DownloadedTile extends StatelessWidget {
   final ColorScheme scheme;
   final int bytes;
   final VoidCallback onDelete;
+  final String locale;
 
   const _DownloadedTile({
     required this.song,
@@ -455,6 +471,7 @@ class _DownloadedTile extends StatelessWidget {
     required this.scheme,
     required this.bytes,
     required this.onDelete,
+    required this.locale,
   });
 
   @override
@@ -477,6 +494,7 @@ class _DownloadedTile extends StatelessWidget {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.delete_outline_rounded, size: 20),
+        tooltip: uiStrings['songsDeleteOne']?[locale] ?? 'Remove download',
         onPressed: onDelete,
       ),
     );
@@ -529,4 +547,27 @@ class _FailedTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A tap on an icon must not silently remove an offline recording.
+Future<bool> showSongDownloadDeleteConfirmation(BuildContext context,
+    {required String title, required String locale}) async {
+  return await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title:
+              Text(uiStrings['songsDeleteOne']?[locale] ?? 'Remove download'),
+          content: Text(
+              '$title\n\n${uiStrings['songsDeleteOneBody']?[locale] ?? 'Remove this saved song from this device? You can download it again.'}'),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(uiStrings['cancel']?[locale] ?? 'Cancel')),
+            FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text(uiStrings['delete']?[locale] ?? 'Delete')),
+          ],
+        ),
+      ) ??
+      false;
 }
