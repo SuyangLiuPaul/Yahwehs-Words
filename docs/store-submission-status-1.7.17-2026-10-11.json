@@ -1,0 +1,162 @@
+{
+  "updatedAt": "2026-10-11T01:18:34.266391+00:00",
+  "stores": {
+    "Words": {
+      "Play": {
+        "version": "1.7.17",
+        "code": 10070171,
+        "console": "Internal 1.7.17 available to internal testers; Alpha 1.7.17 in review",
+        "apiCommit": "HTTP400; changesNotSentForReview retained; no committed API draft",
+        "oldInternalRelease": "1.7.16 preserved",
+        "published": false,
+        "productionGate": "12 opted-in testers for 6 continuous days; 14 required; Apply disabled",
+        "internalPublished": true
+      },
+      "Microsoft": {
+        "version": "1.7.17.0",
+        "submission": "1152921505702093995",
+        "state": "Certification",
+        "storageVerified": true,
+        "ingestion": true,
+        "certification": true,
+        "published": false,
+        "readbackRun": 38101261640,
+        "targetPublishMode": "Immediate",
+        "packages": [
+          {
+            "fileName": "yahwehs_words.msix",
+            "fileStatus": "Uploaded",
+            "version": "1.7.17.0",
+            "architecture": "x64"
+          }
+        ]
+      },
+      "iOS": {
+        "version": "1.7.17",
+        "build": "1070017",
+        "state": "WAITING_FOR_REVIEW",
+        "newReviewSubmitted": true,
+        "processingState": "VALID",
+        "betaState": "WAITING_FOR_BETA_REVIEW",
+        "internalBetaState": "IN_BETA_TESTING",
+        "autoNotifyEnabled": true
+      },
+      "macOS": {
+        "version": "1.7.17",
+        "build": "1070017",
+        "state": "WAITING_FOR_REVIEW",
+        "minimumOS": "11.0",
+        "universal": true,
+        "newReviewSubmitted": true,
+        "processingState": "VALID",
+        "betaState": "WAITING_FOR_BETA_REVIEW",
+        "internalBetaState": "IN_BETA_TESTING",
+        "autoNotifyEnabled": true
+      },
+      "WearPlay": {
+        "version": "1.7.17",
+        "code": 20001025,
+        "track": "4699659407499218860",
+        "release": 15,
+        "state": "Available to internal testers",
+        "bundleSha256": "eabd4a45156ac962f9d2ba9dba0ad73d6954139b8dfd377052c99487cc9a9f6f",
+        "source": "70e747e653f541da2defcd2cf4fd775043f891bc",
+        "run": 38092073040,
+        "artifact": 11684975762,
+        "size": 1565586,
+        "phoneAlphaPreserved": true,
+        "physicalPairingVerified": false
+      }
+    },
+    "Sword": {
+      "Play": {
+        "version": "1.7.17",
+        "code": 2000021,
+        "console": "Internal 1.7.17 available to internal testers; Alpha 1.7.17 in review",
+        "apiCommit": "HTTP400; changesNotSentForReview retained; no committed API draft",
+        "oldInternalRelease": "1.7.16 preserved",
+        "published": false,
+        "productionGate": "12 opted-in testers for 6 continuous days; 14 required; Apply disabled",
+        "internalPublished": true
+      },
+      "Microsoft": {
+        "version": "1.7.17.0",
+        "submission": "1152921505702094507",
+        "state": "Certification",
+        "storageVerified": true,
+        "ingestion": true,
+        "certification": true,
+        "published": false,
+        "readbackRun": 38101263471,
+        "targetPublishMode": "Immediate",
+        "packages": [
+          {
+            "fileName": "yahwehs_sword.msix",
+            "fileStatus": "Uploaded",
+            "version": "1.7.17.0",
+            "architecture": "x64"
+          }
+        ]
+      },
+      "iOS": {
+        "version": "1.7.17",
+        "build": "1070017",
+        "state": "WAITING_FOR_REVIEW",
+        "newReviewSubmitted": true,
+        "processingState": "VALID",
+        "betaState": "WAITING_FOR_BETA_REVIEW",
+        "internalBetaState": "IN_BETA_TESTING",
+        "autoNotifyEnabled": true
+      },
+      "macOS": {
+        "version": "1.7.17",
+        "build": "1070017",
+        "state": "WAITING_FOR_REVIEW",
+        "minimumOS": "11.0",
+        "universal": true,
+        "newReviewSubmitted": true,
+        "processingState": "VALID",
+        "betaState": "WAITING_FOR_BETA_REVIEW",
+        "internalBetaState": "IN_BETA_TESTING",
+        "autoNotifyEnabled": true
+      }
+    }
+  },
+  "merge": {
+    "Words": {
+      "pr": 69,
+      "head": "7bf8d33158313bd64bebcede7c1ae9790f99f9d0",
+      "headCI": 38098044326,
+      "headCIState": "success",
+      "main": "fa7e6e908de79d074822654a8c3bc5e20d837be7",
+      "mainCI": 38098627461,
+      "mainCIState": "success",
+      "testedTreeEqualsMain": true
+    },
+    "Sword": {
+      "pr": 56,
+      "head": "e245efd8ad4962548678ee2e04c6c6c5eb7a9e90",
+      "headCI": 38098046303,
+      "headCIState": "success",
+      "main": "cacf1bf9a6dd5c28370d9076cd68ef7748a36541",
+      "mainCI": 38098765573,
+      "mainCIState": "success",
+      "testedTreeEqualsMain": true
+    }
+  },
+  "runtimeTags": {
+    "Words": "70e747e653f541da2defcd2cf4fd775043f891bc",
+    "Sword": "04342277406d5d7ffec7645daaacfcfe805a3775"
+  },
+  "physicalVerification": false,
+  "emailMarkingChanged": false,
+  "ownerSwordPBXPreserved": "06a794e396afda48e413fd5d82f4c9978985c7a012d0aef9af0ba9fadaf3ed04",
+  "authorizedUploadDraftScopeComplete": true,
+  "publicStoreReleaseComplete": false,
+  "authorization": "Owner authorized all store submissions; this supersedes the earlier draft-only boundary.",
+  "monitoring": {
+    "automation": "words-sword",
+    "status": "ACTIVE",
+    "intervalHours": 10
+  }
+}
