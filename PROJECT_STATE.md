@@ -1,3 +1,7 @@
+## October 11 — 1.7.21 web / APK delivered
+
+Latest source is merged into GitHub main. Canonical dev/prod deployment completed; 6 Words websites serve 1.7.21 with full startup-resource hashes verified. Signed direct phone APK is published and verified; Words Wear APK is also verified. See docs/delivery-1.7.21-2026-10-11.md for exact source, CI, download links and verification limits. Existing store 1.7.17 submissions remain separate and unchanged.
+
 ## October 11 — 1.7.21 web/APK preparation
 
 Latest source and Chinese Genesis display correction are prepared for owner-authorized dev/prod and signed APK delivery. See docs/delivery-1.7.21-2026-10-11.md for gates and limits. Submitted store 1.7.17 packages remain intact; no 1.7.21 store submission is authorized by this website/APK task.
