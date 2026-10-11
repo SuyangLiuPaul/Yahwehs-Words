@@ -6397,6 +6397,11 @@ const uiStrings = {
     'zh-Hant': '目前篩選中沒有可下載的音訊。',
     'en': 'No downloadable audio in this selection.',
   },
+  'songsWebDownloadScope': {
+    'zh-Hans': '网页下载属于当前网站和浏览器。其他网站、浏览器及原生App的下载独立保存，不会自动出现在这里。',
+    'zh-Hant': '網頁下載屬於目前網站和瀏覽器。其他網站、瀏覽器及原生App的下載獨立儲存，不會自動出現在這裡。',
+    'en': 'Downloads belong to this website and browser. Other websites, browsers and native apps keep separate downloads.',
+  },
   'songsScoreFailed': {
     'zh-Hans': '乐谱无法载入。',
     'zh-Hant': '樂譜無法載入。',
