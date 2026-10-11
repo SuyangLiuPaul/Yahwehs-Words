@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import '../utils/app_scroll_behavior.dart' show kSelectableTextPhysics;
+import '../services/song_storage_inspection.dart';
 import '../widgets/sermon_offline_downloads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -34,12 +38,17 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
   /// needle normalised, and normalising it here does it once per
   /// keystroke instead of once per song per keystroke.
   String _query = '';
+  bool _checkingStorage = false;
 
   @override
   void initState() {
     super.initState();
-    _catalogue = SongService.load();
-    _service.init();
+    _catalogue = _loadCatalogue();
+  }
+
+  Future<List<Song>> _loadCatalogue() async {
+    await _service.init();
+    return SongService.load();
   }
 
   @override
@@ -64,6 +73,19 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
               : FutureBuilder<List<Song>>(
                   future: _catalogue,
                   builder: (context, snap) {
+                    if (snap.connectionState != ConnectionState.done) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snap.hasError) {
+                      return Center(
+                          child: TextButton(
+                        onPressed: () =>
+                            setState(() => _catalogue = _loadCatalogue()),
+                        child: Text(uiStrings['songsLoadRecordsAgain']
+                                ?[locale] ??
+                            'Retry loading records'),
+                      ));
+                    }
                     final catalogue = snap.data ?? const <Song>[];
                     return ListenableBuilder(
                       listenable: _service,
@@ -94,13 +116,29 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                             SermonDownloadsLink(locale: locale),
                             if (kIsWeb)
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                                 child: Text(
                                   '${uiStrings['songsWebDownloadScope']?[locale] ?? uiStrings['songsWebDownloadScope']!['en']!}\n${Uri.base.host}',
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(color: scheme.onSurfaceVariant),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                          color: scheme.onSurfaceVariant),
                                 ),
                               ),
+                            if (kIsWeb)
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    icon: const Icon(Icons.manage_search),
+                                    label: Text(uiStrings['songsInspectStorage']
+                                            ?[locale] ??
+                                        'Inspect storage (no download)'),
+                                    onPressed: _checkingStorage
+                                        ? null
+                                        : () => _inspectStorage(locale),
+                                  )),
                             _SummaryCard(
                               count: downloaded.length,
                               bytes: _service.totalBytes,
@@ -283,6 +321,75 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
             'Could not remove this download. It has been kept; try again.'),
       ));
     }
+  }
+
+  Future<void> _inspectStorage(String locale) async {
+    setState(() => _checkingStorage = true);
+    Map<String, dynamic> report;
+    try {
+      report = await inspectSongDownloadStorage();
+    } catch (e) {
+      report = {
+        'reason': 'inspection_failed',
+        'errorType': e.runtimeType.toString()
+      };
+    }
+    if (!mounted) return;
+    setState(() => _checkingStorage = false);
+    final text = const JsonEncoder.withIndent('  ').convert(report);
+    await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(uiStrings['songsInspectStorage']?[locale] ??
+                  'Inspect storage (no download)'),
+              content: SizedBox(
+                  width: 640,
+                  child: SingleChildScrollView(
+                      child: Semantics(
+                          label: text,
+                          excludeSemantics: true,
+                          child: SelectableText(text,
+                              scrollPhysics: kSelectableTextPhysics)))),
+              actions: [
+                TextButton(
+                    onPressed: _service.pendingCount > 0
+                        ? null
+                        : () async {
+                            Navigator.of(ctx).pop();
+                            setState(() => _checkingStorage = true);
+                            try {
+                              await recheckSongDownloadStorage();
+                            } catch (_) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text(uiStrings[
+                                            'songsLoadRecordsAgain']?[locale] ??
+                                        'Could not read storage. Try again.')));
+                              }
+                            } finally {
+                              if (mounted) {
+                                setState(() => _checkingStorage = false);
+                              }
+                            }
+                          },
+                    child: Text(uiStrings['songsRecheckStorage']?[locale] ??
+                        'Recheck saved audio (no download)')),
+                TextButton(
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: text));
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(locale.startsWith('zh')
+                                ? '已复制诊断报告'
+                                : 'Diagnostic report copied')));
+                      }
+                    },
+                    child: Text(uiStrings['copy']?[locale] ?? 'Copy')),
+                TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: Text(uiStrings['close']?[locale] ?? 'Close')),
+              ],
+            ));
   }
 
   void _confirmDeleteAll(String locale) {

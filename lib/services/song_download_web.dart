@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'offline_audio_storage_web.dart';
 import 'offline_audio_types.dart';
+import 'song_cache_probe_web.dart';
 import 'dart:convert';
 import 'dart:js_interop';
 // For `has` — Cache Storage is absent in non-secure contexts, so its
@@ -113,8 +114,10 @@ class SongDownloadService extends ChangeNotifier {
   Future<void> init() => _loaded ? Future.value() : (_initFuture ??= _load());
   Future<void> _load() async {
     if (!isSupported) return;
+    var phase = 'index';
     try {
       final prefs = await SharedPreferences.getInstance();
+      await prefs.reload();
       final raw = prefs.getString(_indexKey);
       if (raw != null) {
         if (!prefs.containsKey('$_indexKey.pre-recovery')) {
@@ -134,57 +137,49 @@ class SongDownloadService extends ChangeNotifier {
         }
       }
 
-      // Reconcile against the cache, exactly as the native service
-      // reconciles against the filesystem. The browser can evict
-      // without telling us, and an index that still claims a song is
-      // downloaded would send a plane passenger to a dead play button.
-      final cache = await _cache();
-      final gone = <String>[];
-      for (final e in _index.entries) {
-        try {
-          final hit = await cache.match(e.value.url.toJS).toDart;
-          if (hit == null) {
-            gone.add(e.key);
-            continue;
-          }
-          final blob = await hit.blob().toDart;
-          final prefix = (await blob.slice(0, 64).arrayBuffer().toDart)
-              .toDart
-              .asUint8List();
-          if ((e.value.bytes > 0 && blob.size.toInt() != e.value.bytes) ||
-              !validAudioPrefix(prefix)) {
-            gone.add(e.key);
-          }
-        } catch (_) {
-          // A damaged or temporarily unreadable cache entry must not erase
-          // its record or prevent other saved recordings from loading.
-          gone.add(e.key);
+      // Validate each existing body once. Keep the first exact failure locally
+      // before retry can replace it; do not erase any index/cache at startup.
+      phase = 'cache_open';
+      final cache = await web.window.caches
+          .has(_cacheName)
+          .toDart
+          .then((present) async => present.toDart ? await _cache() : null);
+      phase = 'reconcile';
+      for (final e in _index.entries.toList()) {
+        final probe =
+            await probeSongCache(cache, e.key, e.value.url, e.value.bytes);
+        if (!probe.valid) {
+          await retainSongValidationFailure(prefs, probe.report);
+          _index.remove(
+              e.key); // in-memory ready list only; _retained stays intact
+          _status[e.key] = SongDownloadStatus(
+              state: SongDownloadState.failed,
+              error: 'Saved audio check: ${probe.report['reason']} '
+                  '(phase: ${probe.report['phase']}). Its record is retained.');
+          continue;
         }
-      }
-      for (final id in gone) {
-        _index.remove(id);
-        _status[id] = const SongDownloadStatus(
-            state: SongDownloadState.failed,
-            error:
-                'Browser audio is unavailable; its original record is retained.');
-      }
-      // Initialization never erases unavailable download metadata.
-
-      for (final e in _index.entries) {
         _status[e.key] = SongDownloadStatus(
-          state: SongDownloadState.done,
-          bytes: e.value.bytes,
-        );
-        await _makeBlobUrl(e.key, e.value.url, cache);
+            state: SongDownloadState.done, bytes: e.value.bytes);
+        // Reuse the body just validated: a second Cache.match/read used to
+        // silently fail after the UI had already marked this recording ready.
+        _blobUrls.putIfAbsent(
+            e.key, () => web.URL.createObjectURL(probe.blob!));
         final scoreUrl = e.value.scoreUrl;
-        if (scoreUrl != null) {
-          final hit = await cache.match(scoreUrl.toJS).toDart;
-          if (hit != null) {
-            _scoreBlobUrls[e.key] =
-                web.URL.createObjectURL(await hit.blob().toDart);
+        if (scoreUrl != null &&
+            cache != null &&
+            !_scoreBlobUrls.containsKey(e.key)) {
+          try {
+            final hit = await cache.match(scoreUrl.toJS).toDart;
+            if (hit != null) {
+              _scoreBlobUrls[e.key] =
+                  web.URL.createObjectURL(await hit.blob().toDart);
+            }
+          } catch (_) {
+            // A failed optional score must not block other saved audio/queue.
           }
         }
       }
+      phase = 'queue';
       final queueRaw = prefs.getString(_queueKey);
       if (queueRaw != null) {
         try {
@@ -208,28 +203,35 @@ class SongDownloadService extends ChangeNotifier {
       _loaded = true;
       notifyListeners();
     } catch (e) {
-      debugPrint('[SongDownloadService/web] init failed: $e');
-      _lastError = 'Download storage unavailable: $e';
+      _lastError =
+          'Download storage check failed ($phase, ${e.runtimeType}). Records are retained.';
+      for (final id in _retained.keys) {
+        if (!_blobUrls.containsKey(id)) {
+          _index.remove(id);
+          _status[id] = SongDownloadStatus(
+              state: SongDownloadState.failed, error: _lastError);
+        }
+      }
+      final prefs = await SharedPreferences.getInstance();
+      await retainSongValidationFailure(prefs, {
+        'id': '@storage',
+        'reason': 'initialization_exception',
+        'phase': phase,
+        'errorType': e.runtimeType.toString(),
+      });
       notifyListeners();
     } finally {
       _initFuture = null;
     }
   }
 
-  /// Turn a cached response into an object URL the player can use.
-  Future<void> _makeBlobUrl(String songId, String url,
-      [web.Cache? open]) async {
-    try {
-      final cache = open ?? await _cache();
-      final hit = await cache.match(url.toJS).toDart;
-      if (hit == null) return;
-      final blob = await hit.blob().toDart;
-      _blobUrls[songId] = web.URL.createObjectURL(blob);
-    } catch (e) {
-      // Falling back to the network URL is correct here: the song
-      // simply streams instead of playing from disk.
-      debugPrint('[SongDownloadService/web] blob url failed: $e');
-    }
+  /// Re-read existing records/bodies without downloading or rewriting them.
+  Future<bool> recheckSavedAudio() async {
+    if (pendingCount > 0 || _initFuture != null) return false;
+    _loaded = false;
+    _lastError = null;
+    await init();
+    return _loaded;
   }
 
   void _revoke(String songId) {
