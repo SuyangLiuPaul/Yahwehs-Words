@@ -2580,3 +2580,7 @@ leave the original checked-out; three such duplicates were found on
 ## October11 website1.7.18 delivery
 
 Words six canonical websites delivered from tested merged main66c3e853; full file SHA256 and real dev download retention/prod smoke verified. See docs/web-recovery-1.7.18-2026-10-11.md for evidence and explicit physical/offline limitations. Native/store1.7.17 remains separate and unchanged.
+
+## October11 additional owner download-status regression
+
+Words actualdev1.7.18 reproduces incorrect “Nothing downloaded yet” after re-downloading an already-saved selection. Shared UI batch planning now distinguishes all saved/no audio/already queued and avoids recounting active/paused jobs. Website-only1.7.19 is being prepared; source/CI/browser/delivery evidence must be completed before production claims. See docs/song-download-status-2026-10-11.md. Owner575/3GB untouched; screenshot origin/version and physical playback remain unverified. Sword no Songs module, website1.7.18 unchanged.

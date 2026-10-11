@@ -10,6 +10,45 @@ import '../models/song.dart';
 /// What a song's audio is doing right now.
 enum SongDownloadState { none, queued, paused, downloading, done, failed }
 
+/// Classifies a batch without modifying saved files or queued downloads.
+/// An empty pending batch is not evidence that the device has no downloads.
+class SongDownloadBatchPlan {
+  final List<Song> pending;
+  final int playableCount;
+  final int queuedCount;
+
+  factory SongDownloadBatchPlan(Iterable<Song> selection,
+      {required bool Function(Song) isDownloaded,
+      required SongDownloadStatus Function(Song) statusOf}) {
+    final pending = <Song>[];
+    final seen = <String>{};
+    var playableCount = 0;
+    var queuedCount = 0;
+    for (final song in selection) {
+      if (!song.hasPlayableAudio || !seen.add(song.id)) continue;
+      playableCount++;
+      if (isDownloaded(song)) continue;
+      final status = statusOf(song);
+      if (status.isBusy || status.state == SongDownloadState.paused) {
+        queuedCount++;
+      } else {
+        pending.add(song);
+      }
+    }
+    return SongDownloadBatchPlan._(
+        List.unmodifiable(pending), playableCount, queuedCount);
+  }
+
+  const SongDownloadBatchPlan._(
+      this.pending, this.playableCount, this.queuedCount);
+
+  String get emptyMessageKey => playableCount == 0
+      ? 'songsNoDownloadableAudio'
+      : queuedCount > 0
+          ? 'songsDownloadsAlreadyQueued'
+          : 'songsDownloadsAlreadySaved';
+}
+
 /// A song's offline status, as the UI needs to render it.
 class SongDownloadStatus {
   final SongDownloadState state;
