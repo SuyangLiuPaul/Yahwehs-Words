@@ -6397,6 +6397,21 @@ const uiStrings = {
     'zh-Hant': '目前篩選中沒有可下載的音訊。',
     'en': 'No downloadable audio in this selection.',
   },
+  'songsRecheckStorage': {
+    'en': 'Recheck saved audio (no download)',
+    'zh-Hans': '重新检查已保存音频（不下载）',
+    'zh-Hant': '重新檢查已儲存音訊（不下載）',
+  },
+  'songsInspectStorage': {
+    'en': 'Inspect storage (no download)',
+    'zh-Hans': '检查存储（不下载）',
+    'zh-Hant': '檢查儲存（不下載）',
+  },
+  'songsLoadRecordsAgain': {
+    'en': 'Could not load download records. Try again.',
+    'zh-Hans': '下载记录未能加载，请重试。',
+    'zh-Hant': '下載記錄未能載入，請重試。',
+  },
   'songsWebDownloadScope': {
     'zh-Hans': '网页下载属于当前网站和浏览器。其他网站、浏览器及原生App的下载独立保存，不会自动出现在这里。',
     'zh-Hant': '網頁下載屬於目前網站和瀏覽器。其他網站、瀏覽器及原生App的下載獨立儲存，不會自動出現在這裡。',

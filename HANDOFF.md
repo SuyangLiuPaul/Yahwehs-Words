@@ -4788,3 +4788,10 @@ Words actualdev1.7.18 reproduces incorrect “Nothing downloaded yet” after re
 ### 2026-10-11 Words网页1.7.19交付
 
 PR76完整CI38119038130通过，合并8834acf6；六个网站线上七文件SHA256一致。已保存／排队／无音频提示分开，网页存储域名说明已上线。Sword18及原生／商店17保持现有交付。详见docs/song-download-status-2026-10-11.md，尤其正式站同上下文旧测试音频不可用、保留记录及重试恢复的异常；不能将直接18→19保留列为通过，575／563来源仍待确认。
+
+
+## 2026-10-11 browser storage diagnosis / owner decisions
+Words web1.7.20 preparation: see `docs/song-storage-diagnosis-2026-10-11.md`. Original18→19 unavailable-audio cause remains unresolved; retry recovery is not upgrade retention. No owner3GB cache/index clearing or bulk download. Native/store17 and Sword web18 stay unchanged.
+
+Owner clarified: after fixing and verifying an identified Words/Sword CI failure, mark **its corresponding email read**. Keep unresolved failure emails unread; do not create an arrival-time blanket filter. Current Gmail searches did not locate the362a287 failure message, so no unrelated mail was changed.
+Owner accepted macOS12 minimum if a future Mac build requires it. Current17 Mac packages already uploaded/VALID/review-submitted with verifiedmacOS11 minimum; do not rebuild or re-upload them merely because the older decision arrived late.
