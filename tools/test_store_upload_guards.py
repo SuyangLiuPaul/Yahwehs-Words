@@ -94,6 +94,27 @@ class GuardTests(unittest.TestCase):
             commit.main()
             self.assertEqual(api.call_count, 2)
             storage.assert_not_called()
+    def test_existing_ms_commit_rejects_other_pending_draft(self):
+        import io, json
+        import windows_store_commit_existing as commit
+        from unittest.mock import patch
+        expected = commit.EXPECTED[commit.product]
+        wrong = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": "other-draft"}}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", return_value=wrong) as api:
+            with self.assertRaises(SystemExit):
+                commit.main()
+            self.assertEqual(api.call_count, 1)
+    def test_existing_ms_commit_stops_after_storage_hash_mismatch(self):
+        import io, json
+        import windows_store_commit_existing as commit
+        from unittest.mock import patch
+        expected = commit.EXPECTED[commit.product]
+        app = {"id": commit.product, "packageIdentityName": expected[3], "pendingApplicationSubmission": {"id": expected[4]}}
+        draft = {"id": expected[4], "status": "PendingCommit", "targetPublishMode": "Immediate"}
+        with patch("sys.stdout", new=io.StringIO()), patch.dict(os.environ, {"MS_CLIENT": "fixture", "MS_SECRET": "fixture", "MS_TENANT": "fixture"}), patch("sys.argv", ["commit", "--submit-for-review"]), patch("urllib.request.urlopen", return_value=io.BytesIO(json.dumps({"access_token": "fixture"}).encode())), patch.object(commit, "request", side_effect=[app, draft]) as api, patch.object(commit, "verify_staged", side_effect=SystemExit("Staged MSIX SHA256 mismatch")):
+            with self.assertRaises(SystemExit):
+                commit.main()
+            self.assertEqual(api.call_count, 2)
     def test_no_pending(self):
         self.assertTrue(may_create_draft({"pendingApplicationSubmission": None}))
     def test_preserve_pending(self):
