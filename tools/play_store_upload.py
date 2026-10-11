@@ -11,19 +11,33 @@ from google.auth.transport.requests import AuthorizedSession
 package = "com.yahwehword.words"
 
 
-def append_draft(track, code, name, notes=None):
+def append_release(track, code, name, notes, status):
     result = copy.deepcopy(track)
-    releases = result.setdefault("releases", [])
-    if any(r.get("status") == "draft" for r in releases):
-        raise ValueError("Existing draft preserved; stop before upload")
-    releases.append({"name": name, "status": "draft", "versionCodes": [str(code)], "releaseNotes": notes or []})
+    releases = result.get("releases", [])
+    if any(r.get("status") in {"draft", "inProgress", "halted"} for r in releases):
+        raise ValueError("Existing draft or active release preserved; stop before upload")
+    release = {"name": name, "status": status, "versionCodes": [str(code)], "releaseNotes": notes}
+    if status == "completed":
+        if track.get("track") != "internal":
+            raise ValueError("Direct publication is restricted to the internal track")
+        result["releases"] = [release]
+    else:
+        result.setdefault("releases", []).append(release)
     return result
+
+
+def append_draft(track, code, name, notes=None):
+    """Backward-compatible helper used by existing release-guard tests."""
+    return append_release(track, code, name, notes or [], "draft")
 
 
 def main():
     track_name, file = sys.argv[1:]
     if track_name not in {"internal", "alpha", "beta"}:
         raise SystemExit("Only test tracks are allowed")
+    release_status = os.environ.get("RELEASE_STATUS", "draft")
+    if release_status not in {"draft", "completed"} or (release_status == "completed" and track_name != "internal"):
+        raise SystemExit("Only draft releases or an explicitly authorized internal release are supported")
     creds = service_account.Credentials.from_service_account_info(
         json.loads(os.environ["PLAY_SERVICE_ACCOUNT_JSON"]),
         scopes=["https://www.googleapis.com/auth/androidpublisher"])
@@ -45,7 +59,7 @@ def main():
     try:
         track_url = base + "/" + edit + "/tracks/" + track_name
         track = read(session.get(track_url, timeout=30))
-        append_draft(track, 0, "preflight")  # Refuse any existing draft before upload.
+        append_release(track, 0, "preflight", [], release_status)  # Refuse existing draft/active release before upload.
         recovery_code = os.environ.get("PLAY_REUSE_VERSION_CODE")
         uploaded = None
         if recovery_code:
@@ -62,18 +76,33 @@ def main():
         if recovery_code and str(uploaded["versionCode"]) != recovery_code:
             raise SystemExit("Recovery package version code mismatch")
         code = uploaded["versionCode"]
+        library = read(session.get(base + "/" + edit + "/bundles", timeout=30))
+        existing_codes = [int(b["versionCode"]) for b in library.get("bundles", []) if int(b["versionCode"]) != int(code)]
+        if existing_codes and int(code) <= max(existing_codes):
+            raise SystemExit("AAB version code must exceed every previously uploaded bundle")
         digest = hashlib.file_digest(Path(file).open("rb"), "sha256").hexdigest()
         if uploaded.get("sha256", "").lower() != digest:
             raise SystemExit("Uploaded bundle SHA-256 mismatch or unavailable")
         print(json.dumps({"package": package, "versionCode": code, "sha256": digest,
             "sourceSha": os.environ.get("PACKAGE_SOURCE_SHA", os.environ.get("GITHUB_SHA")), "bundleAccepted": True}))
         name = Path("pubspec.yaml").read_text(encoding="utf-8").split("\nversion:", 1)[1].splitlines()[0].strip().split("+")[0]
-        read(session.put(track_url, json=append_draft(track, code, name, json.loads(Path("docs/store-notes-1.7.17.json").read_text(encoding="utf-8"))), timeout=30))
+        notes_path = Path("docs/store-notes-" + name + ".json")
+        if not notes_path.is_file():
+            raise SystemExit("Localized store notes missing for app version " + name)
+        notes = json.loads(notes_path.read_text(encoding="utf-8"))
+        if not {"en-US", "zh-CN", "zh-TW"}.issubset({item.get("language") for item in notes}):
+            raise SystemExit("Release notes must include en-US, zh-CN and zh-TW")
+        read(session.put(track_url, json=append_release(track, code, name, notes, release_status), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
-        # Never retry with this flag removed, even when the server rejects it.
-        read(session.post(base + "/" + edit + ":commit", params={"changesNotSentForReview": "true", "changesInReviewBehavior": "ERROR_IF_IN_REVIEW"}, timeout=60))
+        params = {"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"}
+        if release_status == "draft":
+            params["changesNotSentForReview"] = "true"
+        else:
+            params["changesNotSentForReview"] = "false"
+        read(session.post(base + "/" + edit + ":commit", params=params, timeout=60))
         committed = True
-        print("Draft saved without sending review; existing releases preserved. Not published.")
+        print(json.dumps({"track": track_name, "releaseStatus": release_status, "versionCode": code,
+            "draftOnly": release_status == "draft", "internalTrackPublicationRequested": release_status == "completed"}))
     finally:
         if not committed:
             primary_failed = sys.exc_info()[0] is not None
