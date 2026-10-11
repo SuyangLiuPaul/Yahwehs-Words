@@ -343,7 +343,11 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                   'Inspect storage (no download)'),
               content: SizedBox(
                   width: 640,
-                  child: SingleChildScrollView(child: SelectableText(text))),
+                  child: SingleChildScrollView(
+                      child: Semantics(
+                          label: text,
+                          excludeSemantics: true,
+                          child: SelectableText(text)))),
               actions: [
                 TextButton(
                     onPressed: _service.pendingCount > 0
@@ -369,8 +373,15 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                     child: Text(uiStrings['songsRecheckStorage']?[locale] ??
                         'Recheck saved audio (no download)')),
                 TextButton(
-                    onPressed: () =>
-                        Clipboard.setData(ClipboardData(text: text)),
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: text));
+                      if (ctx.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(locale.startsWith('zh')
+                                ? '已复制诊断报告'
+                                : 'Diagnostic report copied')));
+                      }
+                    },
                     child: Text(uiStrings['copy']?[locale] ?? 'Copy')),
                 TextButton(
                     onPressed: () => Navigator.of(ctx).pop(),
