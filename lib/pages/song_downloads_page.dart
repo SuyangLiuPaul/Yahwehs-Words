@@ -375,7 +375,7 @@ class _SongDownloadsPageState extends State<SongDownloadsPage> {
                 TextButton(
                     onPressed: () async {
                       await Clipboard.setData(ClipboardData(text: text));
-                      if (ctx.mounted) {
+                      if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(locale.startsWith('zh')
                                 ? '已复制诊断报告'
