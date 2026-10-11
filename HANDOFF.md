@@ -1,3 +1,7 @@
+## October 11 — 1.7.21 web/APK preparation
+
+Latest source and Chinese Genesis display correction are prepared for owner-authorized dev/prod and signed APK delivery. See docs/delivery-1.7.21-2026-10-11.md for gates and limits. Submitted store 1.7.17 packages remain intact; no 1.7.21 store submission is authorized by this website/APK task.
+
 ## 2026-10-10 — Consistent footnote numbers
 
 Inline and note-card circled numbers now share 55% of the local scripture font size and w600; explanation text remains85%. Sword comparison markers use the same rule without reducing the tooltip hit area. See docs/footnote-number-parity-2026-10-10.md for checks, today’s feature comparison and delivery evidence. Maintenance1.7.16 only; no native/tag update.
