@@ -6305,6 +6305,9 @@ class _MiniReaderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final settings = context.watch<AppSettings>();
+    // Use the formal localized spelling in the compact desktop/scroll
+    // header too; `book` remains the frozen corpus key for navigation.
+    final displayBook = bookNameForDisplay(book, locale, version);
     // 2026-05-24 (v1.3.32): platform-aware backdrop tuning so the
     // top band reads as intentional chrome on every host:
     //   * iOS / macOS / web (CanvasKit) — BackdropFilter blur for
@@ -6365,8 +6368,8 @@ class _MiniReaderHeader extends StatelessWidget {
             Expanded(
               child: Text(
                 MediaQuery.of(context).size.width < 390
-                    ? '${shortBookName(book, locale, version)} $chapter'
-                    : '$book $chapter',
+                    ? '${shortBookName(displayBook, locale, version)} $chapter'
+                    : '$displayBook $chapter',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: bookStyle,
