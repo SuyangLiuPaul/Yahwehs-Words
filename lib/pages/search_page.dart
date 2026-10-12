@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'package:flutter/material.dart';
 import '../utils/search_testament_scope.dart';
 import '../widgets/search_options_bar.dart';
@@ -950,7 +951,7 @@ class _SearchPageState extends State<SearchPage> {
           .replaceAll('\n', ' ')
           .replaceAll(_kMultiSpaceRe, ' ')
           .trim();
-      lines.add('${v.book} ${v.chapter}:${v.verseLabel}  $clean');
+      lines.add('${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}  $clean');
     }
     final blob = lines.join('\n');
     await ClipboardHelper.copyWithFeedback(
@@ -1657,7 +1658,7 @@ class _SearchPageState extends State<SearchPage> {
                   items.add(
                     PopupMenuItem<String>(
                       value: book,
-                      child: Text('$book ($count)',
+                      child: Text('${display_names.bookNameForDisplay(book, settings.locale, context.read<MainProvider>().currentVersion)} ($count)',
                           style: Theme.of(context).textTheme.bodyMedium),
                     ),
                   );
@@ -1810,8 +1811,8 @@ class _SearchPageState extends State<SearchPage> {
               SearchBookChart(
                 counts: bookCounts,
                 locale: settings.locale,
-                scope: filterBook != null ? searchBookScopeLabel(filterBook!, settings.locale) : (!searchAll ? Provider.of<MainProvider>(context, listen: false).currentBook : null),
-                bookLabel: (book) => book,
+                scope: filterBook != null ? searchBookScopeLabel(filterBook!, settings.locale) : (!searchAll ? display_names.bookNameForDisplay(Provider.of<MainProvider>(context, listen: false).currentBook ?? '', settings.locale, Provider.of<MainProvider>(context, listen: false).currentVersion) : null),
+                bookLabel: (book) => display_names.bookNameForDisplay(book, settings.locale, context.read<MainProvider>().currentVersion),
               ),
             if (_results.isNotEmpty)
               Padding(
@@ -1839,7 +1840,7 @@ class _SearchPageState extends State<SearchPage> {
                                           CrossAxisAlignment.start,
                                       children: bookCounts.entries
                                           .map((e) => Text(
-                                              '${e.key} (${e.value})',
+                                              '${display_names.bookNameForDisplay(e.key, settings.locale, context.read<MainProvider>().currentVersion)} (${e.value})',
                                               style: TextStyle(
                                                   fontSize:
                                                       settings.fontSize)))
@@ -1875,7 +1876,7 @@ class _SearchPageState extends State<SearchPage> {
                                       '{count}', _results.length.toString())
                                   .replaceAll('{query}',
                                       _textEditingController.text.trim())
-                              : '${(uiStrings['searchResultCount']?[settings.locale] ?? 'Total {count} matches, grouped by book:').replaceAll('{count}', _results.length.toString())} ${bookCounts.entries.take(3).map((e) => '${e.key}(${e.value})').join(settings.locale == 'en' ? ', ' : '，')}${bookCounts.length > 3 ? '...' : ''}${bookCounts.length > 3 ? '\n${uiStrings['viewMoreBooksHint']?[settings.locale] ?? ''}' : ''}',
+                              : '${(uiStrings['searchResultCount']?[settings.locale] ?? 'Total {count} matches, grouped by book:').replaceAll('{count}', _results.length.toString())} ${bookCounts.entries.take(3).map((e) => '${display_names.bookNameForDisplay(e.key, settings.locale, context.read<MainProvider>().currentVersion)}(${e.value})').join(settings.locale == 'en' ? ', ' : '，')}${bookCounts.length > 3 ? '...' : ''}${bookCounts.length > 3 ? '\n${uiStrings['viewMoreBooksHint']?[settings.locale] ?? ''}' : ''}',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -1980,7 +1981,7 @@ class _SearchPageState extends State<SearchPage> {
                             // v1.3.94: long-press to copy this verse.
                             onLongPress: () => _copyVerseLine(
                                 context,
-                                '${verse.book} ${verse.chapter}:'
+                                '${display_names.bookNameForDisplay(verse.book)} ${verse.chapter}:'
                                     '${verse.verseLabel}',
                                 verse.text),
                             // v1.3.95: unified result layout — reference on
@@ -1995,7 +1996,7 @@ class _SearchPageState extends State<SearchPage> {
                             // defect as one that narrowed in silence.
                             title: Text(
                               fuzzyLabelledReference(
-                                '${verse.book} ${verse.chapter}:'
+                                '${display_names.bookNameForDisplay(verse.book)} ${verse.chapter}:'
                                     '${verse.verseLabel}',
                                 query: _textEditingController.text,
                                 scriptureText: verse.text,

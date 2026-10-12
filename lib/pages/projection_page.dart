@@ -176,6 +176,8 @@
 /// forty verses on the wall has not moved anybody's study.
 library;
 
+import '../utils/version_mapper.dart' as display_names;
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -1418,7 +1420,7 @@ class _ProjectionPageState extends State<ProjectionPage> {
   String _referenceFor(List<Verse> verses) {
     if (verses.isEmpty) return '';
     final first = verses.first;
-    final head = '${first.book} ${first.chapter}:${first.verseLabel}';
+    final head = '${display_names.bookNameForDisplay(first.book)} ${first.chapter}:${first.verseLabel}';
     return verses.length == 1 ? head : '$head–${verses.last.verseLabel}';
   }
 

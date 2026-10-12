@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'dart:async';
 import 'dart:ui';
 
@@ -976,7 +977,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
       case 'withRef':
         return sorted
             .map((v) =>
-                '[${v.book} ${v.chapter}:${v.verseLabel}] ${sanitizeForCopy(v.text, stripParentheticals: strip)}')
+                '[${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}] ${sanitizeForCopy(v.text, stripParentheticals: strip)}')
             .join('\n');
       case 'devotional':
         // 2026-05-17 (v1.2.48): join with a single space, not '\n'.
@@ -987,13 +988,13 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
         final versesText =
             sorted.map((v) => sanitizeForCopy(v.text, stripParentheticals: strip)).join(' ');
         final range = formatVerseRangeLabels(sorted);
-        return '$versesText\n(${first.book} ${first.chapter}:$range)';
+        return '$versesText\n(${display_names.bookNameForDisplay(first.book)} ${first.chapter}:$range)';
       case 'plain':
       default:
         final body = sorted
             .map((v) => '${v.verseLabel} ${sanitizeForCopy(v.text, stripParentheticals: strip)}')
             .join('\n');
-        return '${first.book} ${first.chapter}\n$body';
+        return '${display_names.bookNameForDisplay(first.book)} ${first.chapter}\n$body';
     }
   }
 
@@ -1197,7 +1198,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     await VerseCardSheet.show(
       context,
       reference:
-          '${first.book} ${first.chapter}:${formatVerseRangeLabels(verses)}',
+          '${display_names.bookNameForDisplay(first.book)} ${first.chapter}:${formatVerseRangeLabels(verses)}',
       body: verses
           .map((v) => sanitizeForCopy(v.text,
               stripParentheticals:
@@ -3367,8 +3368,8 @@ void _showAiExplainSheet({
   var verseText = buf.toString().trim();
   if (verseText.length > 3500) verseText = '${verseText.substring(0, 3500)}…';
   final refLabel = verseEnd > verseStart
-      ? '${first.book} ${first.chapter}:$verseStart-$verseEnd'
-      : '${first.book} ${first.chapter}:$verseStart';
+      ? '${display_names.bookNameForDisplay(first.book)} ${first.chapter}:$verseStart-$verseEnd'
+      : '${display_names.bookNameForDisplay(first.book)} ${first.chapter}:$verseStart';
 
   showModalBottomSheet<void>(
     // useSafeArea: without it Flutter wraps the sheet in
@@ -4172,7 +4173,7 @@ void _showChapterSermonsSheet({
       builder: (_, scrollController) => _PreloadedSermonsSheetBody(
         sermons: sermons,
         locale: locale,
-        title: '$book $chapter',
+        title: '${display_names.bookNameForDisplay(book, locale, context.read<MainProvider>().currentVersion)} $chapter',
         scrollController: scrollController,
       ),
     ),
@@ -4710,18 +4711,18 @@ void showNoteEditor({
   // Reference label: single verse → "Genesis 1:16"; range → "Genesis 1:16-18".
   String ref;
   if (verses.length == 1) {
-    ref = '${firstVerse.book} ${firstVerse.chapter}:${firstVerse.verseLabel}';
+    ref = '${display_names.bookNameForDisplay(firstVerse.book)} ${firstVerse.chapter}:${firstVerse.verseLabel}';
   } else {
     final last = verses.last;
     final sameChapter = last.book == firstVerse.book && last.chapter == firstVerse.chapter;
     if (sameChapter) {
-      ref = '${firstVerse.book} ${firstVerse.chapter}:'
+      ref = '${display_names.bookNameForDisplay(firstVerse.book)} ${firstVerse.chapter}:'
           '${firstVerse.verseLabel}-${last.verseLabel}';
     } else {
       // Cross-chapter range (rare but possible if user multi-selected
       // across a chapter break). Show start + end with full labels.
-      ref = '${firstVerse.book} ${firstVerse.chapter}:${firstVerse.verseLabel} – '
-          '${last.book} ${last.chapter}:${last.verseLabel}';
+      ref = '${display_names.bookNameForDisplay(firstVerse.book)} ${firstVerse.chapter}:${firstVerse.verseLabel} – '
+          '${display_names.bookNameForDisplay(last.book)} ${last.chapter}:${last.verseLabel}';
     }
   }
   // [verse] is used by several downstream operations (scroll
@@ -6514,8 +6515,8 @@ class _ChapterPreview extends StatelessWidget {
           ? (uiStrings['endOfBible']?[settings.locale] ??
               (isZh ? '已到尽头' : 'End of Bible'))
           : (isZh
-              ? '当前版本没有 $book $chapter 章。\n请切换到包含此章节的版本（如 CUVS-YHWH / CNV）。'
-              : '$book $chapter not available in the current version.\nSwitch to a full-canon version (e.g. CUVS-YHWH / CNV / KJV).');
+              ? '当前版本没有 ${display_names.bookNameForDisplay(book, settings.locale, mainProvider.currentVersion)} $chapter 章。\n请切换到包含此章节的版本（如 CUVS-YHWH / CNV）。'
+              : '${display_names.bookNameForDisplay(book, settings.locale, mainProvider.currentVersion)} $chapter not available in the current version.\nSwitch to a full-canon version (e.g. CUVS-YHWH / CNV / KJV).');
       return ColoredBox(
         color: scheme.surface,
         child: Center(
@@ -7387,7 +7388,7 @@ class _FloatingHeader extends StatelessWidget {
                         final foldBookName = readerHeaderFoldsBookName(
                           available: rowBox.maxWidth,
                           fullBookWidth: headerLabelWidth(
-                              '$book $chapter', pillStyle,
+                              '$displayBook $chapter', pillStyle,
                               scaler: scaler),
                           versionWidth: headerLabelWidth(
                               narrowBibleVersionLabel(version),

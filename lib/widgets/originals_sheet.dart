@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'dart:async' show unawaited;
 
 import 'package:flutter/gestures.dart';
@@ -904,7 +905,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     final v = _displayedVerse;
     if (entry == null || v == null || _aiChunks.isEmpty) return '';
     final ref =
-        '${v.book} ${v.chapter}:${v.verseLabel} · ${entry.lemma} (${entry.number})';
+        '${display_names.bookNameForDisplay(v.book, widget.locale, widget.currentVersion)} ${v.chapter}:${v.verseLabel} · ${entry.lemma} (${entry.number})';
     final buf = StringBuffer()
       ..writeln(ref)
       ..writeln();
@@ -1254,7 +1255,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
   }
 
   Widget _buildVerseBlock(_VerseOriginals vo, ColorScheme scheme) {
-    final ref = '${vo.verse.book} ${vo.verse.chapter}:${vo.verse.verse}';
+    final ref = '${display_names.bookNameForDisplay(vo.verse.book, widget.locale, widget.currentVersion)} ${vo.verse.chapter}:${vo.verse.verse}';
     final isHebrew = (vo.words ?? const []).isNotEmpty &&
         vo.words!.first.strongs.startsWith('H');
     // Round 56 (continued — Aramaic highlight): English book name for
@@ -2173,7 +2174,7 @@ class _OriginalsSheetState extends State<OriginalsSheet> {
     if (entry == null || v == null) {
       return const SizedBox.shrink();
     }
-    final ref = '${v.book} ${v.chapter}:${v.verseLabel}';
+    final ref = '${display_names.bookNameForDisplay(v.book, widget.locale, widget.currentVersion)} ${v.chapter}:${v.verseLabel}';
     final hasChunks = _aiForStrongs == entry.number && _aiChunks.isNotEmpty;
     final hasError = _aiForStrongs == entry.number && _aiError != null;
 

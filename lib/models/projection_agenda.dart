@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 // The order of service: what goes on the wall, in the order it is
 // needed, prepared before anyone is in the room.
 //
@@ -70,8 +71,8 @@ class AgendaItem {
   String get label {
     if (kind == AgendaKind.blank) return note.isEmpty ? '—' : note;
     final ref = count > 1
-        ? '$book $chapter:$verse–${verse + count - 1}'
-        : '$book $chapter:$verse';
+        ? '${display_names.bookNameForDisplay(book)} $chapter:$verse–${verse + count - 1}'
+        : '${display_names.bookNameForDisplay(book)} $chapter:$verse';
     return note.isEmpty ? ref : '$ref · $note';
   }
 

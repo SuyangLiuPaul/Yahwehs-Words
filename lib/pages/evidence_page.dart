@@ -19,7 +19,7 @@ import 'package:yahwehs_words/services/bible_evidence_service.dart';
 import 'package:yahwehs_words/utils/ai_markdown.dart' show parseAiMarkdown;
 import 'package:yahwehs_words/utils/jump_to_reference.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart' show localizedReferenceLabel;
+import 'package:yahwehs_words/utils/version_mapper.dart' show localizedReferenceLabel, localeAwareBookName;
 import 'package:yahwehs_words/widgets/confidence_badge.dart';
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
@@ -190,6 +190,8 @@ class _EvidencePageState extends State<EvidencePage> {
     final isWide = MediaQuery.of(context).size.width >= 720;
     final maxW = isWide ? 1100.0 : double.infinity;
     final crossAxisCount = isWide ? 2 : 1;
+    final displayBook = widget.filterBook == null ? null : localeAwareBookName(
+        widget.filterBook!, locale, context.read<MainProvider>().currentVersion);
 
     final filtered = _filtered(locale);
     final categories = _all.map((e) => e.category).toSet().toList()
@@ -200,9 +202,8 @@ class _EvidencePageState extends State<EvidencePage> {
         leading: const LocalizedBackButton(),
         title: Text(
           widget.filterBook != null
-              ? (uiStrings['evidenceForBook']?[locale] ?? 'Evidence — ')
-                      .replaceAll('{book}', widget.filterBook!) +
-                  widget.filterBook!
+              ? (uiStrings['evidenceForBook']?[locale] ?? 'Evidence — {book}')
+                      .replaceAll('{book}', displayBook!)
               : (uiStrings['bibleEvidence']?[locale] ?? 'Bible Evidence'),
         ),
         actions: [
@@ -231,7 +232,7 @@ class _EvidencePageState extends State<EvidencePage> {
                       _ScopeBanner(
                         scope: _scope,
                         wasFallback: _scopeWasFallback,
-                        book: widget.filterBook,
+                        book: displayBook,
                         chapter: widget.filterChapter,
                         locale: locale,
                         count: _all.length,

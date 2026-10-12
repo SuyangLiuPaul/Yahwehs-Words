@@ -49,10 +49,14 @@ String localeAwareBookName(String englishBook, String locale,
 /// Corrects formal presentation for names whose frozen bundle key differs
 /// from the requested display spelling. Keep [translateBookName] unchanged:
 /// navigation and verse lookup still need the legacy Genesis key.
-String bookNameForDisplay(String book, String locale, String currentVersion) {
+String bookNameForDisplay(String book,
+    [String? locale, String? currentVersion]) {
   final english = zhToEn(book) ?? book;
   if (english == 'Genesis' && book != 'Genesis') {
-    return localeAwareBookName(english, locale, currentVersion);
+    // Pure clipboard/report formatters have no UI context. In that case
+    // preserve the source edition's script rather than translating its label.
+    final displayLocale = locale ?? (book.startsWith('創') ? 'zh-Hant' : 'zh-Hans');
+    return localeAwareBookName(english, displayLocale, currentVersion);
   }
   return book;
 }

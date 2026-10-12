@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import '../widgets/verse_share_layout_controls.dart';
 import '../widgets/settings_utility_theme.dart';
 import '../widgets/diagnosis_tile.dart';
@@ -105,7 +106,7 @@ String getDevotionalFormattedText(
     i++;
   }
 
-  final ref = '$book $chapter:${ranges.join(',')}';
+  final ref = '${display_names.bookNameForDisplay(book)} $chapter:${ranges.join(',')}';
   // 2026-05-17 (v1.2.48): devotional mode flows all verse text as
   // one continuous paragraph — user explicitly wants "all together,
   // not one verse per line". 灵修 / 抄经 style: text reads as a
@@ -764,7 +765,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                     SizedBox(height: 12 * s),
                     Text(
                       currentBook != null && currentChapter != null
-                          ? '$currentBook $currentChapter'
+                          ? '${display_names.bookNameForDisplay(currentBook, settings.locale, mainProvider.currentVersion)} $currentChapter'
                           : uiStrings['noVersesAvailable']?[settings.locale] ??
                               'No verses available',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -807,7 +808,7 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                       ...verseSamples.map((v) {
                         final label = v['verseLabel'] as String;
                         final ref =
-                            '${currentBook ?? ''} $currentChapter:$label';
+                            '${display_names.bookNameForDisplay(currentBook!, settings.locale, mainProvider.currentVersion)} $currentChapter:$label';
                         // 2026-05-19 (v1.2.58): switch the preview's
                         // ad-hoc regex pipeline to the shared
                         // `sanitizeForCopy` helper so the preview
@@ -2846,11 +2847,11 @@ class _ProjectorCard extends StatelessWidget {
                       builder: (context, box) => ProjectionStage(
                             verses: previewVerses,
                             reference: previewVerses.length > 1
-                                ? '${previewVerses.first.book} '
+                                ? '${display_names.bookNameForDisplay(previewVerses.first.book, locale, mainProvider.currentVersion)} '
                                     '${previewVerses.first.chapter}:'
                                     '${previewVerses.first.verseLabel}–'
                                     '${previewVerses.last.verseLabel}'
-                                : '${previewVerses.first.book} '
+                                : '${display_names.bookNameForDisplay(previewVerses.first.book, locale, mainProvider.currentVersion)} '
                                     '${previewVerses.first.chapter}:'
                                     '${previewVerses.first.verseLabel}',
                             versionCode: mainProvider.currentVersion,
