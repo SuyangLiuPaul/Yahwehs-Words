@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 from windows_store_guard import may_create_draft
 from windows_store_upload import verify_package, package_payload, confirm_saved_package
-from play_store_upload import append_draft
+from play_store_upload import append_draft, normalize_play_release_notes
 
 SPEC = "version: 1.7.17\nmsix_config:\n  identity_name: Test.App\n  publisher: CN=TEST\n"
 
@@ -199,6 +199,26 @@ class MicrosoftRequestTests(unittest.TestCase):
         self.assertIsNone(posts[0].args[2].value)
 
 class PlayIsolationTests(unittest.TestCase):
+    def test_play_release_notes_normalize_repo_locale_map(self):
+        notes = normalize_play_release_notes({
+            "en-us": " English ", "zh-hans": "简体中文", "zh-hant": "繁體中文"})
+        self.assertEqual(notes, [
+            {"language": "en-US", "text": "English"},
+            {"language": "zh-CN", "text": "简体中文"},
+            {"language": "zh-TW", "text": "繁體中文"},
+        ])
+
+    def test_play_release_notes_accept_api_records_and_reject_missing_locale(self):
+        notes = normalize_play_release_notes([
+            {"language": "zh-TW", "text": "繁體"},
+            {"language": "en-US", "text": "English"},
+            {"language": "zh-CN", "text": "简体"},
+        ])
+        self.assertEqual([note["language"] for note in notes],
+                         ["en-US", "zh-CN", "zh-TW"])
+        with self.assertRaisesRegex(ValueError, "missing languages"):
+            normalize_play_release_notes({"en-us": "English"})
+
     def test_workflows_serialize_play_edits(self):
         from pathlib import Path
         root = Path(__file__).parent.parent
@@ -209,7 +229,7 @@ class PlayIsolationTests(unittest.TestCase):
     def test_commit_never_sends_or_cancels_review(self):
         from pathlib import Path
         text = (Path(__file__).parent / 'play_store_upload.py').read_text(encoding='utf-8')
-        self.assertIn('"changesNotSentForReview": "true"', text)
+        self.assertIn('params["changesNotSentForReview"] = "true"', text)
         self.assertIn('"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"', text)
 
 if __name__ == "__main__":
