@@ -26,6 +26,17 @@ void main() {
   );
 
   group('a row', () {
+    test('formal Genesis label keeps the saved agenda book unchanged', () {
+      for (final entry in const {'创世纪': '创世记', '創世紀': '創世記'}.entries) {
+        final item = AgendaItem(kind: AgendaKind.passage,
+            book: entry.key, chapter: 1, verse: 1, count: 2);
+        expect(item.label, '${entry.value} 1:1–2');
+        expect(item.book, entry.key);
+        expect(item.toJson()['book'], entry.key);
+        expect(AgendaItem.fromJson(item.toJson()), item);
+      }
+    });
+
     test('labels a range with its real end, not a count', () {
       expect(passage.label, '以赛亚书 53:4–6');
       expect(

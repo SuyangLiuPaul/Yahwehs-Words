@@ -22,6 +22,8 @@
 /// (clipboard / web download).
 library;
 
+import '../utils/version_mapper.dart' as display_names;
+
 import 'dart:convert';
 
 import 'package:yahwehs_words/constants/app_version.dart';
@@ -189,7 +191,7 @@ class ExportService {
 
   static String _formatRef(String id) {
     final p = _parseId(id);
-    return '${p.book} ${p.chapter}:${p.verseLabel}';
+    return '${display_names.bookNameForDisplay(p.book)} ${p.chapter}:${p.verseLabel}';
   }
 
   static int _bookOrder(String englishBook) {

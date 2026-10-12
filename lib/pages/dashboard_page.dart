@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'song_downloads_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yahwehs_words/services/release_registry.dart';
@@ -902,7 +903,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 leading: Icon(Icons.bookmark_rounded,
                     size: 20, color: scheme.primary),
                 title: Text(
-                  '${v.book} ${v.chapter}:${v.verseLabel}',
+                  '${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}',
                   style: TextStyle(
                       fontFamily: settings.fontFamily,
                       fontFamilyFallback: kCjkFontFallback,
@@ -1810,7 +1811,7 @@ class _DailyVerseCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '— ${verse.book} ${verse.chapter}:${verse.verseLabel}',
+                            '— ${display_names.bookNameForDisplay(verse.book)} ${verse.chapter}:${verse.verseLabel}',
                             style: TextStyle(
                               fontFamily: fontFamily,
                               fontSize:
@@ -2196,10 +2197,10 @@ class _ContinueReadingHero extends StatelessWidget {
     // rather than the other way round.
     final positionCandidates = hasPosition
         ? <String>[
-            if (menuLabel != null) '$book $chapter  ·  $menuLabel',
-            if (shortLabel != null) '$book $chapter  ·  $shortLabel',
+            if (menuLabel != null) '${display_names.bookNameForDisplay(book ?? '', locale, currentVersion)} $chapter  ·  $menuLabel',
+            if (shortLabel != null) '${display_names.bookNameForDisplay(book ?? '', locale, currentVersion)} $chapter  ·  $shortLabel',
             if (shortLabel != null) '$shortBook $chapter  ·  $shortLabel',
-            '$book $chapter',
+            '${display_names.bookNameForDisplay(book ?? '', locale, currentVersion)} $chapter',
             '$shortBook $chapter',
           ]
         : <String>[

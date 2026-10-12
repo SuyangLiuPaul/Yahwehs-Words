@@ -55,4 +55,19 @@ void main() {
     expect(utf8.encode(jsonEncode(value)).length, lessThan(45000));
     expect(rows.every((row) => row['text'] == '经' * 300), true);
   });
+  test('watch formal Genesis labels leave chapter identity and text intact', () {
+    for (final entry in const {
+      'zh-Hans': ('创世纪', '创世记'),
+      'zh-Hant': ('創世紀', '創世記'),
+    }.entries) {
+      final (keyBook, labelBook) = entry.value;
+      final value = watchReadingSnapshot(book: keyBook, chapter: 1,
+          version: 'cuvs-yhwh', locale: entry.key,
+          verses: [Verse(book: keyBook, chapter: 1, verse: 1, text: 'unchanged')]);
+      expect(value['reference'], '$labelBook 1');
+      expect(value['key'], 'cuvs-yhwh|$keyBook|1');
+      expect((value['verses'] as List).single['text'], 'unchanged');
+    }
+  });
+
 }

@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'dart:async';
 // 2026-05-20 (v1.2.67): `dart:js_interop` was here, blocking
 // native compile. Replaced with a conditional-export helper —
@@ -712,7 +713,7 @@ class _LoadingPageState extends State<LoadingPage> {
                   // could clip on narrow viewports; ellipsis is
                   // the expected fallback rather than wrapping.
                   Text(
-                    '${verse.book} ${verse.chapter}:${verse.verseLabel}',
+                    '${display_names.bookNameForDisplay(verse.book)} ${verse.chapter}:${verse.verseLabel}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,

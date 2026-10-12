@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -208,7 +209,7 @@ class _HighlightsPageState extends State<HighlightsPage> {
     final buf = StringBuffer();
     for (final it in items) {
       buf.writeln(
-          '[${it.verse.book} ${it.verse.chapter}:${it.verse.verseLabel}] '
+          '[${display_names.bookNameForDisplay(it.verse.book)} ${it.verse.chapter}:${it.verse.verseLabel}] '
           '${sanitizeForSearch(it.verse.text)}');
     }
     if (!context.mounted) return;
@@ -238,7 +239,7 @@ class _HighlightsPageState extends State<HighlightsPage> {
                   if (!context.mounted) return;
                   await ClipboardHelper.shareOrCopy(
                     context,
-                    '[${it.verse.book} ${it.verse.chapter}:${it.verse.verseLabel}] '
+                    '[${display_names.bookNameForDisplay(it.verse.book)} ${it.verse.chapter}:${it.verse.verseLabel}] '
                     '${sanitizeForSearch(it.verse.text)}',
                   );
                 },
@@ -292,7 +293,7 @@ class _HighlightTile extends StatelessWidget {
         ),
       ),
       title: Text(
-        '${item.verse.book} ${item.verse.chapter}:${item.verse.verseLabel}',
+        '${display_names.bookNameForDisplay(item.verse.book)} ${item.verse.chapter}:${item.verse.verseLabel}',
         style: TextStyle(
           fontWeight: FontWeight.w700,
           color: scheme.primary,

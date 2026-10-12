@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -140,7 +141,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     lines.add('Locale: ${settings.locale}');
     lines.add('Bible version: ${mp.currentVersion}');
     if (mp.currentBook != null && mp.currentChapter != null) {
-      lines.add('Last position: ${mp.currentBook} ${mp.currentChapter}');
+      lines.add('Last position: ${display_names.bookNameForDisplay(mp.currentBook!)} ${mp.currentChapter}');
     }
     lines.add('App: Yahweh\'s Words (web)');
     return lines.join('\n');
@@ -155,7 +156,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
   /// service payload + mailto fallback body.
   String _positionLine(MainProvider mp) {
     if (mp.currentBook != null && mp.currentChapter != null) {
-      return '${mp.currentBook} ${mp.currentChapter}';
+      return '${display_names.bookNameForDisplay(mp.currentBook!)} ${mp.currentChapter}';
     }
     return '';
   }

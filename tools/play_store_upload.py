@@ -5,10 +5,44 @@ import json
 import os
 import sys
 from pathlib import Path
-from google.oauth2 import service_account
-from google.auth.transport.requests import AuthorizedSession
 
 package = "com.yahwehword.words"
+
+PLAY_NOTE_LANGUAGES = {
+    "en-us": "en-US",
+    "zh-hans": "zh-CN",
+    "zh-hant": "zh-TW",
+    "en-US": "en-US",
+    "zh-CN": "zh-CN",
+    "zh-TW": "zh-TW",
+}
+
+
+def normalize_play_release_notes(notes):
+    """Accept the repo's locale map or Play's list-of-language records."""
+    if isinstance(notes, dict):
+        source = [{"language": language, "text": text}
+                  for language, text in notes.items()]
+    elif isinstance(notes, list):
+        source = notes
+    else:
+        raise ValueError("Release notes must be a locale map or a list")
+
+    normalized = {}
+    for item in source:
+        if not isinstance(item, dict):
+            raise ValueError("Each release note must be a language record")
+        language = PLAY_NOTE_LANGUAGES.get(item.get("language"))
+        text = item.get("text")
+        if language and isinstance(text, str) and text.strip():
+            normalized[language] = text.strip()
+
+    required = ("en-US", "zh-CN", "zh-TW")
+    missing = [language for language in required if language not in normalized]
+    if missing:
+        raise ValueError("Release notes missing languages: " + ", ".join(missing))
+    return [{"language": language, "text": normalized[language]}
+            for language in required]
 
 
 def append_release(track, code, name, notes, status):
@@ -34,6 +68,9 @@ def append_draft(track, code, name, notes=None):
 
 
 def main():
+    from google.oauth2 import service_account
+    from google.auth.transport.requests import AuthorizedSession
+
     if len(sys.argv) not in {3, 4}:
         raise SystemExit("Usage: play_store_upload.py TRACK PHONE_AAB [WEAR_AAB]")
     track_name, phone_file, *wear_files = sys.argv[1:]
@@ -100,9 +137,7 @@ def main():
         notes_path = Path("docs/store-notes-" + name + ".json")
         if not notes_path.is_file():
             raise SystemExit("Localized store notes missing for app version " + name)
-        notes = json.loads(notes_path.read_text(encoding="utf-8"))
-        if not {"en-US", "zh-CN", "zh-TW"}.issubset({item.get("language") for item in notes}):
-            raise SystemExit("Release notes must include en-US, zh-CN and zh-TW")
+        notes = normalize_play_release_notes(json.loads(notes_path.read_text(encoding="utf-8")))
         read(session.put(track_url, json=append_release(track, uploaded_codes, name, notes, release_status), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
         params = {"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"}

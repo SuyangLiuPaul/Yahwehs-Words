@@ -1,3 +1,4 @@
+import '../utils/version_mapper.dart' as display_names;
 import 'package:flutter/material.dart';
 // 2026-05-24 (v1.3.7): get no longer used directly here —
 // navigateToReader encapsulates the push logic.
@@ -246,8 +247,8 @@ class _NotesTabState extends State<_NotesTab>
           final headVerse = group.verses.first;
           final note = group.text;
           final rangeLabel = group.verses.length == 1
-              ? '${headVerse.book} ${headVerse.chapter}:${headVerse.verseLabel}'
-              : '${headVerse.book} ${headVerse.chapter}:'
+              ? '${display_names.bookNameForDisplay(headVerse.book)} ${headVerse.chapter}:${headVerse.verseLabel}'
+              : '${display_names.bookNameForDisplay(headVerse.book)} ${headVerse.chapter}:'
                   '${headVerse.verseLabel}-${group.verses.last.verseLabel}';
           // 2026-05-24 (v1.2.91): pull the title from the head verse.
           // All verses in a passage note share the same title (set
@@ -492,7 +493,7 @@ class _BookmarksTab extends StatelessWidget {
           extra: null,
           onCopy: () => ClipboardHelper.copyWithFeedback(
             context,
-            '[${v.book} ${v.chapter}:${v.verseLabel}] '
+            '[${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}] '
             '${sanitizeForSearch(v.text)}',
           ),
         );
@@ -562,7 +563,7 @@ class _AnnotationTile extends StatelessWidget {
         (s) => (s.fontFamily, s.fontSize));
     final settings = context.read<AppSettings>();
     final ref = rangeLabelOverride ??
-        '${verse.book} ${verse.chapter}:${verse.verseLabel}';
+        '${display_names.bookNameForDisplay(verse.book)} ${verse.chapter}:${verse.verseLabel}';
     final preview = sanitizeForSearch(verse.text);
     // 2026-05-24 (v1.2.91): when the user typed a title, surface it
     // as the bold primary header and demote the verse ref to a
