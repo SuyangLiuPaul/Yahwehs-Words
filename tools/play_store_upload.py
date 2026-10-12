@@ -1,4 +1,4 @@
-"""Upload phone and optional Wear AABs to a guarded Play test-track release."""
+"""Upload phone and optional Wear AABs to their guarded Play form-factor tracks."""
 import copy
 import hashlib
 import json
@@ -54,7 +54,7 @@ def append_release(track, code, name, notes, status):
     release = {"name": name, "status": status,
         "versionCodes": [str(item) for item in codes], "releaseNotes": notes}
     if status == "completed":
-        if track.get("track") != "internal":
+        if track.get("track") not in {"internal", "wear:internal"}:
             raise ValueError("Direct publication is restricted to the internal track")
         result["releases"] = [release]
     else:
@@ -65,6 +65,12 @@ def append_release(track, code, name, notes, status):
 def append_draft(track, code, name, notes=None):
     """Backward-compatible helper used by existing release-guard tests."""
     return append_release(track, code, name, notes or [], "draft")
+
+
+def wear_track_name(track_name):
+    if track_name not in {"internal", "alpha", "beta"}:
+        raise ValueError("Unsupported phone test track")
+    return "wear:" + track_name
 
 
 def main():
@@ -102,6 +108,12 @@ def main():
         track_url = base + "/" + edit + "/tracks/" + track_name
         track = read(session.get(track_url, timeout=30))
         append_release(track, 0, "preflight", [], release_status)  # Refuse existing draft/active release before upload.
+        wear_track = None
+        wear_track_url = None
+        if wear_files:
+            wear_track_url = base + "/" + edit + "/tracks/" + wear_track_name(track_name)
+            wear_track = read(session.get(wear_track_url, timeout=30))
+            append_release(wear_track, 0, "preflight", [], release_status)
         library = read(session.get(base + "/" + edit + "/bundles", timeout=30))
         existing_codes = [int(b["versionCode"]) for b in library.get("bundles", [])]
         recovery_code = os.environ.get("PLAY_REUSE_VERSION_CODE")
@@ -138,7 +150,10 @@ def main():
         if not notes_path.is_file():
             raise SystemExit("Localized store notes missing for app version " + name)
         notes = normalize_play_release_notes(json.loads(notes_path.read_text(encoding="utf-8")))
-        read(session.put(track_url, json=append_release(track, uploaded_codes, name, notes, release_status), timeout=30))
+        read(session.put(track_url, json=append_release(track, uploaded_codes[0], name, notes, release_status), timeout=30))
+        if wear_files:
+            read(session.put(wear_track_url, json=append_release(
+                wear_track, uploaded_codes[1], name + " Wear", notes, release_status), timeout=30))
         read(session.post(base + "/" + edit + ":validate", timeout=30))
         params = {"changesInReviewBehavior": "ERROR_IF_IN_REVIEW"}
         if release_status == "draft":
@@ -147,7 +162,8 @@ def main():
             params["changesNotSentForReview"] = "false"
         read(session.post(base + "/" + edit + ":commit", params=params, timeout=60))
         committed = True
-        print(json.dumps({"track": track_name, "releaseStatus": release_status, "versionCodes": uploaded_codes,
+        print(json.dumps({"track": track_name, "wearTrack": "wear:" + track_name if wear_files else None,
+            "releaseStatus": release_status, "versionCodes": uploaded_codes,
             "draftOnly": release_status == "draft", "internalTrackPublicationRequested": release_status == "completed"}))
     finally:
         if not committed:

@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 from windows_store_guard import may_create_draft
 from windows_store_upload import verify_package, package_payload, confirm_saved_package
-from play_store_upload import append_draft, normalize_play_release_notes
+from play_store_upload import append_draft, normalize_play_release_notes, wear_track_name
 
 SPEC = "version: 1.7.17\nmsix_config:\n  identity_name: Test.App\n  publisher: CN=TEST\n"
 
@@ -130,6 +130,12 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(updated["releases"][0], track["releases"][0])
         self.assertEqual(len(track["releases"]), 1)
         self.assertEqual(updated["releases"][1]["status"], "draft")
+
+    def test_wear_release_uses_dedicated_form_factor_track(self):
+        self.assertEqual(wear_track_name("internal"), "wear:internal")
+        self.assertEqual(wear_track_name("alpha"), "wear:alpha")
+        with self.assertRaises(ValueError):
+            wear_track_name("production")
     def test_play_existing_draft_is_preserved(self):
         with self.assertRaises(ValueError):
             append_draft({"releases": [{"status": "draft"}]}, 17, "1.7.17")
