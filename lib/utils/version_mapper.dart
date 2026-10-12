@@ -46,6 +46,17 @@ String localeAwareBookName(String englishBook, String locale,
   return englishBook;
 }
 
+/// Corrects formal presentation for names whose frozen bundle key differs
+/// from the requested display spelling. Keep [translateBookName] unchanged:
+/// navigation and verse lookup still need the legacy Genesis key.
+String bookNameForDisplay(String book, String locale, String currentVersion) {
+  final english = zhToEn(book) ?? book;
+  if (english == 'Genesis' && book != 'Genesis') {
+    return localeAwareBookName(english, locale, currentVersion);
+  }
+  return book;
+}
+
 /// Formats a single parsed [BibleReference] as `book chapter[:verse]`
 /// with the book name localized via [localeAwareBookName]. Mirrors
 /// `BibleReference.toString()`'s chapter/verse suffix logic (including
