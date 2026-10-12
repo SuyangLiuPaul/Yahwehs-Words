@@ -87,7 +87,8 @@ import 'package:yahwehs_words/widgets/google_g_logo.dart';
 import 'package:yahwehs_words/widgets/illustration_image.dart';
 import 'package:yahwehs_words/utils/floating_toast.dart' show showFloatingToast;
 import 'package:yahwehs_words/utils/version_mapper.dart'
-    show translateBookName, toEnglish, localeAwareBookName, sameBookName;
+    show translateBookName, toEnglish, localeAwareBookName, sameBookName,
+        bookNameForDisplay;
 import 'package:yahwehs_words/widgets/highlights_sheet.dart';
 import 'package:yahwehs_words/widgets/originals_sheet.dart';
 import 'package:yahwehs_words/widgets/verse_widget.dart';
@@ -6149,10 +6150,9 @@ class _BookIllustrationGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    // Follow the reading VERSION, not the UI locale: `book` is the English
-    // canonical key, so translateBookName(book, version) yields "Genesis"
-    // for NASB/KJV, "创世记" for CUVS, "創世記" for the -tr variants.
-    final localizedBook = translateBookName(book, version);
+    // Keep the frozen corpus key for lookups, and use the UI locale for
+    // reader-facing labels.
+    final localizedBook = localeAwareBookName(book, locale, version);
     final headerTpl = uiStrings['illustrationsBookCount']?[locale] ??
         '{book} ({n})';
     final headerText = headerTpl
@@ -7235,6 +7235,9 @@ class _FloatingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<AppSettings>();
+    // Keep the canonical book key for navigation, but show its formal
+    // localized name in the floating reader header.
+    final displayBook = bookNameForDisplay(book, locale, version);
     // 2026-08-02 (v1.3.156): when the 护眼/paper reading theme is on,
     // swap the ColorScheme instance itself for a warm-tinted copy —
     // every `scheme.primary` / `scheme.onSurfaceVariant` /
@@ -7484,8 +7487,8 @@ class _FloatingHeader extends StatelessWidget {
                                 final useShort = foldBookName;
                                 return Text(
                                   useShort
-                                      ? '${shortBookName(book, locale, version)} $chapter'
-                                      : '$book $chapter',
+                                      ? '${shortBookName(displayBook, locale, version)} $chapter'
+                                      : '$displayBook $chapter',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
