@@ -111,7 +111,9 @@ android {
         // it. Fixed field widths: minor and patch each get three
         // digits, giving 1.4.207 -> 1004207. Bump the widths before
         // either field can reach 1000.
-        versionCode = flutter.versionName
+        val requestedPlayVersionCode =
+            (project.findProperty("playVersionCode") as String?)?.toIntOrNull()
+        versionCode = requestedPlayVersionCode ?: flutter.versionName
             .split(".")
             .map { it.toIntOrNull() ?: 0 }
             .let { p ->
@@ -119,10 +121,10 @@ android {
                 // when none is given; 1-9), so the SAME visible version can be
                 // rebuilt and re-uploaded. Play rejects a repeated code, and
                 // 1.7.7 had to be cut twice (owner: after the icon and theme
-                // changes "还是 1.7.7"). 1.7.7 build 1 is 10070071, above the 1007007
-                // already on Play, and every later version stays above. It must
-                // stay BELOW the Wear codes (20,001,000 + run number, see
-                // play_version_code_guard_test), which holds through 1.9.x.
+                // changes "还是 1.7.7"). The Gradle property above lets the
+                // Play workflow override this local-build default because
+                // phone and Wear share a package and Play requires every
+                // uploaded bundle code to increase globally.
                 (p.getOrElse(0) { 0 } * 1_000_000 +
                     p.getOrElse(1) { 0 } * 1_000 +
                     p.getOrElse(2) { 0 }) * 10 +

@@ -3,31 +3,19 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('Play code follows the Gradle version-name policy below Wear codes', () {
+  test('Play phone and Wear codes use monotonic disjoint ranges', () {
     final gradle = File('android/app/build.gradle.kts').readAsStringSync();
     final workflow = File('.github/workflows/play-aab.yml').readAsStringSync();
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(gradle, contains('versionCode = flutter.versionName'));
-    expect(gradle, contains('p.getOrElse(0) { 0 } * 1_000_000'));
-    expect(gradle, contains('p.getOrElse(1) { 0 } * 1_000'));
-    expect(gradle, contains('p.getOrElse(2) { 0 }'));
-    final build =
-        workflow.split('run: flutter build appbundle').last.split('\n').first;
-    expect(build, isNot(contains('--build-number=')));
-    final version = RegExp(r'^version: (\d+)\.(\d+)\.(\d+)', multiLine: true)
-        .firstMatch(pubspec)!;
-    final parts = [1, 2, 3].map((i) => int.parse(version.group(i)!)).toList();
-    expect(parts[1], lessThan(1000));
-    expect(parts[2], lessThan(1000));
-    expect(gradle, contains('* 10 +'));
-    expect(gradle, contains('flutter.versionCode.coerceIn(1, 9)'));
-    // x10 plus the build number (1 when none is given): the same visible
-    // version can be rebuilt and uploaded again.
-    final code = (parts[0] * 1000000 + parts[1] * 1000 + parts[2]) * 10 + 1;
-    final wear =
-        RegExp(r'-PwearVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
-            .firstMatch(workflow)!;
-    expect(code, greaterThan(1006032 * 10));
-    expect(code, lessThan(int.parse(wear.group(1)!)));
+    expect(gradle, contains('project.findProperty("playVersionCode")'));
+    expect(pubspec, contains('version: 1.7.21'));
+    final phone = RegExp(r'playVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
+        .firstMatch(workflow)!;
+    final wear = RegExp(r'-PwearVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
+        .firstMatch(workflow)!;
+    expect(int.parse(phone.group(1)!), greaterThan(int.parse(wear.group(1)!)));
+    expect(int.parse(wear.group(1)!), greaterThanOrEqualTo(20001000));
+    expect(workflow, contains('wear-release.aab'));
+    expect(workflow, contains('app-intl-release.aab build/wear/outputs/bundle/release/wear-release.aab'));
   });
 }
