@@ -7,8 +7,13 @@ void main() {
     final gradle = File('android/app/build.gradle.kts').readAsStringSync();
     final workflow = File('.github/workflows/play-aab.yml').readAsStringSync();
     final pubspec = File('pubspec.yaml').readAsStringSync();
+    final appVersion = File('lib/constants/app_version.dart').readAsStringSync();
     expect(gradle, contains('project.findProperty("playVersionCode")'));
-    expect(pubspec, contains('version: 1.7.21'));
+    final version = RegExp(r'^version: (\d+\.\d+\.\d+)', multiLine: true)
+        .firstMatch(pubspec)!
+        .group(1)!;
+    expect(appVersion, contains("defaultValue: '$version'"));
+    expect(appVersion, contains("? '$version' : _envAppVersion"));
     final phone = RegExp(r'playVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
         .firstMatch(workflow)!;
     final wear = RegExp(r'-PwearVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
