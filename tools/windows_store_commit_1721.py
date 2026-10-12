@@ -114,7 +114,7 @@ def verify_staged(submission):
 def update_notes(submission, headers):
     listings = submission.get("listings") or {}
     if not set(NOTES).issubset({key.lower() for key in listings}):
-        raise SystemExit("Draft does not contain all three expected listing locales; no commit")
+        raise SystemExit("Draft listing locales observed: " + ",".join(sorted(key.lower() for key in listings)) + "; no commit")
     for key, listing in listings.items():
         locale = key.lower()
         if locale in NOTES:
