@@ -1,0 +1,29 @@
+name: Submit verified 1.7.24 Microsoft draft
+on:
+  workflow_dispatch:
+    inputs:
+      submit_for_review:
+        description: Commit only the exact validated 1.7.24 draft for certification; immediate publication remains configured
+        type: boolean
+        default: false
+concurrency:
+  group: store-microsoft-submission-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Verify exact staged package and optionally submit
+        env:
+          MS_TENANT: ${{ secrets.MS_STORE_TENANT_ID }}
+          MS_CLIENT: ${{ secrets.MS_STORE_CLIENT_ID }}
+          MS_SECRET: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+        run: |
+          python tools/test_windows_store_commit_1724.py
+          python tools/windows_store_commit_1724.py ${{ inputs.submit_for_review && '--submit-for-review' || '' }}
