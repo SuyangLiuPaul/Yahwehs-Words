@@ -132,11 +132,12 @@ jobs:
         # STORE_BUILD switches off the GitHub self-updater
         # (UpdateService.isSupported): a Play install is updated by Play,
         # and downloading an APK from elsewhere is a Play policy violation.
-        # The shared Play package's historical Wear codes are already above
-        # the semantic phone range. Allocate monotonic, disjoint ranges using
-        # this workflow's run number: Wear 20,001,000+N; phone 20,002,000+N.
-        # This keeps both form factors updatable without colliding.
-        run: ORG_GRADLE_PROJECT_playVersionCode=$((20002000 + GITHUB_RUN_NUMBER)) flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
+        # The phone and Wear variants share one Play application ID, so their
+        # version codes must be globally unique and increase past every prior
+        # bundle, including Wear. Reserve adjacent values per run: phone is
+        # 20,003,000 + 2N; Wear is phone + 1. The two-step run stride means
+        # the next workflow's phone code remains above the previous Wear code.
+        run: ORG_GRADLE_PROJECT_playVersionCode=$((20003000 + 2 * GITHUB_RUN_NUMBER)) flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
 
       - name: Check the bundle carries the Play application id
         run: |
@@ -167,7 +168,7 @@ jobs:
 
       - name: Build Wear OS AAB (same Play package and upload key)
         working-directory: android
-        run: ./gradlew :wear:bundleRelease -PwearVersionCode=$((20001000 + GITHUB_RUN_NUMBER))
+        run: ./gradlew :wear:bundleRelease -PwearVersionCode=$((20003001 + 2 * GITHUB_RUN_NUMBER))
 
       - name: Verify Wear form factor and package
         run: |
