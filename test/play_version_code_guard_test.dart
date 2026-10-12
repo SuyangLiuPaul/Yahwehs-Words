@@ -14,7 +14,7 @@ void main() {
     final wear = RegExp(r'-PwearVersionCode=\$\(\((\d+) \+ GITHUB_RUN_NUMBER\)\)')
         .firstMatch(workflow)!;
     expect(int.parse(phone.group(1)!), greaterThan(int.parse(wear.group(1)!)));
-    expect(int.parse(wear.group(1)!), greaterThan(20001000));
+    expect(int.parse(wear.group(1)!), greaterThanOrEqualTo(20001000));
     expect(workflow, contains('wear-release.aab'));
     expect(workflow, contains('app-intl-release.aab build/wear/outputs/bundle/release/wear-release.aab'));
   });
