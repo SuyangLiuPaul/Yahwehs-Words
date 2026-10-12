@@ -13,7 +13,8 @@ import 'package:yahwehs_words/constants/book_groups.dart'
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/utils/responsive.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart' show toEnglish;
+import 'package:yahwehs_words/utils/version_mapper.dart'
+    show bookNameForDisplay, toEnglish;
 import 'package:yahwehs_words/utils/font_catalog.dart' show kCjkFontFallback;
 
 class BookChapterPicker extends StatefulWidget {
@@ -621,7 +622,8 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '$book $chapter',
+                        '${bookNameForDisplay(book, settings.locale, mainProvider.currentVersion)} '
+                        '$chapter',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -862,7 +864,8 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
                 textColor: scheme.primary,
                 iconColor: scheme.primary,
                 title: Text(
-                  book.title,
+                  bookNameForDisplay(
+                      book.title, settings.locale, mainProvider.currentVersion),
                   style: TextStyle(
                       fontSize: settings.fontSize,
                       fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
@@ -1095,7 +1098,8 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          book.title,
+                          bookNameForDisplay(book.title, settings.locale,
+                              mainProvider.currentVersion),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           softWrap: false,
@@ -1217,7 +1221,8 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        book.title,
+                        bookNameForDisplay(book.title, settings.locale,
+                            mainProvider.currentVersion),
                         style: TextStyle(
                           fontSize: settings.fontSize * 1.1,
                           fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
@@ -1287,7 +1292,8 @@ class _BookChapterPickerState extends State<BookChapterPicker> {
     final fgColor = isCurrent ? scheme.onPrimary : scheme.onSurface;
     final shortName = _shortBookTitle(book.title);
     return Tooltip(
-      message: book.title,
+      message: bookNameForDisplay(book.title, settings.locale,
+          context.read<MainProvider>().currentVersion),
       child: Material(
         color: bgColor,
         borderRadius: BorderRadius.circular(8),

@@ -141,6 +141,26 @@ void main() {
     expect(find.byIcon(Icons.grid_view_rounded), findsOneWidget);
   });
 
+  testWidgets('legacy Genesis bundle title uses the formal display spelling',
+      (tester) async {
+    const verse = Verse(book: '创世纪', chapter: 1, verse: 1, text: '起初');
+    final mp = MainProvider()
+      ..setVerses(const [verse])
+      ..setBooks([
+        Book(
+          title: '创世纪',
+          chapters: [Chapter(title: 1, verses: const [verse])],
+        ),
+      ])
+      ..setCurrentChapter(book: '创世纪', chapter: 1);
+    await _pump(tester, mp);
+
+    expect(find.text('创世记'), findsOneWidget);
+    expect(find.text('创世纪'), findsNothing);
+    // The UI correction must not rewrite the frozen navigation key.
+    expect(mp.currentBook, '创世纪');
+  });
+
   testWidgets('all 39 Old Testament books have a row, under the five '
       'divisions', (tester) async {
     final settings = await _pump(tester, _wholeBible());
