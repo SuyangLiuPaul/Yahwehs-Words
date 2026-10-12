@@ -128,13 +128,15 @@ jobs:
           sed -i '/REQUEST_INSTALL_PACKAGES/d' android/app/src/main/AndroidManifest.xml
           ! grep -rq REQUEST_INSTALL_PACKAGES android/app/src
 
-      - name: Build AAB (release, intl flavor)
+      - name: Build phone AAB (release, intl flavor)
         # STORE_BUILD switches off the GitHub self-updater
         # (UpdateService.isSupported): a Play install is updated by Play,
         # and downloading an APK from elsewhere is a Play policy violation.
-        # Phone versionCode = (major*1,000,000 + minor*1,000 + patch)*10
-        # plus build-number 1..9 (default 1); keep below the Wear range.
-        run: flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
+        # The shared Play package's historical Wear codes are already above
+        # the semantic phone range. Allocate monotonic, disjoint ranges using
+        # this workflow's run number: Wear 20,001,000+N; phone 20,002,000+N.
+        # This keeps both form factors updatable without colliding.
+        run: ORG_GRADLE_PROJECT_playVersionCode=$((20002000 + GITHUB_RUN_NUMBER)) flutter build appbundle --release --flavor intl --dart-define=STORE_BUILD=true
 
       - name: Check the bundle carries the Play application id
         run: |
@@ -191,5 +193,5 @@ jobs:
         env:
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           RELEASE_STATUS: ${{ inputs.release_status }}
-        run: python tools/play_store_upload.py '${{ inputs.track }}' build/app/outputs/bundle/intlRelease/app-intl-release.aab
+        run: python tools/play_store_upload.py '${{ inputs.track }}' build/app/outputs/bundle/intlRelease/app-intl-release.aab build/wear/outputs/bundle/release/wear-release.aab
 
