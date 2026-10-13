@@ -1,3 +1,7 @@
+## October 14 — 1.7.24 current store checkpoint
+
+Both Microsoft products are publicly available as 1.7.24.0 x64. All four Apple public 1.7.24/1070024 versions and all four external TestFlight reviews are Waiting for Review, with automatic release/notification. The owner explicitly authorized replacing the three older pending Apple reviews; latest submissions must now be preserved. Play phone/internal and Words Wear/internal are 1.7.24; Sword Alpha1.7.24 is in review. Words Alpha1.7.24 is a prepared draft awaiting the owner decision about restarting its existing review. Production qualification remains disabled at12 testers/9 continuous days, requiring12/14. Connected Mi Pad has SwordPlay1.7.24 and WordsPlay1.7.4; confirm its Play account and use the existing internal opt-in link. Details, exact IDs, evidence and reusable API/console steps: docs/delivery-1.7.24-2026-10-12.md, newest October14 checkpoint. No new binaries, tags or web deployments today.
+
 ## October 11 — 1.7.21 web / APK delivered
 
 Latest source is merged into GitHub main. Canonical dev/prod deployment completed; 6 Words websites serve 1.7.21 with full startup-resource hashes verified. Signed direct phone APK is published and verified; Words Wear APK is also verified. See docs/delivery-1.7.21-2026-10-11.md for exact source, CI, download links and verification limits. Existing store 1.7.17 submissions remain separate and unchanged.
