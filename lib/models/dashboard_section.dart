@@ -30,8 +30,12 @@ enum DashboardSection {
   /// resolves on first paint).
   dailyVerse,
 
-  // 2026-05-21 (v1.2.69): todayReading removed along with reading
-  // plan feature.
+  /// Reading plan: today's passages, or an invitation to pick a plan.
+  /// 2026-10-15: back at the owner's request (the v1.2.69 `todayReading`
+  /// section was removed with the old feature; this is a new section
+  /// with a new name, so no persisted preference of that era can be
+  /// misread). Default on.
+  readingPlan,
 
   /// Three-column counts row: bookmarks / notes / highlights. Default
   /// on.
@@ -68,6 +72,7 @@ const List<DashboardSection> defaultDashboardOrder = <DashboardSection>[
   DashboardSection.readBible,
   DashboardSection.resumeSermon,
   DashboardSection.dailyVerse,
+  DashboardSection.readingPlan,
   DashboardSection.counts,
   DashboardSection.recentBookmarks,
   DashboardSection.featured,
@@ -83,6 +88,7 @@ const Map<DashboardSection, bool> defaultVisibility =
   DashboardSection.readBible: true,
   DashboardSection.resumeSermon: true,
   DashboardSection.dailyVerse: true,
+  DashboardSection.readingPlan: true,
   DashboardSection.counts: true,
   DashboardSection.recentBookmarks: true,
   DashboardSection.featured: true,
@@ -203,6 +209,8 @@ extension DashboardSectionLabel on DashboardSection {
         return 'Resume Sermon';
       case DashboardSection.dailyVerse:
         return 'Verse of the Day';
+      case DashboardSection.readingPlan:
+        return 'Reading plan';
       case DashboardSection.counts:
         return 'Bookmarks / Notes / Highlights';
       case DashboardSection.recentBookmarks:
@@ -224,6 +232,8 @@ extension DashboardSectionLabel on DashboardSection {
         return 'Pick up where you left off in the last sermon you opened.';
       case DashboardSection.dailyVerse:
         return 'One curated verse per day, the same on every device.';
+      case DashboardSection.readingPlan:
+        return "Today's passages and your progress, or a way to pick a plan.";
       case DashboardSection.counts:
         return 'Counts of bookmarks, notes, and highlights.';
       case DashboardSection.recentBookmarks:

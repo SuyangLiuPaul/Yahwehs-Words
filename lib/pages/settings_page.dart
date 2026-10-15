@@ -2985,6 +2985,8 @@ class _DashboardSectionsCardState extends State<_DashboardSectionsCard> {
         return Icons.headset_mic_rounded;
       case DashboardSection.dailyVerse:
         return Icons.format_quote_rounded;
+      case DashboardSection.readingPlan:
+        return Icons.event_available_outlined;
       case DashboardSection.counts:
         return Icons.dashboard_outlined;
       case DashboardSection.recentBookmarks:

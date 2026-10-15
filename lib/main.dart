@@ -4,6 +4,7 @@ import 'package:yahwehs_words/services/watch_reading_snapshot.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
 import 'package:yahwehs_words/pages/bible_principles_page.dart';
 import 'package:yahwehs_words/pages/study_principles_page.dart';
+import 'package:yahwehs_words/pages/reading_plan_page.dart';
 import 'package:yahwehs_words/pages/study_promises_page.dart';
 import 'package:yahwehs_words/pages/study_testaments_page.dart';
 import 'package:yahwehs_words/pages/world_history_wheel_page.dart';
@@ -320,6 +321,13 @@ final List<GetPage> _registeredGetPages = [
   GetPage(
     name: '/study/principles',
     page: () => const StudyPrinciplesPage(),
+    transition: Transition.rightToLeft,
+    transitionDuration: AppMotion.standard,
+    curve: AppMotion.enter,
+  ),
+  GetPage(
+    name: '/reading-plan',
+    page: () => const ReadingPlanPage(),
     transition: Transition.rightToLeft,
     transitionDuration: AppMotion.standard,
     curve: AppMotion.enter,

@@ -169,6 +169,7 @@ accept the parameter that would make it so (documented per-row).
 | `StudyPrinciplesPage` | `/study/principles` | none | — | yes — linked from Home: principles of the Bible, Bible first |
 | `StudyPromisesPage` | `/study/promises` | none | — | yes — linked from Home: promises of God, fulfilled or not, Bible first |
 | `StudyTestamentsPage` | `/study/testaments` | none | — | yes — linked from Home: New Testament quotations of, allusions to and types from the Old Testament |
+| `ReadingPlanPage` | `/reading-plan` | none | — | yes — reading plans (2026-10-15): pick a plan, today's passages, tick days; progress is per profile and synced |
 | `WorldHistoryWheelPage` | `/world-history-wheel` | none | — | yes — namespaced Sword world-history data |
 | `MisconceptionsPage` | `/misconceptions` | none | — | yes for the list; **individual entries are not a separate page today** (§2) — out of scope until/unless a `MisconceptionDetailPage` is split out |
 | `FeedbackPage` | `/feedback` | none | — | yes |
