@@ -25,8 +25,11 @@ void main() {
         .map((row) => Song.fromJson((row as Map).cast<String, dynamic>()))
         .toList();
     final downloadable = songs.where((s) => s.hasPlayableAudio).toList();
-    expect(songs.length, 630);
-    expect(downloadable.length, 575);
+    // The catalogue is refreshed daily from yswords-data, so the exact
+    // counts move; what this test guards is the shape of the plan.
+    expect(songs.length, greaterThan(600));
+    expect(downloadable.length, greaterThan(500));
+    expect(downloadable.length, lessThan(songs.length));
     final allSaved = downloadable.map((s) => s.id).toSet();
     final twelveSaved = downloadable.take(12).map((s) => s.id).toSet();
     final complete = SongDownloadBatchPlan(songs,
@@ -37,7 +40,7 @@ void main() {
         statusOf: (_) => const SongDownloadStatus());
     expect(complete.pending, isEmpty);
     expect(complete.emptyMessageKey, 'songsDownloadsAlreadySaved');
-    expect(separate.pending.length, 563);
+    expect(separate.pending.length, downloadable.length - 12);
     expect(separate.pending.any((s) => twelveSaved.contains(s.id)), false);
   });
   test('575 saved and 55 link-only songs do not mean no downloads', () {
