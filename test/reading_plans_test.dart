@@ -285,12 +285,12 @@ void main() {
   });
 
   group('daily reminder', () {
-    final plan = ReadingPlan('p', 5, [
+    final plan = ReadingPlan('bible-1y', 5, [
       for (var d = 1; d <= 5; d++) [ReadingSegment('Genesis', d, d)],
     ]);
     ReadingPlanProgress prog(Set<int> done, {String start = '2026-01-01'}) =>
         ReadingPlanProgress(
-            planId: 'p', start: DateTime.parse(start), done: done, updatedMs: 1);
+            planId: 'bible-1y', start: DateTime.parse(start), done: done, updatedMs: 1);
     ({String title, String body})? at(ReadingPlanProgress? p, DateTime fire,
             {String locale = 'en', ReadingPlan? pl}) =>
         readingPlanReminder(
@@ -298,14 +298,14 @@ void main() {
 
     test('says the day and its passages, in the reader\'s language', () {
       final r = at(prog({}), DateTime(2026, 1, 3, 8))!;
-      expect(r.title, 'Reading plan · Day 3 of 5');
+      expect(r.title, '${rpText('readingPlan_bible-1y_name', 'en')} · Day 3 of 5');
       expect(r.body, 'Genesis 3');
       expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hans')!.title,
-          '读经计划 · 第 3 天，共 5 天');
+          '${rpText('readingPlan_bible-1y_name', 'zh-Hans')} · 第 3 天，共 5 天');
       expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hans')!.body,
           '创世记 3');
       expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hant')!.title,
-          '讀經計劃 · 第 3 天，共 5 天');
+          '${rpText('readingPlan_bible-1y_name', 'zh-Hant')} · 第 3 天，共 5 天');
     });
 
     test('each future day carries its own day, not day 1 for ever', () {
@@ -330,8 +330,21 @@ void main() {
 
     test('after the calendar ends, the first unread day is offered', () {
       final r = at(prog({1, 2, 4}), DateTime(2026, 2, 1, 8))!;
-      expect(r.title, 'Reading plan · Day 3 of 5');
+      expect(r.title, '${rpText('readingPlan_bible-1y_name', 'en')} · Day 3 of 5');
       expect(r.body, 'Genesis 3');
+    });
+
+    test("the reader's own words replace the title; a paused plan is silent", () {
+      final p = ReadingPlanProgress(
+          planId: 'bible-1y',
+          start: DateTime(2026, 1, 1),
+          done: const {},
+          message: 'Time to read!',
+          updatedMs: 1);
+      expect(at(p, DateTime(2026, 1, 3, 8))!.title, 'Time to read!');
+      expect(at(p, DateTime(2026, 1, 3, 8))!.body, 'Genesis 3');
+      expect(at(p.copyWith(pausedOn: DateTime(2026, 1, 2)), DateTime(2026, 1, 3, 8)),
+          isNull);
     });
 
     test('verse windows and several passages read naturally', () {
@@ -370,41 +383,102 @@ void main() {
   });
 
   group('sync merge', () {
-    String blob(String id, String start, Set<int> done, int ts) =>
+    String blob(String id, String start, Set<int> done, int ts,
+            {String? entryId, bool deleted = false}) =>
         ReadingPlanProgress(
+                id: entryId,
                 planId: id,
                 start: DateTime.parse(start),
                 done: done,
-                updatedMs: ts)
+                updatedMs: ts,
+                deleted: deleted)
             .toJson();
 
-    ReadingPlanProgress m(Object? a, Object? b) =>
-        ReadingPlanProgress.tryParse(mergeReadingPlanBlobs(a, b))!;
+    /// The doc a list of entries makes (what the service stores).
+    String doc(List<String> entries, {int cleared = 0, int ts = 1}) =>
+        jsonEncode({
+          'v': 2,
+          'updatedMs': ts,
+          if (cleared > 0) 'clearedMs': cleared,
+          'plans': entries.map(jsonDecode).toList(),
+        });
 
-    test('same plan, same start: union of days, either order', () {
+    List<ReadingPlanProgress> merged(Object? a, Object? b) =>
+        ReadingPlansDoc.parse(mergeReadingPlanBlobs(a, b))!.active;
+
+    test('the same plan on two devices: union of days, either order', () {
       final a = blob('bible-1y', '2026-01-01', {1, 2, 3}, 100);
       final b = blob('bible-1y', '2026-01-01', {3, 4}, 200);
-      expect(m(a, b).done, {1, 2, 3, 4});
-      expect(m(b, a).done, {1, 2, 3, 4});
-      expect(m(a, b).updatedMs, 200);
+      expect(merged(a, b).single.done, {1, 2, 3, 4});
+      expect(merged(b, a).single.done, {1, 2, 3, 4});
+      expect(merged(a, b).single.updatedMs, 200);
     });
 
-    test('different plan or start: the newer choice wins outright', () {
+    test('two different plans are both kept; neither replaces the other', () {
       final old = blob('bible-1y', '2026-01-01', {1, 2}, 100);
       final fresh = blob('mcheyne', '2026-02-01', {1}, 200);
-      expect(m(old, fresh).planId, 'mcheyne');
-      expect(m(fresh, old).planId, 'mcheyne');
-      final sameIdLaterStart = blob('bible-1y', '2026-05-01', {}, 300);
-      expect(m(old, sameIdLaterStart).start, DateTime(2026, 5, 1));
+      final out = merged(doc([old]), doc([fresh]));
+      expect(out.map((e) => e.planId).toSet(), {'bible-1y', 'mcheyne'});
+      expect(merged(doc([fresh]), doc([old])).length, 2);
     });
 
-    test('a stop beats an older plan, and a newer plan beats an older stop', () {
+    test('a changed start date or reminder follows the newer edit; reads still union', () {
+      final a = ReadingPlanProgress(
+          id: 'x', planId: 'bible-1y', start: DateTime(2026, 1, 1),
+          done: const {1, 2}, updatedMs: 100, remind: false);
+      final b = ReadingPlanProgress(
+          id: 'x', planId: 'bible-1y', start: DateTime(2026, 5, 1),
+          done: const {2, 3}, updatedMs: 300, remind: true, hour: 7, minute: 30,
+          message: 'Go');
+      for (final out in [
+        merged(doc([a.toJson()]), doc([b.toJson()])).single,
+        merged(doc([b.toJson()]), doc([a.toJson()])).single,
+      ]) {
+        expect(out.start, DateTime(2026, 5, 1));
+        expect((out.remind, out.hour, out.minute, out.message), (true, 7, 30, 'Go'));
+        expect(out.done, {1, 2, 3});
+      }
+    });
+
+    test('a removed plan is not brought back by a stale copy', () {
+      final live = blob('bible-1y', '2026-01-01', {1}, 100, entryId: 'p1');
+      final gone = blob('bible-1y', '2026-01-01', {1}, 200, entryId: 'p1', deleted: true);
+      expect(merged(doc([live]), doc([gone])), isEmpty);
+      expect(merged(doc([gone]), doc([live])), isEmpty);
+      // ...but a copy edited AFTER the removal wins (a deliberate re-add on the same id).
+      final back = blob('bible-1y', '2026-01-01', {1, 2}, 300, entryId: 'p1');
+      expect(merged(doc([gone]), doc([back])).single.done, {1, 2});
+    });
+
+    test('a 1.7.26/27 stop beats an older plan; a newer plan beats an older stop', () {
       final plan = blob('bible-1y', '2026-01-01', {1}, 100);
-      final stop = stoppedReadingPlanBlob(200);
-      expect(mergeReadingPlanBlobs(plan, stop), stop);
-      expect(mergeReadingPlanBlobs(stop, plan), stop);
+      final stop = jsonEncode({'planId': '', 'updatedMs': 200});
+      expect(merged(plan, stop), isEmpty);
+      expect(merged(stop, plan), isEmpty);
       final newer = blob('bible-1y', '2026-01-01', {1}, 300);
-      expect(mergeReadingPlanBlobs(stop, newer), newer);
+      expect(merged(stop, newer).single.done, {1});
+    });
+
+    test('a 1.7.26/27 single-plan blob upgrades to one reminding entry', () {
+      final legacy = jsonEncode({
+        'planId': 'mcheyne',
+        'start': '2026-01-01',
+        'done': [1, 2],
+        'updatedMs': 5,
+      });
+      final e = ReadingPlansDoc.parse(legacy)!.active.single;
+      expect(e.planId, 'mcheyne');
+      expect(e.done, {1, 2});
+      expect(e.remind, isTrue);
+      // two devices that both upgrade it agree on the id, so they merge
+      final other = ReadingPlansDoc.parse(jsonEncode({
+        'planId': 'mcheyne',
+        'start': '2026-01-01',
+        'done': [2, 3],
+        'updatedMs': 6,
+      }))!.active.single;
+      expect(other.id, e.id);
+      expect(merged(legacy, doc([other.toJson()])).single.done, {1, 2, 3});
     });
 
     test('one side missing keeps the other; both missing is null', () {
@@ -412,7 +486,22 @@ void main() {
       expect(mergeReadingPlanBlobs(a, null), a);
       expect(mergeReadingPlanBlobs(null, a), a);
       expect(mergeReadingPlanBlobs(null, null), isNull);
-      expect(ReadingPlanProgress.tryParse(stoppedReadingPlanBlob(1)), isNull);
+      expect(ReadingPlansDoc.parse(jsonEncode({'planId': '', 'updatedMs': 1}))!.active,
+          isEmpty);
+    });
+
+    test('merging is the same from either side', () {
+      final x = doc([
+        blob('bible-1y', '2026-01-01', {1, 2}, 100, entryId: 'a'),
+        blob('mcheyne', '2026-01-05', {4}, 150, entryId: 'b'),
+      ]);
+      final y = doc([
+        blob('bible-1y', '2026-01-01', {2, 9}, 120, entryId: 'a'),
+        blob('nt-90', '2026-02-01', {}, 90, entryId: 'c', deleted: true),
+      ], cleared: 0, ts: 2);
+      expect(mergeReadingPlanBlobs(x, y), mergeReadingPlanBlobs(y, x));
+      expect(mergeReadingPlanBlobs(mergeReadingPlanBlobs(x, y), y),
+          mergeReadingPlanBlobs(x, y));
     });
   });
 
@@ -462,7 +551,7 @@ void main() {
 
     test('the home card shows today as read once it is ticked', () {
       final src = File('lib/pages/dashboard_page.dart').readAsStringSync();
-      expect(src, contains("progress!.done.contains(today)"));
+      expect(src, contains("e.done.contains(today)"));
       expect(src, contains("readingPlan_marked"));
     });
 
@@ -570,22 +659,31 @@ void main() {
       expect(find.textContaining('麥琴'), findsWidgets);
     });
 
-    testWidgets('start a plan, see today, tick it, stop it', (tester) async {
+    testWidgets('start a plan from its sheet, see today, tick it, remove it',
+        (tester) async {
       final svc = await mount(tester, height: 3000);
       await tester.tap(find.byKey(const ValueKey('plan.start.bible-1y')));
       await tester.pumpAndSettle();
-      expect(svc.progress?.planId, 'bible-1y');
-      expect(find.byKey(const ValueKey('plan.today')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('start.confirm')));
+      await tester.pumpAndSettle();
+      final e = svc.entries.single;
+      expect(e.planId, 'bible-1y');
+      expect(e.start, DateTime(2026, 1, 3));
+      expect(find.byKey(ValueKey('plan.today.${e.id}')), findsOneWidget);
       expect(find.textContaining('Genesis 1-3'), findsWidgets);
       await tester.tap(find.text('Mark as read'));
       await tester.pumpAndSettle();
-      expect(svc.progress!.done, {1});
+      expect(svc.entries.single.done, {1});
       expect(find.text('Read'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('plan.stop')));
+      // a running plan is not offered again
+      expect(find.byKey(const ValueKey('plan.card.bible-1y')), findsNothing);
+      await tester.tap(find.byKey(ValueKey('plan.manage.${e.id}')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('OK'));
+      await tester.tap(find.byKey(const ValueKey('manage.remove')));
       await tester.pumpAndSettle();
-      expect(svc.progress, isNull);
+      await tester.tap(find.byKey(const ValueKey('manage.removeConfirm')));
+      await tester.pumpAndSettle();
+      expect(svc.entries, isEmpty);
       expect(find.byKey(const ValueKey('plan.card.bible-1y')), findsOneWidget);
     });
 
@@ -597,7 +695,8 @@ void main() {
               updatedMs: 5)
           .toJson();
       await mount(tester, locale: 'zh-Hans', stored: stored);
-      expect(find.byKey(const ValueKey('plan.today')), findsOneWidget);
+      final id = ReadingPlanProgress.legacyId('mcheyne', DateTime(2026, 1, 1));
+      expect(find.byKey(ValueKey('plan.today.$id')), findsOneWidget);
       expect(find.textContaining('第 3 天，共 365 天'), findsWidgets);
       expect(find.textContaining('创世记 3'), findsWidgets);
       // behind: day 2 unread

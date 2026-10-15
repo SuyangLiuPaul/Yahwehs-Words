@@ -174,6 +174,7 @@ class _DashboardPageState extends State<DashboardPage> {
     AdminOverlay.site().then((site) {
       if (mounted) setState(() => _adminSite = site);
     });
+    ReadingPlanService.instance.addListener(_onReadingPlansChanged);
     ReadingPlanService.instance.reload();
     _loadDailyVerse();
     _loadDailyEvidence();
@@ -460,8 +461,15 @@ class _DashboardPageState extends State<DashboardPage> {
     });
   }
 
+  /// The Reading plan section exists only while a plan does, so the page
+  /// has to notice one being started or removed.
+  void _onReadingPlansChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    ReadingPlanService.instance.removeListener(_onReadingPlansChanged);
     ProfileService.instance.removeListener(_onProfileOrAuthChanged);
     CloudAuthService.instance.removeListener(_onProfileOrAuthChanged);
     RealtimeDbSyncService.instance.removeListener(_onProfileOrAuthChanged);
@@ -847,6 +855,11 @@ class _DashboardPageState extends State<DashboardPage> {
         );
 
       case DashboardSection.readingPlan:
+        // Nothing to show until a plan has been started (and no dead gap).
+        if (ReadingPlanService.instance.progressLoaded &&
+            ReadingPlanService.instance.entries.isEmpty) {
+          return null;
+        }
         return _ReadingPlanCard(locale: locale, settings: settings, scheme: scheme, headerSize: headerSize);
 
       case DashboardSection.counts:
@@ -2492,9 +2505,10 @@ class _ResumeSermonHero extends StatelessWidget {
 }
 
 
-/// Home card for reading plans: today's passages for the reader's active
-/// plan, or an invitation to pick one. Quiet until the stored progress
-/// has been read (no flash of the invitation for someone mid-plan).
+/// Home card for reading plans: each plan the reader is running, with
+/// today's passages. Absent altogether until a plan has been started —
+/// the Reading plans tile in Quick links is the way in, and a card that
+/// only said "choose a plan" was noise for everyone who had not.
 class _ReadingPlanCard extends StatelessWidget {
   final String locale;
   final AppSettings settings;
@@ -2507,6 +2521,8 @@ class _ReadingPlanCard extends StatelessWidget {
     required this.headerSize,
   });
 
+  static const int _shown = 3;
+
   @override
   Widget build(BuildContext context) {
     final svc = ReadingPlanService.instance;
@@ -2514,17 +2530,23 @@ class _ReadingPlanCard extends StatelessWidget {
       animation: svc,
       builder: (context, _) {
         if (!svc.progressLoaded) return const SizedBox.shrink();
-        final progress = svc.progress;
+        final entries = svc.entries;
+        if (entries.isEmpty) return const SizedBox.shrink();
         return FutureBuilder<List<ReadingPlan>>(
           future: svc.plans(),
           builder: (context, snap) {
-            final plan = progress == null
-                ? null
-                : snap.data?.where((p) => p.id == progress.planId).firstOrNull;
-            final status = (plan == null || progress == null)
-                ? null
-                : readingPlanStatus(progress, plan.days, svc.now);
-            final today = status?.today;
+            final plans = snap.data;
+            if (plans == null) return const SizedBox.shrink();
+            final byId = {for (final p in plans) p.id: p};
+            final rows = <Widget>[];
+            for (final e in entries) {
+              final plan = byId[e.planId];
+              if (plan == null) continue;
+              if (rows.length >= _shown) break;
+              rows.add(_row(context, svc, e, plan));
+            }
+            if (rows.isEmpty) return const SizedBox.shrink();
+            final more = entries.length - rows.length;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -2544,40 +2566,20 @@ class _ReadingPlanCard extends StatelessWidget {
                         routeName: kReadingPlanPath),
                     child: Padding(
                       padding: const EdgeInsets.all(14),
-                      child: plan == null || status == null || today == null
-                          ? Row(children: [
-                              Expanded(
-                                  child: Text(rpText(
-                                      'readingPlan_pickTitle', locale))),
-                              const Icon(Icons.chevron_right),
-                            ])
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    rpText('readingPlan_${plan.id}_name',
-                                        locale),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall),
-                                const SizedBox(height: 2),
-                                Text(status.finished
-                                    ? rpText('readingPlan_finished', locale)
-                                    : '${rpText('readingPlan_dayOf', locale, {
-                                        'day': today,
-                                        'days': plan.days
-                                      })}'
-                                        '${progress!.done.contains(today) ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}'),
-                                if (!status.finished) ...[
-                                  const SizedBox(height: 6),
-                                  Text(plan
-                                      .day(today)
-                                      .map((s) =>
-                                          readingSegmentLabel(s, locale))
-                                      .join(' · ')),
-                                ],
-                              ],
-                            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = 0; i < rows.length; i++) ...[
+                            if (i > 0) const Divider(height: 20),
+                            rows[i],
+                          ],
+                          if (more > 0) ...[
+                            const SizedBox(height: 8),
+                            Text(rpText('readingPlan_moreCount', locale,
+                                {'n': more})),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -2586,6 +2588,38 @@ class _ReadingPlanCard extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  Widget _row(BuildContext context, ReadingPlanService svc,
+      ReadingPlanProgress e, ReadingPlan plan) {
+    final status = readingPlanStatus(e, plan.days, svc.now);
+    final today = status.today;
+    final marked = e.done.contains(today);
+    return Column(
+      key: ValueKey('home.readingPlan.${e.id}'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(rpText('readingPlan_${plan.id}_name', locale),
+            style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: 2),
+        Text(status.finished
+            ? rpText('readingPlan_finished', locale)
+            : status.paused
+                ? rpText('readingPlan_paused', locale)
+                : '${rpText('readingPlan_dayOf', locale, {
+                        'day': today,
+                        'days': plan.days
+                      })}'
+                    '${marked ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}'),
+        if (!status.finished && !status.paused) ...[
+          const SizedBox(height: 6),
+          Text(plan
+              .day(today)
+              .map((s) => readingSegmentLabel(s, locale))
+              .join(' · ')),
+        ],
+      ],
     );
   }
 }

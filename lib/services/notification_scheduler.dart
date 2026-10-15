@@ -30,6 +30,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/notification_category.dart';
 import 'package:yahwehs_words/services/notification_content.dart';
+import 'package:yahwehs_words/services/reading_plan_service.dart';
 
 final FlutterLocalNotificationsPlugin _plugin =
     FlutterLocalNotificationsPlugin();
@@ -135,57 +136,72 @@ const _kDetails = NotificationDetails(
 /// Compute the next instance of [prefs.hour]:[prefs.minute] that
 /// matches one of the weekdays in prefs.weekdays. Always returns a
 /// future TZDateTime.
-tz.TZDateTime _nextFire(NotificationCategoryPrefs prefs) {
+tz.TZDateTime _nextFire(NotificationCategoryPrefs prefs) =>
+    _nextFireAt(prefs.hour, prefs.minute, prefs.weekdays);
+
+tz.TZDateTime _nextFireAt(int hour, int minute, Set<int> weekdays) {
   final now = tz.TZDateTime.now(tz.local);
-  var candidate = tz.TZDateTime(
-      tz.local, now.year, now.month, now.day, prefs.hour, prefs.minute);
+  var candidate =
+      tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
   // Step forward at least one minute to avoid scheduling in the past.
-  while (!candidate.isAfter(now) ||
-      !prefs.weekdays.contains(candidate.weekday)) {
-    candidate = candidate.add(const Duration(days: 1));
+  while (!candidate.isAfter(now) || !weekdays.contains(candidate.weekday)) {
+    candidate = tz.TZDateTime(
+        tz.local, candidate.year, candidate.month, candidate.day + 1, hour, minute);
   }
   return candidate;
 }
 
-/// Reading-plan reminders are booked one day at a time, two weeks ahead.
+/// Reading-plan reminders are booked one day at a time, two weeks ahead,
+/// for EACH plan the reader is running (up to [kMaxReadingPlans]), at
+/// that plan's own time when it has one.
 ///
 /// The other categories repeat daily with the text they had when they
 /// were booked — acceptable for "a verse reference", wrong for "today's
 /// chapters": a repeating reminder would announce day 1's reading for
 /// ever. Each booking here carries ITS day's passages, and a day that is
-/// already read, or a plan that is finished or not chosen, books nothing.
-/// Every app open and every settings change re-books (cancelAll first),
-/// so the window slides forward and picks up progress ticked since.
+/// already read, or a plan that is finished, paused or not reminding,
+/// books nothing. Every app open, settings change and plan change
+/// re-books (cancelAll first), so the window slides forward and picks up
+/// progress ticked since.
+///
+/// Ids: 1100 + 14 * (the plan's slot) + (the day), so 1100..1211.
 Future<void> _scheduleReadingPlan(
     NotificationCategoryPrefs prefs, String locale) async {
-  var fire = _nextFire(prefs);
+  final slots = await ReadingPlanService.instance.reminderSlots();
   var booked = 0;
-  for (var i = 0; i < 14; i++) {
-    final content = await resolveReadingPlanReminder(fire, locale);
-    if (content != null) {
-      await _plugin.zonedSchedule(
-        1100 + i,
-        content.title,
-        content.body,
-        fire,
-        _kDetails,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        payload: NotificationCategoryIds.readingPlan,
-      );
-      booked++;
+  for (var k = 0; k < slots.length; k++) {
+    final slot = slots[k];
+    final hour = slot.hour ?? prefs.hour;
+    final minute = slot.hour == null ? prefs.minute : (slot.minute ?? 0);
+    var fire = _nextFireAt(hour, minute, prefs.weekdays);
+    for (var i = 0; i < 14; i++) {
+      final r = await ReadingPlanService.instance
+          .reminderForEntry(slot.entry, fire, locale);
+      if (r != null) {
+        await _plugin.zonedSchedule(
+          1100 + 14 * k + i,
+          r.title,
+          r.body,
+          fire,
+          _kDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload: NotificationCategoryIds.readingPlan,
+        );
+        booked++;
+      }
+      // The next wanted weekday, rebuilt from calendar fields rather
+      // than `add(Duration(days: 1))`, which adds 24 h and so drifts an
+      // hour across a daylight-saving change.
+      var next = tz.TZDateTime(
+          tz.local, fire.year, fire.month, fire.day + 1, hour, minute);
+      while (!prefs.weekdays.contains(next.weekday)) {
+        next = tz.TZDateTime(
+            tz.local, next.year, next.month, next.day + 1, hour, minute);
+      }
+      fire = next;
     }
-    // The next wanted weekday, rebuilt from calendar fields rather than
-    // `add(Duration(days: 1))`, which adds 24 h and so drifts an hour
-    // across a daylight-saving change.
-    var next = tz.TZDateTime(
-        tz.local, fire.year, fire.month, fire.day + 1, prefs.hour, prefs.minute);
-    while (!prefs.weekdays.contains(next.weekday)) {
-      next = tz.TZDateTime(
-          tz.local, next.year, next.month, next.day + 1, prefs.hour, prefs.minute);
-    }
-    fire = next;
   }
-  debugPrint('[scheduler] reading_plan booked $booked of 14 days');
+  debugPrint('[scheduler] reading_plan booked $booked for ${slots.length} plans');
 }
 
 Future<void> _scheduleCategory(String categoryId,
@@ -231,7 +247,7 @@ int _idForCategory(String categoryId) {
     case NotificationCategoryIds.memoryVerse:
       return 1005;
     case NotificationCategoryIds.readingPlan:
-      return 1100; // plus 0..13, one per booked day
+      return 1100; // plus 14 per plan slot and 0..13 per booked day
     default:
       return 1000 + categoryId.hashCode.abs() % 1000;
   }

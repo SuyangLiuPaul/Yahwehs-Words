@@ -9,6 +9,7 @@ import 'package:yahwehs_words/utils/jump_to_reference.dart' as jumper;
 import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
+import 'package:yahwehs_words/widgets/reading_plan_sheets.dart';
 
 const kReadingPlanPath = '/reading-plan';
 
@@ -17,7 +18,7 @@ const kReadingPlanPath = '/reading-plan';
 /// [day] and [daySegments] make the reader a [ReadingSession]: limited to
 /// that day's chapters, with a back arrow to the plan and a progress bar.
 Future<void> openReadingSegment(BuildContext context, ReadingSegment s,
-    {int? day, List<ReadingSegment>? daySegments}) async {
+    {String? entryId, int? day, List<ReadingSegment>? daySegments}) async {
   final mp = context.read<MainProvider>();
   final ref = BibleReference(
     englishBook: s.book,
@@ -29,9 +30,9 @@ Future<void> openReadingSegment(BuildContext context, ReadingSegment s,
   if (!context.mounted) return;
   final ok = await jumper.showJumpResultSnackBar(context, result);
   if (!ok || !context.mounted) return;
-  final session = day == null
+  final session = (day == null || entryId == null)
       ? null
-      : ReadingSession.forDay(day, daySegments ?? [s]);
+      : ReadingSession.forDay(entryId, day, daySegments ?? [s]);
   pushPage(HomePage(session: session), routeName: '/HomePage');
 }
 
@@ -79,166 +80,213 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
           }
           return AnimatedBuilder(
             animation: _svc,
-            builder: (context, _) =>
-                _body(context, locale, snap.data!, _svc.progress),
+            builder: (context, _) => _body(context, locale, snap.data!),
           );
         },
       ),
     );
   }
 
-  Widget _body(BuildContext context, String locale, List<ReadingPlan> plans,
-      ReadingPlanProgress? progress) {
-    final active = progress == null
-        ? null
-        : plans.where((p) => p.id == progress.planId).firstOrNull;
+  Widget _body(BuildContext context, String locale, List<ReadingPlan> plans) {
+    final entries = _svc.entries;
+    final byId = {for (final p in plans) p.id: p};
+    // Plans that are running (not yet finished) are not offered again.
+    final running = <String>{
+      for (final e in entries)
+        if (byId[e.planId] != null &&
+            !readingPlanStatus(e, byId[e.planId]!.days, _svc.now).finished)
+          e.planId,
+    };
+    final full = entries.length >= kMaxReadingPlans;
+    final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
       children: [
-        if (active != null) ..._activeSection(context, locale, active, progress!),
-        if (active == null) ...[
+        if (entries.isEmpty) ...[
           Text(rpText('readingPlan_pickTitle', locale),
-              style: Theme.of(context).textTheme.titleLarge),
+              style: theme.textTheme.titleLarge),
           const SizedBox(height: 6),
           Text(rpText('readingPlan_pickHint', locale)),
           const SizedBox(height: 12),
         ] else ...[
-          const SizedBox(height: 20),
-          Text(rpText('readingPlan_other', locale),
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(rpText('readingPlan_myPlans', locale),
+              style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+          for (final e in entries)
+            if (byId[e.planId] != null)
+              _EntryCard(
+                key: ValueKey('plan.entry.${e.id}'),
+                entry: e,
+                plan: byId[e.planId]!,
+                locale: locale,
+                svc: _svc,
+              ),
+          const SizedBox(height: 12),
+          Text(rpText('readingPlan_addPlan', locale),
+              style: theme.textTheme.titleMedium),
+          const SizedBox(height: 4),
+          Text(rpText('readingPlan_addHint', locale),
+              style: theme.textTheme.bodySmall),
           const SizedBox(height: 8),
         ],
+        if (full)
+          _Note(
+              text: rpText('readingPlan_limitReached', locale,
+                  {'n': kMaxReadingPlans})),
         for (final p in plans)
-          if (active == null || p.id != active.id)
+          if (!running.contains(p.id))
             _PlanCard(
               plan: p,
               locale: locale,
-              onStart: () => _confirmStart(context, locale, p, active != null),
+              enabled: !full,
+              onStart: () => showStartPlanSheet(context, p, locale),
             ),
         const SizedBox(height: 16),
         Text(rpText('readingPlan_source', locale),
-            style: Theme.of(context).textTheme.bodySmall),
+            style: theme.textTheme.bodySmall),
       ],
     );
   }
+}
 
-  Future<void> _confirmStart(BuildContext context, String locale,
-      ReadingPlan plan, bool replacing) async {
-    if (replacing) {
-      final ok = await _ask(context, locale, 'readingPlan_replaceConfirm');
-      if (ok != true) return;
-    }
-    await _svc.start(plan.id);
-  }
+/// One running plan: where it stands, today's passages, every day, and a
+/// button to its settings.
+class _EntryCard extends StatelessWidget {
+  final ReadingPlanProgress entry;
+  final ReadingPlan plan;
+  final String locale;
+  final ReadingPlanService svc;
+  const _EntryCard({
+    super.key,
+    required this.entry,
+    required this.plan,
+    required this.locale,
+    required this.svc,
+  });
 
-  Future<bool?> _ask(BuildContext context, String locale, String key) {
-    return showDialog<bool>(
-      context: context,
-      builder: (c) => AlertDialog(
-        content: Text(rpText(key, locale)),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(c, false),
-              child: Text(rpText('readingPlan_cancel', locale))),
-          FilledButton(
-              onPressed: () => Navigator.pop(c, true),
-              child: Text(rpText('readingPlan_confirm', locale))),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _activeSection(BuildContext context, String locale,
-      ReadingPlan plan, ReadingPlanProgress progress) {
-    final st = readingPlanStatus(progress, plan.days, _svc.now);
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final st = readingPlanStatus(entry, plan.days, svc.now);
     final today = st.today;
-    final isDone = progress.done.contains(today);
+    final isDone = entry.done.contains(today);
+    final id = entry.id;
     String two(int n) => n.toString().padLeft(2, '0');
-    final s = progress.start;
-    return [
-      Text(rpText('readingPlan_${plan.id}_name', locale),
-          style: theme.textTheme.titleLarge),
-      const SizedBox(height: 4),
-      Text(rpText('readingPlan_doneCount', locale,
-          {'done': st.doneCount, 'days': plan.days})),
-      const SizedBox(height: 8),
-      LinearProgressIndicator(
-          value: plan.days == 0 ? 0 : st.doneCount / plan.days),
-      const SizedBox(height: 16),
-      if (st.finished)
-        _Note(text: rpText('readingPlan_finished', locale))
-      else if (st.notStarted)
-        _Note(
-            text: rpText('readingPlan_notStarted', locale,
-                {'date': '${s.year}-${two(s.month)}-${two(s.day)}'}))
-      else if (st.calendarEnded)
-        _Note(
-            text: rpText('readingPlan_calendarEnded', locale,
-                {'n': plan.days - st.doneCount})),
-      if (!st.finished && st.unreadBefore > 0 && !st.notStarted)
-        _Note(
-            text: rpText('readingPlan_behind', locale,
-                {'n': st.unreadBefore, 'day': st.resumeDay ?? today})),
-      const SizedBox(height: 8),
-      _DayCard(
-        key: const ValueKey('plan.today'),
-        title: '${rpText('readingPlan_today', locale)} · '
-            '${rpText('readingPlan_dayOf', locale, {'day': today, 'days': plan.days})}',
-        segments: plan.day(today),
-        locale: locale,
-        done: isDone,
-        onOpen: (seg) => openReadingSegment(context, seg,
-            day: today, daySegments: plan.day(today)),
-        onToggle: (v) => _svc.setDone(today, v),
-      ),
-      if (st.resumeDay != null && st.resumeDay != today && !st.notStarted) ...[
-        const SizedBox(height: 8),
-        _DayCard(
-          key: const ValueKey('plan.resume'),
-          title: rpText('readingPlan_dayOf', locale,
-              {'day': st.resumeDay!, 'days': plan.days}),
-          segments: plan.day(st.resumeDay!),
-          locale: locale,
-          done: progress.done.contains(st.resumeDay!),
-          onOpen: (seg) => openReadingSegment(context, seg,
-              day: st.resumeDay!, daySegments: plan.day(st.resumeDay!)),
-          onToggle: (v) => _svc.setDone(st.resumeDay!, v),
-        ),
-      ],
-      const SizedBox(height: 12),
-      ExpansionTile(
-        key: const ValueKey('plan.allDays'),
-        tilePadding: EdgeInsets.zero,
-        title: Text(rpText('readingPlan_allDays', locale)),
-        children: [
-          for (var d = 1; d <= plan.days; d++)
-            CheckboxListTile(
-              key: ValueKey('plan.day.$d'),
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              value: progress.done.contains(d),
-              onChanged: (v) => _svc.setDone(d, v ?? false),
-              title: Text(rpText('readingPlan_dayOf', locale,
-                  {'day': d, 'days': plan.days})),
-              subtitle: Text(plan
-                  .day(d)
-                  .map((x) => readingSegmentLabel(x, locale))
-                  .join(' · ')),
+    final s = entry.start;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Expanded(
+                child: Text(rpText('readingPlan_${plan.id}_name', locale),
+                    style: theme.textTheme.titleMedium),
+              ),
+              IconButton(
+                key: ValueKey('plan.manage.$id'),
+                tooltip: rpText('readingPlan_manage', locale),
+                icon: const Icon(Icons.tune),
+                onPressed: () => showManagePlanSheet(context, id, plan),
+              ),
+            ]),
+            Text(
+              [
+                rpText('readingPlan_doneCount', locale,
+                    {'done': st.doneCount, 'days': plan.days}),
+                if (st.skippedCount > 0)
+                  rpText('readingPlan_skippedCount', locale,
+                      {'n': st.skippedCount}),
+                if (st.paused) rpText('readingPlan_paused', locale),
+              ].join(' · '),
             ),
-        ],
+            const SizedBox(height: 8),
+            LinearProgressIndicator(
+                value: plan.days == 0 ? 0 : st.doneCount / plan.days),
+            const SizedBox(height: 12),
+            if (st.finished)
+              _Note(text: rpText('readingPlan_finished', locale))
+            else if (st.notStarted)
+              _Note(
+                  text: rpText('readingPlan_notStarted', locale,
+                      {'date': '${s.year}-${two(s.month)}-${two(s.day)}'}))
+            else if (st.calendarEnded)
+              _Note(
+                  text: rpText('readingPlan_calendarEnded', locale,
+                      {'n': plan.days - st.doneCount - st.skippedCount})),
+            if (!st.finished && st.unreadBefore > 0 && !st.notStarted)
+              _Note(
+                  text: rpText('readingPlan_behind', locale,
+                      {'n': st.unreadBefore, 'day': st.resumeDay ?? today})),
+            if (!st.finished) ...[
+              const SizedBox(height: 4),
+              _DayCard(
+                key: ValueKey('plan.today.$id'),
+                title: '${rpText('readingPlan_today', locale)} · '
+                    '${rpText('readingPlan_dayOf', locale, {'day': today, 'days': plan.days})}',
+                segments: plan.day(today),
+                locale: locale,
+                done: isDone,
+                onOpen: (seg) => openReadingSegment(context, seg,
+                    entryId: id, day: today, daySegments: plan.day(today)),
+                onToggle: (v) => svc.setDone(id, today, v),
+              ),
+              if (st.resumeDay != null &&
+                  st.resumeDay != today &&
+                  !st.notStarted) ...[
+                const SizedBox(height: 8),
+                _DayCard(
+                  key: ValueKey('plan.resume.$id'),
+                  title: rpText('readingPlan_dayOf', locale,
+                      {'day': st.resumeDay!, 'days': plan.days}),
+                  segments: plan.day(st.resumeDay!),
+                  locale: locale,
+                  done: entry.done.contains(st.resumeDay!),
+                  onOpen: (seg) => openReadingSegment(context, seg,
+                      entryId: id,
+                      day: st.resumeDay!,
+                      daySegments: plan.day(st.resumeDay!)),
+                  onToggle: (v) => svc.setDone(id, st.resumeDay!, v),
+                ),
+              ],
+            ],
+            const SizedBox(height: 8),
+            ExpansionTile(
+              key: ValueKey('plan.allDays.$id'),
+              tilePadding: EdgeInsets.zero,
+              title: Text(rpText('readingPlan_allDays', locale)),
+              children: [
+                for (var d = 1; d <= plan.days; d++)
+                  CheckboxListTile(
+                    key: ValueKey('plan.day.$id.$d'),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    value: entry.done.contains(d),
+                    onChanged: (v) => svc.setDone(id, d, v ?? false),
+                    title: Text(rpText('readingPlan_dayOf', locale,
+                        {'day': d, 'days': plan.days})),
+                    subtitle: Text(plan
+                        .day(d)
+                        .map((x) => readingSegmentLabel(x, locale))
+                        .join(' · ')),
+                    secondary: IconButton(
+                      key: ValueKey('plan.openDay.$id.$d'),
+                      tooltip: rpText('readingPlan_openDay', locale),
+                      icon: const Icon(Icons.menu_book_outlined),
+                      onPressed: plan.day(d).isEmpty
+                          ? null
+                          : () => openReadingSegment(context, plan.day(d).first,
+                              entryId: id, day: d, daySegments: plan.day(d)),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
-      TextButton.icon(
-        key: const ValueKey('plan.stop'),
-        icon: const Icon(Icons.stop_circle_outlined),
-        label: Text(rpText('readingPlan_stop', locale)),
-        onPressed: () async {
-          if (await _ask(context, locale, 'readingPlan_stopConfirm') == true) {
-            await _svc.stop();
-          }
-        },
-      ),
-    ];
+    );
   }
 }
 
@@ -256,9 +304,13 @@ class _Note extends StatelessWidget {
 class _PlanCard extends StatelessWidget {
   final ReadingPlan plan;
   final String locale;
+  final bool enabled;
   final VoidCallback onStart;
   const _PlanCard(
-      {required this.plan, required this.locale, required this.onStart});
+      {required this.plan,
+      required this.locale,
+      required this.onStart,
+      this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -283,8 +335,8 @@ class _PlanCard extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: FilledButton(
                 key: ValueKey('plan.start.${plan.id}'),
-                onPressed: onStart,
-                child: Text(rpText('readingPlan_startToday', locale)),
+                onPressed: enabled ? onStart : null,
+                child: Text(rpText('readingPlan_startButton', locale)),
               ),
             ),
           ],

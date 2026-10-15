@@ -58,3 +58,44 @@ and nothing else. Genesis 1-3 is three pages.
   pager takes over.
 
 The Home page's Quick links also carry a "Reading plans" tile.
+
+
+## Several plans at once (2026-10-16)
+
+What other Bible apps do, and what was taken from them (Bible Gateway:
+own start date, pause and resume, reminders per plan; Logos and A Lamp
+Unto: catching up without guilt — slide the schedule, or leave the
+missed days behind; MyBible: a start date per plan, several plans
+together; Bible Box: finished plans kept, not lost):
+
+- **Several plans run side by side** (up to `kMaxReadingPlans` = 8). Each
+  is a `ReadingPlanProgress` with its own id, so the same plan can run
+  twice on different dates. All are stored in ONE blob under the one
+  undotted key (`ReadingPlansDoc`, format v2). The 1.7.26/27 single-plan
+  blob and its "stopped" form still parse.
+- **Start date** is chosen when a plan is started (today, tomorrow, any
+  date) and can be moved later. Days read are plan day numbers, not
+  dates, so moving it never un-reads anything.
+- **Pause / resume**: the plan's calendar stands still, no reminders;
+  resuming adds the paused days to the start date, so nothing is behind.
+- **Catch up**, two ways, never silently marking anything read:
+  *pick up where I left off* slides the schedule so the first unread day
+  is today; *skip the missed days* moves them to `skipped`, so they stop
+  counting as behind.
+- **Reminders are per plan**: on/off, its own time (else the Reading plan
+  category's), and the reader's own words as the notification title
+  (else "<plan> · Day n of N"). Several plans book separately, ids
+  1100 + 14 × slot + day. Turning a plan's reminder on also turns the
+  category on; if the notification master switch is off the sheet says so
+  and offers Settings. On the web there is one time per category, so the
+  per-plan time is hidden and everything due is sent as one notification.
+- **Home card**: absent until a plan has been started (the Reading plans
+  tile in Quick links is the way in); then one row per plan.
+- **Sync**: merged per plan id — the days read or skipped on either
+  device are kept, every other field follows the newer edit, a removed
+  plan stays removed (tombstone, forgotten after 90 days), and a
+  1.7.26/27 "stop" still beats an older plan (`clearedMs`).
+
+Not done, on purpose: choosing weekdays a plan runs on (the Reading plan
+reminder category already has weekdays for reminders), streak counters,
+sharing a plan with friends.

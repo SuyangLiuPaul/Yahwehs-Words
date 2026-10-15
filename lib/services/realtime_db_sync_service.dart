@@ -110,8 +110,10 @@ class RealtimeDbSyncService extends ChangeNotifier {
     'notesSortMode',
     // 2026-10-15: reading-plan progress, ONE undotted key holding a
     // JSON blob (see reading_plan_service.dart for why not plan.*).
-    // Merged by mergeReadingPlanBlobs: same plan + start → union of
-    // days read; otherwise the newer choice (including "stopped").
+    // 2026-10-16: holds ALL the plans a reader is running. Merged by
+    // mergeReadingPlanBlobs: per running plan, the days read on either
+    // device are kept and every other field follows the newer edit;
+    // a removed plan stays removed (tombstone).
     'readingPlan',
     // 'plan.activeId' was here through v1.3.44. Removed 2026-05-25
     // (v1.3.45) — the reading-plan feature was deleted in v1.2.69

@@ -3372,11 +3372,6 @@ const uiStrings = {
     'zh-Hant': '每天讀幾章，標記讀完，進度在你登入的裝置之間同步。',
     'en': 'Read a few chapters a day and tick them off. Progress syncs across your signed-in devices.',
   },
-  'readingPlan_start': {
-    'zh-Hans': '开始',
-    'zh-Hant': '開始',
-    'en': 'Start',
-  },
   'readingPlan_startToday': {
     'zh-Hans': '从今天开始',
     'zh-Hant': '從今天開始',
@@ -3452,21 +3447,6 @@ const uiStrings = {
     'zh-Hant': '今天',
     'en': 'Today',
   },
-  'readingPlan_stop': {
-    'zh-Hans': '停止这个计划',
-    'zh-Hant': '停止這個計劃',
-    'en': 'Stop this plan',
-  },
-  'readingPlan_stopConfirm': {
-    'zh-Hans': '停止后进度会清除。确定停止吗？',
-    'zh-Hant': '停止後進度會清除。確定停止嗎？',
-    'en': 'Stopping clears your progress. Stop the plan?',
-  },
-  'readingPlan_replaceConfirm': {
-    'zh-Hans': '你正在读另一个计划，开始新计划会清除它的进度。要继续吗？',
-    'zh-Hant': '你正在讀另一個計劃，開始新計劃會清除它的進度。要繼續嗎？',
-    'en': 'You are in another plan. Starting this one clears its progress. Continue?',
-  },
   'readingPlan_cancel': {
     'zh-Hans': '取消',
     'zh-Hant': '取消',
@@ -3476,21 +3456,6 @@ const uiStrings = {
     'zh-Hans': '确定',
     'zh-Hant': '確定',
     'en': 'OK',
-  },
-  'readingPlan_current': {
-    'zh-Hans': '正在读',
-    'zh-Hant': '正在讀',
-    'en': 'Current',
-  },
-  'readingPlan_other': {
-    'zh-Hans': '其他计划',
-    'zh-Hant': '其他計劃',
-    'en': 'Other plans',
-  },
-  'readingPlan_open': {
-    'zh-Hans': '打开计划',
-    'zh-Hant': '打開計劃',
-    'en': 'Open plan',
   },
   'readingPlan_bible-1y_name': {
     'zh-Hans': '一年读完圣经（按圣经顺序）',
@@ -3553,9 +3518,204 @@ const uiStrings = {
     'en': 'A few psalms a day plus one chapter of Proverbs (day n, chapter n).',
   },
   'readingPlan_notifTitle': {
-    'zh-Hans': '读经计划 · 第 {day} 天，共 {days} 天',
-    'zh-Hant': '讀經計劃 · 第 {day} 天，共 {days} 天',
-    'en': 'Reading plan · Day {day} of {days}',
+    'zh-Hans': '{name} · 第 {day} 天，共 {days} 天',
+    'zh-Hant': '{name} · 第 {day} 天，共 {days} 天',
+    'en': '{name} · Day {day} of {days}',
+  },
+  'readingPlan_notifMany': {
+    'zh-Hans': '读经计划 · 今天有 {n} 个要读',
+    'zh-Hant': '讀經計劃 · 今天有 {n} 個要讀',
+    'en': 'Reading plans · {n} to read today',
+  },
+  'readingPlan_myPlans': {
+    'zh-Hans': '我的计划',
+    'zh-Hant': '我的計劃',
+    'en': 'My plans',
+  },
+  'readingPlan_addPlan': {
+    'zh-Hans': '添加计划',
+    'zh-Hant': '添加計劃',
+    'en': 'Add a plan',
+  },
+  'readingPlan_addHint': {
+    'zh-Hans': '可以同时读几个计划，每个都有自己的进度和提醒。',
+    'zh-Hant': '可以同時讀幾個計劃，每個都有自己的進度和提醒。',
+    'en': 'You can run several plans at once. Each has its own progress and reminder.',
+  },
+  'readingPlan_limitReached': {
+    'zh-Hans': '最多同时保留 {n} 个计划。请先移除一个。',
+    'zh-Hant': '最多同時保留 {n} 個計劃。請先移除一個。',
+    'en': 'You can keep up to {n} plans. Remove one first.',
+  },
+  'readingPlan_startTitle': {
+    'zh-Hans': '开始这个计划',
+    'zh-Hant': '開始這個計劃',
+    'en': 'Start this plan',
+  },
+  'readingPlan_startButton': {
+    'zh-Hans': '开始',
+    'zh-Hant': '開始',
+    'en': 'Start',
+  },
+  'readingPlan_startDate': {
+    'zh-Hans': '开始日期',
+    'zh-Hant': '開始日期',
+    'en': 'Start date',
+  },
+  'readingPlan_todayOption': {
+    'zh-Hans': '今天',
+    'zh-Hant': '今天',
+    'en': 'Today',
+  },
+  'readingPlan_tomorrowOption': {
+    'zh-Hans': '明天',
+    'zh-Hant': '明天',
+    'en': 'Tomorrow',
+  },
+  'readingPlan_pickDate': {
+    'zh-Hans': '选日期',
+    'zh-Hant': '選日期',
+    'en': 'Pick a date',
+  },
+  'readingPlan_manageTitle': {
+    'zh-Hans': '计划设置',
+    'zh-Hant': '計劃設定',
+    'en': 'Plan settings',
+  },
+  'readingPlan_manage': {
+    'zh-Hans': '设置',
+    'zh-Hant': '設定',
+    'en': 'Settings',
+  },
+  'readingPlan_changeStart': {
+    'zh-Hans': '更改开始日期',
+    'zh-Hant': '更改開始日期',
+    'en': 'Change start date',
+  },
+  'readingPlan_startedOn': {
+    'zh-Hans': '开始于 {date}',
+    'zh-Hant': '開始於 {date}',
+    'en': 'Started {date}',
+  },
+  'readingPlan_remindMe': {
+    'zh-Hans': '提醒我读经',
+    'zh-Hant': '提醒我讀經',
+    'en': 'Remind me to read',
+  },
+  'readingPlan_remindTime': {
+    'zh-Hans': '提醒时间',
+    'zh-Hant': '提醒時間',
+    'en': 'Reminder time',
+  },
+  'readingPlan_remindDefaultTime': {
+    'zh-Hans': '默认（{time}）',
+    'zh-Hant': '預設（{time}）',
+    'en': 'Default ({time})',
+  },
+  'readingPlan_remindUseDefault': {
+    'zh-Hans': '用默认时间',
+    'zh-Hant': '用預設時間',
+    'en': 'Use the default time',
+  },
+  'readingPlan_remindMessage': {
+    'zh-Hans': '提醒文字（可选）',
+    'zh-Hant': '提醒文字（可選）',
+    'en': 'Reminder text (optional)',
+  },
+  'readingPlan_remindMessageHint': {
+    'zh-Hans': '例如：该读经了！',
+    'zh-Hant': '例如：該讀經了！',
+    'en': 'e.g. Time to read!',
+  },
+  'readingPlan_remindNeedsNotifications': {
+    'zh-Hans': '通知还没有打开。到设置里打开通知，才会收到提醒。',
+    'zh-Hant': '通知還沒有開啟。到設定裡開啟通知，才會收到提醒。',
+    'en': 'Notifications are off. Turn them on in Settings to receive reminders.',
+  },
+  'readingPlan_openSettings': {
+    'zh-Hans': '打开设置',
+    'zh-Hant': '打開設定',
+    'en': 'Open Settings',
+  },
+  'readingPlan_remindWebNote': {
+    'zh-Hans': '在网页版里，提醒会在你过了提醒时间后打开应用时送达。',
+    'zh-Hant': '在網頁版裡，提醒會在你過了提醒時間後打開應用時送達。',
+    'en': 'In the browser, the reminder arrives when you open the app after the reminder time.',
+  },
+  'readingPlan_pause': {
+    'zh-Hans': '暂停计划',
+    'zh-Hant': '暫停計劃',
+    'en': 'Pause plan',
+  },
+  'readingPlan_pauseHint': {
+    'zh-Hans': '暂停期间不算落后，也不会提醒。',
+    'zh-Hant': '暫停期間不算落後，也不會提醒。',
+    'en': 'While paused you are not behind and get no reminders.',
+  },
+  'readingPlan_resume': {
+    'zh-Hans': '继续计划',
+    'zh-Hant': '繼續計劃',
+    'en': 'Resume plan',
+  },
+  'readingPlan_paused': {
+    'zh-Hans': '已暂停',
+    'zh-Hant': '已暫停',
+    'en': 'Paused',
+  },
+  'readingPlan_catchUp': {
+    'zh-Hans': '从上次读到的地方接着读',
+    'zh-Hant': '從上次讀到的地方接著讀',
+    'en': 'Pick up where I left off',
+  },
+  'readingPlan_catchUpHint': {
+    'zh-Hans': '把日程往后推，让第 {day} 天变成今天。没有任何东西被标成已读。',
+    'zh-Hant': '把日程往後推，讓第 {day} 天變成今天。沒有任何東西被標成已讀。',
+    'en': 'Slides the schedule so day {day} is today. Nothing is marked read.',
+  },
+  'readingPlan_skipMissed': {
+    'zh-Hans': '跳过漏掉的 {n} 天',
+    'zh-Hant': '跳過漏掉的 {n} 天',
+    'en': 'Skip the {n} missed days',
+  },
+  'readingPlan_skipMissedHint': {
+    'zh-Hans': '它们不再算落后，今天的照常读。',
+    'zh-Hant': '它們不再算落後，今天的照常讀。',
+    'en': 'They stop counting as behind. Today’s reading stays.',
+  },
+  'readingPlan_skippedCount': {
+    'zh-Hans': '已跳过 {n} 天',
+    'zh-Hant': '已跳過 {n} 天',
+    'en': '{n} skipped',
+  },
+  'readingPlan_remove': {
+    'zh-Hans': '移除这个计划',
+    'zh-Hant': '移除這個計劃',
+    'en': 'Remove this plan',
+  },
+  'readingPlan_removeConfirm': {
+    'zh-Hans': '移除后，这个计划和它的进度会被清除。确定吗？',
+    'zh-Hant': '移除後，這個計劃和它的進度會被清除。確定嗎？',
+    'en': 'Removing clears this plan and its progress. Remove it?',
+  },
+  'readingPlan_completed': {
+    'zh-Hans': '已读完',
+    'zh-Hant': '已讀完',
+    'en': 'Completed',
+  },
+  'readingPlan_openDay': {
+    'zh-Hans': '打开这一天的经文',
+    'zh-Hant': '打開這一天的經文',
+    'en': 'Open this day’s reading',
+  },
+  'readingPlan_moreCount': {
+    'zh-Hans': '还有 {n} 个计划',
+    'zh-Hant': '還有 {n} 個計劃',
+    'en': '{n} more',
+  },
+  'readingPlan_alreadyRunning': {
+    'zh-Hans': '已经在读',
+    'zh-Hant': '已經在讀',
+    'en': 'Already reading',
   },
   'readingPlan_source': {
     'zh-Hans': '日程由本应用按章节和经节数生成；麦琴计划取自 1842 年原表（公有领域），并与另外两份整理版本逐日核对。',

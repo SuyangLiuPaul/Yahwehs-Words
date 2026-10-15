@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -87,11 +88,16 @@ class ReadingPage {
 /// chapters here; the reader opens on its first verse.
 @immutable
 class ReadingSession {
+  /// Which of the reader's running plans this day belongs to
+  /// ([ReadingPlanProgress.id]); "mark as read" is recorded there.
+  final String entryId;
   final int day;
   final List<ReadingPage> pages;
-  const ReadingSession({required this.day, required this.pages});
+  const ReadingSession(
+      {required this.entryId, required this.day, required this.pages});
 
-  factory ReadingSession.forDay(int day, List<ReadingSegment> segments) {
+  factory ReadingSession.forDay(
+      String entryId, int day, List<ReadingSegment> segments) {
     final pages = <ReadingPage>[];
     for (final s in segments) {
       for (var c = s.from; c <= s.to; c++) {
@@ -99,7 +105,7 @@ class ReadingSession {
         if (!pages.contains(p)) pages.add(p);
       }
     }
-    return ReadingSession(day: day, pages: pages);
+    return ReadingSession(entryId: entryId, day: day, pages: pages);
   }
 
   /// Index of ([englishBook], [chapter]) in [pages], or -1 when the
@@ -121,88 +127,218 @@ class ReadingPlan {
       (day < 1 || day > schedule.length) ? const [] : schedule[day - 1];
 }
 
-/// What a reader has chosen and done. Stored as JSON under
-/// [kReadingPlanKey] in the active profile.
+/// The most plans a reader can have running (and remembered) at once.
+/// Bounds the stored blob and the notification ids booked for them.
+const int kMaxReadingPlans = 8;
+
+/// One plan the reader is running: which plan, from when, what has been
+/// read, and how it should remind them. Several can run side by side.
+///
+/// Stored inside the [ReadingPlansDoc] under [kReadingPlanKey].
+///
+/// Day numbers in [done] and [skipped] are the PLAN's days (day 12 of
+/// the plan), never calendar dates, so moving [start] or pausing never
+/// invalidates what has been read.
 @immutable
 class ReadingPlanProgress {
+  /// This running instance. Two copies of the same plan started on
+  /// different dates are different instances. Sync merges by it.
+  final String id;
+
+  /// Which bundled plan ([ReadingPlan.id]).
   final String planId;
 
-  /// Local calendar date the plan started (time ignored).
+  /// Local calendar date day 1 falls on (time ignored). The reader can
+  /// move it: a plan begun late, or to catch up.
   final DateTime start;
 
   /// Day numbers (1-based) the reader has marked as read.
   final Set<int> done;
 
+  /// Day numbers the reader chose to leave behind. Not read, but no
+  /// longer counted as "behind".
+  final Set<int> skipped;
+
+  /// While set, the plan's calendar stands still at this date: today
+  /// does not advance and no reminder is booked. Resuming moves
+  /// [start] on by the days that were paused, so nothing is "missed".
+  final DateTime? pausedOn;
+
+  /// Whether this plan reminds the reader. Reminders also need the
+  /// notification master switch and the Reading plan category enabled.
+  final bool remind;
+
+  /// This plan's own reminder time; null = the Reading plan category's.
+  final int? hour;
+  final int? minute;
+
+  /// The reader's own words for the reminder's title ("Time to read!").
+  /// Null/empty = the plan name and day.
+  final String? message;
+
+  /// Epoch ms the plan was started; orders the list.
+  final int addedMs;
+
   /// Epoch ms of the last change; drives cross-device conflict choice.
   final int updatedMs;
 
-  const ReadingPlanProgress({
+  /// Removed. Kept as a tombstone so another device's older copy does
+  /// not bring the plan back; dropped after [kReadingPlanTombstoneDays].
+  final bool deleted;
+
+  ReadingPlanProgress({
     required this.planId,
     required this.start,
     required this.done,
     required this.updatedMs,
-  });
+    String? id,
+    this.skipped = const {},
+    this.pausedOn,
+    this.remind = false,
+    this.hour,
+    this.minute,
+    this.message,
+    int? addedMs,
+    this.deleted = false,
+  })  : id = id ?? legacyId(planId, start),
+        addedMs = addedMs ?? updatedMs;
+
+  /// The id a pre-1.7.28 single-plan blob gets, derived from what it
+  /// holds so two devices that both upgrade it agree on one id.
+  static String legacyId(String planId, DateTime start) =>
+      'legacy-$planId-${_date(start)}';
 
   static String _date(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
-  String toJson() => jsonEncode({
+  static DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  bool get paused => pausedOn != null;
+
+  Map<String, Object?> toMap() => {
+        'id': id,
         'planId': planId,
         'start': _date(start),
         'done': (done.toList()..sort()),
+        if (skipped.isNotEmpty) 'skipped': (skipped.toList()..sort()),
+        if (pausedOn != null) 'pausedOn': _date(pausedOn!),
+        'remind': remind,
+        if (hour != null && minute != null) 'hour': hour,
+        if (hour != null && minute != null) 'minute': minute,
+        if (message != null && message!.isNotEmpty) 'message': message,
+        'addedMs': addedMs,
         'updatedMs': updatedMs,
-      });
+        if (deleted) 'deleted': true,
+      };
 
-  /// Null for anything that is not a well-formed blob.
+  String toJson() => jsonEncode(toMap());
+
+  static Set<int> _days(Object? v) => {
+        for (final d in (v is List ? v : const []))
+          if (d is num && d >= 1) d.toInt(),
+      };
+
+  /// Null for anything that is not a well-formed entry. [legacy]: the
+  /// 1.7.26/27 single-plan blob, which had no `remind` and reminded
+  /// whenever the category was on.
+  static ReadingPlanProgress? fromMap(Object? m, {bool legacy = false}) {
+    if (m is! Map) return null;
+    final planId = m['planId'];
+    final start = DateTime.tryParse('${m['start']}');
+    if (planId is! String || planId.isEmpty || start == null) return null;
+    final ts = m['updatedMs'];
+    final updated = ts is num ? ts.toInt() : 0;
+    final paused = m['pausedOn'] == null
+        ? null
+        : DateTime.tryParse('${m['pausedOn']}');
+    final h = m['hour'];
+    final mi = m['minute'];
+    final hasTime = h is num && mi is num;
+    final msg = m['message'];
+    final added = m['addedMs'];
+    final id = m['id'];
+    return ReadingPlanProgress(
+      id: id is String && id.isNotEmpty ? id : null,
+      planId: planId,
+      start: _dateOnly(start),
+      done: _days(m['done']),
+      skipped: _days(m['skipped']),
+      pausedOn: paused == null ? null : _dateOnly(paused),
+      remind: m['remind'] is bool ? m['remind'] as bool : legacy,
+      hour: hasTime ? h.toInt().clamp(0, 23) : null,
+      minute: hasTime ? mi.toInt().clamp(0, 59) : null,
+      message: msg is String && msg.trim().isNotEmpty ? msg.trim() : null,
+      addedMs: added is num ? added.toInt() : null,
+      updatedMs: updated,
+      deleted: m['deleted'] == true,
+    );
+  }
+
+  /// One entry from its JSON text (the 1.7.26/27 blob, or [toJson]).
   static ReadingPlanProgress? tryParse(Object? raw) {
     if (raw is! String || raw.isEmpty) return null;
     try {
       final m = jsonDecode(raw);
-      if (m is! Map) return null;
-      final id = m['planId'];
-      final start = DateTime.tryParse('${m['start']}');
-      if (id is! String || id.isEmpty || start == null) return null;
-      final done = <int>{
-        for (final v in (m['done'] as List? ?? const []))
-          if (v is num && v >= 1) v.toInt(),
-      };
-      final ts = m['updatedMs'];
-      return ReadingPlanProgress(
-        planId: id,
-        start: DateTime(start.year, start.month, start.day),
-        done: done,
-        updatedMs: ts is num ? ts.toInt() : 0,
-      );
+      return fromMap(m, legacy: m is Map && m['remind'] == null);
     } catch (_) {
       return null;
     }
   }
 
-  ReadingPlanProgress copyWith({Set<int>? done, int? updatedMs}) =>
+  ReadingPlanProgress copyWith({
+    Set<int>? done,
+    Set<int>? skipped,
+    DateTime? start,
+    DateTime? pausedOn,
+    bool clearPausedOn = false,
+    bool? remind,
+    int? hour,
+    int? minute,
+    bool clearTime = false,
+    String? message,
+    bool clearMessage = false,
+    int? updatedMs,
+    bool? deleted,
+  }) =>
       ReadingPlanProgress(
+        id: id,
         planId: planId,
-        start: start,
+        start: start == null ? this.start : _dateOnly(start),
         done: done ?? this.done,
+        skipped: skipped ?? this.skipped,
+        pausedOn: clearPausedOn
+            ? null
+            : (pausedOn == null ? this.pausedOn : _dateOnly(pausedOn)),
+        remind: remind ?? this.remind,
+        hour: clearTime ? null : (hour ?? this.hour),
+        minute: clearTime ? null : (minute ?? this.minute),
+        message: clearMessage ? null : (message ?? this.message),
+        addedMs: addedMs,
         updatedMs: updatedMs ?? this.updatedMs,
+        deleted: deleted ?? this.deleted,
       );
 
   /// Which plan day [today] is, counted from [start] (day 1 = start).
   /// Can be < 1 (start in the future) or > the plan length (finished
   /// on the calendar). Uses UTC dates so a daylight-saving change can
   /// never make a 23- or 25-hour "day" round to the wrong number — the
-  /// bug `day_of_year` had (2026-09-08).
+  /// bug `day_of_year` had (2026-09-08). A paused plan counts as if
+  /// today were the day it was paused.
   int calendarDay(DateTime today) {
+    var t = _dateOnly(today);
+    final p = pausedOn;
+    if (p != null && p.isBefore(t)) t = p;
     final a = DateTime.utc(start.year, start.month, start.day);
-    final b = DateTime.utc(today.year, today.month, today.day);
+    final b = DateTime.utc(t.year, t.month, t.day);
     return b.difference(a).inDays + 1;
   }
 
-  /// First day not yet marked done, or null when every day is.
+  /// First day neither read nor skipped, or null when every day is.
   int? firstUnread(int days) {
     for (var d = 1; d <= days; d++) {
-      if (!done.contains(d)) return d;
+      if (!done.contains(d) && !skipped.contains(d)) return d;
     }
     return null;
   }
@@ -243,32 +379,38 @@ class ReadingPlanStatus {
   /// The plan's start date is still in the future.
   final bool notStarted;
 
-  /// Every day is marked read.
+  /// Every day is read or skipped.
   final bool finished;
 
   /// The calendar ran past the last day but days remain unread.
   final bool calendarEnded;
 
+  /// The reader paused this plan.
+  final bool paused;
+
   /// Day to show as "today": calendar day clamped to 1..days.
   final int today;
 
-  /// Days before [today] that are not marked read.
+  /// Days before [today] that are neither read nor skipped.
   final int unreadBefore;
 
-  /// First day not yet read (null when finished).
+  /// First day not yet read or skipped (null when finished).
   final int? resumeDay;
 
   final int doneCount;
+  final int skippedCount;
   final int days;
 
   const ReadingPlanStatus({
     required this.notStarted,
     required this.finished,
     required this.calendarEnded,
+    required this.paused,
     required this.today,
     required this.unreadBefore,
     required this.resumeDay,
     required this.doneCount,
+    required this.skippedCount,
     required this.days,
   });
 
@@ -279,28 +421,33 @@ class ReadingPlanStatus {
 ReadingPlanStatus readingPlanStatus(
     ReadingPlanProgress p, int days, DateTime now) {
   final done = p.done.where((d) => d >= 1 && d <= days).toSet();
+  final skipped =
+      p.skipped.where((d) => d >= 1 && d <= days && !done.contains(d)).toSet();
   final cal = p.calendarDay(now);
   final today = cal < 1 ? 1 : (cal > days ? days : cal);
   var unreadBefore = 0;
   for (var d = 1; d < today; d++) {
-    if (!done.contains(d)) unreadBefore++;
+    if (!done.contains(d) && !skipped.contains(d)) unreadBefore++;
   }
-  final finished = done.length >= days;
+  final finished = done.length + skipped.length >= days;
   return ReadingPlanStatus(
     notStarted: cal < 1,
     finished: finished,
     calendarEnded: !finished && cal > days,
+    paused: p.paused,
     today: today,
     unreadBefore: unreadBefore,
-    resumeDay: finished ? null : p.copyWith(done: done).firstUnread(days),
+    resumeDay:
+        finished ? null : p.copyWith(done: done, skipped: skipped).firstUnread(days),
     doneCount: done.length,
+    skippedCount: skipped.length,
     days: days,
   );
 }
 
-/// The reminder for the reader's plan on the day of [fire], or null when
-/// there is nothing worth saying (no plan, plan finished, the day not
-/// started yet, or that day already ticked). Pure.
+/// The reminder for one running plan on the day of [fire], or null when
+/// there is nothing worth saying (no plan, plan finished or paused, the
+/// day not started yet, or that day already ticked). Pure.
 ///
 /// [fire] is the day the notification is for, which is not always today:
 /// the native scheduler books the next two weeks, each with ITS day's
@@ -313,64 +460,173 @@ ReadingPlanStatus readingPlanStatus(
 /// have read — but only the days they have actually ticked can be known,
 /// so a future day's reminder is still booked and the next app open
 /// re-books without it.
+///
+/// The title is the reader's own [ReadingPlanProgress.message] when they
+/// wrote one, else the plan's name and day. Several plans run at once,
+/// so the name is always needed to tell two reminders apart.
 ({String title, String body})? readingPlanReminder({
   required ReadingPlanProgress? progress,
   required ReadingPlan? plan,
   required DateTime fire,
   required String locale,
 }) {
-  if (progress == null || plan == null) return null;
+  if (progress == null || plan == null || progress.paused) return null;
   final st = readingPlanStatus(progress, plan.days, fire);
   if (st.finished || st.notStarted) return null;
   final day = st.calendarEnded ? st.resumeDay : st.today;
-  if (day == null || progress.done.contains(day)) return null;
+  if (day == null || progress.done.contains(day) || progress.skipped.contains(day)) {
+    return null;
+  }
   final segs = plan.day(day);
   if (segs.isEmpty) return null;
+  final msg = progress.message;
   return (
-    title: rpText('readingPlan_notifTitle', locale,
-        {'day': day, 'days': plan.days}),
+    title: (msg != null && msg.trim().isNotEmpty)
+        ? msg.trim()
+        : rpText('readingPlan_notifTitle', locale, {
+            'name': rpText('readingPlan_${plan.id}_name', locale),
+            'day': day,
+            'days': plan.days,
+          }),
     body: segs.map((x) => readingSegmentLabel(x, locale)).join(' · '),
+  );
+}
+
+/// How long a removed plan is remembered so another device's older copy
+/// cannot bring it back.
+const int kReadingPlanTombstoneDays = 90;
+
+/// Everything stored under [kReadingPlanKey]: the reader's running plans.
+///
+/// Format v2 (1.7.28):
+/// `{"v":2,"updatedMs":…,"clearedMs":…,"plans":[{entry}…]}`.
+/// Parses the two older shapes as well — the 1.7.26/27 single-plan blob
+/// (`{"planId","start","done","updatedMs"}`) becomes one entry and its
+/// "stopped" form (`{"planId":"","updatedMs"}`) becomes an empty list
+/// that remembers when it was stopped ([clearedMs]) so a stale plan on
+/// another device cannot undo the stop.
+@immutable
+class ReadingPlansDoc {
+  /// Every entry, including tombstones ([ReadingPlanProgress.deleted]).
+  final List<ReadingPlanProgress> entries;
+
+  /// Entries last changed at or before this are dropped.
+  final int clearedMs;
+  final int updatedMs;
+
+  const ReadingPlansDoc(
+      {required this.entries, this.clearedMs = 0, this.updatedMs = 0});
+
+  /// What the reader sees: not removed, not older than a stop.
+  List<ReadingPlanProgress> get active => [
+        for (final e in entries)
+          if (!e.deleted && e.updatedMs > clearedMs) e,
+      ]..sort(_byAdded);
+
+  static int _byAdded(ReadingPlanProgress a, ReadingPlanProgress b) {
+    final c = a.addedMs.compareTo(b.addedMs);
+    return c != 0 ? c : a.id.compareTo(b.id);
+  }
+
+  String toJson() {
+    final all = [...entries]..sort(_byAdded);
+    return jsonEncode({
+      'v': 2,
+      'updatedMs': updatedMs,
+      if (clearedMs > 0) 'clearedMs': clearedMs,
+      'plans': [for (final e in all) e.toMap()],
+    });
+  }
+
+  /// Null for anything that is not a reading-plan blob.
+  static ReadingPlansDoc? parse(Object? raw) {
+    if (raw is! String || raw.isEmpty) return null;
+    try {
+      final m = jsonDecode(raw);
+      if (m is! Map) return null;
+      final ts = m['updatedMs'];
+      final stamp = ts is num ? ts.toInt() : 0;
+      if (m['plans'] is List) {
+        final cl = m['clearedMs'];
+        final entries = <ReadingPlanProgress>[
+          for (final e in (m['plans'] as List))
+            if (ReadingPlanProgress.fromMap(e) case final p?) p,
+        ];
+        return ReadingPlansDoc(
+          entries: entries,
+          clearedMs: cl is num ? cl.toInt() : 0,
+          updatedMs: stamp,
+        );
+      }
+      if (m['planId'] is String) {
+        if ((m['planId'] as String).isEmpty) {
+          return ReadingPlansDoc(entries: const [], clearedMs: stamp, updatedMs: stamp);
+        }
+        final e = ReadingPlanProgress.fromMap(m, legacy: true);
+        if (e == null) return null;
+        return ReadingPlansDoc(entries: [e], updatedMs: e.updatedMs);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+/// Merge two copies of one running plan (same [ReadingPlanProgress.id]).
+/// What was read or skipped on either device stays read or skipped; every
+/// other field comes from the more recently changed copy (ties broken by
+/// the text of the entry, so both devices pick the same one).
+ReadingPlanProgress _mergeEntry(ReadingPlanProgress a, ReadingPlanProgress b) {
+  final aNewer = a.updatedMs != b.updatedMs
+      ? a.updatedMs > b.updatedMs
+      : a.toJson().compareTo(b.toJson()) >= 0;
+  final newer = aNewer ? a : b;
+  return newer.copyWith(
+    done: {...a.done, ...b.done},
+    skipped: {...a.skipped, ...b.skipped},
+    updatedMs: a.updatedMs > b.updatedMs ? a.updatedMs : b.updatedMs,
   );
 }
 
 /// Merge rule for cross-device sync (used by RealtimeDbSyncService).
 ///
-/// Same plan started on the same date on both devices → the union of
-/// what was read (a chapter read on the phone is read on the laptop).
-/// Different plan or start → the newer choice wins outright; mixing day
-/// numbers of two different schedules would mark the wrong chapters.
-///
-/// A stopped plan is a blob too ([stoppedReadingPlanBlob]), carrying its
-/// own timestamp, so "stop" on one device is not undone by the plan
-/// still sitting on another: the newer of the two choices wins.
+/// Plans are matched by their instance id: the days read on either
+/// device are kept (a chapter read on the phone is read on the laptop);
+/// everything else (start date, reminder, paused, removed) follows the
+/// newer change. A plan one device does not have is added, unless the
+/// other device removed or stopped it more recently.
 String? mergeReadingPlanBlobs(Object? local, Object? remote) {
-  final l = ReadingPlanProgress.tryParse(local);
-  final r = ReadingPlanProgress.tryParse(remote);
-  if (l != null && r != null) {
-    final same = l.planId == r.planId &&
-        l.start.year == r.start.year &&
-        l.start.month == r.start.month &&
-        l.start.day == r.start.day;
-    if (same) {
-      return l
-          .copyWith(
-            done: {...l.done, ...r.done},
-            updatedMs: l.updatedMs > r.updatedMs ? l.updatedMs : r.updatedMs,
-          )
-          .toJson();
-    }
-    return (r.updatedMs > l.updatedMs ? r : l).toJson();
-  }
+  final l = ReadingPlansDoc.parse(local);
+  final r = ReadingPlansDoc.parse(remote);
   final lStr = local is String && local.isNotEmpty ? local : null;
   final rStr = remote is String && remote.isNotEmpty ? remote : null;
-  if (lStr == null) return rStr;
-  if (rStr == null) return lStr;
-  return readingPlanBlobStamp(rStr) > readingPlanBlobStamp(lStr) ? rStr : lStr;
+  if (l == null || r == null) {
+    if (l == null && r == null) {
+      if (lStr == null) return rStr;
+      if (rStr == null) return lStr;
+      return readingPlanBlobStamp(rStr) > readingPlanBlobStamp(lStr) ? rStr : lStr;
+    }
+    return l == null ? rStr : lStr;
+  }
+  final byId = <String, ReadingPlanProgress>{};
+  for (final e in [...l.entries, ...r.entries]) {
+    final have = byId[e.id];
+    byId[e.id] = have == null ? e : _mergeEntry(have, e);
+  }
+  final cleared = l.clearedMs > r.clearedMs ? l.clearedMs : r.clearedMs;
+  final kept = [
+    for (final e in byId.values)
+      if (e.updatedMs > cleared) e,
+  ];
+  var stamp = l.updatedMs > r.updatedMs ? l.updatedMs : r.updatedMs;
+  for (final e in kept) {
+    if (e.updatedMs > stamp) stamp = e.updatedMs;
+  }
+  if (cleared > stamp) stamp = cleared;
+  return ReadingPlansDoc(entries: kept, clearedMs: cleared, updatedMs: stamp)
+      .toJson();
 }
-
-/// The value stored when a reader stops their plan.
-String stoppedReadingPlanBlob(int updatedMs) =>
-    jsonEncode({'planId': '', 'updatedMs': updatedMs});
 
 /// `updatedMs` of any reading-plan blob, active or stopped; 0 if none.
 int readingPlanBlobStamp(String raw) {
@@ -383,7 +639,17 @@ int readingPlanBlobStamp(String raw) {
   }
 }
 
-/// Bundled plans + the active profile's progress.
+/// A plan the scheduler should book reminders for, with its own time
+/// when it has one.
+@immutable
+class ReadingReminderSlot {
+  final ReadingPlanProgress entry;
+  final int? hour;
+  final int? minute;
+  const ReadingReminderSlot(this.entry, this.hour, this.minute);
+}
+
+/// Bundled plans + the active profile's running plans.
 class ReadingPlanService extends ChangeNotifier {
   ReadingPlanService._() {
     // A profile switch and a sync download both end in
@@ -405,14 +671,30 @@ class ReadingPlanService extends ChangeNotifier {
   @visibleForTesting
   DateTime Function()? clock;
 
+  /// Called (about a second after the last change) when stored plans
+  /// changed, so notifications can be re-booked. main.dart wires it.
+  VoidCallback? onPersisted;
+  Timer? _persistedTimer;
+
   DateTime get now => (clock ?? DateTime.now)();
 
   List<ReadingPlan>? _plans;
   Future<List<ReadingPlan>>? _loading;
-  ReadingPlanProgress? _progress;
+  List<ReadingPlanProgress> _all = const [];
+  int _clearedMs = 0;
   bool _progressLoaded = false;
 
-  ReadingPlanProgress? get progress => _progress;
+  /// The reader's running plans, oldest first.
+  List<ReadingPlanProgress> get entries =>
+      ReadingPlansDoc(entries: _all, clearedMs: _clearedMs).active;
+
+  ReadingPlanProgress? entry(String? id) {
+    for (final e in entries) {
+      if (e.id == id) return e;
+    }
+    return null;
+  }
+
   bool get progressLoaded => _progressLoaded;
 
   /// Parse the asset. Pure, so tests can feed it a string.
@@ -459,20 +741,33 @@ class ReadingPlanService extends ChangeNotifier {
 
   String get _key => ProfileService.instance.scopedKey(kReadingPlanKey);
 
-  /// (Re)read progress for the active profile. Call after a profile
+  /// (Re)read the plans for the active profile. Call after a profile
   /// switch or a sync download.
   Future<void> reload() async {
     final prefs = await SharedPreferences.getInstance();
-    _progress = ReadingPlanProgress.tryParse(prefs.getString(_key));
+    final doc = ReadingPlansDoc.parse(prefs.getString(_key));
+    _all = doc?.entries ?? const [];
+    _clearedMs = doc?.clearedMs ?? 0;
     _progressLoaded = true;
     notifyListeners();
   }
 
-  Future<void> _save(ReadingPlanProgress? p) async {
+  Future<void> _save() async {
+    final ms = now.millisecondsSinceEpoch;
+    final cutoff = ms - kReadingPlanTombstoneDays * 86400000;
+    _all = [
+      for (final e in _all)
+        if (!(e.deleted && e.updatedMs < cutoff)) e,
+    ];
+    var stamp = _clearedMs;
+    for (final e in _all) {
+      if (e.updatedMs > stamp) stamp = e.updatedMs;
+    }
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key,
-        p?.toJson() ?? stoppedReadingPlanBlob(now.millisecondsSinceEpoch));
-    _progress = p;
+    await prefs.setString(
+        _key,
+        ReadingPlansDoc(entries: _all, clearedMs: _clearedMs, updatedMs: stamp)
+            .toJson());
     _progressLoaded = true;
     notifyListeners();
     try {
@@ -480,41 +775,202 @@ class ReadingPlanService extends ChangeNotifier {
     } catch (_) {
       // Sync is best-effort (signed out, China build, tests).
     }
+    if (onPersisted != null) {
+      _persistedTimer?.cancel();
+      _persistedTimer = Timer(const Duration(seconds: 1), () => onPersisted?.call());
+    }
   }
 
-  /// Start [planId] today (or on [startDate]). Replaces any plan in
-  /// progress — the page asks before calling this when one exists.
-  Future<void> start(String planId, {DateTime? startDate}) {
+  Future<void> _update(
+      String id, ReadingPlanProgress Function(ReadingPlanProgress e) change) async {
+    final i = _all.indexWhere((e) => e.id == id && !e.deleted);
+    if (i < 0) return;
+    final next = [..._all];
+    next[i] = change(_all[i]).copyWith(updatedMs: _stamp(_all[i]));
+    _all = next;
+    await _save();
+  }
+
+  /// A change time that is always newer than the entry's last one, even
+  /// when two changes land in the same millisecond or the clock stepped
+  /// back, so the merge never prefers the older of two edits.
+  int _stamp(ReadingPlanProgress e) {
+    final t = now.millisecondsSinceEpoch;
+    return t > e.updatedMs ? t : e.updatedMs + 1;
+  }
+
+  static int _seq = 0;
+
+  /// Start [planId] on [startDate] (default today) alongside any plans
+  /// already running. Null when [kMaxReadingPlans] are already kept.
+  Future<ReadingPlanProgress?> start(
+    String planId, {
+    DateTime? startDate,
+    bool remind = false,
+    int? hour,
+    int? minute,
+    String? message,
+  }) async {
+    if (entries.length >= kMaxReadingPlans) return null;
     final d = startDate ?? now;
-    return _save(ReadingPlanProgress(
+    final day = DateTime(d.year, d.month, d.day);
+    var ms = now.millisecondsSinceEpoch;
+    // Creation order is the list order, so never tie with a plan already
+    // there (two starts inside one millisecond, or a clock stepped back).
+    for (final x in _all) {
+      if (x.addedMs >= ms) ms = x.addedMs + 1;
+    }
+    final e = ReadingPlanProgress(
+      id: '$planId-${ReadingPlanProgress._date(day)}-${ms.toRadixString(36)}'
+          '-${(_seq++).toRadixString(36)}',
       planId: planId,
-      start: DateTime(d.year, d.month, d.day),
+      start: day,
       done: const {},
-      updatedMs: now.millisecondsSinceEpoch,
-    ));
+      remind: remind,
+      hour: hour,
+      minute: hour == null ? null : minute,
+      message: (message ?? '').trim().isEmpty ? null : message!.trim(),
+      addedMs: ms,
+      updatedMs: ms,
+    );
+    _all = [..._all, e];
+    await _save();
+    return e;
   }
 
-  Future<void> stop() => _save(null);
+  /// Remove a plan (and what was read in it).
+  Future<void> remove(String id) =>
+      _update(id, (e) => e.copyWith(deleted: true));
 
-  /// Resolve the reminder for [fire] from what is stored (loading it if
-  /// this is a cold start, as it is when the OS wakes the scheduler).
-  Future<({String title, String body})?> reminderFor(
-      DateTime fire, String locale) async {
+  Future<void> setDone(String id, int day, bool done) => _update(id, (e) {
+        final next = {...e.done};
+        done ? next.add(day) : next.remove(day);
+        // Read beats skipped: a day cannot be both.
+        return e.copyWith(
+            done: next, skipped: {...e.skipped}..remove(day));
+      });
+
+  /// Move day 1 to [date]. What has been read stays read.
+  Future<void> setStart(String id, DateTime date) =>
+      _update(id, (e) => e.copyWith(start: date));
+
+  /// Freeze the plan's calendar today; no reminders until [resume].
+  Future<void> pause(String id) => _update(id, (e) {
+        if (e.paused) return e;
+        final n = now;
+        return e.copyWith(pausedOn: DateTime(n.year, n.month, n.day));
+      });
+
+  /// Carry on: the days spent paused are added to the start date, so
+  /// the plan picks up exactly where it stopped, with nothing behind.
+  Future<void> resume(String id) => _update(id, (e) {
+        final p = e.pausedOn;
+        if (p == null) return e;
+        final n = now;
+        final today = DateTime(n.year, n.month, n.day);
+        final gap = DateTime.utc(today.year, today.month, today.day)
+            .difference(DateTime.utc(p.year, p.month, p.day))
+            .inDays;
+        final s = e.start;
+        return e.copyWith(
+          start: DateTime(s.year, s.month, s.day + (gap > 0 ? gap : 0)),
+          clearPausedOn: true,
+        );
+      });
+
+  /// "Pick up where I left off": slide the schedule so the first unread
+  /// day is today. Nothing is lost and nothing is marked read.
+  Future<void> catchUp(String id) async {
+    final e = entry(id);
+    final plan = await this.plan(e?.planId);
+    if (e == null || plan == null) return;
+    final first = e.firstUnread(plan.days);
+    if (first == null) return;
+    final n = now;
+    final today = DateTime(n.year, n.month, n.day);
+    // Day `first` should fall on today: start = today - (first - 1).
+    await setStart(id, DateTime(today.year, today.month, today.day - (first - 1)));
+  }
+
+  /// "Leave the missed days behind": every unread day before today is
+  /// skipped, so it stops counting as behind. Today stays to be read.
+  Future<void> skipMissed(String id) async {
+    final e = entry(id);
+    final plan = await this.plan(e?.planId);
+    if (e == null || plan == null) return;
+    final st = readingPlanStatus(e, plan.days, now);
+    final add = <int>{
+      for (var d = 1; d < st.today; d++)
+        if (!e.done.contains(d)) d,
+    };
+    if (add.isEmpty) return;
+    await _update(id, (x) => x.copyWith(skipped: {...x.skipped, ...add}));
+  }
+
+  /// Set the plan's reminder. [hour]/[minute] null with [clearTime]
+  /// returns it to the Reading plan category's time.
+  Future<void> setReminder(
+    String id, {
+    bool? remind,
+    int? hour,
+    int? minute,
+    bool clearTime = false,
+    String? message,
+    bool clearMessage = false,
+  }) =>
+      _update(
+          id,
+          (e) => e.copyWith(
+                remind: remind,
+                hour: hour,
+                minute: minute,
+                clearTime: clearTime,
+                message: message,
+                clearMessage: clearMessage,
+              ));
+
+  /// The plans the scheduler should book reminders for: reminding, not
+  /// paused, not finished.
+  Future<List<ReadingReminderSlot>> reminderSlots() async {
     if (!_progressLoaded) await reload();
+    final out = <ReadingReminderSlot>[];
+    for (final e in entries) {
+      if (!e.remind || e.paused) continue;
+      final plan = await this.plan(e.planId);
+      if (plan == null) continue;
+      if (readingPlanStatus(e, plan.days, now).finished) continue;
+      out.add(ReadingReminderSlot(e, e.hour, e.minute));
+      if (out.length >= kMaxReadingPlans) break;
+    }
+    return out;
+  }
+
+  /// One running plan's reminder for [fire] (see [readingPlanReminder]).
+  Future<({String title, String body})?> reminderForEntry(
+      ReadingPlanProgress e, DateTime fire, String locale) async {
     return readingPlanReminder(
-      progress: _progress,
-      plan: await plan(_progress?.planId),
+      progress: e,
+      plan: await plan(e.planId),
       fire: fire,
       locale: locale,
     );
   }
 
-  Future<void> setDone(int day, bool done) async {
-    final p = _progress;
-    if (p == null) return;
-    final next = {...p.done};
-    done ? next.add(day) : next.remove(day);
-    await _save(p.copyWith(
-        done: next, updatedMs: now.millisecondsSinceEpoch));
+  /// Everything due on [fire] as ONE notification, for the web, which
+  /// has a single time per category: the plan's own reminder when one is
+  /// due, or a short list when several are.
+  Future<({String title, String body})?> reminderFor(
+      DateTime fire, String locale) async {
+    final lines = <({String title, String body})>[];
+    for (final slot in await reminderSlots()) {
+      final r = await reminderForEntry(slot.entry, fire, locale);
+      if (r != null) lines.add(r);
+    }
+    if (lines.isEmpty) return null;
+    if (lines.length == 1) return lines.first;
+    return (
+      title: rpText('readingPlan_notifMany', locale, {'n': lines.length}),
+      body: lines.map((l) => '${l.title}: ${l.body}').join('\n'),
+    );
   }
 }

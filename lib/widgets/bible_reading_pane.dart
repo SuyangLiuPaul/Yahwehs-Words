@@ -875,7 +875,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                       visualDensity: VisualDensity.compact),
                   onPressed: () async {
                     await ReadingPlanService.instance
-                        .setDone(session.day, true);
+                        .setDone(session.entryId, session.day, true);
                     if (mounted) Navigator.of(context).maybePop();
                   },
                   child: Text(rpText('readingPlan_sessionMarkDone', locale)),

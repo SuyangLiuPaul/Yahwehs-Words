@@ -27,12 +27,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('a day becomes its chapters, in the plan order, once each', () {
-    final s = ReadingSession.forDay(7, const [
+    final s = ReadingSession.forDay('e1', 7, const [
       ReadingSegment('Genesis', 1, 3),
       ReadingSegment('Matthew', 1, 1),
       ReadingSegment('Genesis', 3, 3), // overlap is not repeated
     ]);
-    expect(s.day, 7);
+    expect((s.entryId, s.day), ('e1', 7));
     expect(s.pages.map((p) => '${p.book} ${p.chapter}').toList(),
         ['Genesis 1', 'Genesis 2', 'Genesis 3', 'Matthew 1']);
     expect(s.indexOf('Genesis', 2), 1);
@@ -88,7 +88,8 @@ void main() {
     return mp;
   }
 
-  final three = ReadingSession.forDay(1, const [ReadingSegment('Genesis', 1, 3)]);
+  final three =
+      ReadingSession.forDay('e1', 1, const [ReadingSegment('Genesis', 1, 3)]);
 
   testWidgets('session: back arrow instead of Home, progress 1 of 3',
       (tester) async {
@@ -171,11 +172,11 @@ void main() {
       await tester.tap(find.text('Skip'));
       await tester.pump(const Duration(milliseconds: 500));
     }
-    // Two of them: the card's own heading and the quick-links tile, which
-    // comes last.
+    // No plan has been started, so there is no card — only the tile.
     final tile = find.text(rpText('readingPlan_title', 'en'));
-    expect(tile, findsNWidgets(2));
-    await tester.tap(tile.last);
+    expect(tile, findsOneWidget);
+    expect(find.byKey(const ValueKey('home.readingPlan')), findsNothing);
+    await tester.tap(tile);
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(ReadingPlanPage), findsOneWidget);

@@ -65,6 +65,7 @@ import 'package:yahwehs_words/utils/breadcrumb_observer.dart';
 import 'package:yahwehs_words/services/notification_catchup.dart';
 import 'package:yahwehs_words/services/notification_scheduler.dart'
     as notif_scheduler;
+import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/services/realtime_db_sync_service.dart';
 import 'package:yahwehs_words/services/offline_pack_service.dart';
 import 'package:yahwehs_words/services/fetch_books.dart';
@@ -991,6 +992,13 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     // watching for as long as the tab stays open. No-op off the web; see
     // notification_catchup.dart for why push was not the answer.
     NotificationCatchup.instance.start(appSettings);
+
+    // 2026-10-16: starting, reading, pausing or re-timing a reading plan
+    // changes what its reminders say; re-book them (the service waits a
+    // second after the last change). Native only — the web has nothing
+    // booked, `NotificationCatchup` reads the plans when it fires.
+    ReadingPlanService.instance.onPersisted =
+        () => unawaited(appSettings.rescheduleNotifications());
 
     // Clears the false-positive "Failed to load" window — see
     // MainProvider.bootInFlight doc comment. Set before the `_loading`

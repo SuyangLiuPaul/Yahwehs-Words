@@ -1208,6 +1208,11 @@ class AppSettings extends ChangeNotifier {
     unawaited(_armCatchupSafely());
   }
 
+  /// Re-book every scheduled notification from what is stored now.
+  /// For things that change what a reminder says without touching a
+  /// notification setting (a reading plan started, read or paused).
+  Future<void> rescheduleNotifications() => _rescheduleAllSafely();
+
   /// Wrapper that pulls the scheduler off the conditional-import
   /// boundary. On web the scheduler short-circuits internally.
   Future<void> _rescheduleAllSafely() async {
