@@ -54,6 +54,36 @@ void main() {
       expect(fruit.sermons.map((s) => s.id), contains('016'));
       expect(fruit.verses, containsAll(['Matthew 5:3-12', 'Galatians 5:22-23']));
     });
+    test('principles page: every explanation, limit, sermon title and source has English', () {
+      final raw = jsonDecode(File('assets/study_principles.json').readAsStringSync())
+          as Map<String, dynamic>;
+      final missing = <String>[];
+      void need(String where, Object? t) {
+        final en = t is Map ? (t['en'] as String?)?.trim() : null;
+        if (en == null || en.isEmpty) missing.add(where);
+        if (en != null && RegExp(r'[\u3400-\u9fff]').hasMatch(en)) {
+          missing.add('$where (Chinese inside English)');
+        }
+      }
+      for (final p in (raw['principles'] as List).cast<Map<String, dynamic>>()) {
+        final id = p['id'];
+        need('$id title', p['title']);
+        need('$id line', p['line']);
+        for (final k in ['limits', 'says']) {
+          final l = (p[k] as List?) ?? const [];
+          for (var i = 0; i < l.length; i++) {
+            need('$id $k[$i]', l[i]);
+          }
+        }
+        for (final s in ((p['sermons'] as List?) ?? const []).cast<Map<String, dynamic>>()) {
+          need('$id sermon ${s['id']}', s['title']);
+        }
+        for (final s in ((p['sources'] as List?) ?? const []).cast<Map<String, dynamic>>()) {
+          need('$id source', s['name']);
+        }
+      }
+      expect(missing, isEmpty, reason: missing.take(10).join('\n'));
+    });
     test('sizes: 190+ principles in 13 groups, 220+ promises in 10 groups', () {
       expect(principles.principles.length, greaterThanOrEqualTo(190));
       expect(principles.categories, hasLength(13));
@@ -387,6 +417,13 @@ void main() {
     expect(find.text('聖經裡的原則'), findsOneWidget);
     await mount(tester, const StudyPrinciplesPage(loader: _file), locale: 'en');
     expect(find.text('Principles of the Bible'), findsOneWidget);
+    // English UI must not show any Chinese on screen (titles, explanations).
+    final cjk = RegExp(r'[\u3400-\u9fff]');
+    final shown = [
+      for (final w in tester.widgetList<Text>(find.byType(Text)))
+        if (cjk.hasMatch(w.data ?? w.textSpan?.toPlainText() ?? '')) w.data ?? ''
+    ];
+    expect(shown, isEmpty, reason: shown.take(5).join(' | '));
     expect(tester.takeException(), isNull);
   });
 }

@@ -188,9 +188,9 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
             '凡基督教传统对经文有不同读法的地方，本页都会注明，不替任何一方裁决；这些比较所依据的资料列在下面。',
             '凡基督教傳統對經文有不同讀法的地方，本頁都會註明，不替任何一方裁決；這些比較所依據的資料列在下面。'),
         bullet(
-            'The explanations are written in Chinese; in English you will see English titles and the KJV text.',
-            '说明文字以中文写成；英文界面只有标题和经文是英文。',
-            '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
+            'The explanations were written in Chinese first; the English is a translation of them. Verse text is the KJV.',
+            '说明文字先以中文写成；英文是它的译文，英文界面的经文用 KJV。',
+            '說明文字先以中文寫成；英文是它的譯文，英文介面的經文用 KJV。'),
         if (sources.isNotEmpty) ...[
           StudyLabel2(
               studyL(locale, 'Sources', '外部资料', '外部資料')),
