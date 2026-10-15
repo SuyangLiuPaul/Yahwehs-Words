@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahwehs_words/services/cloud_auth_service.dart';
 import 'package:yahwehs_words/services/cloud_sync_service.dart' show CloudSyncStatus;
 import 'package:yahwehs_words/services/profile_service.dart';
+import 'package:yahwehs_words/services/reading_plan_service.dart';
 
 /// Replaces Drive sync (and the older Firestore-based CloudSyncService)
 /// with Firebase Realtime Database. Why this is the right call for
@@ -107,6 +108,11 @@ class RealtimeDbSyncService extends ChangeNotifier {
     // adding it now so the user's sort preference follows them
     // across devices, matching the documented behaviour.
     'notesSortMode',
+    // 2026-10-15: reading-plan progress, ONE undotted key holding a
+    // JSON blob (see reading_plan_service.dart for why not plan.*).
+    // Merged by mergeReadingPlanBlobs: same plan + start → union of
+    // days read; otherwise the newer choice (including "stopped").
+    'readingPlan',
     // 'plan.activeId' was here through v1.3.44. Removed 2026-05-25
     // (v1.3.45) — the reading-plan feature was deleted in v1.2.69
     // and the key contains a `.`, which RTDB forbids: "Keys must
@@ -725,6 +731,14 @@ class RealtimeDbSyncService extends ChangeNotifier {
         if (union.isNotEmpty) out['recentSearches'] = union;
       }
     }
+    // 2026-10-15: reading plan. Not newest-blob-wins: a day ticked on
+    // the phone and another ticked on the laptop must both survive.
+    {
+      final merged =
+          mergeReadingPlanBlobs(local['readingPlan'], remote['readingPlan']);
+      if (merged != null) out['readingPlan'] = merged;
+    }
+
     // v1.3.45: plan.activeId / plan.startMs / plan.useDate merge
     // block + the plan.completed.* prefix loop removed. The
     // reading-plan feature was deleted in v1.2.69 and these dotted
@@ -761,6 +775,7 @@ class RealtimeDbSyncService extends ChangeNotifier {
   /// other schema key is carried through generically at the end of
   /// `_mergeSnapshots`; this set is what tells the two apart.
   static const _bespokeMergeKeys = <String>{
+    'readingPlan',
     'bookmarks',
     'highlights',
     'verseNotes',
