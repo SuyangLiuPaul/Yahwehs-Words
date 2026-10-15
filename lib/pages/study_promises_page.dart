@@ -236,9 +236,9 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
               '相关讲道只是链接，不是任何一条的依据。',
               '相關講道只是連結，不是任何一條的依據。'),
           bullet(
-              'The explanations are written in Chinese; in English you will see English titles and the KJV text.',
-              '说明文字以中文写成；英文界面只有标题和经文是英文。',
-              '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
+              'The explanations were written in Chinese first; the English is a translation of them. Verse text is the KJV.',
+              '说明文字先以中文写成；英文是它的译文，英文界面的经文用 KJV。',
+              '說明文字先以中文寫成；英文是它的譯文，英文介面的經文用 KJV。'),
           StudyLabel2(
               studyL(locale, 'Sources', '外部资料', '外部資料')),
           for (final s in _allSources(d)) StudySourceLink(source: s, locale: locale),

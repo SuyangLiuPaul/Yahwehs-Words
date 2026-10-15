@@ -84,6 +84,38 @@ void main() {
       }
       expect(missing, isEmpty, reason: missing.take(10).join('\n'));
     });
+    test('promises page: who, condition, fulfilment, history, sermons, sources and status have English', () {
+      final raw = jsonDecode(File('assets/study_promises.json').readAsStringSync())
+          as Map<String, dynamic>;
+      final cjk = RegExp(r'[\u3400-\u9fff]');
+      final missing = <String>[];
+      void need(String where, Object? t, {bool allowEmpty = false}) {
+        final zh = t is Map ? (t['zh-Hans'] as String?) ?? '' : '';
+        final en = t is Map ? (t['en'] as String?)?.trim() : null;
+        if (allowEmpty && zh.isEmpty) return;
+        if (en == null || en.isEmpty) missing.add(where);
+        if (en != null && cjk.hasMatch(en)) missing.add('$where (Chinese inside English)');
+      }
+      for (final p in (raw['promises'] as List).cast<Map<String, dynamic>>()) {
+        final id = p['id'];
+        need('$id title', p['title']);
+        need('$id who', p['who']);
+        need('$id condText', p['condText'], allowEmpty: true);
+        need('$id fulfil', p['fulfil']);
+        if (p['history'] != null) need('$id history', p['history'], allowEmpty: true);
+        for (final s in ((p['sermons'] as List?) ?? const []).cast<Map<String, dynamic>>()) {
+          need('$id sermon ${s['id']}', s['title']);
+        }
+        for (final s in ((p['sources'] as List?) ?? const []).cast<Map<String, dynamic>>()) {
+          need('$id source', s['name']);
+        }
+      }
+      for (final e in (raw['status'] as Map<String, dynamic>).entries) {
+        need('status ${e.key} label', (e.value as Map)['label']);
+        need('status ${e.key} note', (e.value as Map)['note']);
+      }
+      expect(missing, isEmpty, reason: missing.take(10).join('\n'));
+    });
     test('sizes: 190+ principles in 13 groups, 220+ promises in 10 groups', () {
       expect(principles.principles.length, greaterThanOrEqualTo(190));
       expect(principles.categories, hasLength(13));
@@ -411,6 +443,16 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('promises: English UI shows no Chinese', (tester) async {
+    await mount(tester, const StudyPromisesPage(loader: _file), locale: 'en');
+    final cjk = RegExp(r'[\u3400-\u9fff]');
+    final shown = [
+      for (final w in tester.widgetList<Text>(find.byType(Text)))
+        if (cjk.hasMatch(w.data ?? w.textSpan?.toPlainText() ?? '')) w.data ?? ''
+    ];
+    expect(shown, isEmpty, reason: shown.take(5).join(' | '));
+    expect(tester.takeException(), isNull);
+  });
   testWidgets('principles: Traditional and English render', (tester) async {
     await mount(tester, const StudyPrinciplesPage(loader: _file),
         locale: 'zh-Hant');
