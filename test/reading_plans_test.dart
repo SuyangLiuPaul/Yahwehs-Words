@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/dashboard_section.dart';
+import 'package:yahwehs_words/models/notification_category.dart';
+import 'package:yahwehs_words/services/notification_content.dart' show notificationCategoryLabel;
 import 'package:yahwehs_words/pages/reading_plan_page.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
 import 'package:yahwehs_words/services/reading_plan_service.dart';
@@ -279,6 +281,91 @@ void main() {
       // days outside the plan in a stored blob never count
       st = readingPlanStatus(prog(start, {1, 99, -3}), 10, DateTime(2026, 1, 2));
       expect(st.doneCount, 1);
+    });
+  });
+
+  group('daily reminder', () {
+    final plan = ReadingPlan('p', 5, [
+      for (var d = 1; d <= 5; d++) [ReadingSegment('Genesis', d, d)],
+    ]);
+    ReadingPlanProgress prog(Set<int> done, {String start = '2026-01-01'}) =>
+        ReadingPlanProgress(
+            planId: 'p', start: DateTime.parse(start), done: done, updatedMs: 1);
+    ({String title, String body})? at(ReadingPlanProgress? p, DateTime fire,
+            {String locale = 'en', ReadingPlan? pl}) =>
+        readingPlanReminder(
+            progress: p, plan: pl ?? plan, fire: fire, locale: locale);
+
+    test('says the day and its passages, in the reader\'s language', () {
+      final r = at(prog({}), DateTime(2026, 1, 3, 8))!;
+      expect(r.title, 'Reading plan · Day 3 of 5');
+      expect(r.body, 'Genesis 3');
+      expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hans')!.title,
+          '读经计划 · 第 3 天，共 5 天');
+      expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hans')!.body,
+          '创世记 3');
+      expect(at(prog({}), DateTime(2026, 1, 3, 8), locale: 'zh-Hant')!.title,
+          '讀經計劃 · 第 3 天，共 5 天');
+    });
+
+    test('each future day carries its own day, not day 1 for ever', () {
+      final bodies = [
+        for (var i = 0; i < 5; i++)
+          at(prog({}), DateTime(2026, 1, 1 + i, 8))!.body
+      ];
+      expect(bodies, ['Genesis 1', 'Genesis 2', 'Genesis 3', 'Genesis 4', 'Genesis 5']);
+    });
+
+    test('silent when there is nothing to say', () {
+      expect(at(null, DateTime(2026, 1, 3)), isNull); // no plan chosen
+      expect(at(prog({}), DateTime(2025, 12, 30)), isNull); // not started
+      expect(at(prog({1, 2, 3, 4, 5}), DateTime(2026, 1, 3)), isNull); // finished
+      expect(at(prog({3}), DateTime(2026, 1, 3)), isNull); // that day is read
+      expect(at(prog({}), DateTime(2026, 1, 3), pl: null), isNotNull);
+      expect(
+          readingPlanReminder(
+              progress: prog({}), plan: null, fire: DateTime(2026, 1, 3), locale: 'en'),
+          isNull); // plan id no longer exists
+    });
+
+    test('after the calendar ends, the first unread day is offered', () {
+      final r = at(prog({1, 2, 4}), DateTime(2026, 2, 1, 8))!;
+      expect(r.title, 'Reading plan · Day 3 of 5');
+      expect(r.body, 'Genesis 3');
+    });
+
+    test('verse windows and several passages read naturally', () {
+      final mc = ReadingPlan('m', 2, [
+        [
+          const ReadingSegment('Exodus', 11, 12, 1, 21),
+          const ReadingSegment('Psalms', 119, 119, 1, 24),
+        ],
+        [const ReadingSegment('Jude', 1, 1)],
+      ]);
+      final r = readingPlanReminder(
+          progress: ReadingPlanProgress(
+              planId: 'm', start: DateTime(2026, 1, 1), done: const {}, updatedMs: 1),
+          plan: mc,
+          fire: DateTime(2026, 1, 1, 8),
+          locale: 'en')!;
+      expect(r.body, 'Exodus 11:1-12:21 · Psalms 119:1-24');
+    });
+
+    test('wired into the category list, scheduler, catch-up and settings', () {
+      expect(NotificationCategoryIds.phase1,
+          contains(NotificationCategoryIds.readingPlan));
+      expect(NotificationCategoryIds.all,
+          contains(NotificationCategoryIds.readingPlan));
+      final d = NotificationCategoryPrefs.defaultFor(NotificationCategoryIds.readingPlan);
+      expect((d.enabled, d.hour, d.minute), (false, 8, 0));
+      expect(File('lib/services/notification_scheduler.dart').readAsStringSync(),
+          contains('_scheduleReadingPlan'));
+      expect(File('lib/services/notification_catchup.dart').readAsStringSync(),
+          contains('resolveReadingPlanReminder'));
+      expect(File('lib/pages/settings_page.dart').readAsStringSync(),
+          contains('NotificationCategoryIds.readingPlan'));
+      expect(notificationCategoryLabel(NotificationCategoryIds.readingPlan, 'zh-Hant'),
+          '讀經計劃');
     });
   });
 

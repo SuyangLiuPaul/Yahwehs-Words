@@ -180,8 +180,15 @@ class NotificationCatchup with WidgetsBindingObserver {
       final delivered = <String>[];
       for (final id in due) {
         try {
-          final content =
-              await resolveNotificationContent(id, now, settings.locale);
+          final content = id == NotificationCategoryIds.readingPlan
+              ? await resolveReadingPlanReminder(now, settings.locale)
+              : await resolveNotificationContent(id, now, settings.locale);
+          if (content == null) {
+            // Nothing to say today (no plan, already read, finished):
+            // record it as handled so the poll does not ask again.
+            ledger[id] = today;
+            continue;
+          }
           await NotificationService.show(
             title: content.title,
             body: content.body.isEmpty ? null : content.body,
@@ -196,7 +203,7 @@ class NotificationCatchup with WidgetsBindingObserver {
           debugPrint('[catchup] $id failed: $e');
         }
       }
-      if (delivered.isNotEmpty) await _writeLedger(prefs, ledger);
+      await _writeLedger(prefs, ledger);
       return delivered;
     } catch (e) {
       debugPrint('[catchup] run failed: $e');

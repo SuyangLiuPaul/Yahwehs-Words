@@ -177,8 +177,11 @@ void main() {
         now: DateTime(2026, 9, 8, 21, 30),
         shownOn: const {},
       );
+      // The reading plan (not listed in [times], so 09:00 here) joins
+      // them in its place in the day.
       expect(due, [
         NotificationCategoryIds.dailyVerse,
+        NotificationCategoryIds.readingPlan,
         NotificationCategoryIds.bibleEvidence,
         NotificationCategoryIds.sermonOfDay,
       ]);

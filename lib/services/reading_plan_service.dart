@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
 import 'package:yahwehs_words/services/realtime_db_sync_service.dart';
+import 'package:yahwehs_words/utils/version_mapper.dart';
 
 /// Reading plans, 2026-10-15.
 ///
@@ -159,6 +161,34 @@ class ReadingPlanProgress {
   }
 }
 
+/// `uiStrings[key]` in [locale], English if missing, with `{name}`
+/// placeholders replaced.
+String rpText(String key, String locale, [Map<String, Object> params = const {}]) {
+  var t = uiStrings[key]?[locale] ?? uiStrings[key]?['en'] ?? key;
+  params.forEach((k, v) => t = t.replaceAll('{$k}', '$v'));
+  return t;
+}
+
+/// "Genesis 1-3" / "创世记 1-3" / "Exodus 11:1-12:21", in the reader's language.
+String readingSegmentLabel(ReadingSegment s, String locale) {
+  final book = localeAwareBookName(s.book, locale);
+  final range = s.wholeChapters
+      ? (s.from == s.to ? '${s.from}' : '${s.from}-${s.to}')
+      : _windowLabel(s);
+  return '$book $range';
+}
+
+String _windowLabel(ReadingSegment s) {
+  final a = s.fromVerse;
+  final b = s.toVerse;
+  if (s.from == s.to) {
+    if (a != null && b != null) return '${s.from}:$a-$b';
+    if (a != null) return '${s.from}:$a-';
+    return '${s.from}:1-$b';
+  }
+  return '${s.from}${a != null ? ':$a' : ''}-${s.to}${b != null ? ':$b' : ''}';
+}
+
 /// Where a reader stands, worked out from progress and the calendar.
 /// Pure, so the rules (including every edge) are tested without a UI.
 @immutable
@@ -218,6 +248,41 @@ ReadingPlanStatus readingPlanStatus(
     resumeDay: finished ? null : p.copyWith(done: done).firstUnread(days),
     doneCount: done.length,
     days: days,
+  );
+}
+
+/// The reminder for the reader's plan on the day of [fire], or null when
+/// there is nothing worth saying (no plan, plan finished, the day not
+/// started yet, or that day already ticked). Pure.
+///
+/// [fire] is the day the notification is for, which is not always today:
+/// the native scheduler books the next two weeks, each with ITS day's
+/// passages, because a repeating notification would repeat day 1's
+/// chapters for ever.
+///
+/// Day for a given date: the calendar day from the start date; once the
+/// calendar has run past the end, the first day still unread. A day that
+/// is already ticked is skipped — nobody needs a nudge to read what they
+/// have read — but only the days they have actually ticked can be known,
+/// so a future day's reminder is still booked and the next app open
+/// re-books without it.
+({String title, String body})? readingPlanReminder({
+  required ReadingPlanProgress? progress,
+  required ReadingPlan? plan,
+  required DateTime fire,
+  required String locale,
+}) {
+  if (progress == null || plan == null) return null;
+  final st = readingPlanStatus(progress, plan.days, fire);
+  if (st.finished || st.notStarted) return null;
+  final day = st.calendarEnded ? st.resumeDay : st.today;
+  if (day == null || progress.done.contains(day)) return null;
+  final segs = plan.day(day);
+  if (segs.isEmpty) return null;
+  return (
+    title: rpText('readingPlan_notifTitle', locale,
+        {'day': day, 'days': plan.days}),
+    body: segs.map((x) => readingSegmentLabel(x, locale)).join(' · '),
   );
 }
 
@@ -383,6 +448,19 @@ class ReadingPlanService extends ChangeNotifier {
   }
 
   Future<void> stop() => _save(null);
+
+  /// Resolve the reminder for [fire] from what is stored (loading it if
+  /// this is a cold start, as it is when the OS wakes the scheduler).
+  Future<({String title, String body})?> reminderFor(
+      DateTime fire, String locale) async {
+    if (!_progressLoaded) await reload();
+    return readingPlanReminder(
+      progress: _progress,
+      plan: await plan(_progress?.planId),
+      fire: fire,
+      locale: locale,
+    );
+  }
 
   Future<void> setDone(int day, bool done) async {
     final p = _progress;

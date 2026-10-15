@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/pages/home_page.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
@@ -8,39 +7,10 @@ import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/jump_to_reference.dart' as jumper;
 import 'package:yahwehs_words/utils/reference_parser.dart';
-import 'package:yahwehs_words/utils/version_mapper.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
 
 const kReadingPlanPath = '/reading-plan';
-
-/// `uiStrings[key]` in [locale], English if missing, with `{name}`
-/// placeholders replaced.
-String rpText(String key, String locale, [Map<String, Object> params = const {}]) {
-  var t = uiStrings[key]?[locale] ?? uiStrings[key]?['en'] ?? key;
-  params.forEach((k, v) => t = t.replaceAll('{$k}', '$v'));
-  return t;
-}
-
-/// "Genesis 1-3" / "创世记 1-3" / "Exodus 11:1-12:21", in the reader's language.
-String readingSegmentLabel(ReadingSegment s, String locale) {
-  final book = localeAwareBookName(s.book, locale);
-  final range = s.wholeChapters
-      ? (s.from == s.to ? '${s.from}' : '${s.from}-${s.to}')
-      : _windowLabel(s);
-  return '$book $range';
-}
-
-String _windowLabel(ReadingSegment s) {
-  final a = s.fromVerse;
-  final b = s.toVerse;
-  if (s.from == s.to) {
-    if (a != null && b != null) return '${s.from}:$a-$b';
-    if (a != null) return '${s.from}:$a-';
-    return '${s.from}:1-$b';
-  }
-  return '${s.from}${a != null ? ':$a' : ''}-${s.to}${b != null ? ':$b' : ''}';
-}
 
 /// Open the reader on the first chapter of [s] (or its first verse).
 Future<void> openReadingSegment(

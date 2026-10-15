@@ -147,8 +147,52 @@ tz.TZDateTime _nextFire(NotificationCategoryPrefs prefs) {
   return candidate;
 }
 
+/// Reading-plan reminders are booked one day at a time, two weeks ahead.
+///
+/// The other categories repeat daily with the text they had when they
+/// were booked — acceptable for "a verse reference", wrong for "today's
+/// chapters": a repeating reminder would announce day 1's reading for
+/// ever. Each booking here carries ITS day's passages, and a day that is
+/// already read, or a plan that is finished or not chosen, books nothing.
+/// Every app open and every settings change re-books (cancelAll first),
+/// so the window slides forward and picks up progress ticked since.
+Future<void> _scheduleReadingPlan(
+    NotificationCategoryPrefs prefs, String locale) async {
+  var fire = _nextFire(prefs);
+  var booked = 0;
+  for (var i = 0; i < 14; i++) {
+    final content = await resolveReadingPlanReminder(fire, locale);
+    if (content != null) {
+      await _plugin.zonedSchedule(
+        1100 + i,
+        content.title,
+        content.body,
+        fire,
+        _kDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload: NotificationCategoryIds.readingPlan,
+      );
+      booked++;
+    }
+    // The next wanted weekday, rebuilt from calendar fields rather than
+    // `add(Duration(days: 1))`, which adds 24 h and so drifts an hour
+    // across a daylight-saving change.
+    var next = tz.TZDateTime(
+        tz.local, fire.year, fire.month, fire.day + 1, prefs.hour, prefs.minute);
+    while (!prefs.weekdays.contains(next.weekday)) {
+      next = tz.TZDateTime(
+          tz.local, next.year, next.month, next.day + 1, prefs.hour, prefs.minute);
+    }
+    fire = next;
+  }
+  debugPrint('[scheduler] reading_plan booked $booked of 14 days');
+}
+
 Future<void> _scheduleCategory(String categoryId,
     NotificationCategoryPrefs prefs, String locale) async {
+  if (categoryId == NotificationCategoryIds.readingPlan) {
+    return _scheduleReadingPlan(prefs, locale);
+  }
   final fire = _nextFire(prefs);
   final content = await resolveNotificationContent(categoryId, fire, locale);
   // Stable int id derived from category string so cancel-by-category
@@ -186,6 +230,8 @@ int _idForCategory(String categoryId) {
       return 1004;
     case NotificationCategoryIds.memoryVerse:
       return 1005;
+    case NotificationCategoryIds.readingPlan:
+      return 1100; // plus 0..13, one per booked day
     default:
       return 1000 + categoryId.hashCode.abs() % 1000;
   }

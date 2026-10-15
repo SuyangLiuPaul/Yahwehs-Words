@@ -3537,6 +3537,11 @@ const uiStrings = {
     'zh-Hant': '每天幾篇詩篇，加一章箴言（第幾天就讀箴言第幾章）。',
     'en': 'A few psalms a day plus one chapter of Proverbs (day n, chapter n).',
   },
+  'readingPlan_notifTitle': {
+    'zh-Hans': '读经计划 · 第 {day} 天，共 {days} 天',
+    'zh-Hant': '讀經計劃 · 第 {day} 天，共 {days} 天',
+    'en': 'Reading plan · Day {day} of {days}',
+  },
   'readingPlan_source': {
     'zh-Hans': '日程由本应用按章节和经节数生成；麦琴计划取自 1842 年原表（公有领域），并与另外两份整理版本逐日核对。',
     'zh-Hant': '日程由本應用按章節和經節數生成；麥琴計劃取自 1842 年原表（公有領域），並與另外兩份整理版本逐日核對。',

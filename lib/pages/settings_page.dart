@@ -3932,6 +3932,10 @@ class _NotificationCategoriesSection extends StatelessWidget {
         return locale.startsWith('zh')
             ? _zhScript(locale, '晚安经文', '晚安經文')
             : 'Bedtime verse';
+      case NotificationCategoryIds.readingPlan:
+        return locale.startsWith('zh')
+            ? _zhScript(locale, '读经计划', '讀經計劃')
+            : 'Reading plan';
       default:
         return id;
     }
@@ -3949,6 +3953,8 @@ class _NotificationCategoriesSection extends StatelessWidget {
         return Icons.newspaper_rounded;
       case NotificationCategoryIds.memoryVerse:
         return Icons.nightlight_round;
+      case NotificationCategoryIds.readingPlan:
+        return Icons.event_available_outlined;
       default:
         return Icons.notifications_outlined;
     }

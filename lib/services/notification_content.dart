@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:yahwehs_words/models/notification_category.dart';
+import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/utils/passage_localizer.dart' show localizePassage;
 
 /// One resolved reminder, ready to hand to whichever delivery mechanism
@@ -62,6 +63,9 @@ String notificationCategoryLabel(String categoryId, String locale) {
       break;
     case NotificationCategoryIds.memoryVerse:
       m = const {'en': 'Bedtime Verse', 'zh-Hans': '睡前经文', 'zh-Hant': '睡前經文'};
+      break;
+    case NotificationCategoryIds.readingPlan:
+      m = const {'en': 'Reading Plan', 'zh-Hans': '读经计划', 'zh-Hant': '讀經計劃'};
       break;
     default:
       m = const {
@@ -111,6 +115,15 @@ Future<NotificationContent> resolveNotificationContent(
       return _resolveBibleEvidence(when, locale);
     case NotificationCategoryIds.sermonOfDay:
       return _resolveSermonOfDay(when, locale);
+    case NotificationCategoryIds.readingPlan:
+      // Callers that can skip a day ask [resolveReadingPlanReminder]
+      // instead; this total form only exists so no category is left
+      // without an answer.
+      final r = await ReadingPlanService.instance.reminderFor(when, locale);
+      return r == null
+          ? NotificationContent(
+              notificationCategoryLabel(categoryId, locale), '')
+          : NotificationContent(r.title, r.body);
     case NotificationCategoryIds.newsDigest:
     case NotificationCategoryIds.memoryVerse:
       return NotificationContent(
@@ -118,6 +131,21 @@ Future<NotificationContent> resolveNotificationContent(
     default:
       return NotificationContent(
           notificationCategoryLabel(categoryId, locale), '');
+  }
+}
+
+/// The reading-plan reminder for [when], or null when there is nothing to
+/// say that day (no plan, finished, not started, already read). Delivery
+/// paths use this so they can stay silent instead of sending a hollow
+/// notification.
+Future<NotificationContent?> resolveReadingPlanReminder(
+    DateTime when, String locale) async {
+  try {
+    final r = await ReadingPlanService.instance.reminderFor(when, locale);
+    return r == null ? null : NotificationContent(r.title, r.body);
+  } catch (e) {
+    debugPrint('[notif-content] reading plan lookup failed: $e');
+    return null;
   }
 }
 

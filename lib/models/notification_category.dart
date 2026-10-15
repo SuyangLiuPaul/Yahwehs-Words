@@ -32,6 +32,9 @@ class NotificationCategoryIds {
   /// (Phase 2 — needs user bookmark integration; v1.3.0 omits)
   static const String memoryVerse = 'memory_verse';
 
+  /// 2026-10-15: the day's reading from the reader's active reading plan.
+  static const String readingPlan = 'reading_plan';
+
   /// All category IDs in display order. Phase-1 ships the first 3.
   static const List<String> all = [
     dailyVerse,
@@ -39,6 +42,7 @@ class NotificationCategoryIds {
     sermonOfDay,
     newsDigest,
     memoryVerse,
+    readingPlan,
   ];
 
   /// Which categories ship in v1.3.0. Phase-2 will widen this list.
@@ -46,6 +50,7 @@ class NotificationCategoryIds {
     dailyVerse,
     bibleEvidence,
     sermonOfDay,
+    readingPlan,
   ];
 }
 
@@ -91,6 +96,9 @@ class NotificationCategoryPrefs {
       case NotificationCategoryIds.memoryVerse:
         return const NotificationCategoryPrefs(
             enabled: false, hour: 22, minute: 0);
+      case NotificationCategoryIds.readingPlan:
+        return const NotificationCategoryPrefs(
+            enabled: false, hour: 8, minute: 0);
       default:
         return const NotificationCategoryPrefs(
             enabled: false, hour: 9, minute: 0);
