@@ -159,6 +159,68 @@ class ReadingPlanProgress {
   }
 }
 
+/// Where a reader stands, worked out from progress and the calendar.
+/// Pure, so the rules (including every edge) are tested without a UI.
+@immutable
+class ReadingPlanStatus {
+  /// The plan's start date is still in the future.
+  final bool notStarted;
+
+  /// Every day is marked read.
+  final bool finished;
+
+  /// The calendar ran past the last day but days remain unread.
+  final bool calendarEnded;
+
+  /// Day to show as "today": calendar day clamped to 1..days.
+  final int today;
+
+  /// Days before [today] that are not marked read.
+  final int unreadBefore;
+
+  /// First day not yet read (null when finished).
+  final int? resumeDay;
+
+  final int doneCount;
+  final int days;
+
+  const ReadingPlanStatus({
+    required this.notStarted,
+    required this.finished,
+    required this.calendarEnded,
+    required this.today,
+    required this.unreadBefore,
+    required this.resumeDay,
+    required this.doneCount,
+    required this.days,
+  });
+
+  /// True when [today] is the day to read and it is not yet ticked.
+  bool todayPending(Set<int> done) => !finished && !done.contains(today);
+}
+
+ReadingPlanStatus readingPlanStatus(
+    ReadingPlanProgress p, int days, DateTime now) {
+  final done = p.done.where((d) => d >= 1 && d <= days).toSet();
+  final cal = p.calendarDay(now);
+  final today = cal < 1 ? 1 : (cal > days ? days : cal);
+  var unreadBefore = 0;
+  for (var d = 1; d < today; d++) {
+    if (!done.contains(d)) unreadBefore++;
+  }
+  final finished = done.length >= days;
+  return ReadingPlanStatus(
+    notStarted: cal < 1,
+    finished: finished,
+    calendarEnded: !finished && cal > days,
+    today: today,
+    unreadBefore: unreadBefore,
+    resumeDay: finished ? null : p.copyWith(done: done).firstUnread(days),
+    doneCount: done.length,
+    days: days,
+  );
+}
+
 /// Merge rule for cross-device sync (used by RealtimeDbSyncService).
 ///
 /// Same plan started on the same date on both devices → the union of

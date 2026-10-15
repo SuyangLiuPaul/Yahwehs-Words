@@ -43,6 +43,8 @@ const Set<String> kRegisteredRoutePaths = {
   '/study/principles',
   '/study/promises',
   '/study/testaments',
+  // 2026-10-15: reading plans, back at the owner's request.
+  '/reading-plan',
   '/world-history-wheel',
   '/sermons',
   '/misconceptions',

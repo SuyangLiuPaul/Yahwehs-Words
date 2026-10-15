@@ -9,6 +9,8 @@ import 'package:yahwehs_words/services/usage_stats.dart';
 import 'package:yahwehs_words/widgets/admin_announcement_banner.dart';
 import 'package:yahwehs_words/constants/learning_visibility.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
+import 'package:yahwehs_words/pages/reading_plan_page.dart';
+import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/pages/study_principles_page.dart';
 import 'package:yahwehs_words/pages/study_promises_page.dart';
 import 'package:yahwehs_words/pages/study_testaments_page.dart';
@@ -172,6 +174,7 @@ class _DashboardPageState extends State<DashboardPage> {
     AdminOverlay.site().then((site) {
       if (mounted) setState(() => _adminSite = site);
     });
+    ReadingPlanService.instance.reload();
     _loadDailyVerse();
     _loadDailyEvidence();
     _loadResumeSermon();
@@ -842,6 +845,9 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ],
         );
+
+      case DashboardSection.readingPlan:
+        return _ReadingPlanCard(locale: locale, settings: settings, scheme: scheme, headerSize: headerSize);
 
       case DashboardSection.counts:
         return Row(
@@ -2471,6 +2477,104 @@ class _ResumeSermonHero extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+
+/// Home card for reading plans: today's passages for the reader's active
+/// plan, or an invitation to pick one. Quiet until the stored progress
+/// has been read (no flash of the invitation for someone mid-plan).
+class _ReadingPlanCard extends StatelessWidget {
+  final String locale;
+  final AppSettings settings;
+  final ColorScheme scheme;
+  final double headerSize;
+  const _ReadingPlanCard({
+    required this.locale,
+    required this.settings,
+    required this.scheme,
+    required this.headerSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final svc = ReadingPlanService.instance;
+    return AnimatedBuilder(
+      animation: svc,
+      builder: (context, _) {
+        if (!svc.progressLoaded) return const SizedBox.shrink();
+        final progress = svc.progress;
+        return FutureBuilder<List<ReadingPlan>>(
+          future: svc.plans(),
+          builder: (context, snap) {
+            final plan = progress == null
+                ? null
+                : snap.data?.where((p) => p.id == progress.planId).firstOrNull;
+            final status = (plan == null || progress == null)
+                ? null
+                : readingPlanStatus(progress, plan.days, svc.now);
+            final today = status?.today;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SectionHeader(
+                  icon: Icons.event_available_outlined,
+                  label: rpText('readingPlan_title', locale),
+                  settings: settings,
+                  scheme: scheme,
+                  fontSize: headerSize,
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  key: const ValueKey('home.readingPlan'),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => pushPage(const ReadingPlanPage(),
+                        routeName: kReadingPlanPath),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: plan == null || status == null || today == null
+                          ? Row(children: [
+                              Expanded(
+                                  child: Text(rpText(
+                                      'readingPlan_pickTitle', locale))),
+                              const Icon(Icons.chevron_right),
+                            ])
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    rpText('readingPlan_${plan.id}_name',
+                                        locale),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall),
+                                const SizedBox(height: 2),
+                                Text(status.finished
+                                    ? rpText('readingPlan_finished', locale)
+                                    : rpText('readingPlan_dayOf', locale, {
+                                        'day': today,
+                                        'days': plan.days
+                                      })),
+                                if (!status.finished) ...[
+                                  const SizedBox(height: 6),
+                                  Text(plan
+                                      .day(today)
+                                      .map((s) =>
+                                          readingSegmentLabel(s, locale))
+                                      .join(' · ')),
+                                ],
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
