@@ -99,3 +99,44 @@ together; Bible Box: finished plans kept, not lost):
 Not done, on purpose: choosing weekdays a plan runs on (the Reading plan
 reminder category already has weekdays for reminders), streak counters,
 sharing a plan with friends.
+
+
+## Complete plans (2026-10-16)
+
+What was still missing after "several at once", and is now there:
+
+- **"Read" means read.** Opening a day from a plan, a chapter counts when
+  the reader has scrolled to its END (its footer is on screen; a chapter
+  that fits one screen is all in view). Chapters are remembered per day
+  (`readChapters`) across closing the reader; when every chapter of the
+  day has been, the day is read, dated (`doneOn`) and a toast says so.
+  Making up an earlier day works the same way (open it from "All days").
+  Ticking a day by hand still works, for reading done elsewhere.
+  Only the chapter on screen counts: a swipe settling can still fire the
+  old page's listener, so its end is never credited to the next chapter.
+- **Your own plan.** Any books, in a number of days or by a finish date;
+  each day carries about the same number of verses. The schedule is cut
+  on the device from `assets/chapter_verses.json` by the same algorithm as
+  `tools/build_reading_plans.py`; a test proves the whole Bible in 365 days
+  is exactly the bundled plan, and that every chapter comes up once.
+  Only the books and day count are stored (`CustomPlanSpec`).
+- **Days off** (weekdays the plan does not run on): a day off does not
+  advance the plan and is not reminded. Changing them keeps today on the
+  same plan day. Pause/resume and catch-up are day-off aware
+  (`startForDayOn`).
+- **Streak**: consecutive days with any reading, across all plans
+  (yesterday still counts until a whole day is missed), longest run, days
+  read. Dates are kept per day read; sync keeps the earliest.
+- **Bulk catch-up**: "mark the N earlier days as read" for what was read
+  elsewhere, dated on the days they fell so a streak is not invented.
+- **Read it again** on a finished plan; **share my progress** (the OS
+  share sheet, or a copy to the clipboard where there is none); every
+  day in "All days" shows its date and an "open this day" button; each
+  plan shows when it will finish.
+- **The calendar moves**: `startDayWatch()` re-reads "today" at midnight
+  and when the app returns to the foreground, and re-books reminders.
+
+Not done, on purpose: chronological / thematic orders (no verified
+public-domain ordering is in this repository to check one against),
+audio, reading with friends. Everything in the plan list and a reader's
+own plan is unaffected by the Bible version in use.

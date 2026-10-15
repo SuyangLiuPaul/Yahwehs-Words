@@ -193,6 +193,7 @@ flutter:
     - assets/images/passion-reference-clock.jpeg
     - assets/bible_principles.json
     - assets/reading_plans.json
+    - assets/chapter_verses.json
     - assets/study_principles.json
     - assets/study_promises.json
     - assets/study_testaments.json

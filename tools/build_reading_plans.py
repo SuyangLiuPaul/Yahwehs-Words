@@ -44,6 +44,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KJV = os.path.join(ROOT, 'assets', 'kjv.json')
 OUT = os.path.join(ROOT, 'assets', 'reading_plans.json')
+VERSES = os.path.join(ROOT, 'assets', 'chapter_verses.json')
 
 BOOKS = [
     'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy',
@@ -191,16 +192,34 @@ def build():
     }
 
 
+def chapter_verses():
+    """{book: [verses in chapter 1, chapter 2, ...]} in canonical order.
+
+    The app cuts a reader's OWN plan (any books, any number of days) with
+    the same algorithm as [split], on this table, so a custom "Bible in a
+    year" is byte-for-byte the bundled one (a test holds the two together).
+    """
+    counts = verse_counts()
+    return {
+        b: [counts[(b, c)] for c in range(1, max(k[1] for k in counts if k[0] == b) + 1)]
+        for b in BOOKS
+    }
+
+
 def main():
     text = json.dumps(build(), ensure_ascii=False, separators=(',', ':'))
+    verses_text = json.dumps(chapter_verses(), ensure_ascii=False, separators=(',', ':'))
     if '--check' in sys.argv:
         current = open(OUT, encoding='utf-8').read() if os.path.exists(OUT) else ''
-        if current != text:
-            print('assets/reading_plans.json is stale: run tools/build_reading_plans.py')
+        cur_v = open(VERSES, encoding='utf-8').read() if os.path.exists(VERSES) else ''
+        if current != text or cur_v != verses_text:
+            print('assets/reading_plans.json or assets/chapter_verses.json is stale: '
+                  'run tools/build_reading_plans.py')
             sys.exit(1)
-        print('assets/reading_plans.json is current')
+        print('assets/reading_plans.json and assets/chapter_verses.json are current')
         return
     open(OUT, 'w', encoding='utf-8').write(text)
+    open(VERSES, 'w', encoding='utf-8').write(verses_text)
     data = json.loads(text)
     for p in data['plans']:
         print(p['id'], p['days'], 'days')

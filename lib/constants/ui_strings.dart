@@ -3717,6 +3717,246 @@ const uiStrings = {
     'zh-Hant': '已經在讀',
     'en': 'Already reading',
   },
+  'readingPlan_customAuto': {
+    'zh-Hans': '自选：{books}，{days} 天',
+    'zh-Hant': '自選：{books}，{days} 天',
+    'en': 'Custom: {books} in {days} days',
+  },
+  'readingPlan_customTitle': {
+    'zh-Hans': '自己做一个计划',
+    'zh-Hant': '自己做一個計劃',
+    'en': 'Make your own plan',
+  },
+  'readingPlan_customDesc': {
+    'zh-Hans': '选哪些书卷、几天读完，每天的量按节数平均分配。',
+    'zh-Hant': '選哪些書卷、幾天讀完，每天的量按節數平均分配。',
+    'en': 'Pick the books and how many days; each day carries about the same number of verses.',
+  },
+  'readingPlan_customName': {
+    'zh-Hans': '计划名称（可选）',
+    'zh-Hant': '計劃名稱（可選）',
+    'en': 'Plan name (optional)',
+  },
+  'readingPlan_customBooks': {
+    'zh-Hans': '要读的书卷',
+    'zh-Hant': '要讀的書卷',
+    'en': 'Books to read',
+  },
+  'readingPlan_customWholeBible': {
+    'zh-Hans': '全本圣经',
+    'zh-Hant': '全本聖經',
+    'en': 'Whole Bible',
+  },
+  'readingPlan_customOt': {
+    'zh-Hans': '旧约',
+    'zh-Hant': '舊約',
+    'en': 'Old Testament',
+  },
+  'readingPlan_customNt': {
+    'zh-Hans': '新约',
+    'zh-Hant': '新約',
+    'en': 'New Testament',
+  },
+  'readingPlan_customChoose': {
+    'zh-Hans': '自选书卷…',
+    'zh-Hant': '自選書卷…',
+    'en': 'Choose books…',
+  },
+  'readingPlan_customAll': {
+    'zh-Hans': '全选',
+    'zh-Hant': '全選',
+    'en': 'All',
+  },
+  'readingPlan_customNone': {
+    'zh-Hans': '清空',
+    'zh-Hant': '清空',
+    'en': 'None',
+  },
+  'readingPlan_customDone': {
+    'zh-Hans': '完成',
+    'zh-Hant': '完成',
+    'en': 'Done',
+  },
+  'readingPlan_customSummary': {
+    'zh-Hans': '{books} 卷书，共 {chapters} 章',
+    'zh-Hant': '{books} 卷書，共 {chapters} 章',
+    'en': '{books} books, {chapters} chapters',
+  },
+  'readingPlan_customPace': {
+    'zh-Hans': '读多久',
+    'zh-Hant': '讀多久',
+    'en': 'How long',
+  },
+  'readingPlan_customInDays': {
+    'zh-Hans': '按天数',
+    'zh-Hant': '按天數',
+    'en': 'In a number of days',
+  },
+  'readingPlan_customByDate': {
+    'zh-Hans': '按完成日期',
+    'zh-Hant': '按完成日期',
+    'en': 'By a finish date',
+  },
+  'readingPlan_customDays': {
+    'zh-Hans': '天数',
+    'zh-Hant': '天數',
+    'en': 'Days',
+  },
+  'readingPlan_customFinishBy': {
+    'zh-Hans': '完成日期',
+    'zh-Hant': '完成日期',
+    'en': 'Finish by',
+  },
+  'readingPlan_customPerDay': {
+    'zh-Hans': '每天约 {n} 章',
+    'zh-Hant': '每天約 {n} 章',
+    'en': 'About {n} chapters a day',
+  },
+  'readingPlan_customPickBooks': {
+    'zh-Hans': '请先选书卷。',
+    'zh-Hant': '請先選書卷。',
+    'en': 'Choose at least one book.',
+  },
+  'readingPlan_customBadDate': {
+    'zh-Hans': '完成日期要在开始日期之后。',
+    'zh-Hant': '完成日期要在開始日期之後。',
+    'en': 'The finish date must be after the start date.',
+  },
+  'readingPlan_customTooMany': {
+    'zh-Hans': '天数最多等于章数（{n}），每天至少读一章。',
+    'zh-Hant': '天數最多等於章數（{n}），每天至少讀一章。',
+    'en': 'At most {n} days, one chapter a day.',
+  },
+  'readingPlan_restDays': {
+    'zh-Hans': '休息日',
+    'zh-Hant': '休息日',
+    'en': 'Days off',
+  },
+  'readingPlan_restDaysHint': {
+    'zh-Hans': '计划在这些星期几不读，也不提醒。',
+    'zh-Hant': '計劃在這些星期幾不讀，也不提醒。',
+    'en': 'The plan skips these weekdays, and so do its reminders.',
+  },
+  'readingPlan_wd1': {
+    'zh-Hans': '周一',
+    'zh-Hant': '週一',
+    'en': 'Mon',
+  },
+  'readingPlan_wd2': {
+    'zh-Hans': '周二',
+    'zh-Hant': '週二',
+    'en': 'Tue',
+  },
+  'readingPlan_wd3': {
+    'zh-Hans': '周三',
+    'zh-Hant': '週三',
+    'en': 'Wed',
+  },
+  'readingPlan_wd4': {
+    'zh-Hans': '周四',
+    'zh-Hant': '週四',
+    'en': 'Thu',
+  },
+  'readingPlan_wd5': {
+    'zh-Hans': '周五',
+    'zh-Hant': '週五',
+    'en': 'Fri',
+  },
+  'readingPlan_wd6': {
+    'zh-Hans': '周六',
+    'zh-Hant': '週六',
+    'en': 'Sat',
+  },
+  'readingPlan_wd7': {
+    'zh-Hans': '周日',
+    'zh-Hant': '週日',
+    'en': 'Sun',
+  },
+  'readingPlan_restDayNote': {
+    'zh-Hans': '今天是这个计划的休息日。',
+    'zh-Hant': '今天是這個計劃的休息日。',
+    'en': 'Today is a day off for this plan.',
+  },
+  'readingPlan_endsOn': {
+    'zh-Hans': '预计读完：{date}',
+    'zh-Hant': '預計讀完：{date}',
+    'en': 'Finishes {date}',
+  },
+  'readingPlan_chaptersRead': {
+    'zh-Hans': '今天已读 {n} / {total} 章（读到每章末尾才算）',
+    'zh-Hant': '今天已讀 {n} / {total} 章（讀到每章末尾才算）',
+    'en': '{n} of {total} chapters read today (scroll to the end of each)',
+  },
+  'readingPlan_chaptersReadDone': {
+    'zh-Hans': '已读',
+    'zh-Hant': '已讀',
+    'en': 'Read',
+  },
+  'readingPlan_dayCompleted': {
+    'zh-Hans': '今天的读经完成了 ✓',
+    'zh-Hant': '今天的讀經完成了 ✓',
+    'en': 'Today’s reading is done ✓',
+  },
+  'readingPlan_streak': {
+    'zh-Hans': '连续读经 {n} 天',
+    'zh-Hant': '連續讀經 {n} 天',
+    'en': '{n}-day streak',
+  },
+  'readingPlan_streakBest': {
+    'zh-Hans': '最长 {n} 天',
+    'zh-Hant': '最長 {n} 天',
+    'en': 'Longest {n}',
+  },
+  'readingPlan_daysRead': {
+    'zh-Hans': '共读了 {n} 天',
+    'zh-Hant': '共讀了 {n} 天',
+    'en': 'Days read: {n}',
+  },
+  'readingPlan_markMissedRead': {
+    'zh-Hans': '把前面 {n} 天标为已读',
+    'zh-Hant': '把前面 {n} 天標為已讀',
+    'en': 'Mark the {n} earlier days as read',
+  },
+  'readingPlan_markMissedReadHint': {
+    'zh-Hans': '适合你在别处（比如纸质圣经）已经读过的。',
+    'zh-Hant': '適合你在別處（比如紙本聖經）已經讀過的。',
+    'en': 'For days you already read elsewhere, on paper for instance.',
+  },
+  'readingPlan_readAgain': {
+    'zh-Hans': '再读一遍',
+    'zh-Hant': '再讀一遍',
+    'en': 'Read it again',
+  },
+  'readingPlan_readAgainHint': {
+    'zh-Hans': '用同样的设置从今天重新开始。',
+    'zh-Hant': '用同樣的設定從今天重新開始。',
+    'en': 'Starts over from today with the same settings.',
+  },
+  'readingPlan_share': {
+    'zh-Hans': '分享我的进度',
+    'zh-Hant': '分享我的進度',
+    'en': 'Share my progress',
+  },
+  'readingPlan_shareText': {
+    'zh-Hans': '我在「雅伟之言」读《{name}》：第 {day} 天，共 {days} 天，已读 {done} 天。',
+    'zh-Hant': '我在「雅偉之言」讀《{name}》：第 {day} 天，共 {days} 天，已讀 {done} 天。',
+    'en': 'I’m reading “{name}” in Yahweh’s Words: day {day} of {days}, {done} days read.',
+  },
+  'readingPlan_shareCopied': {
+    'zh-Hans': '已复制到剪贴板',
+    'zh-Hant': '已複製到剪貼簿',
+    'en': 'Copied to the clipboard',
+  },
+  'readingPlan_manualHint': {
+    'zh-Hans': '手动勾选也可以，比如在别处读过。',
+    'zh-Hant': '手動勾選也可以，比如在別處讀過。',
+    'en': 'You can also tick a day by hand, if you read it elsewhere.',
+  },
+  'readingPlan_chaptersReadShort': {
+    'zh-Hans': '已读 {n}/{total}',
+    'zh-Hant': '已讀 {n}/{total}',
+    'en': '{n}/{total} read',
+  },
   'readingPlan_source': {
     'zh-Hans': '日程由本应用按章节和经节数生成；麦琴计划取自 1842 年原表（公有领域），并与另外两份整理版本逐日核对。',
     'zh-Hant': '日程由本應用按章節和經節數生成；麥琴計劃取自 1842 年原表（公有領域），並與另外兩份整理版本逐日核對。',

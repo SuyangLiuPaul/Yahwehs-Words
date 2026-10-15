@@ -18,9 +18,15 @@ import 'package:yahwehs_words/pages/reading_plan_page.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/services/reading_plan_service.dart';
 
-List<Verse> _chapter(String book, int c) => [
-      Verse(book: book, chapter: c, verse: 1, text: '$book $c one'),
-      Verse(book: book, chapter: c, verse: 2, text: '$book $c two'),
+List<Verse> _chapter(String book, int c, {int verses = 2}) => [
+      for (var v = 1; v <= verses; v++)
+        Verse(
+            book: book,
+            chapter: c,
+            verse: v,
+            text: verses > 2
+                ? '$book $c verse $v ${'and God spoke these words for a long while ' * 4}'
+                : '$book $c ${v == 1 ? 'one' : 'two'}'),
     ];
 
 void main() {
@@ -40,13 +46,14 @@ void main() {
   });
 
   Future<MainProvider> pumpReader(WidgetTester tester,
-      {ReadingSession? session}) async {
+      {ReadingSession? session, int firstChapterVerses = 2}) async {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = const Size(390, 844);
     addTearDown(tester.view.reset);
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final verses = [
-      for (var c = 1; c <= 6; c++) ..._chapter('Genesis', c),
+      for (var c = 1; c <= 6; c++)
+        ..._chapter('Genesis', c, verses: c == 1 ? firstChapterVerses : 2),
     ];
     final settings = AppSettings();
     await settings.setLocale('en');
@@ -61,7 +68,10 @@ void main() {
             ..setBooks([
               Book(title: 'Genesis', chapters: [
                 for (var c = 1; c <= 6; c++)
-                  Chapter(title: c, verses: _chapter('Genesis', c)),
+                  Chapter(
+                      title: c,
+                      verses: _chapter('Genesis', c,
+                          verses: c == 1 ? firstChapterVerses : 2)),
               ]),
             ])
             ..setVerses(verses);
@@ -91,7 +101,7 @@ void main() {
   final three =
       ReadingSession.forDay('e1', 1, const [ReadingSegment('Genesis', 1, 3)]);
 
-  testWidgets('session: back arrow instead of Home, progress 1 of 3',
+  testWidgets('session: back arrow instead of Home, nothing read yet',
       (tester) async {
     await pumpReader(tester, session: three);
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
@@ -99,8 +109,9 @@ void main() {
     expect(find.byKey(const ValueKey('readingSession.strip')), findsOneWidget);
     final bar = tester.widget<LinearProgressIndicator>(
         find.byKey(const ValueKey('readingSession.progress')));
-    expect(bar.value, closeTo(1 / 3, 1e-9));
-    expect(find.text('Chapter 1 of 3'), findsOneWidget);
+    // The bar is how much has been READ, not which page is open.
+    expect(bar.value, 0.0);
+    expect(find.textContaining('Chapter 1 of 3'), findsOneWidget);
   });
 
   testWidgets('session: next stops at the third chapter and offers to mark it',
@@ -112,7 +123,7 @@ void main() {
     await tester.tap(next);
     await tester.pump(const Duration(milliseconds: 600));
     expect(mp.currentChapter, 3);
-    expect(find.text('Chapter 3 of 3'), findsOneWidget);
+    expect(find.textContaining('Chapter 3 of 3'), findsOneWidget);
     expect(find.byKey(const ValueKey('readingSession.done')), findsOneWidget);
 
     // A third tap goes nowhere: chapter 4 exists in the Bible, not in the day.
@@ -131,7 +142,7 @@ void main() {
     expect(mp.currentChapter, 3,
         reason: 'the pager still reaches Genesis 4: it is paging the Bible, '
             'not the day');
-    expect(find.text('Chapter 3 of 3'), findsOneWidget);
+    expect(find.textContaining('Chapter 3 of 3'), findsOneWidget);
   });
 
   testWidgets('session: the back arrow returns to the plan, not the root',
@@ -180,6 +191,94 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(ReadingPlanPage), findsOneWidget);
+  });
+
+  testWidgets('session: scrolling each chapter to its end records it, and the day completes',
+      (tester) async {
+    // A real running plan whose day 1 is Genesis 1-3. The seeded chapters
+    // are two verses each, so each is entirely on screen: "scrolled to the
+    // end" is true the moment it opens.
+    final svc = ReadingPlanService.instance;
+    late String id;
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    await tester.runAsync(() async {
+      svc.clock = () => DateTime(2026, 1, 1, 9);
+      await svc.reload();
+      id = (await svc.start('bible-1y', startDate: DateTime(2026, 1, 1)))!.id;
+    });
+    final session = ReadingSession.forDay(
+        id, 1, const [ReadingSegment('Genesis', 1, 3)]);
+    final mp = await pumpReader(tester, session: session);
+    final next = find.byIcon(Icons.chevron_right_rounded);
+    Future<void> settle() async {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump(const Duration(milliseconds: 600));
+    }
+    await settle();
+    expect(svc.entry(id)!.readChapters[1], {'Genesis|1'});
+    expect(svc.entry(id)!.done, isEmpty);
+    await tester.tap(next);
+    await settle();
+    expect(svc.entry(id)!.readChapters[1], {'Genesis|1', 'Genesis|2'});
+    await tester.tap(next);
+    await settle();
+    expect(mp.currentChapter, 3);
+    final e = svc.entry(id)!;
+    expect(e.done, {1}, reason: 'all three chapters were read to the end');
+    expect(e.doneOn.keys, {1});
+    expect(e.readChapters, isEmpty);
+    await tester.pump(const Duration(seconds: 3)); // let the toast go
+    await tester.runAsync(() async {
+      for (final x in svc.entries) {
+        await svc.remove(x.id);
+      }
+    });
+  });
+
+  testWidgets('session: a long chapter is not read until it is scrolled to the end',
+      (tester) async {
+    final svc = ReadingPlanService.instance;
+    late String id;
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    await tester.runAsync(() async {
+      svc.clock = () => DateTime(2026, 1, 1, 9);
+      await svc.reload();
+      id = (await svc.start('bible-1y', startDate: DateTime(2026, 1, 1)))!.id;
+    });
+    // Day 1 of this plan is Genesis 1-3; chapter 1 is the long one.
+    final session = ReadingSession.forDay(
+        id, 1, const [ReadingSegment('Genesis', 1, 3)]);
+    await pumpReader(tester, session: session, firstChapterVerses: 30);
+    Future<void> settle() async {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    await settle();
+    expect(svc.entry(id)!.readChapters, isEmpty,
+        reason: 'only the top of the chapter is on screen');
+    // scroll down a little: still not at the end
+    await tester.drag(find.byType(PageView), const Offset(0, -400));
+    await settle();
+    expect(svc.entry(id)!.readChapters, isEmpty);
+    // ...and to the end
+    for (var i = 0;
+        i < 80 && svc.entry(id)!.readChapters.isEmpty;
+        i++) {
+      await tester.drag(find.byType(PageView), const Offset(0, -700));
+      await settle();
+    }
+    // The end of chapter 1 is recorded; the day is not done (2 and 3 unread).
+    expect(svc.entry(id)!.readChapters[1], {'Genesis|1'});
+    expect(svc.entry(id)!.done, isEmpty);
+    await tester.pump(const Duration(seconds: 3));
+    await tester.runAsync(() async {
+      for (final x in svc.entries) {
+        await svc.remove(x.id);
+      }
+    });
   });
 
   testWidgets('no session: the ordinary reader keeps Home and has no strip',

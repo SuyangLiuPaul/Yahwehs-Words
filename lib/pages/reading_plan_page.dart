@@ -89,14 +89,15 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
 
   Widget _body(BuildContext context, String locale, List<ReadingPlan> plans) {
     final entries = _svc.entries;
-    final byId = {for (final p in plans) p.id: p};
     // Plans that are running (not yet finished) are not offered again.
     final running = <String>{
       for (final e in entries)
-        if (byId[e.planId] != null &&
-            !readingPlanStatus(e, byId[e.planId]!.days, _svc.now).finished)
+        if (e.custom == null &&
+            _svc.planFor(e) != null &&
+            !readingPlanStatus(e, _svc.planFor(e)!.days, _svc.now).finished)
           e.planId,
     };
+    final streak = readingStreak(entries, _svc.now);
     final full = entries.length >= kMaxReadingPlans;
     final theme = Theme.of(context);
     return ListView(
@@ -112,12 +113,25 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
           Text(rpText('readingPlan_myPlans', locale),
               style: theme.textTheme.titleLarge),
           const SizedBox(height: 8),
+          if (streak.totalDays > 0)
+            Padding(
+              key: const ValueKey('plan.streak'),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Wrap(spacing: 14, runSpacing: 4, children: [
+                Text('🔥 ${rpText('readingPlan_streak', locale, {'n': streak.current})}',
+                    style: theme.textTheme.titleSmall),
+                Text(rpText('readingPlan_streakBest', locale,
+                    {'n': streak.longest})),
+                Text(rpText('readingPlan_daysRead', locale,
+                    {'n': streak.totalDays})),
+              ]),
+            ),
           for (final e in entries)
-            if (byId[e.planId] != null)
+            if (_svc.planFor(e) != null)
               _EntryCard(
                 key: ValueKey('plan.entry.${e.id}'),
                 entry: e,
-                plan: byId[e.planId]!,
+                plan: _svc.planFor(e)!,
                 locale: locale,
                 svc: _svc,
               ),
@@ -141,6 +155,33 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
               enabled: !full,
               onStart: () => showStartPlanSheet(context, p, locale),
             ),
+        Card(
+          key: const ValueKey('plan.card.custom'),
+          margin: const EdgeInsets.only(bottom: 10),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(rpText('readingPlan_customTitle', locale),
+                    style: theme.textTheme.titleMedium),
+                const SizedBox(height: 6),
+                Text(rpText('readingPlan_customDesc', locale)),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton(
+                    key: const ValueKey('plan.start.custom'),
+                    onPressed: full
+                        ? null
+                        : () => showStartPlanSheet(context, null, locale),
+                    child: Text(rpText('readingPlan_startButton', locale)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
         Text(rpText('readingPlan_source', locale),
             style: theme.textTheme.bodySmall),
@@ -182,7 +223,7 @@ class _EntryCard extends StatelessWidget {
           children: [
             Row(children: [
               Expanded(
-                child: Text(rpText('readingPlan_${plan.id}_name', locale),
+                child: Text(readingPlanName(plan, locale),
                     style: theme.textTheme.titleMedium),
               ),
               IconButton(
@@ -205,7 +246,17 @@ class _EntryCard extends StatelessWidget {
             const SizedBox(height: 8),
             LinearProgressIndicator(
                 value: plan.days == 0 ? 0 : st.doneCount / plan.days),
+            if (!st.finished && plan.days > 0) ...[
+              const SizedBox(height: 4),
+              Text(
+                  rpText('readingPlan_endsOn', locale, {
+                    'date': formatPlanDate(entry.dateOfDay(plan.days)),
+                  }),
+                  style: theme.textTheme.bodySmall),
+            ],
             const SizedBox(height: 12),
+            if (st.restDay)
+              _Note(text: rpText('readingPlan_restDayNote', locale)),
             if (st.finished)
               _Note(text: rpText('readingPlan_finished', locale))
             else if (st.notStarted)
@@ -229,6 +280,12 @@ class _EntryCard extends StatelessWidget {
                 segments: plan.day(today),
                 locale: locale,
                 done: isDone,
+                chaptersRead: isDone
+                    ? null
+                    : (entry.readChapters[today]?.length ?? 0),
+                chaptersTotal: ReadingSession.forDay(id, today, plan.day(today))
+                    .pages
+                    .length,
                 onOpen: (seg) => openReadingSegment(context, seg,
                     entryId: id, day: today, daySegments: plan.day(today)),
                 onToggle: (v) => svc.setDone(id, today, v),
@@ -267,10 +324,8 @@ class _EntryCard extends StatelessWidget {
                     onChanged: (v) => svc.setDone(id, d, v ?? false),
                     title: Text(rpText('readingPlan_dayOf', locale,
                         {'day': d, 'days': plan.days})),
-                    subtitle: Text(plan
-                        .day(d)
-                        .map((x) => readingSegmentLabel(x, locale))
-                        .join(' · ')),
+                    subtitle: Text('${formatPlanDate(entry.dateOfDay(d))} · '
+                        '${plan.day(d).map((x) => readingSegmentLabel(x, locale)).join(' · ')}'),
                     secondary: IconButton(
                       key: ValueKey('plan.openDay.$id.$d'),
                       tooltip: rpText('readingPlan_openDay', locale),
@@ -351,6 +406,10 @@ class _DayCard extends StatelessWidget {
   final List<ReadingSegment> segments;
   final String locale;
   final bool done;
+
+  /// Chapters of this day already scrolled to the end (null: not tracked).
+  final int? chaptersRead;
+  final int? chaptersTotal;
   final void Function(ReadingSegment) onOpen;
   final void Function(bool) onToggle;
   const _DayCard({
@@ -361,6 +420,8 @@ class _DayCard extends StatelessWidget {
     required this.done,
     required this.onOpen,
     required this.onToggle,
+    this.chaptersRead,
+    this.chaptersTotal,
   });
 
   @override
@@ -380,6 +441,15 @@ class _DayCard extends StatelessWidget {
                   onPressed: () => onOpen(s),
                 ),
             ]),
+            if (chaptersRead != null &&
+                chaptersTotal != null &&
+                chaptersRead! > 0) ...[
+              const SizedBox(height: 6),
+              Text(
+                  rpText('readingPlan_chaptersRead', locale,
+                      {'n': chaptersRead!, 'total': chaptersTotal!}),
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
             const SizedBox(height: 8),
             FilledButton.tonalIcon(
               icon: Icon(done ? Icons.check_circle : Icons.circle_outlined),

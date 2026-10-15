@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/widgets.dart'
+    show AppLifecycleState, WidgetsBinding, WidgetsBindingObserver;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/services/profile_service.dart';
@@ -69,6 +71,9 @@ class ReadingPage {
   final int chapter;
   const ReadingPage(this.book, this.chapter);
 
+  /// Stable text id of the chapter, the unit "read" is recorded in.
+  String get key => '$book|$chapter';
+
   @override
   bool operator ==(Object other) =>
       other is ReadingPage && other.book == book && other.chapter == chapter;
@@ -114,6 +119,53 @@ class ReadingSession {
       pages.indexOf(ReadingPage(englishBook, chapter));
 }
 
+/// A reader's own plan: which books, cut into how many days. Stored in
+/// the running plan itself, so every device cuts the identical schedule
+/// from it ([buildCustomPlan]).
+@immutable
+class CustomPlanSpec {
+  /// Typed by the reader; null/empty = a name made from the books.
+  final String? name;
+
+  /// Canonical English names (any order; the plan reads in canon order).
+  final List<String> books;
+
+  /// How many reading days the plan is cut into.
+  final int days;
+
+  const CustomPlanSpec({this.name, required this.books, required this.days});
+
+  Map<String, Object?> toMap() => {
+        if (name != null && name!.trim().isNotEmpty) 'name': name!.trim(),
+        'books': books,
+        'days': days,
+      };
+
+  static CustomPlanSpec? fromMap(Object? m) {
+    if (m is! Map) return null;
+    final books = m['books'];
+    final days = m['days'];
+    if (books is! List || days is! num || days < 1) return null;
+    final names = [for (final b in books) if (b is String && b.isNotEmpty) b];
+    if (names.isEmpty) return null;
+    final n = m['name'];
+    return CustomPlanSpec(
+        name: n is String && n.trim().isNotEmpty ? n.trim() : null,
+        books: names,
+        days: days.toInt());
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is CustomPlanSpec &&
+      other.name == name &&
+      other.days == days &&
+      listEquals(other.books, books);
+
+  @override
+  int get hashCode => Object.hash(name, days, Object.hashAll(books));
+}
+
 @immutable
 class ReadingPlan {
   final String id;
@@ -121,15 +173,110 @@ class ReadingPlan {
 
   /// `schedule[d]` is day d+1.
   final List<List<ReadingSegment>> schedule;
-  const ReadingPlan(this.id, this.days, this.schedule);
+
+  /// Set for a reader's own plan ([id] is `custom`).
+  final CustomPlanSpec? spec;
+  const ReadingPlan(this.id, this.days, this.schedule, {this.spec});
 
   List<ReadingSegment> day(int day) =>
       (day < 1 || day > schedule.length) ? const [] : schedule[day - 1];
 }
 
+/// Every chapter's verse count, from `assets/chapter_verses.json`
+/// (written by tools/build_reading_plans.py from the app's own KJV).
+/// What a reader's own plan is balanced on.
+class ChapterCatalog {
+  /// Canonical order.
+  final Map<String, List<int>> verses;
+  const ChapterCatalog(this.verses);
+
+  List<String> get books => verses.keys.toList();
+
+  int chapterCount(Iterable<String> books) =>
+      books.fold(0, (a, b) => a + (verses[b]?.length ?? 0));
+
+  static ChapterCatalog parse(String raw) {
+    final m = jsonDecode(raw) as Map<String, dynamic>;
+    return ChapterCatalog({
+      for (final e in m.entries)
+        e.key: [for (final v in (e.value as List)) (v as num).toInt()],
+    });
+  }
+}
+
+/// Cut [spec]'s books into [CustomPlanSpec.days] runs of whole chapters,
+/// balanced by VERSES, in canon order. The same algorithm as
+/// tools/build_reading_plans.py's `split`, so a custom plan of the whole
+/// Bible in 365 days is exactly the bundled one (a test holds them
+/// together). More days than chapters is cut to one chapter a day.
+ReadingPlan buildCustomPlan(CustomPlanSpec spec, ChapterCatalog catalog) {
+  final wanted = spec.books.toSet();
+  final chs = <({String book, int chapter, int verses})>[];
+  for (final b in catalog.books) {
+    if (!wanted.contains(b)) continue;
+    final v = catalog.verses[b]!;
+    for (var c = 0; c < v.length; c++) {
+      chs.add((book: b, chapter: c + 1, verses: v[c]));
+    }
+  }
+  if (chs.isEmpty) return ReadingPlan('custom', 0, const [], spec: spec);
+  final days = spec.days.clamp(1, chs.length);
+  final total = chs.fold<int>(0, (a, c) => a + c.verses);
+  final schedule = <List<ReadingSegment>>[];
+  var i = 0;
+  var run = 0;
+  for (var k = 1; k <= days; k++) {
+    final target = total * k / days;
+    final start = i;
+    final remaining = days - k;
+    while (i < chs.length - remaining) {
+      run += chs[i].verses;
+      i++;
+      if (run >= target) {
+        // Step back one chapter when that lands nearer the target (and
+        // the day keeps at least one chapter).
+        if (i - 1 > start &&
+            (run - target) > (target - (run - chs[i - 1].verses))) {
+          i--;
+          run -= chs[i].verses;
+        }
+        break;
+      }
+    }
+    if (i == start) {
+      run += chs[i].verses;
+      i++;
+    }
+    final segs = <ReadingSegment>[];
+    var from = start;
+    for (var x = start; x < i; x++) {
+      final last = x == i - 1;
+      final sameNext = !last &&
+          chs[x + 1].book == chs[x].book &&
+          chs[x + 1].chapter == chs[x].chapter + 1;
+      if (!sameNext) {
+        segs.add(ReadingSegment(chs[from].book, chs[from].chapter, chs[x].chapter));
+        from = x + 1;
+      }
+    }
+    schedule.add(segs);
+  }
+  return ReadingPlan('custom', days, schedule, spec: spec);
+}
+
 /// The most plans a reader can have running (and remembered) at once.
 /// Bounds the stored blob and the notification ids booked for them.
 const int kMaxReadingPlans = 8;
+
+/// Whole days since 1970-01-01 (UTC) of a calendar date — the compact
+/// form a "read on" date is stored in.
+int epochDayOf(DateTime d) =>
+    DateTime.utc(d.year, d.month, d.day).millisecondsSinceEpoch ~/ 86400000;
+
+DateTime dateOfEpochDay(int e) {
+  final u = DateTime.fromMillisecondsSinceEpoch(e * 86400000, isUtc: true);
+  return DateTime(u.year, u.month, u.day);
+}
 
 /// One plan the reader is running: which plan, from when, what has been
 /// read, and how it should remind them. Several can run side by side.
@@ -145,8 +292,11 @@ class ReadingPlanProgress {
   /// different dates are different instances. Sync merges by it.
   final String id;
 
-  /// Which bundled plan ([ReadingPlan.id]).
+  /// Which bundled plan ([ReadingPlan.id]), or `custom`.
   final String planId;
+
+  /// A reader's own plan ([planId] is `custom`): its books and days.
+  final CustomPlanSpec? custom;
 
   /// Local calendar date day 1 falls on (time ignored). The reader can
   /// move it: a plan begun late, or to catch up.
@@ -158,6 +308,19 @@ class ReadingPlanProgress {
   /// Day numbers the reader chose to leave behind. Not read, but no
   /// longer counted as "behind".
   final Set<int> skipped;
+
+  /// Weekdays (ISO, Mon=1..Sun=7) the plan does not run on. Day 1 is
+  /// the first other weekday on or after [start]; a rest day does not
+  /// advance the plan and is not reminded.
+  final Set<int> restDays;
+
+  /// The date each read day was read ([epochDayOf]); feeds the streak.
+  final Map<int, int> doneOn;
+
+  /// Chapters of a day that are already read, while the day is not yet
+  /// ([ReadingPage.key]s): a day is read when every chapter in it has
+  /// been scrolled to the end.
+  final Map<int, Set<String>> readChapters;
 
   /// While set, the plan's calendar stands still at this date: today
   /// does not advance and no reminder is booked. Resuming moves
@@ -192,7 +355,11 @@ class ReadingPlanProgress {
     required this.done,
     required this.updatedMs,
     String? id,
+    this.custom,
     this.skipped = const {},
+    this.restDays = const {},
+    this.doneOn = const {},
+    this.readChapters = const {},
     this.pausedOn,
     this.remind = false,
     this.hour,
@@ -217,12 +384,27 @@ class ReadingPlanProgress {
 
   bool get paused => pausedOn != null;
 
+  /// The rest days in force: all seven would mean never reading, so that
+  /// reads as none.
+  Set<int> get effectiveRestDays => restDays.length >= 7 ? const {} : restDays;
+
   Map<String, Object?> toMap() => {
         'id': id,
         'planId': planId,
+        if (custom != null) 'custom': custom!.toMap(),
         'start': _date(start),
         'done': (done.toList()..sort()),
         if (skipped.isNotEmpty) 'skipped': (skipped.toList()..sort()),
+        if (restDays.isNotEmpty) 'rest': (restDays.toList()..sort()),
+        if (doneOn.isNotEmpty)
+          'doneOn': {
+            for (final k in (doneOn.keys.toList()..sort())) '$k': doneOn[k],
+          },
+        if (readChapters.isNotEmpty)
+          'chapters': {
+            for (final k in (readChapters.keys.toList()..sort()))
+              '$k': (readChapters[k]!.toList()..sort()),
+          },
         if (pausedOn != null) 'pausedOn': _date(pausedOn!),
         'remind': remind,
         if (hour != null && minute != null) 'hour': hour,
@@ -248,6 +430,8 @@ class ReadingPlanProgress {
     final planId = m['planId'];
     final start = DateTime.tryParse('${m['start']}');
     if (planId is! String || planId.isEmpty || start == null) return null;
+    final custom = CustomPlanSpec.fromMap(m['custom']);
+    if (planId == 'custom' && custom == null) return null;
     final ts = m['updatedMs'];
     final updated = ts is num ? ts.toInt() : 0;
     final paused = m['pausedOn'] == null
@@ -259,12 +443,39 @@ class ReadingPlanProgress {
     final msg = m['message'];
     final added = m['addedMs'];
     final id = m['id'];
+    final doneOn = <int, int>{};
+    final rawOn = m['doneOn'];
+    if (rawOn is Map) {
+      for (final e in rawOn.entries) {
+        final k = int.tryParse('${e.key}');
+        final v = e.value;
+        if (k != null && k >= 1 && v is num) doneOn[k] = v.toInt();
+      }
+    }
+    final chapters = <int, Set<String>>{};
+    final rawCh = m['chapters'];
+    if (rawCh is Map) {
+      for (final e in rawCh.entries) {
+        final k = int.tryParse('${e.key}');
+        final v = e.value;
+        if (k != null && k >= 1 && v is List) {
+          chapters[k] = {for (final c in v) if (c is String) c};
+        }
+      }
+    }
     return ReadingPlanProgress(
       id: id is String && id.isNotEmpty ? id : null,
       planId: planId,
+      custom: custom,
       start: _dateOnly(start),
       done: _days(m['done']),
       skipped: _days(m['skipped']),
+      restDays: {
+        for (final d in (m['rest'] is List ? m['rest'] as List : const []))
+          if (d is num && d >= 1 && d <= 7) d.toInt(),
+      },
+      doneOn: doneOn,
+      readChapters: chapters,
       pausedOn: paused == null ? null : _dateOnly(paused),
       remind: m['remind'] is bool ? m['remind'] as bool : legacy,
       hour: hasTime ? h.toInt().clamp(0, 23) : null,
@@ -290,6 +501,9 @@ class ReadingPlanProgress {
   ReadingPlanProgress copyWith({
     Set<int>? done,
     Set<int>? skipped,
+    Set<int>? restDays,
+    Map<int, int>? doneOn,
+    Map<int, Set<String>>? readChapters,
     DateTime? start,
     DateTime? pausedOn,
     bool clearPausedOn = false,
@@ -305,9 +519,13 @@ class ReadingPlanProgress {
       ReadingPlanProgress(
         id: id,
         planId: planId,
+        custom: custom,
         start: start == null ? this.start : _dateOnly(start),
         done: done ?? this.done,
         skipped: skipped ?? this.skipped,
+        restDays: restDays ?? this.restDays,
+        doneOn: doneOn ?? this.doneOn,
+        readChapters: readChapters ?? this.readChapters,
         pausedOn: clearPausedOn
             ? null
             : (pausedOn == null ? this.pausedOn : _dateOnly(pausedOn)),
@@ -320,20 +538,69 @@ class ReadingPlanProgress {
         deleted: deleted ?? this.deleted,
       );
 
-  /// Which plan day [today] is, counted from [start] (day 1 = start).
-  /// Can be < 1 (start in the future) or > the plan length (finished
-  /// on the calendar). Uses UTC dates so a daylight-saving change can
-  /// never make a 23- or 25-hour "day" round to the wrong number — the
-  /// bug `day_of_year` had (2026-09-08). A paused plan counts as if
-  /// today were the day it was paused.
+  /// Which plan day [today] is, counted from [start] (day 1 = the first
+  /// non-rest day on or after it). Can be < 1 (start in the future) or >
+  /// the plan length (finished on the calendar). Uses UTC dates so a
+  /// daylight-saving change can never make a 23- or 25-hour "day" round
+  /// to the wrong number — the bug `day_of_year` had (2026-09-08). A
+  /// paused plan counts as if today were the day it was paused. On a
+  /// rest day it is still yesterday's day: nothing new falls due.
   int calendarDay(DateTime today) {
     var t = _dateOnly(today);
     final p = pausedOn;
     if (p != null && p.isBefore(t)) t = p;
-    final a = DateTime.utc(start.year, start.month, start.day);
-    final b = DateTime.utc(t.year, t.month, t.day);
-    return b.difference(a).inDays + 1;
+    final diff = DateTime.utc(t.year, t.month, t.day)
+        .difference(DateTime.utc(start.year, start.month, start.day))
+        .inDays;
+    final rest = effectiveRestDays;
+    if (diff < 0 || rest.isEmpty) return diff + 1;
+    final n = diff + 1;
+    var count = (n ~/ 7) * (7 - rest.length);
+    var wd = start.weekday;
+    for (var i = 0; i < n % 7; i++) {
+      if (!rest.contains(wd)) count++;
+      wd = wd % 7 + 1;
+    }
+    return count;
   }
+
+  /// The date plan day [day] falls on.
+  DateTime dateOfDay(int day) {
+    final rest = effectiveRestDays;
+    if (day < 1 || rest.isEmpty) {
+      return DateTime(start.year, start.month, start.day + (day < 1 ? 0 : day - 1));
+    }
+    var d = start;
+    var c = 0;
+    while (true) {
+      if (!rest.contains(d.weekday)) {
+        c++;
+        if (c == day) return d;
+      }
+      d = DateTime(d.year, d.month, d.day + 1);
+    }
+  }
+
+  /// The start date that makes [day] fall on [on] (or, if [on] is a rest
+  /// day, on the last day before it that is not).
+  DateTime startForDayOn(DateTime on, int day) {
+    final rest = effectiveRestDays;
+    var cur = _dateOnly(on);
+    if (rest.isEmpty) return DateTime(cur.year, cur.month, cur.day - (day - 1));
+    while (rest.contains(cur.weekday)) {
+      cur = DateTime(cur.year, cur.month, cur.day - 1);
+    }
+    var c = 1;
+    while (c < day) {
+      cur = DateTime(cur.year, cur.month, cur.day - 1);
+      if (!rest.contains(cur.weekday)) c++;
+    }
+    return cur;
+  }
+
+  /// [date] is one of the plan's rest days.
+  bool isRestDate(DateTime date) =>
+      effectiveRestDays.contains(_dateOnly(date).weekday);
 
   /// First day neither read nor skipped, or null when every day is.
   int? firstUnread(int days) {
@@ -388,6 +655,9 @@ class ReadingPlanStatus {
   /// The reader paused this plan.
   final bool paused;
 
+  /// Today is one of the plan's rest days: nothing new falls due.
+  final bool restDay;
+
   /// Day to show as "today": calendar day clamped to 1..days.
   final int today;
 
@@ -406,6 +676,7 @@ class ReadingPlanStatus {
     required this.finished,
     required this.calendarEnded,
     required this.paused,
+    required this.restDay,
     required this.today,
     required this.unreadBefore,
     required this.resumeDay,
@@ -435,6 +706,7 @@ ReadingPlanStatus readingPlanStatus(
     finished: finished,
     calendarEnded: !finished && cal > days,
     paused: p.paused,
+    restDay: !finished && !p.paused && p.isRestDate(now),
     today: today,
     unreadBefore: unreadBefore,
     resumeDay:
@@ -443,6 +715,25 @@ ReadingPlanStatus readingPlanStatus(
     skippedCount: skipped.length,
     days: days,
   );
+}
+
+/// A plan's name for the reader: the bundled plan's, or the reader's own
+/// words, or one made from the books of their own plan.
+String readingPlanName(ReadingPlan plan, String locale) {
+  final spec = plan.spec;
+  if (spec == null) return rpText('readingPlan_${plan.id}_name', locale);
+  final typed = spec.name;
+  if (typed != null && typed.trim().isNotEmpty) return typed.trim();
+  final order = [...spec.books];
+  String b(String x) => localeAwareBookName(x, locale);
+  final String label;
+  if (order.length <= 2) {
+    label = order.map(b).join(', ');
+  } else {
+    label = '${b(order.first)}–${b(order.last)}';
+  }
+  return rpText('readingPlan_customAuto', locale,
+      {'books': label, 'days': plan.days});
 }
 
 /// The reminder for one running plan on the day of [fire], or null when
@@ -471,6 +762,7 @@ ReadingPlanStatus readingPlanStatus(
   required String locale,
 }) {
   if (progress == null || plan == null || progress.paused) return null;
+  if (progress.isRestDate(fire)) return null; // a rest day: nothing to nudge
   final st = readingPlanStatus(progress, plan.days, fire);
   if (st.finished || st.notStarted) return null;
   final day = st.calendarEnded ? st.resumeDay : st.today;
@@ -484,7 +776,7 @@ ReadingPlanStatus readingPlanStatus(
     title: (msg != null && msg.trim().isNotEmpty)
         ? msg.trim()
         : rpText('readingPlan_notifTitle', locale, {
-            'name': rpText('readingPlan_${plan.id}_name', locale),
+            'name': readingPlanName(plan, locale),
             'day': day,
             'days': plan.days,
           }),
@@ -582,8 +874,22 @@ ReadingPlanProgress _mergeEntry(ReadingPlanProgress a, ReadingPlanProgress b) {
       ? a.updatedMs > b.updatedMs
       : a.toJson().compareTo(b.toJson()) >= 0;
   final newer = aNewer ? a : b;
+  // Read-on dates: the earliest wins, so a streak never shortens.
+  final doneOn = {...a.doneOn};
+  b.doneOn.forEach((k, v) {
+    final have = doneOn[k];
+    doneOn[k] = have == null || v < have ? v : have;
+  });
+  final chapters = <int, Set<String>>{};
+  for (final m in [a.readChapters, b.readChapters]) {
+    m.forEach((k, v) => chapters[k] = {...?chapters[k], ...v});
+  }
+  final done = {...a.done, ...b.done};
+  chapters.removeWhere((k, _) => done.contains(k));
   return newer.copyWith(
-    done: {...a.done, ...b.done},
+    done: done,
+    doneOn: doneOn,
+    readChapters: chapters,
     skipped: {...a.skipped, ...b.skipped},
     updatedMs: a.updatedMs > b.updatedMs ? a.updatedMs : b.updatedMs,
   );
@@ -639,6 +945,42 @@ int readingPlanBlobStamp(String raw) {
   }
 }
 
+/// How many days in a row the reader has read, across every plan.
+@immutable
+class ReadingStreak {
+  /// Consecutive days up to today (or up to yesterday: a streak is not
+  /// broken until a whole day has passed without reading).
+  final int current;
+  final int longest;
+
+  /// Distinct days with any reading.
+  final int totalDays;
+  const ReadingStreak(this.current, this.longest, this.totalDays);
+}
+
+ReadingStreak readingStreak(Iterable<ReadingPlanProgress> entries, DateTime now) {
+  final days = <int>{
+    for (final e in entries)
+      if (!e.deleted) ...e.doneOn.values,
+  };
+  if (days.isEmpty) return const ReadingStreak(0, 0, 0);
+  final sorted = days.toList()..sort();
+  var longest = 1;
+  var run = 1;
+  for (var i = 1; i < sorted.length; i++) {
+    run = sorted[i] == sorted[i - 1] + 1 ? run + 1 : 1;
+    if (run > longest) longest = run;
+  }
+  final today = epochDayOf(now);
+  var cursor = days.contains(today) ? today : today - 1;
+  var current = 0;
+  while (days.contains(cursor)) {
+    current++;
+    cursor--;
+  }
+  return ReadingStreak(current, longest, days.length);
+}
+
 /// A plan the scheduler should book reminders for, with its own time
 /// when it has one.
 @immutable
@@ -648,6 +990,9 @@ class ReadingReminderSlot {
   final int? minute;
   const ReadingReminderSlot(this.entry, this.hour, this.minute);
 }
+
+/// What recording a chapter as read did.
+enum ChapterReadResult { notTracked, already, partial, dayDone }
 
 /// Bundled plans + the active profile's running plans.
 class ReadingPlanService extends ChangeNotifier {
@@ -679,7 +1024,9 @@ class ReadingPlanService extends ChangeNotifier {
   DateTime get now => (clock ?? DateTime.now)();
 
   List<ReadingPlan>? _plans;
+  ChapterCatalog? _catalog;
   Future<List<ReadingPlan>>? _loading;
+  final Map<String, ReadingPlan> _customCache = {};
   List<ReadingPlanProgress> _all = const [];
   int _clearedMs = 0;
   bool _progressLoaded = false;
@@ -696,6 +1043,8 @@ class ReadingPlanService extends ChangeNotifier {
   }
 
   bool get progressLoaded => _progressLoaded;
+
+  ChapterCatalog? get catalog => _catalog;
 
   /// Parse the asset. Pure, so tests can feed it a string.
   static List<ReadingPlan> parse(String raw) {
@@ -722,21 +1071,46 @@ class ReadingPlanService extends ChangeNotifier {
     ];
   }
 
+  /// The bundled plans (and, with them, the chapter table a reader's own
+  /// plan is cut from).
   Future<List<ReadingPlan>> plans() {
     if (_plans != null) return Future.value(_plans);
     return _loading ??= () async {
-      final raw = await (loader ?? rootBundle.loadString)(
-          'assets/reading_plans.json');
+      final read = loader ?? rootBundle.loadString;
+      final raw = await read('assets/reading_plans.json');
+      _catalog = ChapterCatalog.parse(await read('assets/chapter_verses.json'));
       return _plans = parse(raw);
     }();
   }
 
+  /// A bundled plan by id.
   Future<ReadingPlan?> plan(String? id) async {
     if (id == null) return null;
     for (final p in await plans()) {
       if (p.id == id) return p;
     }
     return null;
+  }
+
+  /// The plan a running entry follows — bundled, or built from its own
+  /// books. Null until [plans] has loaded, or if the plan is gone.
+  ReadingPlan? planFor(ReadingPlanProgress e) {
+    final spec = e.custom;
+    if (spec != null) {
+      final cat = _catalog;
+      if (cat == null) return null;
+      return _customCache.putIfAbsent(
+          '${e.id}|${spec.hashCode}', () => buildCustomPlan(spec, cat));
+    }
+    for (final p in _plans ?? const <ReadingPlan>[]) {
+      if (p.id == e.planId) return p;
+    }
+    return null;
+  }
+
+  Future<ReadingPlan?> planForAsync(ReadingPlanProgress e) async {
+    await plans();
+    return planFor(e);
   }
 
   String get _key => ProfileService.instance.scopedKey(kReadingPlanKey);
@@ -775,10 +1149,14 @@ class ReadingPlanService extends ChangeNotifier {
     } catch (_) {
       // Sync is best-effort (signed out, China build, tests).
     }
-    if (onPersisted != null) {
-      _persistedTimer?.cancel();
-      _persistedTimer = Timer(const Duration(seconds: 1), () => onPersisted?.call());
-    }
+    _persistedSoon();
+  }
+
+  void _persistedSoon() {
+    if (onPersisted == null) return;
+    _persistedTimer?.cancel();
+    _persistedTimer =
+        Timer(const Duration(seconds: 1), () => onPersisted?.call());
   }
 
   Future<void> _update(
@@ -799,13 +1177,21 @@ class ReadingPlanService extends ChangeNotifier {
     return t > e.updatedMs ? t : e.updatedMs + 1;
   }
 
+  DateTime get _today {
+    final n = now;
+    return DateTime(n.year, n.month, n.day);
+  }
+
   static int _seq = 0;
 
-  /// Start [planId] on [startDate] (default today) alongside any plans
-  /// already running. Null when [kMaxReadingPlans] are already kept.
+  /// Start [planId] (or the reader's own [custom] plan) on [startDate]
+  /// (default today) alongside any plans already running. Null when
+  /// [kMaxReadingPlans] are already kept.
   Future<ReadingPlanProgress?> start(
     String planId, {
+    CustomPlanSpec? custom,
     DateTime? startDate,
+    Set<int> restDays = const {},
     bool remind = false,
     int? hour,
     int? minute,
@@ -823,9 +1209,11 @@ class ReadingPlanService extends ChangeNotifier {
     final e = ReadingPlanProgress(
       id: '$planId-${ReadingPlanProgress._date(day)}-${ms.toRadixString(36)}'
           '-${(_seq++).toRadixString(36)}',
-      planId: planId,
+      planId: custom == null ? planId : 'custom',
+      custom: custom,
       start: day,
       done: const {},
+      restDays: restDays.length >= 7 ? const {} : restDays,
       remind: remind,
       hour: hour,
       minute: hour == null ? null : minute,
@@ -838,36 +1226,120 @@ class ReadingPlanService extends ChangeNotifier {
     return e;
   }
 
+  /// Run the same plan again from today, with the same reminder.
+  Future<ReadingPlanProgress?> restart(String id) async {
+    final e = entry(id);
+    if (e == null) return null;
+    return start(e.planId,
+        custom: e.custom,
+        restDays: e.restDays,
+        remind: e.remind,
+        hour: e.hour,
+        minute: e.minute,
+        message: e.message);
+  }
+
   /// Remove a plan (and what was read in it).
   Future<void> remove(String id) =>
       _update(id, (e) => e.copyWith(deleted: true));
 
+  /// Mark a whole day read (or not) by hand. Reading it in the app does
+  /// the same through [markChapterRead].
   Future<void> setDone(String id, int day, bool done) => _update(id, (e) {
         final next = {...e.done};
-        done ? next.add(day) : next.remove(day);
+        final on = {...e.doneOn};
+        final chapters = {...e.readChapters};
+        if (done) {
+          next.add(day);
+          on.putIfAbsent(day, () => epochDayOf(now));
+          chapters.remove(day);
+        } else {
+          next.remove(day);
+          on.remove(day);
+          chapters.remove(day);
+        }
         // Read beats skipped: a day cannot be both.
         return e.copyWith(
-            done: next, skipped: {...e.skipped}..remove(day));
+            done: next,
+            doneOn: on,
+            readChapters: chapters,
+            skipped: {...e.skipped}..remove(day));
       });
+
+  /// Record that the reader scrolled to the end of [chapterKey]
+  /// ([ReadingPage.key]) while reading [day] of plan [id]. When every
+  /// chapter of the day has been, the day is read.
+  Future<ChapterReadResult> markChapterRead(
+      String id, int day, String chapterKey) async {
+    final e = entry(id);
+    if (e == null) return ChapterReadResult.notTracked;
+    final plan = await planForAsync(e);
+    if (plan == null) return ChapterReadResult.notTracked;
+    final wanted = ReadingSession.forDay(id, day, plan.day(day))
+        .pages
+        .map((p) => p.key)
+        .toSet();
+    if (!wanted.contains(chapterKey)) return ChapterReadResult.notTracked;
+    if (e.done.contains(day)) return ChapterReadResult.already;
+    final have = {...?e.readChapters[day]};
+    if (have.contains(chapterKey)) return ChapterReadResult.already;
+    have.add(chapterKey);
+    final complete = have.containsAll(wanted);
+    await _update(id, (x) {
+      if (!complete) {
+        return x.copyWith(readChapters: {...x.readChapters, day: have});
+      }
+      return x.copyWith(
+        done: {...x.done, day},
+        doneOn: {...x.doneOn}..putIfAbsent(day, () => epochDayOf(now)),
+        readChapters: {...x.readChapters}..remove(day),
+        skipped: {...x.skipped}..remove(day),
+      );
+    });
+    return complete ? ChapterReadResult.dayDone : ChapterReadResult.partial;
+  }
+
+  /// Chapters of [day] already read (while the day is not yet done).
+  Set<String> chaptersRead(String id, int day) =>
+      entry(id)?.readChapters[day] ?? const {};
 
   /// Move day 1 to [date]. What has been read stays read.
   Future<void> setStart(String id, DateTime date) =>
       _update(id, (e) => e.copyWith(start: date));
 
+  /// Choose the weekdays the plan does not run on (ISO, Mon=1..Sun=7).
+  /// Today stays the same plan day where it can: the start date is moved
+  /// so the reader does not suddenly find themselves days ahead or behind.
+  Future<void> setRestDays(String id, Set<int> rest) async {
+    final e = entry(id);
+    if (e == null) return;
+    final plan = planFor(e);
+    final clean = rest.length >= 7 ? <int>{} : rest;
+    await _update(id, (x) {
+      final before = x.calendarDay(_today);
+      final changed = x.copyWith(restDays: clean);
+      if (plan == null || before < 1 || before > plan.days) return changed;
+      return changed.copyWith(start: changed.startForDayOn(_today, before));
+    });
+  }
+
   /// Freeze the plan's calendar today; no reminders until [resume].
   Future<void> pause(String id) => _update(id, (e) {
         if (e.paused) return e;
-        final n = now;
-        return e.copyWith(pausedOn: DateTime(n.year, n.month, n.day));
+        return e.copyWith(pausedOn: _today);
       });
 
-  /// Carry on: the days spent paused are added to the start date, so
-  /// the plan picks up exactly where it stopped, with nothing behind.
+  /// Carry on: today becomes the plan day it was when paused, so the
+  /// plan picks up exactly where it stopped, with nothing behind.
   Future<void> resume(String id) => _update(id, (e) {
         final p = e.pausedOn;
         if (p == null) return e;
-        final n = now;
-        final today = DateTime(n.year, n.month, n.day);
+        final today = _today;
+        final dayAtPause = e.calendarDay(today); // clamped to the pause date
+        if (dayAtPause >= 1) {
+          return e.copyWith(
+              start: e.startForDayOn(today, dayAtPause), clearPausedOn: true);
+        }
         final gap = DateTime.utc(today.year, today.month, today.day)
             .difference(DateTime.utc(p.year, p.month, p.day))
             .inDays;
@@ -882,21 +1354,18 @@ class ReadingPlanService extends ChangeNotifier {
   /// day is today. Nothing is lost and nothing is marked read.
   Future<void> catchUp(String id) async {
     final e = entry(id);
-    final plan = await this.plan(e?.planId);
+    final plan = e == null ? null : await planForAsync(e);
     if (e == null || plan == null) return;
     final first = e.firstUnread(plan.days);
     if (first == null) return;
-    final n = now;
-    final today = DateTime(n.year, n.month, n.day);
-    // Day `first` should fall on today: start = today - (first - 1).
-    await setStart(id, DateTime(today.year, today.month, today.day - (first - 1)));
+    await setStart(id, e.startForDayOn(_today, first));
   }
 
   /// "Leave the missed days behind": every unread day before today is
   /// skipped, so it stops counting as behind. Today stays to be read.
   Future<void> skipMissed(String id) async {
     final e = entry(id);
-    final plan = await this.plan(e?.planId);
+    final plan = e == null ? null : await planForAsync(e);
     if (e == null || plan == null) return;
     final st = readingPlanStatus(e, plan.days, now);
     final add = <int>{
@@ -905,6 +1374,34 @@ class ReadingPlanService extends ChangeNotifier {
     };
     if (add.isEmpty) return;
     await _update(id, (x) => x.copyWith(skipped: {...x.skipped, ...add}));
+  }
+
+  /// "I already read these": every unread day before today is marked
+  /// read (for a reader who followed the plan on paper, or elsewhere).
+  Future<void> markMissedRead(String id) async {
+    final e = entry(id);
+    final plan = e == null ? null : await planForAsync(e);
+    if (e == null || plan == null) return;
+    final st = readingPlanStatus(e, plan.days, now);
+    final add = <int>{
+      for (var d = 1; d < st.today; d++)
+        if (!e.done.contains(d)) d,
+    };
+    if (add.isEmpty) return;
+    await _update(id, (x) {
+      final on = {...x.doneOn};
+      for (final d in add) {
+        // The day it fell on, not today, so a streak is not invented.
+        on.putIfAbsent(d, () => epochDayOf(x.dateOfDay(d)));
+      }
+      final chapters = {...x.readChapters}..removeWhere((k, _) => add.contains(k));
+      return x.copyWith(
+        done: {...x.done, ...add},
+        doneOn: on,
+        readChapters: chapters,
+        skipped: {...x.skipped}..removeAll(add),
+      );
+    });
   }
 
   /// Set the plan's reminder. [hour]/[minute] null with [clearTime]
@@ -936,7 +1433,7 @@ class ReadingPlanService extends ChangeNotifier {
     final out = <ReadingReminderSlot>[];
     for (final e in entries) {
       if (!e.remind || e.paused) continue;
-      final plan = await this.plan(e.planId);
+      final plan = await planForAsync(e);
       if (plan == null) continue;
       if (readingPlanStatus(e, plan.days, now).finished) continue;
       out.add(ReadingReminderSlot(e, e.hour, e.minute));
@@ -950,7 +1447,7 @@ class ReadingPlanService extends ChangeNotifier {
       ReadingPlanProgress e, DateTime fire, String locale) async {
     return readingPlanReminder(
       progress: e,
-      plan: await plan(e.planId),
+      plan: await planForAsync(e),
       fire: fire,
       locale: locale,
     );
@@ -972,5 +1469,60 @@ class ReadingPlanService extends ChangeNotifier {
       title: rpText('readingPlan_notifMany', locale, {'n': lines.length}),
       body: lines.map((l) => '${l.title}: ${l.body}').join('\n'),
     );
+  }
+
+  // ── The calendar moves while the app is open ──────────────────────
+
+  _DayWatch? _watch;
+
+  /// Keep "today" honest while the app stays open: at midnight, and when
+  /// the app returns to the foreground after one (a phone left on a desk
+  /// overnight, a tab left open), re-read the day and re-book reminders.
+  /// Called once from main.dart; tests leave it off so no timer is pending.
+  void startDayWatch() {
+    _watch ??= _DayWatch(this)..start();
+  }
+
+  @visibleForTesting
+  void dayChangedForTest() => _dayChanged();
+
+  DateTime? _lastDay;
+
+  void _dayChanged() {
+    final t = _today;
+    if (_lastDay != null && _lastDay == t) return;
+    _lastDay = t;
+    notifyListeners();
+    _persistedSoon();
+  }
+}
+
+class _DayWatch with WidgetsBindingObserver {
+  final ReadingPlanService svc;
+  Timer? _timer;
+  _DayWatch(this.svc);
+
+  void start() {
+    svc._lastDay = svc._today;
+    WidgetsBinding.instance.addObserver(this);
+    _arm();
+  }
+
+  void _arm() {
+    _timer?.cancel();
+    final n = svc.now;
+    final next = DateTime(n.year, n.month, n.day + 1, 0, 0, 2);
+    _timer = Timer(next.difference(n), () {
+      svc._dayChanged();
+      _arm();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      svc._dayChanged();
+      _arm();
+    }
   }
 }

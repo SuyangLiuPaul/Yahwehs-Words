@@ -91,7 +91,12 @@ import 'package:yahwehs_words/utils/version_mapper.dart'
     show translateBookName, toEnglish, localeAwareBookName, sameBookName,
         bookNameForDisplay;
 import 'package:yahwehs_words/services/reading_plan_service.dart'
-    show ReadingPlanService, ReadingSession, rpText;
+    show
+        ChapterReadResult,
+        ReadingPage,
+        ReadingPlanService,
+        ReadingSession,
+        rpText;
 import 'package:yahwehs_words/widgets/highlights_sheet.dart';
 import 'package:yahwehs_words/widgets/originals_sheet.dart';
 import 'package:yahwehs_words/widgets/verse_widget.dart';
@@ -419,6 +424,52 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     // wrapping the SPL, which works on every mount including re-mounts.
   }
 
+  /// Chapters of the reading-plan day already reported this mount, so a
+  /// scroll that stays at the end reports once.
+  final Set<String> _reportedChapters = {};
+
+  /// A reading-plan chapter counts as read when the reader has scrolled
+  /// to its end (its last item, the footer, is on screen) — or the whole
+  /// chapter fits on one screen and so is all in view.
+  ///
+  /// Only the CURRENT page's positions count: while a swipe settles the
+  /// previous page's listener can still fire, and its end would otherwise
+  /// be credited to the chapter just arrived at.
+  void _noteChapterEnd(Iterable<ItemPosition> positions, double progress) {
+    final session = widget.session;
+    final provider = _positionsProvider;
+    if (session == null || provider == null) return;
+    if (!identical(_attachedPositionsListener, provider.itemPositionsListener)) {
+      return;
+    }
+    final book = provider.currentBook;
+    final chapter = provider.currentChapter;
+    if (book == null || chapter == null) return;
+    final lastIndex = _progressItemCount - 1;
+    if (lastIndex < 1) return; // the page has not told us its length yet
+    final atEnd = positions
+            .any((p) => p.index == lastIndex && p.itemTrailingEdge <= 1.02) ||
+        progress >= 0.995;
+    if (!atEnd) return;
+    final en = toEnglish(book) ?? book;
+    if (session.indexOf(en, chapter) < 0) return;
+    final key = ReadingPage(en, chapter).key;
+    if (!_reportedChapters.add('${session.day}|$key')) return;
+    final locale = context.read<AppSettings>().locale;
+    final color = Theme.of(context).colorScheme.primary;
+    ReadingPlanService.instance
+        .markChapterRead(session.entryId, session.day, key)
+        .then((r) {
+      if (!mounted || r != ChapterReadResult.dayDone) return;
+      showFloatingToast(
+        context,
+        message: rpText('readingPlan_dayCompleted', locale),
+        icon: Icons.check_circle_outline,
+        background: color,
+      );
+    });
+  }
+
   void _handleItemPositionsChanged() {
     final positions =
         _attachedPositionsListener?.itemPositions.value;
@@ -475,6 +526,8 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
       itemCount: _progressItemCount,
       itemHeights: _itemHeights,
     );
+
+    _noteChapterEnd(positions, progress);
 
     if (mounted) {
       _visibleItemPosNotifier.value = pos;
@@ -850,49 +903,63 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     final total = _sessionLength(provider);
     final last = i == total - 1;
     final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      key: const ValueKey('readingSession.strip'),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+    final svc = ReadingPlanService.instance;
+    return AnimatedBuilder(
+      animation: svc,
+      builder: (context, _) {
+        final e = svc.entry(session.entryId);
+        final dayDone = e?.done.contains(session.day) ?? false;
+        // The bar is how much of the day has actually been read — every
+        // chapter scrolled to its end — not which page the reader is on.
+        final read = dayDone ? total : (e?.readChapters[session.day]?.length ?? 0);
+        return Padding(
+          key: const ValueKey('readingSession.strip'),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Text(
-                  rpText('readingPlan_sessionOf', locale,
-                      {'n': i + 1, 'total': total}),
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSurfaceVariant),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${rpText('readingPlan_sessionOf', locale, {'n': i + 1, 'total': total})}'
+                      ' · ${rpText('readingPlan_chaptersReadShort', locale, {'n': read, 'total': total})}',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: scheme.onSurfaceVariant),
+                    ),
+                  ),
+                  if (last)
+                    FilledButton.tonal(
+                      key: const ValueKey('readingSession.done'),
+                      style: FilledButton.styleFrom(
+                          visualDensity: VisualDensity.compact),
+                      onPressed: () async {
+                        await svc.setDone(session.entryId, session.day, true);
+                        if (mounted) Navigator.of(this.context).maybePop();
+                      },
+                      child: Text(rpText(
+                          dayDone
+                              ? 'readingPlan_marked'
+                              : 'readingPlan_sessionMarkDone',
+                          locale)),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  key: const ValueKey('readingSession.progress'),
+                  value: total == 0 ? 0 : read / total,
+                  minHeight: 6,
                 ),
               ),
-              if (last)
-                FilledButton.tonal(
-                  key: const ValueKey('readingSession.done'),
-                  style: FilledButton.styleFrom(
-                      visualDensity: VisualDensity.compact),
-                  onPressed: () async {
-                    await ReadingPlanService.instance
-                        .setDone(session.entryId, session.day, true);
-                    if (mounted) Navigator.of(context).maybePop();
-                  },
-                  child: Text(rpText('readingPlan_sessionMarkDone', locale)),
-                ),
             ],
           ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              key: const ValueKey('readingSession.progress'),
-              value: (i + 1) / total,
-              minHeight: 6,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

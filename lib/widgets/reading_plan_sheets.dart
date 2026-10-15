@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/notification_category.dart';
 import 'package:yahwehs_words/pages/settings_page.dart';
 import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
+import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
 
 /// 2026-10-16: the two sheets behind a running reading plan — one to
 /// start it (when, and how to be reminded) and one to manage it later
@@ -180,6 +183,109 @@ class _ReadingReminderFieldsState extends State<ReadingReminderFields> {
   }
 }
 
+/// Weekday chips for the days a plan does not run on.
+class DaysOffPicker extends StatelessWidget {
+  final Set<int> value;
+  final ValueChanged<Set<int>> onChanged;
+  const DaysOffPicker({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = context.watch<AppSettings>().locale;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(rpText('readingPlan_restDays', locale),
+            style: Theme.of(context).textTheme.titleSmall),
+        const SizedBox(height: 2),
+        Text(rpText('readingPlan_restDaysHint', locale),
+            style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 8),
+        Wrap(spacing: 6, runSpacing: 6, children: [
+          for (var d = 1; d <= 7; d++)
+            FilterChip(
+              key: ValueKey('daysOff.$d'),
+              label: Text(rpText('readingPlan_wd$d', locale)),
+              selected: value.contains(d),
+              // Seven days off would be no plan at all: the last one stays.
+              onSelected: (on) {
+                final next = {...value};
+                on ? next.add(d) : next.remove(d);
+                if (next.length >= 7) return;
+                onChanged(next);
+              },
+            ),
+        ]),
+      ],
+    );
+  }
+}
+
+/// Pick books from the canon, grouped Old / New Testament.
+Future<Set<String>?> showBookPicker(BuildContext context, ChapterCatalog catalog,
+    Set<String> initial, String locale) {
+  return showModalBottomSheet<Set<String>>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (_) => _BookPicker(catalog: catalog, initial: initial),
+  );
+}
+
+class _BookPicker extends StatefulWidget {
+  final ChapterCatalog catalog;
+  final Set<String> initial;
+  const _BookPicker({required this.catalog, required this.initial});
+
+  @override
+  State<_BookPicker> createState() => _BookPickerState();
+}
+
+class _BookPickerState extends State<_BookPicker> {
+  late Set<String> _sel = {...widget.initial};
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = context.watch<AppSettings>().locale;
+    final books = widget.catalog.books;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Wrap(spacing: 8, runSpacing: 4, children: [
+            TextButton(
+                key: const ValueKey('books.all'),
+                onPressed: () => setState(() => _sel = {...books}),
+                child: Text(rpText('readingPlan_customAll', locale))),
+            TextButton(
+                key: const ValueKey('books.none'),
+                onPressed: () => setState(() => _sel = {}),
+                child: Text(rpText('readingPlan_customNone', locale))),
+            FilledButton(
+                key: const ValueKey('books.done'),
+                onPressed: () => Navigator.of(context).pop(_sel),
+                child: Text(rpText('readingPlan_customDone', locale))),
+          ]),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: books.length,
+            itemBuilder: (c, i) => CheckboxListTile(
+              key: ValueKey('book.${books[i]}'),
+              dense: true,
+              title: Text(localeAwareBookName(books[i], locale)),
+              value: _sel.contains(books[i]),
+              onChanged: (v) => setState(() {
+                v == true ? _sel.add(books[i]) : _sel.remove(books[i]);
+              }),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Date range a start date may be moved within: far enough back to
 /// record a plan begun months ago, far enough ahead to plan a new year.
 DateTimeRange planDateRange(DateTime now) => DateTimeRange(
@@ -189,7 +295,7 @@ DateTimeRange planDateRange(DateTime now) => DateTimeRange(
 
 /// Start [plan]: when, and how to be reminded. True when it was started.
 Future<bool> showStartPlanSheet(
-    BuildContext context, ReadingPlan plan, String locale) async {
+    BuildContext context, ReadingPlan? plan, String locale) async {
   final started = await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
@@ -200,7 +306,8 @@ Future<bool> showStartPlanSheet(
 }
 
 class _StartPlanSheet extends StatefulWidget {
-  final ReadingPlan plan;
+  /// Null: the reader is making their own plan.
+  final ReadingPlan? plan;
   const _StartPlanSheet({required this.plan});
 
   @override
@@ -209,13 +316,32 @@ class _StartPlanSheet extends StatefulWidget {
 
 enum _When { today, tomorrow, date }
 
+enum _Pace { days, finishBy }
+
 class _StartPlanSheetState extends State<_StartPlanSheet> {
   _When _when = _When.today;
   DateTime? _picked;
   ReminderDraft _reminder = const ReminderDraft();
+  Set<int> _rest = {};
   bool _busy = false;
 
+  // Making their own plan.
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _daysCtl = TextEditingController(text: '90');
+  Set<String> _books = {};
+  _Pace _pace = _Pace.days;
+  DateTime? _finishBy;
+
   ReadingPlanService get _svc => ReadingPlanService.instance;
+  bool get _isCustom => widget.plan == null;
+  ChapterCatalog? get _catalog => _svc.catalog;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _daysCtl.dispose();
+    super.dispose();
+  }
 
   DateTime get _date {
     final n = _svc.now;
@@ -228,6 +354,42 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
       case _When.date:
         return _picked ?? today;
     }
+  }
+
+  /// Reading days from the start date up to and including [end], not
+  /// counting the plan's days off.
+  int _daysUntil(DateTime end) {
+    final rest = _rest.length >= 7 ? <int>{} : _rest;
+    var d = _date;
+    var n = 0;
+    while (!d.isAfter(end)) {
+      if (!rest.contains(d.weekday)) n++;
+      d = DateTime(d.year, d.month, d.day + 1);
+      if (n > 5000) break;
+    }
+    return n;
+  }
+
+  int? get _customDays {
+    if (_pace == _Pace.days) return int.tryParse(_daysCtl.text.trim());
+    final f = _finishBy;
+    return f == null ? null : _daysUntil(f);
+  }
+
+  /// What is wrong with the plan being made, or null.
+  String? _customProblem(String locale) {
+    final cat = _catalog;
+    if (cat == null) return null;
+    if (_books.isEmpty) return rpText('readingPlan_customPickBooks', locale);
+    final n = _customDays;
+    final chapters = cat.chapterCount(_books);
+    if (_pace == _Pace.finishBy && (n == null || n < 1)) {
+      return rpText('readingPlan_customBadDate', locale);
+    }
+    if (n == null || n < 1 || n > chapters) {
+      return rpText('readingPlan_customTooMany', locale, {'n': chapters});
+    }
+    return null;
   }
 
   Future<void> _pickDate() async {
@@ -245,13 +407,44 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
     });
   }
 
+  Future<void> _pickFinish() async {
+    final range = planDateRange(_svc.now);
+    final d = await showDatePicker(
+      context: context,
+      initialDate: _finishBy ?? DateTime(_date.year, _date.month, _date.day + 89),
+      firstDate: _date,
+      lastDate: DateTime(range.end.year + 3, range.end.month, range.end.day),
+    );
+    if (d == null || !mounted) return;
+    setState(() {
+      _finishBy = d;
+      _pace = _Pace.finishBy;
+    });
+  }
+
+  Future<void> _chooseBooks(String locale) async {
+    final cat = _catalog;
+    if (cat == null) return;
+    final picked = await showBookPicker(context, cat, _books, locale);
+    if (picked != null && mounted) setState(() => _books = picked);
+  }
+
   Future<void> _start() async {
     if (_busy) return;
+    final locale = context.read<AppSettings>().locale;
+    if (_isCustom && _customProblem(locale) != null) return;
     setState(() => _busy = true);
     final r = _reminder;
     final e = await _svc.start(
-      widget.plan.id,
+      widget.plan?.id ?? 'custom',
+      custom: _isCustom
+          ? CustomPlanSpec(
+              name: _name.text.trim().isEmpty ? null : _name.text.trim(),
+              books: _books.toList(),
+              days: _customDays!)
+          : null,
       startDate: _date,
+      restDays: _rest,
       remind: r.remind,
       hour: r.hour,
       minute: r.minute,
@@ -259,7 +452,6 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
     );
     if (!mounted) return;
     if (e == null) {
-      final locale = context.read<AppSettings>().locale;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(rpText('readingPlan_limitReached', locale,
               {'n': kMaxReadingPlans}))));
@@ -269,10 +461,121 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
     Navigator.of(context).pop(true);
   }
 
+  Widget _customSection(BuildContext context, String locale, ThemeData theme) {
+    final cat = _catalog;
+    final problem = _customProblem(locale);
+    final chapters = cat == null ? 0 : cat.chapterCount(_books);
+    final n = _customDays;
+    final ot = cat == null ? <String>{} : cat.books.take(39).toSet();
+    final nt = cat == null ? <String>{} : cat.books.skip(39).toSet();
+    bool same(Set<String> a, Set<String> b) =>
+        a.length == b.length && a.containsAll(b);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          key: const ValueKey('custom.name'),
+          controller: _name,
+          maxLength: 40,
+          decoration: InputDecoration(
+            labelText: rpText('readingPlan_customName', locale),
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(rpText('readingPlan_customBooks', locale),
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 8),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          ChoiceChip(
+            key: const ValueKey('custom.whole'),
+            label: Text(rpText('readingPlan_customWholeBible', locale)),
+            selected: cat != null && same(_books, {...ot, ...nt}),
+            onSelected: (_) => setState(() => _books = {...ot, ...nt}),
+          ),
+          ChoiceChip(
+            key: const ValueKey('custom.ot'),
+            label: Text(rpText('readingPlan_customOt', locale)),
+            selected: cat != null && same(_books, ot),
+            onSelected: (_) => setState(() => _books = {...ot}),
+          ),
+          ChoiceChip(
+            key: const ValueKey('custom.nt'),
+            label: Text(rpText('readingPlan_customNt', locale)),
+            selected: cat != null && same(_books, nt),
+            onSelected: (_) => setState(() => _books = {...nt}),
+          ),
+          ActionChip(
+            key: const ValueKey('custom.choose'),
+            avatar: const Icon(Icons.checklist, size: 18),
+            label: Text(rpText('readingPlan_customChoose', locale)),
+            onPressed: () => _chooseBooks(locale),
+          ),
+        ]),
+        if (_books.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Text(rpText('readingPlan_customSummary', locale,
+              {'books': _books.length, 'chapters': chapters})),
+        ],
+        const SizedBox(height: 12),
+        Text(rpText('readingPlan_customPace', locale),
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 8),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          ChoiceChip(
+            key: const ValueKey('custom.paceDays'),
+            label: Text(rpText('readingPlan_customInDays', locale)),
+            selected: _pace == _Pace.days,
+            onSelected: (_) => setState(() => _pace = _Pace.days),
+          ),
+          ChoiceChip(
+            key: const ValueKey('custom.paceDate'),
+            label: Text(rpText('readingPlan_customByDate', locale)),
+            selected: _pace == _Pace.finishBy,
+            onSelected: (_) => _pickFinish(),
+          ),
+        ]),
+        const SizedBox(height: 8),
+        if (_pace == _Pace.days)
+          TextField(
+            key: const ValueKey('custom.days'),
+            controller: _daysCtl,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: rpText('readingPlan_customDays', locale),
+              border: const OutlineInputBorder(),
+            ),
+            onChanged: (_) => setState(() {}),
+          )
+        else
+          ListTile(
+            key: const ValueKey('custom.finishBy'),
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.event_available_outlined),
+            title: Text(rpText('readingPlan_customFinishBy', locale)),
+            subtitle: Text(_finishBy == null
+                ? rpText('readingPlan_pickDate', locale)
+                : '${formatPlanDate(_finishBy!)} · ${rpText('readingPlan_daysCount', locale, {'days': n ?? 0})}'),
+            onTap: _pickFinish,
+          ),
+        const SizedBox(height: 4),
+        if (problem != null)
+          Text(problem,
+              key: const ValueKey('custom.problem'),
+              style: TextStyle(color: theme.colorScheme.error))
+        else if (n != null && n > 0)
+          Text(rpText('readingPlan_customPerDay', locale,
+              {'n': (chapters / n).toStringAsFixed(chapters % n == 0 ? 0 : 1)})),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final locale = context.watch<AppSettings>().locale;
     final theme = Theme.of(context);
+    final plan = widget.plan;
+    final canStart = !_busy && (!_isCustom || _customProblem(locale) == null);
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -281,11 +584,20 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(rpText('readingPlan_${widget.plan.id}_name', locale),
+            Text(
+                plan == null
+                    ? rpText('readingPlan_customTitle', locale)
+                    : readingPlanName(plan, locale),
                 style: theme.textTheme.titleLarge),
             const SizedBox(height: 4),
-            Text(rpText('readingPlan_${widget.plan.id}_desc', locale)),
+            Text(plan == null
+                ? rpText('readingPlan_customDesc', locale)
+                : rpText('readingPlan_${plan.id}_desc', locale)),
             const SizedBox(height: 16),
+            if (plan == null) ...[
+              _customSection(context, locale, theme),
+              const SizedBox(height: 16),
+            ],
             Text(rpText('readingPlan_startDate', locale),
                 style: theme.textTheme.titleSmall),
             const SizedBox(height: 8),
@@ -315,6 +627,9 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
             const SizedBox(height: 8),
             Text(formatPlanDate(_date), style: theme.textTheme.bodySmall),
             const SizedBox(height: 12),
+            DaysOffPicker(
+                value: _rest, onChanged: (v) => setState(() => _rest = v)),
+            const SizedBox(height: 12),
             ReadingReminderFields(
               value: _reminder,
               onChanged: (v) => setState(() => _reminder = v),
@@ -324,7 +639,7 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
               alignment: Alignment.centerRight,
               child: FilledButton(
                 key: const ValueKey('start.confirm'),
-                onPressed: _busy ? null : _start,
+                onPressed: canStart ? _start : null,
                 child: Text(rpText('readingPlan_startButton', locale)),
               ),
             ),
@@ -408,6 +723,26 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
     await _svc.setStart(widget.entryId, d);
   }
 
+  Future<void> _share(
+      ReadingPlanProgress e, ReadingPlanStatus st, String locale) async {
+    final text = rpText('readingPlan_shareText', locale, {
+      'name': readingPlanName(widget.plan, locale),
+      'day': st.today,
+      'days': widget.plan.days,
+      'done': st.doneCount,
+    });
+    try {
+      await Share.share(text);
+    } catch (_) {
+      // No share sheet here (a desktop browser, a test): copy it instead.
+      await Clipboard.setData(ClipboardData(text: text));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(rpText('readingPlan_shareCopied', locale))));
+      }
+    }
+  }
+
   Future<void> _remove(String locale) async {
     final ok = await showDialog<bool>(
       context: context,
@@ -454,7 +789,7 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(rpText('readingPlan_${widget.plan.id}_name', locale),
+                Text(readingPlanName(widget.plan, locale),
                     style: theme.textTheme.titleLarge),
                 const SizedBox(height: 8),
                 ListTile(
@@ -465,19 +800,42 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
                   subtitle: Text(formatPlanDate(e.start)),
                   onTap: () => _changeStart(e),
                 ),
+                const SizedBox(height: 8),
+                DaysOffPicker(
+                  value: e.restDays,
+                  onChanged: (v) => _svc.setRestDays(widget.entryId, v),
+                ),
                 const Divider(),
                 ReadingReminderFields(
                   value: draft,
                   onChanged: (d) => _onReminder(e, d),
                 ),
                 const Divider(),
-                if (st.finished)
+                if (st.finished) ...[
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.check_circle_outline),
                     title: Text(rpText('readingPlan_completed', locale)),
-                  )
-                else
+                  ),
+                  ListTile(
+                    key: const ValueKey('manage.readAgain'),
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.replay),
+                    title: Text(rpText('readingPlan_readAgain', locale)),
+                    subtitle: Text(rpText('readingPlan_readAgainHint', locale)),
+                    onTap: () async {
+                      final again = await _svc.restart(widget.entryId);
+                      if (!mounted) return;
+                      if (again == null) {
+                        ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
+                            content: Text(rpText('readingPlan_limitReached',
+                                locale, {'n': kMaxReadingPlans}))));
+                      } else {
+                        Navigator.of(this.context).pop();
+                      }
+                    },
+                  ),
+                ] else
                   ListTile(
                     key: const ValueKey('manage.pause'),
                     contentPadding: EdgeInsets.zero,
@@ -505,6 +863,16 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
                     onTap: () => _svc.catchUp(widget.entryId),
                   ),
                   ListTile(
+                    key: const ValueKey('manage.markMissedRead'),
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.done_all),
+                    title: Text(rpText('readingPlan_markMissedRead', locale,
+                        {'n': st.unreadBefore})),
+                    subtitle:
+                        Text(rpText('readingPlan_markMissedReadHint', locale)),
+                    onTap: () => _svc.markMissedRead(widget.entryId),
+                  ),
+                  ListTile(
                     key: const ValueKey('manage.skipMissed'),
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.skip_next_outlined),
@@ -516,6 +884,13 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
                   ),
                 ],
                 const Divider(),
+                ListTile(
+                  key: const ValueKey('manage.share'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.ios_share),
+                  title: Text(rpText('readingPlan_share', locale)),
+                  onTap: () => _share(e, st, locale),
+                ),
                 ListTile(
                   key: const ValueKey('manage.remove'),
                   contentPadding: EdgeInsets.zero,

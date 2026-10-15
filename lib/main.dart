@@ -999,6 +999,8 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
     // booked, `NotificationCatchup` reads the plans when it fires.
     ReadingPlanService.instance.onPersisted =
         () => unawaited(appSettings.rescheduleNotifications());
+    // And keep "today" honest across midnight and a long background.
+    ReadingPlanService.instance.startDayWatch();
 
     // Clears the false-positive "Failed to load" window — see
     // MainProvider.bootInFlight doc comment. Set before the `_loading`

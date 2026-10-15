@@ -2535,12 +2535,10 @@ class _ReadingPlanCard extends StatelessWidget {
         return FutureBuilder<List<ReadingPlan>>(
           future: svc.plans(),
           builder: (context, snap) {
-            final plans = snap.data;
-            if (plans == null) return const SizedBox.shrink();
-            final byId = {for (final p in plans) p.id: p};
+            if (snap.data == null) return const SizedBox.shrink();
             final rows = <Widget>[];
             for (final e in entries) {
-              final plan = byId[e.planId];
+              final plan = svc.planFor(e);
               if (plan == null) continue;
               if (rows.length >= _shown) break;
               rows.add(_row(context, svc, e, plan));
@@ -2573,6 +2571,14 @@ class _ReadingPlanCard extends StatelessWidget {
                             if (i > 0) const Divider(height: 20),
                             rows[i],
                           ],
+                          if (readingStreak(entries, svc.now).current > 1) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                                '🔥 ${rpText('readingPlan_streak', locale, {
+                                      'n': readingStreak(entries, svc.now).current
+                                    })}',
+                                key: const ValueKey('home.readingPlan.streak')),
+                          ],
                           if (more > 0) ...[
                             const SizedBox(height: 8),
                             Text(rpText('readingPlan_moreCount', locale,
@@ -2600,7 +2606,7 @@ class _ReadingPlanCard extends StatelessWidget {
       key: ValueKey('home.readingPlan.${e.id}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(rpText('readingPlan_${plan.id}_name', locale),
+        Text(readingPlanName(plan, locale),
             style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 2),
         Text(status.finished
@@ -2612,7 +2618,10 @@ class _ReadingPlanCard extends StatelessWidget {
                         'days': plan.days
                       })}'
                     '${marked ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}'),
-        if (!status.finished && !status.paused) ...[
+        if (status.restDay) ...[
+          const SizedBox(height: 6),
+          Text(rpText('readingPlan_restDayNote', locale)),
+        ] else if (!status.finished && !status.paused) ...[
           const SizedBox(height: 6),
           Text(plan
               .day(today)
