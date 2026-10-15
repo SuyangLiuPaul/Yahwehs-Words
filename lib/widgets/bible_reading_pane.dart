@@ -90,6 +90,8 @@ import 'package:yahwehs_words/utils/floating_toast.dart' show showFloatingToast;
 import 'package:yahwehs_words/utils/version_mapper.dart'
     show translateBookName, toEnglish, localeAwareBookName, sameBookName,
         bookNameForDisplay;
+import 'package:yahwehs_words/services/reading_plan_service.dart'
+    show ReadingPlanService, ReadingSession, rpText;
 import 'package:yahwehs_words/widgets/highlights_sheet.dart';
 import 'package:yahwehs_words/widgets/originals_sheet.dart';
 import 'package:yahwehs_words/widgets/verse_widget.dart';
@@ -132,6 +134,11 @@ class BibleReadingPane extends StatefulWidget {
   final VoidCallback? onClose;
   final bool showSearchAndSettings;
 
+  /// Non-null when opened from a reading plan: the reader walks only
+  /// these chapters, shows a progress bar over the bottom bar, and its
+  /// top-left button goes back to the plan instead of Home.
+  final ReadingSession? session;
+
   const BibleReadingPane({
     super.key,
     this.showSidebarToggle = false,
@@ -141,6 +148,7 @@ class BibleReadingPane extends StatefulWidget {
     this.splitViewActive = false,
     this.onClose,
     this.showSearchAndSettings = true,
+    this.session,
   });
 
   @override
@@ -328,9 +336,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     final mp = context.read<MainProvider>();
     _paneId = ++_paneSeq;
     _livePaneFor[mp] = _paneId;
-    final initialChapterIdx = mp.findChapterIndex(
-            mp.currentBook, mp.currentChapter) ??
-        0;
+    final initialChapterIdx = _chapterIdxIn(_paneChapters(mp), mp);
     _pageController = PageController(
         initialPage: initialChapterIdx, viewportFraction: 1.0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -764,10 +770,150 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
 
   // ── Chapter navigation ──────────────────────────────────────────────
 
+  /// The chapters this pane pages through: the whole canon, or — when
+  /// opened from a reading plan — just the day's chapters in the plan's
+  /// order. Falls back to the whole canon if the chapter on screen is not
+  /// one of them (a jump from somewhere else), so the pager can never be
+  /// left pointing at a page that is not the current chapter.
+  List<({String book, int chapter})> _paneChapters(MainProvider mp) {
+    final all = mp.chapterList;
+    final session = widget.session;
+    if (session == null) return all;
+    // Built once per (chapter list, version): this runs on every build of
+    // the pane and the scan is the size of the canon.
+    final cached = _sessionChapters;
+    if (cached != null &&
+        identical(_sessionChaptersAll, all) &&
+        _sessionChaptersVersion == mp.currentVersion) {
+      return _chapterIdxIn(cached, mp, orMinusOne: true) < 0 ? all : cached;
+    }
+    final out = <({String book, int chapter})>[];
+    for (final p in session.pages) {
+      final local = translateBookName(p.book, mp.currentVersion);
+      final i = all.indexWhere(
+          (c) => c.chapter == p.chapter && sameBookName(c.book, local));
+      if (i >= 0) out.add(all[i]);
+    }
+    _sessionChapters = out;
+    _sessionChaptersAll = all;
+    _sessionChaptersVersion = mp.currentVersion;
+    if (out.isEmpty || _chapterIdxIn(out, mp, orMinusOne: true) < 0) {
+      return all;
+    }
+    return out;
+  }
+
+  List<({String book, int chapter})>? _sessionChapters;
+  List<({String book, int chapter})>? _sessionChaptersAll;
+  String? _sessionChaptersVersion;
+
+  int _chapterIdxIn(List<({String book, int chapter})> list, MainProvider mp,
+      {bool orMinusOne = false}) {
+    final b = mp.currentBook;
+    final c = mp.currentChapter;
+    if (b != null && c != null) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].book == b && list[i].chapter == c) return i;
+      }
+    }
+    return orMinusOne ? -1 : 0;
+  }
+
+  /// Position of the chapter on screen inside the reading-plan session,
+  /// or -1 (no session, or the reader has left the day's chapters).
+  int _sessionIndex(MainProvider provider) {
+    if (widget.session == null) return -1;
+    final list = _paneChapters(provider);
+    if (identical(list, provider.chapterList)) return -1;
+    return _chapterIdxIn(list, provider, orMinusOne: true);
+  }
+
+  int _sessionLength(MainProvider provider) =>
+      _sessionIndex(provider) < 0 ? 0 : _paneChapters(provider).length;
+
+  /// True when the session is active and [delta] steps off its ends —
+  /// the bottom bar greys that button out.
+  bool _sessionAt(MainProvider provider, int delta) {
+    final i = _sessionIndex(provider);
+    if (i < 0) return false;
+    final t = i + delta;
+    return t < 0 || t >= _sessionLength(provider);
+  }
+
+  /// "Chapter 2 of 3", a progress bar, and on the last chapter a button
+  /// that marks the day read and returns to the plan. Null outside a
+  /// session, or once the reader has left the day's chapters.
+  Widget? _sessionStrip(MainProvider provider, String locale) {
+    final session = widget.session;
+    final i = _sessionIndex(provider);
+    if (session == null || i < 0) return null;
+    final total = _sessionLength(provider);
+    final last = i == total - 1;
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      key: const ValueKey('readingSession.strip'),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  rpText('readingPlan_sessionOf', locale,
+                      {'n': i + 1, 'total': total}),
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurfaceVariant),
+                ),
+              ),
+              if (last)
+                FilledButton.tonal(
+                  key: const ValueKey('readingSession.done'),
+                  style: FilledButton.styleFrom(
+                      visualDensity: VisualDensity.compact),
+                  onPressed: () async {
+                    await ReadingPlanService.instance
+                        .setDone(session.day, true);
+                    if (mounted) Navigator.of(context).maybePop();
+                  },
+                  child: Text(rpText('readingPlan_sessionMarkDone', locale)),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              key: const ValueKey('readingSession.progress'),
+              value: (i + 1) / total,
+              minHeight: 6,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Step within the session. True when it handled the move (including
+  /// "already at the end", which is a stop, not a fall-through to the
+  /// next book).
+  bool _stepSession(MainProvider provider, int delta) {
+    final i = _sessionIndex(provider);
+    if (i < 0) return false;
+    final list = _paneChapters(provider);
+    final target = i + delta;
+    if (target < 0 || target >= list.length) return true;
+    _switchTo(provider, list[target].book, list[target].chapter);
+    return true;
+  }
+
   void _goToNextChapter() {
     final provider = context.read<MainProvider>();
     provider.clearSelectedVerses();
     provider.clearHighlightIndex();
+    if (_stepSession(provider, 1)) return;
     final books = provider.books;
     final currentBook = provider.currentBook;
     final currentChapter = provider.currentChapter;
@@ -796,6 +942,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     final provider = context.read<MainProvider>();
     provider.clearSelectedVerses();
     provider.clearHighlightIndex();
+    if (_stepSession(provider, -1)) return;
     final books = provider.books;
     final currentBook = provider.currentBook;
     final currentChapter = provider.currentChapter;
@@ -1707,12 +1854,9 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                       onNotification: _onScrollNotification,
                       child:
                     Builder(builder: (pageBuildCtx) {
-                      final chapterList = mainProvider.chapterList;
+                      final chapterList = _paneChapters(mainProvider);
                       final currentChapterPageIdx =
-                          mainProvider.findChapterIndex(
-                                  mainProvider.currentBook,
-                                  mainProvider.currentChapter) ??
-                              0;
+                          _chapterIdxIn(chapterList, mainProvider);
                       // 2026-05-24 (v1.2.98): sync only on
                       // EXTERNAL chapter changes. v1.2.96 fired
                       // on every build where `controllerPage !=
@@ -1991,12 +2135,19 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                       onToggleSplitView: widget.onToggleSplitView,
                       splitViewActive: widget.splitViewActive,
                       onClose: widget.onClose,
-                      showSearchAndSettings: widget.showSearchAndSettings,
+                      showSearchAndSettings:
+                          widget.showSearchAndSettings &&
+                              widget.session == null,
+                      onBack: widget.session == null
+                          ? null
+                          : () => Navigator.of(context).maybePop(),
                       chapterMaps: _chapterMaps,
                       bookMaps: _bookMaps,
                       chapterSermons: _chapterSermons,
                       locale: settings.locale,
-                      onBookTap: isWideScreen && widget.showSidebarToggle
+                      onBookTap: widget.session != null
+                          ? () {} // limited to the plan's chapters
+                          : isWideScreen && widget.showSidebarToggle
                           ? () {
                               mainProvider.clearSelectedVerses();
                               widget.onToggleSidebar?.call();
@@ -2355,8 +2506,13 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                         visible: _chromeVisible,
                         deviceClass: dc,
                         locale: settings.locale,
-                        onPrevChapter: _goToPreviousChapter,
-                        onNextChapter: _goToNextChapter,
+                        onPrevChapter: _sessionAt(mainProvider, -1)
+                            ? null
+                            : _goToPreviousChapter,
+                        onNextChapter: _sessionAt(mainProvider, 1)
+                            ? null
+                            : _goToNextChapter,
+                        topStrip: _sessionStrip(mainProvider, settings.locale),
                         onOpenNotes: () {
                           mainProvider.clearSelectedVerses();
                           pushPage(const LibraryPage(),
@@ -6931,8 +7087,12 @@ class _ChapterPageState extends State<_ChapterPage>
 /// Hidden when verses are selected (the _SelectionActionBar takes over).
 class _BibleReaderBottomBar extends StatelessWidget {
   final bool visible;
-  final VoidCallback onPrevChapter;
-  final VoidCallback onNextChapter;
+  final VoidCallback? onPrevChapter;
+  final VoidCallback? onNextChapter;
+
+  /// Drawn inside the bar's surface, above the buttons — the reading
+  /// plan's progress strip.
+  final Widget? topStrip;
   final VoidCallback onOpenNotes;
   // 2026-05-22 (v1.2.72): Illustrations button — opens the maps
   // picker sheet directly from the bottom bar (was previously buried
@@ -6949,6 +7109,7 @@ class _BibleReaderBottomBar extends StatelessWidget {
     required this.visible,
     required this.onPrevChapter,
     required this.onNextChapter,
+    this.topStrip,
     required this.onOpenNotes,
     required this.onOpenIllustrations,
     required this.onFontSize,
@@ -7032,7 +7193,11 @@ class _BibleReaderBottomBar extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                         horizontal: 4 * chromeScale,
                         vertical: 4 * chromeScale),
-                    child: Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (topStrip != null) topStrip!,
+                        Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                       _BottomBarBtn(
@@ -7103,6 +7268,8 @@ class _BibleReaderBottomBar extends StatelessWidget {
                       ),
                     ],
                   ),
+                      ],
+                    ),
                 ),
               ),
             ),
@@ -7183,6 +7350,9 @@ class _FloatingHeader extends StatelessWidget {
   final bool splitViewActive;
   final VoidCallback? onClose;
   final bool showSearchAndSettings;
+
+  /// Reading-plan session: replaces the Home button with a back arrow.
+  final VoidCallback? onBack;
   final List<BibleMap> chapterMaps;
   final List<BibleMap> bookMaps;
   /// Pastor Eric sermons whose body or passage hint cites any verse
@@ -7225,6 +7395,7 @@ class _FloatingHeader extends StatelessWidget {
     this.splitViewActive = false,
     this.onClose,
     this.showSearchAndSettings = true,
+    this.onBack,
     this.chapterMaps = const [],
     this.bookMaps = const [],
     this.chapterSermons = const [],
@@ -7324,7 +7495,19 @@ class _FloatingHeader extends StatelessWidget {
                     // it now lives here (no duplicate home icons).
                     // Hidden in the split-view secondary pane
                     // (where `onClose` already sits in this slot).
-                    if (onClose == null && Navigator.of(context).canPop())
+                    // Opened from a reading plan: a back arrow to the
+                    // plan, not Home (2026-10-16).
+                    if (onBack != null)
+                      IconButton(
+                        onPressed: onBack,
+                        icon: Icon(Icons.arrow_back_rounded, size: iconSize),
+                        padding: EdgeInsets.all(iconPad),
+                        constraints: const BoxConstraints(
+                            minWidth: 36, minHeight: 36),
+                        tooltip: uiStrings['back']?[locale] ?? 'Back',
+                      )
+                    else if (onClose == null &&
+                        Navigator.of(context).canPop())
                       IconButton(
                         onPressed: () =>
                             Navigator.of(context).popUntil((r) => r.isFirst),

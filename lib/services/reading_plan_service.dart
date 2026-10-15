@@ -61,6 +61,53 @@ class ReadingSegment {
   int get hashCode => Object.hash(book, from, to, fromVerse, toVerse);
 }
 
+/// One chapter of a [ReadingSession].
+@immutable
+class ReadingPage {
+  final String book; // canonical English name
+  final int chapter;
+  const ReadingPage(this.book, this.chapter);
+
+  @override
+  bool operator ==(Object other) =>
+      other is ReadingPage && other.book == book && other.chapter == chapter;
+
+  @override
+  int get hashCode => Object.hash(book, chapter);
+}
+
+/// What the reader is limited to when it is opened from a reading plan:
+/// the chapters of one day, in order, and nothing else. Opening
+/// Genesis 1-3 gives a reader of exactly three pages with a progress bar
+/// and a back arrow to the plan, not the whole Bible with a Home button.
+///
+/// A day that has several passages (M'Cheyne has four) is ONE session
+/// across all of them, so the bar measures the day, not one passage.
+/// A passage that starts or ends inside a chapter still reads as whole
+/// chapters here; the reader opens on its first verse.
+@immutable
+class ReadingSession {
+  final int day;
+  final List<ReadingPage> pages;
+  const ReadingSession({required this.day, required this.pages});
+
+  factory ReadingSession.forDay(int day, List<ReadingSegment> segments) {
+    final pages = <ReadingPage>[];
+    for (final s in segments) {
+      for (var c = s.from; c <= s.to; c++) {
+        final p = ReadingPage(s.book, c);
+        if (!pages.contains(p)) pages.add(p);
+      }
+    }
+    return ReadingSession(day: day, pages: pages);
+  }
+
+  /// Index of ([englishBook], [chapter]) in [pages], or -1 when the
+  /// reader has wandered off the day's chapters (a search result, say).
+  int indexOf(String englishBook, int chapter) =>
+      pages.indexOf(ReadingPage(englishBook, chapter));
+}
+
 @immutable
 class ReadingPlan {
   final String id;

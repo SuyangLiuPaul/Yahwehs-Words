@@ -34,3 +34,27 @@ A reader starts a plan on any date; day n is n-1 days after the start date. Days
 - Reminder notification for the day's reading (the scheduler has categories; a plan reminder would be one more).
 - Per-day "catch up" shortcut beyond the "continue from day N" line.
 - Not merged, not released, version unchanged (1.7.25).
+
+
+## The reader opened from a plan (2026-10-16)
+
+Tapping a passage chip opens the reader as a `ReadingSession`
+(`reading_plan_service.dart`): the day's chapters, in the plan's order,
+and nothing else. Genesis 1-3 is three pages.
+
+- the pager (`_paneChapters` in `bible_reading_pane.dart`) pages only
+  those chapters; swipe, the bottom bar's arrows and the keyboard stop
+  at the ends, and the book chip no longer opens the book picker;
+- the top-left button is a back arrow to the plan (not Home), and the
+  header's search is hidden;
+- a strip over the bottom bar shows "Chapter n of N" with a progress
+  bar; on the last chapter it offers "Mark today as read", which sets
+  the day done and returns to the plan;
+- a day with several passages (M'Cheyne) is one session across all of
+  them. A passage that starts inside a chapter still reads as whole
+  chapters; the reader opens on its first verse;
+- if the reader ends up on a chapter outside the day (a jump from
+  elsewhere) the session quietly steps aside and the ordinary reader
+  pager takes over.
+
+The Home page's Quick links also carry a "Reading plans" tile.

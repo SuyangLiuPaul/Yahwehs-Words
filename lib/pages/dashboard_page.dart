@@ -1117,6 +1117,16 @@ class _DashboardPageState extends State<DashboardPage> {
                 ],
                               // From the admin portal (links added for this group).
                 _LinkTile(icon:Icons.download_for_offline_outlined,label:uiStrings['songsDownloads']?[locale] ?? 'Offline downloads',onTap:()=>pushPage(const SongDownloadsPage(),routeName:'/songs/downloads')),
+                // 2026-10-16: the reading plan is one tap from the quick links
+                // as well as its own card, so it is found even when the
+                // card's section is switched off.
+                _LinkTile(
+                  icon: Icons.event_note_outlined,
+                  label: rpText('readingPlan_title', locale),
+                  showChevron: false,
+                  onTap: () => pushPage(const ReadingPlanPage(),
+                      routeName: kReadingPlanPath),
+                ),
                 ..._adminLinkTiles('frequent'),
               ],
             ),

@@ -13,8 +13,11 @@ import 'package:yahwehs_words/widgets/localized_back_button.dart';
 const kReadingPlanPath = '/reading-plan';
 
 /// Open the reader on the first chapter of [s] (or its first verse).
-Future<void> openReadingSegment(
-    BuildContext context, ReadingSegment s) async {
+///
+/// [day] and [daySegments] make the reader a [ReadingSession]: limited to
+/// that day's chapters, with a back arrow to the plan and a progress bar.
+Future<void> openReadingSegment(BuildContext context, ReadingSegment s,
+    {int? day, List<ReadingSegment>? daySegments}) async {
   final mp = context.read<MainProvider>();
   final ref = BibleReference(
     englishBook: s.book,
@@ -26,7 +29,10 @@ Future<void> openReadingSegment(
   if (!context.mounted) return;
   final ok = await jumper.showJumpResultSnackBar(context, result);
   if (!ok || !context.mounted) return;
-  pushPage(const HomePage(), routeName: '/HomePage');
+  final session = day == null
+      ? null
+      : ReadingSession.forDay(day, daySegments ?? [s]);
+  pushPage(HomePage(session: session), routeName: '/HomePage');
 }
 
 class ReadingPlanPage extends StatefulWidget {
@@ -182,7 +188,8 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
         segments: plan.day(today),
         locale: locale,
         done: isDone,
-        onOpen: (seg) => openReadingSegment(context, seg),
+        onOpen: (seg) => openReadingSegment(context, seg,
+            day: today, daySegments: plan.day(today)),
         onToggle: (v) => _svc.setDone(today, v),
       ),
       if (st.resumeDay != null && st.resumeDay != today && !st.notStarted) ...[
@@ -194,7 +201,8 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
           segments: plan.day(st.resumeDay!),
           locale: locale,
           done: progress.done.contains(st.resumeDay!),
-          onOpen: (seg) => openReadingSegment(context, seg),
+          onOpen: (seg) => openReadingSegment(context, seg,
+              day: st.resumeDay!, daySegments: plan.day(st.resumeDay!)),
           onToggle: (v) => _svc.setDone(st.resumeDay!, v),
         ),
       ],

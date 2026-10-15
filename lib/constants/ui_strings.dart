@@ -3402,6 +3402,21 @@ const uiStrings = {
     'zh-Hant': '讀完了',
     'en': 'Mark as read',
   },
+  'readingPlan_sessionOf': {
+    'zh-Hans': '第 {n} / {total} 章',
+    'zh-Hant': '第 {n} / {total} 章',
+    'en': 'Chapter {n} of {total}',
+  },
+  'readingPlan_sessionMarkDone': {
+    'zh-Hans': '标记今天读完',
+    'zh-Hant': '標記今天讀完',
+    'en': 'Mark today as read',
+  },
+  'readingPlan_sessionBack': {
+    'zh-Hans': '返回读经计划',
+    'zh-Hant': '返回讀經計劃',
+    'en': 'Back to reading plan',
+  },
   'readingPlan_marked': {
     'zh-Hans': '已读',
     'zh-Hant': '已讀',

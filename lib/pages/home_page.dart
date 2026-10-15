@@ -5,13 +5,18 @@ import 'package:yahwehs_words/utils/navigate_to_chapter_verse.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/services/fetch_books.dart';
 import 'package:yahwehs_words/services/fetch_verses.dart';
+import 'package:yahwehs_words/services/reading_plan_service.dart' show ReadingSession;
 import 'package:yahwehs_words/utils/jump_to_reference.dart' as jumper;
 import 'package:yahwehs_words/widgets/sidebar_panel.dart';
 import 'package:yahwehs_words/widgets/bible_reading_pane.dart';
 import 'package:yahwehs_words/utils/responsive.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.session});
+
+  /// Set when the reader is opened from a reading plan: it then shows
+  /// only that day's chapters. See [ReadingSession].
+  final ReadingSession? session;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -133,7 +138,8 @@ class _HomePageState extends State<HomePage> {
     final isWideScreen = ResponsiveBreakpoints.isTabletOrWider(screenWidth);
     final dc = ResponsiveBreakpoints.classOf(screenWidth);
 
-    final showSidebar = isWideScreen && !_splitViewActive;
+    final inSession = widget.session != null;
+    final showSidebar = isWideScreen && !_splitViewActive && !inSession;
     final sidebarW =
         showSidebar && _sidebarOpen ? ResponsiveBreakpoints.sidebarWidth : 0.0;
 
@@ -146,8 +152,10 @@ class _HomePageState extends State<HomePage> {
       onToggleSidebar: showSidebar ? _toggleSidebar : null,
       // Toggle direction tracks current state — when split is active the
       // primary's menu shows "Close Split View" and tapping it deactivates.
-      onToggleSplitView:
-          _splitViewActive ? _deactivateSplitView : _activateSplitView,
+      onToggleSplitView: inSession
+          ? null
+          : (_splitViewActive ? _deactivateSplitView : _activateSplitView),
+      session: widget.session,
       splitViewActive: _splitViewActive,
       onClose: null,
       showSearchAndSettings: true,
