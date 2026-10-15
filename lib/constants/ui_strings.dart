@@ -3346,6 +3346,202 @@ const uiStrings = {
     'zh-Hant': '每天精選一節經文，所有設備同步。',
     'en': 'One curated verse per day, the same on every device.',
   },
+  // 2026-10-15: reading plans are back, at the owner's request.
+  'dashboardSection_readingPlan_label': {
+    'zh-Hans': '读经计划',
+    'zh-Hant': '讀經計劃',
+    'en': 'Reading plan',
+  },
+  'dashboardSection_readingPlan_description': {
+    'zh-Hans': '今天要读的经文和进度；还没开始时可在这里选一个计划。',
+    'zh-Hant': '今天要讀的經文和進度；還沒開始時可在這裡選一個計劃。',
+    'en': "Today's passages and your progress, or a way to pick a plan.",
+  },
+  'readingPlan_title': {
+    'zh-Hans': '读经计划',
+    'zh-Hant': '讀經計劃',
+    'en': 'Reading plans',
+  },
+  'readingPlan_pickTitle': {
+    'zh-Hans': '选一个读经计划',
+    'zh-Hant': '選一個讀經計劃',
+    'en': 'Choose a reading plan',
+  },
+  'readingPlan_pickHint': {
+    'zh-Hans': '每天读几章，标记读完，进度在你登录的设备之间同步。',
+    'zh-Hant': '每天讀幾章，標記讀完，進度在你登入的裝置之間同步。',
+    'en': 'Read a few chapters a day and tick them off. Progress syncs across your signed-in devices.',
+  },
+  'readingPlan_start': {
+    'zh-Hans': '开始',
+    'zh-Hant': '開始',
+    'en': 'Start',
+  },
+  'readingPlan_startToday': {
+    'zh-Hans': '从今天开始',
+    'zh-Hant': '從今天開始',
+    'en': 'Start today',
+  },
+  'readingPlan_dayOf': {
+    'zh-Hans': '第 {day} 天，共 {days} 天',
+    'zh-Hant': '第 {day} 天，共 {days} 天',
+    'en': 'Day {day} of {days}',
+  },
+  'readingPlan_daysCount': {
+    'zh-Hans': '{days} 天',
+    'zh-Hant': '{days} 天',
+    'en': '{days} days',
+  },
+  'readingPlan_doneCount': {
+    'zh-Hans': '已读 {done} / {days} 天',
+    'zh-Hant': '已讀 {done} / {days} 天',
+    'en': '{done} of {days} days read',
+  },
+  'readingPlan_markDone': {
+    'zh-Hans': '读完了',
+    'zh-Hant': '讀完了',
+    'en': 'Mark as read',
+  },
+  'readingPlan_marked': {
+    'zh-Hans': '已读',
+    'zh-Hant': '已讀',
+    'en': 'Read',
+  },
+  'readingPlan_behind': {
+    'zh-Hans': '还有 {n} 天没读，从第 {day} 天接着读',
+    'zh-Hant': '還有 {n} 天沒讀，從第 {day} 天接著讀',
+    'en': '{n} earlier days unread. Continue from day {day}',
+  },
+  'readingPlan_notStarted': {
+    'zh-Hans': '计划从 {date} 开始',
+    'zh-Hant': '計劃從 {date} 開始',
+    'en': 'The plan starts on {date}',
+  },
+  'readingPlan_finished': {
+    'zh-Hans': '这个计划读完了，感谢神！',
+    'zh-Hant': '這個計劃讀完了，感謝神！',
+    'en': 'You have finished this plan. Thank God!',
+  },
+  'readingPlan_calendarEnded': {
+    'zh-Hans': '按日期计划已结束，还有 {n} 天没读',
+    'zh-Hant': '按日期計劃已結束，還有 {n} 天沒讀',
+    'en': 'The plan’s dates are over; {n} days are still unread',
+  },
+  'readingPlan_allDays': {
+    'zh-Hans': '全部日程',
+    'zh-Hant': '全部日程',
+    'en': 'All days',
+  },
+  'readingPlan_today': {
+    'zh-Hans': '今天',
+    'zh-Hant': '今天',
+    'en': 'Today',
+  },
+  'readingPlan_stop': {
+    'zh-Hans': '停止这个计划',
+    'zh-Hant': '停止這個計劃',
+    'en': 'Stop this plan',
+  },
+  'readingPlan_stopConfirm': {
+    'zh-Hans': '停止后进度会清除。确定停止吗？',
+    'zh-Hant': '停止後進度會清除。確定停止嗎？',
+    'en': 'Stopping clears your progress. Stop the plan?',
+  },
+  'readingPlan_replaceConfirm': {
+    'zh-Hans': '你正在读另一个计划，开始新计划会清除它的进度。要继续吗？',
+    'zh-Hant': '你正在讀另一個計劃，開始新計劃會清除它的進度。要繼續嗎？',
+    'en': 'You are in another plan. Starting this one clears its progress. Continue?',
+  },
+  'readingPlan_cancel': {
+    'zh-Hans': '取消',
+    'zh-Hant': '取消',
+    'en': 'Cancel',
+  },
+  'readingPlan_confirm': {
+    'zh-Hans': '确定',
+    'zh-Hant': '確定',
+    'en': 'OK',
+  },
+  'readingPlan_current': {
+    'zh-Hans': '正在读',
+    'zh-Hant': '正在讀',
+    'en': 'Current',
+  },
+  'readingPlan_other': {
+    'zh-Hans': '其他计划',
+    'zh-Hant': '其他計劃',
+    'en': 'Other plans',
+  },
+  'readingPlan_open': {
+    'zh-Hans': '打开计划',
+    'zh-Hant': '打開計劃',
+    'en': 'Open plan',
+  },
+  'readingPlan_bible-1y_name': {
+    'zh-Hans': '一年读完圣经（按圣经顺序）',
+    'zh-Hant': '一年讀完聖經（按聖經順序）',
+    'en': 'The whole Bible in a year (Bible order)',
+  },
+  'readingPlan_bible-1y_desc': {
+    'zh-Hans': '从创世记读到启示录，每天约三章，按经节数平均分配。',
+    'zh-Hant': '從創世記讀到啟示錄，每天約三章，按經節數平均分配。',
+    'en': 'Genesis to Revelation, about three chapters a day, balanced by number of verses.',
+  },
+  'readingPlan_bible-1y-ot-nt_name': {
+    'zh-Hans': '一年读完圣经（旧约新约同读）',
+    'zh-Hant': '一年讀完聖經（舊約新約同讀）',
+    'en': 'The whole Bible in a year (Old and New Testament together)',
+  },
+  'readingPlan_bible-1y-ot-nt_desc': {
+    'zh-Hans': '每天一段旧约、一章左右新约。新约在第 260 天读完，之后只读旧约。',
+    'zh-Hant': '每天一段舊約、一章左右新約。新約在第 260 天讀完，之後只讀舊約。',
+    'en': 'Each day some Old Testament and about one New Testament chapter. The New Testament ends on day 260; after that, Old Testament only.',
+  },
+  'readingPlan_mcheyne_name': {
+    'zh-Hans': '麦琴读经计划（1842）',
+    'zh-Hant': '麥琴讀經計劃（1842）',
+    'en': 'M’Cheyne’s calendar (1842)',
+  },
+  'readingPlan_mcheyne_desc': {
+    'zh-Hans': '苏格兰牧师麦琴（Robert Murray M’Cheyne）编的读经表，每天四段，一年读旧约一遍、新约和诗篇两遍。原表 1 月 1 日从第 1 天开始，你也可以任何一天开始。',
+    'zh-Hant': '蘇格蘭牧師麥琴（Robert Murray M’Cheyne）編的讀經表，每天四段，一年讀舊約一遍、新約和詩篇兩遍。原表 1 月 1 日從第 1 天開始，你也可以任何一天開始。',
+    'en': 'The calendar by the Scottish pastor Robert Murray M’Cheyne: four readings a day, the Old Testament once and the New Testament and Psalms twice in a year. The original starts day 1 on January 1; you can start any day.',
+  },
+  'readingPlan_nt-90_name': {
+    'zh-Hans': '90 天读完新约',
+    'zh-Hant': '90 天讀完新約',
+    'en': 'The New Testament in 90 days',
+  },
+  'readingPlan_nt-90_desc': {
+    'zh-Hans': '从马太福音读到启示录，每天约三章。',
+    'zh-Hant': '從馬太福音讀到啟示錄，每天約三章。',
+    'en': 'Matthew to Revelation, about three chapters a day.',
+  },
+  'readingPlan_gospels-30_name': {
+    'zh-Hans': '30 天读完四福音',
+    'zh-Hant': '30 天讀完四福音',
+    'en': 'The four Gospels in 30 days',
+  },
+  'readingPlan_gospels-30_desc': {
+    'zh-Hans': '马太、马可、路加、约翰福音，每天约三章。',
+    'zh-Hant': '馬太、馬可、路加、約翰福音，每天約三章。',
+    'en': 'Matthew, Mark, Luke and John, about three chapters a day.',
+  },
+  'readingPlan_psalms-proverbs-31_name': {
+    'zh-Hans': '31 天读完诗篇和箴言',
+    'zh-Hant': '31 天讀完詩篇和箴言',
+    'en': 'Psalms and Proverbs in 31 days',
+  },
+  'readingPlan_psalms-proverbs-31_desc': {
+    'zh-Hans': '每天几篇诗篇，加一章箴言（第几天就读箴言第几章）。',
+    'zh-Hant': '每天幾篇詩篇，加一章箴言（第幾天就讀箴言第幾章）。',
+    'en': 'A few psalms a day plus one chapter of Proverbs (day n, chapter n).',
+  },
+  'readingPlan_source': {
+    'zh-Hans': '日程由本应用按章节和经节数生成；麦琴计划取自 1842 年原表（公有领域），并与另外两份整理版本逐日核对。',
+    'zh-Hant': '日程由本應用按章節和經節數生成；麥琴計劃取自 1842 年原表（公有領域），並與另外兩份整理版本逐日核對。',
+    'en': 'Schedules are generated by this app from chapter and verse counts; M’Cheyne’s comes from the 1842 calendar (public domain), checked day by day against two other transcriptions.',
+  },
   // The two 'dashboardSection_todayReading_*' strings were deleted
   // 2026-09-08. DashboardSection.todayReading itself was removed in
   // v1.2.69, so these labelled a row the layout editor cannot render.
