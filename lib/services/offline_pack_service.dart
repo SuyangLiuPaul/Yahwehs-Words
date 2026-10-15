@@ -324,8 +324,11 @@ class OfflinePackService extends ChangeNotifier {
     'assets/sermons/refs.json',
     // Added 2026-05 after the "really offline?" audit — this was
     // missing and caused the gospel synopsis fallback to fail
-    // offline. (reading_plans.json removed in v1.2.69.)
+    // offline. (reading_plans.json removed in v1.2.69, back 2026-10-15:
+    // it is ~50 KB and a plan that fails to open offline is the one
+    // moment a reader needs it.)
     'assets/gospel_synopsis.json',
+    'assets/reading_plans.json',
     // 2026-08-09 (Songs v2): the catalogue itself is ~570 KB of
     // metadata and belongs offline so the directory browses, filters
     // and shows lyrics with no connection. The media it points at is
