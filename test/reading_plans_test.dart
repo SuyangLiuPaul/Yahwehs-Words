@@ -392,7 +392,7 @@ void main() {
         expect(RegExp(r'[㐀-鿿]').hasMatch(uiStrings[k]!['en']!), isFalse,
             reason: '$k en');
         // placeholders must match across languages
-        final ph = (String s) =>
+        List<String> ph(String s) =>
             (RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toList()..sort());
         expect(ph(uiStrings[k]!['zh-Hans']!), ph(uiStrings[k]!['en']!), reason: k);
         expect(ph(uiStrings[k]!['zh-Hant']!), ph(uiStrings[k]!['en']!), reason: k);
