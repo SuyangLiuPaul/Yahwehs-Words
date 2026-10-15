@@ -443,9 +443,9 @@ class _StudyTestamentsPageState extends State<StudyTestamentsPage> {
               '节号依英文圣经（诗篇标题等在希伯来文里编号略有不同）。所列旧约经文就是脚注所指的那一处；新约有时依从希腊文译本（七十士译本）而不是希伯来文，所以字句可能不同。',
               '節號依英文聖經（詩篇標題等在希伯來文裡編號略有不同）。所列舊約經文就是腳註所指的那一處；新約有時依從希臘文譯本（七十士譯本）而不是希伯來文，所以字句可能不同。'),
           bullet(
-              'The explanations are written in Chinese; in English you will see English titles and the KJV text.',
-              '说明文字以中文写成；英文界面只有标题和经文是英文。',
-              '說明文字以中文寫成；英文介面只有標題和經文是英文。'),
+              'The explanations were written in Chinese first; the English is a translation of them. Verse text is the KJV.',
+              '说明文字先以中文写成；英文是它的译文，英文界面的经文用 KJV。',
+              '說明文字先以中文寫成；英文是它的譯文，英文介面的經文用 KJV。'),
           StudyLabel2(studyL(locale, 'Sources', '外部资料', '外部資料')),
           Text(
               studyL(

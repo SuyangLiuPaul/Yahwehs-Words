@@ -39,6 +39,20 @@ void main() {
       d = await StudyData.loadTestaments(loader: _file);
     });
 
+    test('typology entries have English for the word and the explanation', () {
+      final raw = jsonDecode(File('assets/study_testaments.json').readAsStringSync())
+          as Map<String, dynamic>;
+      final cjk = RegExp(r'[\u3400-\u9fff]');
+      final missing = <String>[];
+      for (final t in (raw['typology'] as List).cast<Map<String, dynamic>>()) {
+        for (final k in ['title', 'word', 'says']) {
+          final en = ((t[k] as Map)['en'] as String?)?.trim() ?? '';
+          if (en.isEmpty) missing.add('${t['id']} $k');
+          if (cjk.hasMatch(en)) missing.add('${t['id']} $k (Chinese inside English)');
+        }
+      }
+      expect(missing, isEmpty, reason: missing.take(10).join('\n'));
+    });
     test('sizes', () {
       expect(d.entries.length, greaterThanOrEqualTo(400));
       expect(d.typology.length, greaterThanOrEqualTo(20));
@@ -228,6 +242,19 @@ void main() {
     expect(find.text('新約與舊約的對應'), findsOneWidget);
     await mount(tester, locale: 'en');
     expect(find.text('New Testament ↔ Old Testament'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('English UI shows no Chinese on the types tab', (tester) async {
+    await mount(tester, locale: 'en');
+    await tester.tap(find.text('Types'));
+    await tester.pumpAndSettle();
+    final cjk = RegExp(r'[\u3400-\u9fff]');
+    final shown = [
+      for (final w in tester.widgetList<Text>(find.byType(Text)))
+        if (cjk.hasMatch(w.data ?? w.textSpan?.toPlainText() ?? '')) w.data ?? ''
+    ];
+    expect(shown, isEmpty, reason: shown.take(5).join(' | '));
     expect(tester.takeException(), isNull);
   });
 }
