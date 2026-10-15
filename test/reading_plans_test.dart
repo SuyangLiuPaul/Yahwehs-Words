@@ -373,6 +373,12 @@ void main() {
           contains(DashboardSection.readingPlan));
     });
 
+    test('the home card shows today as read once it is ticked', () {
+      final src = File('lib/pages/dashboard_page.dart').readAsStringSync();
+      expect(src, contains("progress!.done.contains(today)"));
+      expect(src, contains("readingPlan_marked"));
+    });
+
     test('every string a plan or the page uses exists in all three languages', () {
       final keys = <String>{
         for (final k in uiStrings.keys)

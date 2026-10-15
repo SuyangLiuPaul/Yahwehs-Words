@@ -2553,10 +2553,11 @@ class _ReadingPlanCard extends StatelessWidget {
                                 const SizedBox(height: 2),
                                 Text(status.finished
                                     ? rpText('readingPlan_finished', locale)
-                                    : rpText('readingPlan_dayOf', locale, {
+                                    : '${rpText('readingPlan_dayOf', locale, {
                                         'day': today,
                                         'days': plan.days
-                                      })),
+                                      })}'
+                                        '${progress!.done.contains(today) ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}'),
                                 if (!status.finished) ...[
                                   const SizedBox(height: 6),
                                   Text(plan
