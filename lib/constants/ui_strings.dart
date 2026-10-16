@@ -3957,6 +3957,101 @@ const uiStrings = {
     'zh-Hant': '已讀 {n}/{total}',
     'en': '{n}/{total} read',
   },
+  'readingPlan_heroToRead': {
+    'zh-Hans': '今天要读 {n} 项',
+    'zh-Hant': '今天要讀 {n} 項',
+    'en': '{n} to read today',
+  },
+  'readingPlan_heroProgress': {
+    'zh-Hans': '已完成 {done} / {total}',
+    'zh-Hant': '已完成 {done} / {total}',
+    'en': '{done} of {total} done',
+  },
+  'readingPlan_readNow': {
+    'zh-Hans': '开始阅读',
+    'zh-Hant': '開始閱讀',
+    'en': 'Read now',
+  },
+  'readingPlan_continueReading': {
+    'zh-Hans': '继续阅读',
+    'zh-Hant': '繼續閱讀',
+    'en': 'Continue reading',
+  },
+  'readingPlan_catchUpDay': {
+    'zh-Hans': '补读',
+    'zh-Hant': '補讀',
+    'en': 'Catch up',
+  },
+  'readingPlan_behindChip': {
+    'zh-Hans': '落后 {n} 天',
+    'zh-Hant': '落後 {n} 天',
+    'en': '{n} behind',
+  },
+  'readingPlan_dayShort': {
+    'zh-Hans': '第 {day} 天',
+    'zh-Hant': '第 {day} 天',
+    'en': 'Day {day}',
+  },
+  'readingPlan_todayLabel': {
+    'zh-Hans': '今天',
+    'zh-Hant': '今天',
+    'en': 'Today',
+  },
+  'readingPlan_scheduleTitle': {
+    'zh-Hans': '日程',
+    'zh-Hant': '日程',
+    'en': 'Schedule',
+  },
+  'readingPlan_scheduleHint': {
+    'zh-Hans': '点左边的方框标记已读，点这一天打开经文。',
+    'zh-Hant': '點左邊的方框標記已讀，點這一天打開經文。',
+    'en': 'Tick the box to mark a day read; tap a day to open its reading.',
+  },
+  'readingPlan_sectionSchedule': {
+    'zh-Hans': '日程',
+    'zh-Hant': '日程',
+    'en': 'Schedule',
+  },
+  'readingPlan_sectionReminder': {
+    'zh-Hans': '提醒',
+    'zh-Hant': '提醒',
+    'en': 'Reminder',
+  },
+  'readingPlan_sectionProgress': {
+    'zh-Hans': '进度',
+    'zh-Hant': '進度',
+    'en': 'Progress',
+  },
+  'readingPlan_sectionMore': {
+    'zh-Hans': '更多',
+    'zh-Hant': '更多',
+    'en': 'More',
+  },
+  'readingPlan_welcomeTitle': {
+    'zh-Hans': '养成每天读经的习惯',
+    'zh-Hant': '養成每天讀經的習慣',
+    'en': 'Build a daily reading habit',
+  },
+  'readingPlan_plansCount': {
+    'zh-Hans': '{n} 个计划进行中',
+    'zh-Hant': '{n} 個計劃進行中',
+    'en': '{n} plans running',
+  },
+  'readingPlan_fullSchedule': {
+    'zh-Hans': '查看全部日程',
+    'zh-Hant': '查看全部日程',
+    'en': 'Full schedule',
+  },
+  'readingPlan_daysLeft': {
+    'zh-Hans': '还剩 {n} 天',
+    'zh-Hant': '還剩 {n} 天',
+    'en': '{n} days left',
+  },
+  'readingPlan_remindOn': {
+    'zh-Hans': '已开提醒',
+    'zh-Hant': '已開提醒',
+    'en': 'Reminder on',
+  },
   'readingPlan_source': {
     'zh-Hans': '日程由本应用按章节和经节数生成；麦琴计划取自 1842 年原表（公有领域），并与另外两份整理版本逐日核对。',
     'zh-Hant': '日程由本應用按章節和經節數生成；麥琴計劃取自 1842 年原表（公有領域），並與另外兩份整理版本逐日核對。',

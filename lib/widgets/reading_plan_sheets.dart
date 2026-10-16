@@ -11,6 +11,7 @@ import 'package:yahwehs_words/pages/settings_page.dart';
 import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
+import 'package:yahwehs_words/widgets/reading_plan_widgets.dart';
 
 /// 2026-10-16: the two sheets behind a running reading plan — one to
 /// start it (when, and how to be reminded) and one to manage it later
@@ -122,16 +123,28 @@ class _ReadingReminderFieldsState extends State<ReadingReminderFields> {
         ),
         if (v.remind) ...[
           if (!settings.notificationsEnabled)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+            Container(
+              key: const ValueKey('reminder.needsNotifications'),
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Row(
-                key: const ValueKey('reminder.needsNotifications'),
                 children: [
+                  Icon(Icons.notifications_off_outlined,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onErrorContainer),
+                  const SizedBox(width: 8),
                   Expanded(
                       child: Text(
                           rpText('readingPlan_remindNeedsNotifications', locale),
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.error))),
+                              fontSize: 13,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onErrorContainer))),
                   TextButton(
                     onPressed: () => pushPage(const SettingsPage(),
                         routeName: '/settings'),
@@ -300,6 +313,7 @@ Future<bool> showStartPlanSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    showDragHandle: true,
     builder: (_) => _StartPlanSheet(plan: plan),
   );
   return started == true;
@@ -562,7 +576,11 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
         if (problem != null)
           Text(problem,
               key: const ValueKey('custom.problem'),
-              style: TextStyle(color: theme.colorScheme.error))
+              // Nothing chosen yet is a prompt, not a mistake.
+              style: TextStyle(
+                  color: _books.isEmpty
+                      ? theme.colorScheme.onSurfaceVariant
+                      : theme.colorScheme.error))
         else if (n != null && n > 0)
           Text(rpText('readingPlan_customPerDay', locale,
               {'n': (chapters / n).toStringAsFixed(chapters % n == 0 ? 0 : 1)})),
@@ -574,73 +592,147 @@ class _StartPlanSheetState extends State<_StartPlanSheet> {
   Widget build(BuildContext context) {
     final locale = context.watch<AppSettings>().locale;
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final plan = widget.plan;
     final canStart = !_busy && (!_isCustom || _customProblem(locale) == null);
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.92),
+      child: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-                plan == null
-                    ? rpText('readingPlan_customTitle', locale)
-                    : readingPlanName(plan, locale),
-                style: theme.textTheme.titleLarge),
-            const SizedBox(height: 4),
-            Text(plan == null
-                ? rpText('readingPlan_customDesc', locale)
-                : rpText('readingPlan_${plan.id}_desc', locale)),
-            const SizedBox(height: 16),
-            if (plan == null) ...[
-              _customSection(context, locale, theme),
-              const SizedBox(height: 16),
-            ],
-            Text(rpText('readingPlan_startDate', locale),
-                style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              ChoiceChip(
-                key: const ValueKey('start.today'),
-                label: Text(rpText('readingPlan_todayOption', locale)),
-                selected: _when == _When.today,
-                onSelected: (_) => setState(() => _when = _When.today),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: scheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(readingPlanIcon(plan?.id ?? 'custom'),
+                            color: scheme.onPrimaryContainer),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                plan == null
+                                    ? rpText('readingPlan_customTitle', locale)
+                                    : readingPlanName(plan, locale),
+                                style: theme.textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.w800)),
+                            if (plan != null)
+                              Text(
+                                  rpText('readingPlan_daysCount', locale,
+                                      {'days': plan.days}),
+                                  style: theme.textTheme.labelLarge
+                                      ?.copyWith(color: scheme.primary)),
+                          ],
+                        ),
+                      ),
+                    ]),
+                    const SizedBox(height: 10),
+                    Text(
+                        plan == null
+                            ? rpText('readingPlan_customDesc', locale)
+                            : rpText('readingPlan_${plan.id}_desc', locale),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant, height: 1.4)),
+                    const SizedBox(height: 18),
+                    if (plan == null) ...[
+                      PlanGroup(
+                          padding: const EdgeInsets.all(14),
+                          children: [_customSection(context, locale, theme)]),
+                      const SizedBox(height: 16),
+                    ],
+                    PlanGroup(
+                      title: rpText('readingPlan_startDate', locale),
+                      padding: const EdgeInsets.all(14),
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(spacing: 8, runSpacing: 8, children: [
+                            ChoiceChip(
+                              key: const ValueKey('start.today'),
+                              label: Text(rpText('readingPlan_todayOption', locale)),
+                              selected: _when == _When.today,
+                              onSelected: (_) =>
+                                  setState(() => _when = _When.today),
+                            ),
+                            ChoiceChip(
+                              key: const ValueKey('start.tomorrow'),
+                              label: Text(
+                                  rpText('readingPlan_tomorrowOption', locale)),
+                              selected: _when == _When.tomorrow,
+                              onSelected: (_) =>
+                                  setState(() => _when = _When.tomorrow),
+                            ),
+                            ChoiceChip(
+                              key: const ValueKey('start.pick'),
+                              avatar: const Icon(Icons.calendar_month_outlined,
+                                  size: 18),
+                              label: Text(_when == _When.date
+                                  ? formatPlanDate(_date)
+                                  : rpText('readingPlan_pickDate', locale)),
+                              selected: _when == _When.date,
+                              onSelected: (_) => _pickDate(),
+                            ),
+                          ]),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(formatPlanDate(_date),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurfaceVariant))),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    PlanGroup(
+                      padding: const EdgeInsets.all(14),
+                      children: [
+                        DaysOffPicker(
+                            value: _rest,
+                            onChanged: (v) => setState(() => _rest = v)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    PlanGroup(
+                      title: rpText('readingPlan_sectionReminder', locale),
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      children: [
+                        ReadingReminderFields(
+                          value: _reminder,
+                          onChanged: (v) => setState(() => _reminder = v),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              ChoiceChip(
-                key: const ValueKey('start.tomorrow'),
-                label: Text(rpText('readingPlan_tomorrowOption', locale)),
-                selected: _when == _When.tomorrow,
-                onSelected: (_) => setState(() => _when = _When.tomorrow),
-              ),
-              ChoiceChip(
-                key: const ValueKey('start.pick'),
-                avatar: const Icon(Icons.calendar_month_outlined, size: 18),
-                label: Text(_when == _When.date
-                    ? formatPlanDate(_date)
-                    : rpText('readingPlan_pickDate', locale)),
-                selected: _when == _When.date,
-                onSelected: (_) => _pickDate(),
-              ),
-            ]),
-            const SizedBox(height: 8),
-            Text(formatPlanDate(_date), style: theme.textTheme.bodySmall),
-            const SizedBox(height: 12),
-            DaysOffPicker(
-                value: _rest, onChanged: (v) => setState(() => _rest = v)),
-            const SizedBox(height: 12),
-            ReadingReminderFields(
-              value: _reminder,
-              onChanged: (v) => setState(() => _reminder = v),
             ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(
-                key: const ValueKey('start.confirm'),
-                onPressed: canStart ? _start : null,
-                child: Text(rpText('readingPlan_startButton', locale)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  key: const ValueKey('start.confirm'),
+                  style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50)),
+                  onPressed: canStart ? _start : null,
+                  child: Text(rpText('readingPlan_startButton', locale)),
+                ),
               ),
             ),
           ],
@@ -658,6 +750,7 @@ Future<void> showManagePlanSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    showDragHandle: true,
     builder: (_) => _ManagePlanSheet(entryId: entryId, plan: plan),
   );
 }
@@ -768,6 +861,7 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
   Widget build(BuildContext context) {
     final locale = context.watch<AppSettings>().locale;
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return AnimatedBuilder(
       animation: _svc,
       builder: (context, _) {
@@ -780,127 +874,196 @@ class _ManagePlanSheetState extends State<_ManagePlanSheet> {
             minute: e.minute,
             message: e.message ?? '');
         final behind = !st.finished && !st.notStarted && st.unreadBefore > 0;
-        return Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(readingPlanName(widget.plan, locale),
-                    style: theme.textTheme.titleLarge),
-                const SizedBox(height: 8),
-                ListTile(
-                  key: const ValueKey('manage.start'),
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.calendar_month_outlined),
-                  title: Text(rpText('readingPlan_changeStart', locale)),
-                  subtitle: Text(formatPlanDate(e.start)),
-                  onTap: () => _changeStart(e),
-                ),
-                const SizedBox(height: 8),
-                DaysOffPicker(
-                  value: e.restDays,
-                  onChanged: (v) => _svc.setRestDays(widget.entryId, v),
-                ),
-                const Divider(),
-                ReadingReminderFields(
-                  value: draft,
-                  onChanged: (d) => _onReminder(e, d),
-                ),
-                const Divider(),
-                if (st.finished) ...[
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.check_circle_outline),
-                    title: Text(rpText('readingPlan_completed', locale)),
+        Widget tile(
+                {Key? key,
+                required IconData icon,
+                required String title,
+                String? subtitle,
+                Color? color,
+                VoidCallback? onTap}) =>
+            ListTile(
+              key: key,
+              leading: Icon(icon, color: color),
+              title: Text(title, style: TextStyle(color: color)),
+              subtitle: subtitle == null ? null : Text(subtitle),
+              onTap: onTap,
+            );
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.92),
+          child: Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(children: [
+                    Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                          readingPlanIcon(
+                              e.custom != null ? 'custom' : widget.plan.id),
+                          color: scheme.onPrimaryContainer),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(readingPlanName(widget.plan, locale),
+                              style: theme.textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.w800)),
+                          Text(
+                              rpText('readingPlan_dayOf', locale, {
+                                'day': st.today,
+                                'days': widget.plan.days
+                              }),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: scheme.onSurfaceVariant)),
+                        ],
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 18),
+                  if (behind || st.finished) ...[
+                    PlanGroup(
+                      title: rpText('readingPlan_sectionProgress', locale),
+                      children: [
+                        if (st.finished) ...[
+                          tile(
+                            icon: Icons.check_circle_outline,
+                            title: rpText('readingPlan_completed', locale),
+                          ),
+                          tile(
+                            key: const ValueKey('manage.readAgain'),
+                            icon: Icons.replay,
+                            title: rpText('readingPlan_readAgain', locale),
+                            subtitle:
+                                rpText('readingPlan_readAgainHint', locale),
+                            onTap: () async {
+                              final again = await _svc.restart(widget.entryId);
+                              if (!mounted) return;
+                              if (again == null) {
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(rpText(
+                                            'readingPlan_limitReached', locale,
+                                            {'n': kMaxReadingPlans}))));
+                              } else {
+                                Navigator.of(this.context).pop();
+                              }
+                            },
+                          ),
+                        ],
+                        if (behind) ...[
+                          tile(
+                            key: const ValueKey('manage.catchUp'),
+                            icon: Icons.fast_forward_outlined,
+                            title: rpText('readingPlan_catchUp', locale),
+                            subtitle: rpText('readingPlan_catchUpHint', locale,
+                                {'day': st.resumeDay ?? st.today}),
+                            onTap: () => _svc.catchUp(widget.entryId),
+                          ),
+                          tile(
+                            key: const ValueKey('manage.markMissedRead'),
+                            icon: Icons.done_all,
+                            title: rpText('readingPlan_markMissedRead', locale,
+                                {'n': st.unreadBefore}),
+                            subtitle:
+                                rpText('readingPlan_markMissedReadHint', locale),
+                            onTap: () => _svc.markMissedRead(widget.entryId),
+                          ),
+                          tile(
+                            key: const ValueKey('manage.skipMissed'),
+                            icon: Icons.skip_next_outlined,
+                            title: rpText('readingPlan_skipMissed', locale,
+                                {'n': st.unreadBefore}),
+                            subtitle:
+                                rpText('readingPlan_skipMissedHint', locale),
+                            onTap: () => _svc.skipMissed(widget.entryId),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  PlanGroup(
+                    title: rpText('readingPlan_sectionSchedule', locale),
+                    children: [
+                      tile(
+                        key: const ValueKey('manage.start'),
+                        icon: Icons.calendar_month_outlined,
+                        title: rpText('readingPlan_changeStart', locale),
+                        subtitle: formatPlanDate(e.start),
+                        onTap: () => _changeStart(e),
+                      ),
+                      if (!st.finished)
+                        tile(
+                          key: const ValueKey('manage.pause'),
+                          icon: e.paused
+                              ? Icons.play_circle_outline
+                              : Icons.pause_circle_outline,
+                          title: rpText(
+                              e.paused
+                                  ? 'readingPlan_resume'
+                                  : 'readingPlan_pause',
+                              locale),
+                          subtitle: e.paused
+                              ? null
+                              : rpText('readingPlan_pauseHint', locale),
+                          onTap: () => e.paused
+                              ? _svc.resume(widget.entryId)
+                              : _svc.pause(widget.entryId),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+                        child: DaysOffPicker(
+                          value: e.restDays,
+                          onChanged: (v) => _svc.setRestDays(widget.entryId, v),
+                        ),
+                      ),
+                    ],
                   ),
-                  ListTile(
-                    key: const ValueKey('manage.readAgain'),
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.replay),
-                    title: Text(rpText('readingPlan_readAgain', locale)),
-                    subtitle: Text(rpText('readingPlan_readAgainHint', locale)),
-                    onTap: () async {
-                      final again = await _svc.restart(widget.entryId);
-                      if (!mounted) return;
-                      if (again == null) {
-                        ScaffoldMessenger.of(this.context).showSnackBar(SnackBar(
-                            content: Text(rpText('readingPlan_limitReached',
-                                locale, {'n': kMaxReadingPlans}))));
-                      } else {
-                        Navigator.of(this.context).pop();
-                      }
-                    },
+                  const SizedBox(height: 16),
+                  PlanGroup(
+                    title: rpText('readingPlan_sectionReminder', locale),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    children: [
+                      ReadingReminderFields(
+                        value: draft,
+                        onChanged: (d) => _onReminder(e, d),
+                      ),
+                    ],
                   ),
-                ] else
-                  ListTile(
-                    key: const ValueKey('manage.pause'),
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(e.paused
-                        ? Icons.play_circle_outline
-                        : Icons.pause_circle_outline),
-                    title: Text(rpText(
-                        e.paused ? 'readingPlan_resume' : 'readingPlan_pause',
-                        locale)),
-                    subtitle: e.paused
-                        ? null
-                        : Text(rpText('readingPlan_pauseHint', locale)),
-                    onTap: () => e.paused
-                        ? _svc.resume(widget.entryId)
-                        : _svc.pause(widget.entryId),
-                  ),
-                if (behind) ...[
-                  ListTile(
-                    key: const ValueKey('manage.catchUp'),
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.fast_forward_outlined),
-                    title: Text(rpText('readingPlan_catchUp', locale)),
-                    subtitle: Text(rpText('readingPlan_catchUpHint', locale,
-                        {'day': st.resumeDay ?? st.today})),
-                    onTap: () => _svc.catchUp(widget.entryId),
-                  ),
-                  ListTile(
-                    key: const ValueKey('manage.markMissedRead'),
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.done_all),
-                    title: Text(rpText('readingPlan_markMissedRead', locale,
-                        {'n': st.unreadBefore})),
-                    subtitle:
-                        Text(rpText('readingPlan_markMissedReadHint', locale)),
-                    onTap: () => _svc.markMissedRead(widget.entryId),
-                  ),
-                  ListTile(
-                    key: const ValueKey('manage.skipMissed'),
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.skip_next_outlined),
-                    title: Text(rpText('readingPlan_skipMissed', locale,
-                        {'n': st.unreadBefore})),
-                    subtitle:
-                        Text(rpText('readingPlan_skipMissedHint', locale)),
-                    onTap: () => _svc.skipMissed(widget.entryId),
+                  const SizedBox(height: 16),
+                  PlanGroup(
+                    title: rpText('readingPlan_sectionMore', locale),
+                    children: [
+                      tile(
+                        key: const ValueKey('manage.share'),
+                        icon: Icons.ios_share,
+                        title: rpText('readingPlan_share', locale),
+                        onTap: () => _share(e, st, locale),
+                      ),
+                      tile(
+                        key: const ValueKey('manage.remove'),
+                        icon: Icons.delete_outline,
+                        title: rpText('readingPlan_remove', locale),
+                        color: scheme.error,
+                        onTap: () => _remove(locale),
+                      ),
+                    ],
                   ),
                 ],
-                const Divider(),
-                ListTile(
-                  key: const ValueKey('manage.share'),
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.ios_share),
-                  title: Text(rpText('readingPlan_share', locale)),
-                  onTap: () => _share(e, st, locale),
-                ),
-                ListTile(
-                  key: const ValueKey('manage.remove'),
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.delete_outline,
-                      color: theme.colorScheme.error),
-                  title: Text(rpText('readingPlan_remove', locale),
-                      style: TextStyle(color: theme.colorScheme.error)),
-                  onTap: () => _remove(locale),
-                ),
-              ],
+              ),
             ),
           ),
         );

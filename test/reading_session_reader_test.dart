@@ -107,10 +107,14 @@ void main() {
     expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     expect(find.byIcon(Icons.home_rounded), findsNothing);
     expect(find.byKey(const ValueKey('readingSession.strip')), findsOneWidget);
-    final bar = tester.widget<LinearProgressIndicator>(
-        find.byKey(const ValueKey('readingSession.progress')));
-    // The bar is how much has been READ, not which page is open.
-    expect(bar.value, 0.0);
+    // One segment per chapter, none filled: nothing has been read.
+    for (var k = 0; k < 3; k++) {
+      final seg = tester.widget<Container>(
+          find.byKey(ValueKey('readingSession.seg.$k')));
+      final color = (seg.decoration as BoxDecoration).color!;
+      final primary = Theme.of(tester.element(find.byType(HomePage))).colorScheme.primary;
+      expect(color == primary, isFalse, reason: 'segment $k');
+    }
     expect(find.textContaining('Chapter 1 of 3'), findsOneWidget);
   });
 

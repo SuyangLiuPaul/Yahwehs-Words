@@ -94,6 +94,7 @@ import 'package:yahwehs_words/services/reading_plan_service.dart'
     show
         ChapterReadResult,
         ReadingPage,
+        ReadingPlanProgress,
         ReadingPlanService,
         ReadingSession,
         rpText;
@@ -947,20 +948,56 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                     ),
                 ],
               ),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
+              const SizedBox(height: 8),
+              if (total <= 12)
+                // One segment per chapter: filled when read, tinted on the
+                // chapter on screen. Reads as "3 chapters, 1 done" at a
+                // glance, which a single bar cannot.
+                Row(
                   key: const ValueKey('readingSession.progress'),
-                  value: total == 0 ? 0 : read / total,
-                  minHeight: 6,
+                  children: [
+                    for (var k = 0; k < total; k++) ...[
+                      if (k > 0) const SizedBox(width: 4),
+                      Expanded(
+                        child: Container(
+                          key: ValueKey('readingSession.seg.$k'),
+                          height: 6,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: dayDone || _sessionChapterRead(e, session, k)
+                                ? scheme.primary
+                                : (k == i
+                                    ? scheme.primary.withValues(alpha: 0.4)
+                                    : scheme.outlineVariant),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                )
+              else
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    key: const ValueKey('readingSession.progress'),
+                    value: total == 0 ? 0 : read / total,
+                    minHeight: 6,
+                  ),
                 ),
-              ),
             ],
           ),
         );
       },
     );
+  }
+
+  /// Whether the [k]th chapter of the session's day has been read.
+  bool _sessionChapterRead(ReadingPlanProgress? e, ReadingSession session, int k) {
+    if (e == null) return false;
+    final list = _paneChapters(context.read<MainProvider>());
+    if (k < 0 || k >= list.length) return false;
+    final en = toEnglish(list[k].book) ?? list[k].book;
+    return e.readChapters[session.day]?.contains('$en|${list[k].chapter}') ?? false;
   }
 
   /// Step within the session. True when it handled the move (including

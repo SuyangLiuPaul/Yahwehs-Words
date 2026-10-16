@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/pages/home_page.dart';
+import 'package:yahwehs_words/pages/reading_plan_schedule_page.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/services/reading_plan_service.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
@@ -10,6 +11,7 @@ import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
 import 'package:yahwehs_words/widgets/reading_plan_sheets.dart';
+import 'package:yahwehs_words/widgets/reading_plan_widgets.dart';
 
 const kReadingPlanPath = '/reading-plan';
 
@@ -88,110 +90,303 @@ class _ReadingPlanPageState extends State<ReadingPlanPage> {
   }
 
   Widget _body(BuildContext context, String locale, List<ReadingPlan> plans) {
-    final entries = _svc.entries;
+    final entries = _svc.entries
+        .where((e) => _svc.planFor(e) != null)
+        .toList();
     // Plans that are running (not yet finished) are not offered again.
     final running = <String>{
       for (final e in entries)
         if (e.custom == null &&
-            _svc.planFor(e) != null &&
             !readingPlanStatus(e, _svc.planFor(e)!.days, _svc.now).finished)
           e.planId,
     };
-    final streak = readingStreak(entries, _svc.now);
-    final full = entries.length >= kMaxReadingPlans;
+    final full = _svc.entries.length >= kMaxReadingPlans;
     final theme = Theme.of(context);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
-      children: [
-        if (entries.isEmpty) ...[
-          Text(rpText('readingPlan_pickTitle', locale),
-              style: theme.textTheme.titleLarge),
-          const SizedBox(height: 6),
-          Text(rpText('readingPlan_pickHint', locale)),
-          const SizedBox(height: 12),
-        ] else ...[
-          Text(rpText('readingPlan_myPlans', locale),
-              style: theme.textTheme.titleLarge),
-          const SizedBox(height: 8),
-          if (streak.totalDays > 0)
-            Padding(
-              key: const ValueKey('plan.streak'),
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Wrap(spacing: 14, runSpacing: 4, children: [
-                Text('🔥 ${rpText('readingPlan_streak', locale, {'n': streak.current})}',
-                    style: theme.textTheme.titleSmall),
-                Text(rpText('readingPlan_streakBest', locale,
-                    {'n': streak.longest})),
-                Text(rpText('readingPlan_daysRead', locale,
-                    {'n': streak.totalDays})),
-              ]),
-            ),
-          for (final e in entries)
-            if (_svc.planFor(e) != null)
-              _EntryCard(
-                key: ValueKey('plan.entry.${e.id}'),
-                entry: e,
-                plan: _svc.planFor(e)!,
-                locale: locale,
-                svc: _svc,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 48),
+          children: [
+            if (entries.isEmpty)
+              _Welcome(locale: locale)
+            else ...[
+              _TodayHero(entries: entries, svc: _svc, locale: locale),
+              const SizedBox(height: 22),
+              _SectionHeading(
+                  text: rpText('readingPlan_myPlans', locale),
+                  trailing: entries.length > 1
+                      ? rpText('readingPlan_plansCount', locale,
+                          {'n': entries.length})
+                      : null),
+              const SizedBox(height: 10),
+              for (final e in entries)
+                _EntryCard(
+                  key: ValueKey('plan.entry.${e.id}'),
+                  entry: e,
+                  plan: _svc.planFor(e)!,
+                  locale: locale,
+                  svc: _svc,
+                ),
+            ],
+            const SizedBox(height: 14),
+            _SectionHeading(
+                text: entries.isEmpty
+                    ? rpText('readingPlan_pickTitle', locale)
+                    : rpText('readingPlan_addPlan', locale)),
+            const SizedBox(height: 4),
+            Text(
+                entries.isEmpty
+                    ? rpText('readingPlan_pickHint', locale)
+                    : rpText('readingPlan_addHint', locale),
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+            const SizedBox(height: 12),
+            if (full)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: PlanPill(
+                  icon: Icons.info_outline,
+                  label: rpText('readingPlan_limitReached', locale,
+                      {'n': kMaxReadingPlans}),
+                ),
               ),
-          const SizedBox(height: 12),
-          Text(rpText('readingPlan_addPlan', locale),
-              style: theme.textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(rpText('readingPlan_addHint', locale),
-              style: theme.textTheme.bodySmall),
-          const SizedBox(height: 8),
-        ],
-        if (full)
-          _Note(
-              text: rpText('readingPlan_limitReached', locale,
-                  {'n': kMaxReadingPlans})),
-        for (final p in plans)
-          if (!running.contains(p.id))
-            _PlanCard(
-              plan: p,
+            for (final p in plans)
+              if (!running.contains(p.id))
+                _AvailablePlan(
+                  plan: p,
+                  locale: locale,
+                  enabled: !full,
+                  onStart: () => showStartPlanSheet(context, p, locale),
+                ),
+            _CustomPlanTile(
               locale: locale,
               enabled: !full,
-              onStart: () => showStartPlanSheet(context, p, locale),
+              onStart: () => showStartPlanSheet(context, null, locale),
             ),
-        Card(
-          key: const ValueKey('plan.card.custom'),
-          margin: const EdgeInsets.only(bottom: 10),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(rpText('readingPlan_customTitle', locale),
-                    style: theme.textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(rpText('readingPlan_customDesc', locale)),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton(
-                    key: const ValueKey('plan.start.custom'),
-                    onPressed: full
-                        ? null
-                        : () => showStartPlanSheet(context, null, locale),
-                    child: Text(rpText('readingPlan_startButton', locale)),
-                  ),
-                ),
-              ],
-            ),
-          ),
+            const SizedBox(height: 18),
+            Text(rpText('readingPlan_source', locale),
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+          ],
         ),
-        const SizedBox(height: 16),
-        Text(rpText('readingPlan_source', locale),
-            style: theme.textTheme.bodySmall),
+      ),
+    );
+  }
+}
+
+class _SectionHeading extends StatelessWidget {
+  final String text;
+  final String? trailing;
+  const _SectionHeading({required this.text, this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Expanded(
+          child: Text(text,
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+        ),
+        if (trailing != null)
+          Text(trailing!,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
 }
 
-/// One running plan: where it stands, today's passages, every day, and a
-/// button to its settings.
+/// Nothing started yet: say what this is for, warmly, before the list.
+class _Welcome extends StatelessWidget {
+  final String locale;
+  const _Welcome({required this.locale});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            scheme.primary,
+            Color.alphaBlend(Colors.black.withValues(alpha: 0.28), scheme.primary),
+          ],
+        ),
+      ),
+      child: Row(children: [
+        Icon(Icons.event_available_outlined,
+            size: 44, color: scheme.onPrimary.withValues(alpha: 0.95)),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(rpText('readingPlan_welcomeTitle', locale),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: scheme.onPrimary, fontWeight: FontWeight.w700)),
+        ),
+      ]),
+    );
+  }
+}
+
+/// The top of the page: how today looks across every plan, the streak,
+/// and one button that goes straight to the next thing to read.
+class _TodayHero extends StatelessWidget {
+  final List<ReadingPlanProgress> entries;
+  final ReadingPlanService svc;
+  final String locale;
+  const _TodayHero(
+      {required this.entries, required this.svc, required this.locale});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final now = svc.now;
+    // Today's work: each plan that has something due today.
+    var total = 0;
+    var done = 0;
+    ({ReadingPlanProgress e, ReadingPlan plan, int day, ReadingSegment seg})? next;
+    for (final e in entries) {
+      final plan = svc.planFor(e)!;
+      final st = readingPlanStatus(e, plan.days, now);
+      if (st.finished || st.paused || st.notStarted || st.restDay) continue;
+      total++;
+      if (e.done.contains(st.today)) {
+        done++;
+      } else if (next == null) {
+        final seg = firstUnreadSegment(e, st.today, plan.day(st.today));
+        if (seg != null) next = (e: e, plan: plan, day: st.today, seg: seg);
+      }
+    }
+    final streak = readingStreak(entries, now);
+    final allDone = total > 0 && done == total;
+    final on = scheme.onPrimary;
+    final weekday = rpText('readingPlan_wd${now.weekday}', locale);
+    return Container(
+      key: const ValueKey('plan.hero'),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            scheme.primary,
+            Color.alphaBlend(Colors.black.withValues(alpha: 0.28), scheme.primary),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+              color: scheme.primary.withValues(alpha: 0.28),
+              blurRadius: 18,
+              offset: const Offset(0, 8)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Expanded(
+              child: Text(
+                  '${formatPlanDate(now)} · $weekday',
+                  style: theme.textTheme.labelLarge
+                      ?.copyWith(color: on.withValues(alpha: 0.85))),
+            ),
+            if (streak.current > 0)
+              Container(
+                key: const ValueKey('plan.streak'),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: on.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                    '🔥 ${rpText('readingPlan_streak', locale, {'n': streak.current})}',
+                    style: TextStyle(
+                        color: on, fontSize: 12, fontWeight: FontWeight.w700)),
+              ),
+          ]),
+          const SizedBox(height: 10),
+          Text(
+            total == 0
+                ? rpText('readingPlan_restDayNote', locale)
+                : allDone
+                    ? rpText('readingPlan_dayCompleted', locale)
+                    : rpText('readingPlan_heroToRead', locale,
+                        {'n': total - done}),
+            style: theme.textTheme.headlineSmall
+                ?.copyWith(color: on, fontWeight: FontWeight.w800),
+          ),
+          if (total > 0) ...[
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: done / total,
+                minHeight: 8,
+                color: on,
+                backgroundColor: on.withValues(alpha: 0.22),
+              ),
+            ),
+          ],
+          const SizedBox(height: 6),
+          Wrap(spacing: 14, runSpacing: 2, children: [
+            if (total > 0)
+              Text(
+                  rpText('readingPlan_heroProgress', locale,
+                      {'done': done, 'total': total}),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color: on, fontWeight: FontWeight.w700)),
+            if (streak.totalDays > 0) ...[
+              Text(
+                  rpText('readingPlan_streakBest', locale,
+                      {'n': streak.longest}),
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: on.withValues(alpha: 0.85))),
+              Text(
+                  rpText('readingPlan_daysRead', locale,
+                      {'n': streak.totalDays}),
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: on.withValues(alpha: 0.85))),
+            ],
+          ]),
+          if (next != null) ...[
+            const SizedBox(height: 14),
+            FilledButton.icon(
+              key: const ValueKey('plan.hero.read'),
+              style: FilledButton.styleFrom(
+                backgroundColor: on,
+                foregroundColor: scheme.primary,
+                minimumSize: const Size.fromHeight(48),
+              ),
+              icon: const Icon(Icons.menu_book_rounded),
+              label: Text(
+                '${rpText((next.e.readChapters[next.day]?.isNotEmpty ?? false) ? 'readingPlan_continueReading' : 'readingPlan_readNow', locale)}'
+                ' · ${readingSegmentLabel(next.seg, locale)}',
+                overflow: TextOverflow.ellipsis,
+              ),
+              onPressed: () => openReadingSegment(context, next!.seg,
+                  entryId: next.e.id,
+                  day: next.day,
+                  daySegments: next.plan.day(next.day)),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// One running plan.
 class _EntryCard extends StatelessWidget {
   final ReadingPlanProgress entry;
   final ReadingPlan plan;
@@ -208,23 +403,59 @@ class _EntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final st = readingPlanStatus(entry, plan.days, svc.now);
-    final today = st.today;
-    final isDone = entry.done.contains(today);
     final id = entry.id;
-    String two(int n) => n.toString().padLeft(2, '0');
-    final s = entry.start;
+    final pct = plan.days == 0 ? 0.0 : st.doneCount / plan.days;
+    final catchUpDay = st.resumeDay;
+    final behind = !st.finished && !st.notStarted && st.unreadBefore > 0;
     return Card(
+      elevation: 0,
+      color: scheme.surfaceContainerLow,
       margin: const EdgeInsets.only(bottom: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              PlanRing(
+                value: pct,
+                size: 58,
+                child: Text('${(pct * 100).floor()}%',
+                    style: theme.textTheme.labelLarge
+                        ?.copyWith(fontWeight: FontWeight.w800)),
+              ),
+              const SizedBox(width: 14),
               Expanded(
-                child: Text(readingPlanName(plan, locale),
-                    style: theme.textTheme.titleMedium),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(readingPlanName(plan, locale),
+                        style: theme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 2),
+                    Text(
+                      st.finished
+                          ? rpText('readingPlan_completed', locale)
+                          : rpText('readingPlan_dayOf', locale,
+                              {'day': st.today, 'days': plan.days}),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                          color: scheme.onSurfaceVariant),
+                    ),
+                    if (!st.finished && plan.days > 0)
+                      Text(
+                          rpText('readingPlan_endsOn', locale, {
+                            'date': formatPlanDate(entry.dateOfDay(plan.days)),
+                          }),
+                          style: theme.textTheme.bodySmall
+                              ?.copyWith(color: scheme.onSurfaceVariant)),
+                  ],
+                ),
               ),
               IconButton(
                 key: ValueKey('plan.manage.$id'),
@@ -233,110 +464,109 @@ class _EntryCard extends StatelessWidget {
                 onPressed: () => showManagePlanSheet(context, id, plan),
               ),
             ]),
-            Text(
-              [
-                rpText('readingPlan_doneCount', locale,
-                    {'done': st.doneCount, 'days': plan.days}),
-                if (st.skippedCount > 0)
-                  rpText('readingPlan_skippedCount', locale,
-                      {'n': st.skippedCount}),
-                if (st.paused) rpText('readingPlan_paused', locale),
-              ].join(' · '),
-            ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(
-                value: plan.days == 0 ? 0 : st.doneCount / plan.days),
-            if (!st.finished && plan.days > 0) ...[
-              const SizedBox(height: 4),
-              Text(
-                  rpText('readingPlan_endsOn', locale, {
-                    'date': formatPlanDate(entry.dateOfDay(plan.days)),
-                  }),
-                  style: theme.textTheme.bodySmall),
-            ],
-            const SizedBox(height: 12),
-            if (st.restDay)
-              _Note(text: rpText('readingPlan_restDayNote', locale)),
-            if (st.finished)
-              _Note(text: rpText('readingPlan_finished', locale))
-            else if (st.notStarted)
-              _Note(
-                  text: rpText('readingPlan_notStarted', locale,
-                      {'date': '${s.year}-${two(s.month)}-${two(s.day)}'}))
-            else if (st.calendarEnded)
-              _Note(
-                  text: rpText('readingPlan_calendarEnded', locale,
-                      {'n': plan.days - st.doneCount - st.skippedCount})),
-            if (!st.finished && st.unreadBefore > 0 && !st.notStarted)
-              _Note(
-                  text: rpText('readingPlan_behind', locale,
-                      {'n': st.unreadBefore, 'day': st.resumeDay ?? today})),
-            if (!st.finished) ...[
-              const SizedBox(height: 4),
-              _DayCard(
-                key: ValueKey('plan.today.$id'),
-                title: '${rpText('readingPlan_today', locale)} · '
-                    '${rpText('readingPlan_dayOf', locale, {'day': today, 'days': plan.days})}',
-                segments: plan.day(today),
-                locale: locale,
-                done: isDone,
-                chaptersRead: isDone
-                    ? null
-                    : (entry.readChapters[today]?.length ?? 0),
-                chaptersTotal: ReadingSession.forDay(id, today, plan.day(today))
-                    .pages
-                    .length,
-                onOpen: (seg) => openReadingSegment(context, seg,
-                    entryId: id, day: today, daySegments: plan.day(today)),
-                onToggle: (v) => svc.setDone(id, today, v),
+            if (behind ||
+                st.paused ||
+                st.notStarted ||
+                st.restDay ||
+                entry.remind ||
+                st.skippedCount > 0) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Wrap(spacing: 8, runSpacing: 6, children: [
+                  if (behind)
+                    PlanPill(
+                      key: const ValueKey('plan.behind'),
+                      icon: Icons.schedule,
+                      label: rpText('readingPlan_behindChip', locale,
+                          {'n': st.unreadBefore}),
+                      background: scheme.errorContainer,
+                      foreground: scheme.onErrorContainer,
+                      onTap: () => showManagePlanSheet(context, id, plan),
+                    ),
+                  if (st.paused)
+                    PlanPill(
+                        icon: Icons.pause_circle_outline,
+                        label: rpText('readingPlan_paused', locale)),
+                  if (st.notStarted)
+                    PlanPill(
+                        icon: Icons.event,
+                        label: rpText('readingPlan_notStarted', locale, {
+                          'date': formatPlanDate(entry.dateOfDay(1)),
+                        })),
+                  if (st.restDay)
+                    PlanPill(
+                        icon: Icons.free_breakfast_outlined,
+                        label: rpText('readingPlan_restDayNote', locale)),
+                  if (st.skippedCount > 0)
+                    PlanPill(
+                        icon: Icons.skip_next_outlined,
+                        label: rpText('readingPlan_skippedCount', locale,
+                            {'n': st.skippedCount})),
+                  if (entry.remind)
+                    PlanPill(
+                        icon: Icons.notifications_active_outlined,
+                        label: entry.hour != null
+                            ? formatPlanTime(entry.hour!, entry.minute ?? 0)
+                            : rpText('readingPlan_remindOn', locale)),
+                ]),
               ),
-              if (st.resumeDay != null &&
-                  st.resumeDay != today &&
-                  !st.notStarted) ...[
-                const SizedBox(height: 8),
-                _DayCard(
-                  key: ValueKey('plan.resume.$id'),
-                  title: rpText('readingPlan_dayOf', locale,
-                      {'day': st.resumeDay!, 'days': plan.days}),
-                  segments: plan.day(st.resumeDay!),
+            ],
+            if (st.finished)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, right: 8),
+                child: _Note(text: rpText('readingPlan_finished', locale)),
+              )
+            else if (st.calendarEnded)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, right: 8),
+                child: _Note(
+                    text: rpText('readingPlan_calendarEnded', locale, {
+                  'n': plan.days - st.doneCount - st.skippedCount
+                })),
+              ),
+            if (!st.finished && !st.notStarted) ...[
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: _DayPanel(
+                  key: ValueKey('plan.today.$id'),
+                  entry: entry,
+                  plan: plan,
+                  day: st.today,
+                  label: rpText('readingPlan_todayLabel', locale),
                   locale: locale,
-                  done: entry.done.contains(st.resumeDay!),
-                  onOpen: (seg) => openReadingSegment(context, seg,
-                      entryId: id,
-                      day: st.resumeDay!,
-                      daySegments: plan.day(st.resumeDay!)),
-                  onToggle: (v) => svc.setDone(id, st.resumeDay!, v),
+                  svc: svc,
+                  highlight: true,
+                ),
+              ),
+              if (catchUpDay != null && catchUpDay != st.today) ...[
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _DayPanel(
+                    key: ValueKey('plan.resume.$id'),
+                    entry: entry,
+                    plan: plan,
+                    day: catchUpDay,
+                    label: rpText('readingPlan_catchUpDay', locale),
+                    locale: locale,
+                    svc: svc,
+                  ),
                 ),
               ],
             ],
-            const SizedBox(height: 8),
-            ExpansionTile(
-              key: ValueKey('plan.allDays.$id'),
-              tilePadding: EdgeInsets.zero,
-              title: Text(rpText('readingPlan_allDays', locale)),
-              children: [
-                for (var d = 1; d <= plan.days; d++)
-                  CheckboxListTile(
-                    key: ValueKey('plan.day.$id.$d'),
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    value: entry.done.contains(d),
-                    onChanged: (v) => svc.setDone(id, d, v ?? false),
-                    title: Text(rpText('readingPlan_dayOf', locale,
-                        {'day': d, 'days': plan.days})),
-                    subtitle: Text('${formatPlanDate(entry.dateOfDay(d))} · '
-                        '${plan.day(d).map((x) => readingSegmentLabel(x, locale)).join(' · ')}'),
-                    secondary: IconButton(
-                      key: ValueKey('plan.openDay.$id.$d'),
-                      tooltip: rpText('readingPlan_openDay', locale),
-                      icon: const Icon(Icons.menu_book_outlined),
-                      onPressed: plan.day(d).isEmpty
-                          ? null
-                          : () => openReadingSegment(context, plan.day(d).first,
-                              entryId: id, day: d, daySegments: plan.day(d)),
-                    ),
-                  ),
-              ],
+            const SizedBox(height: 6),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: ValueKey('plan.allDays.$id'),
+                icon: const Icon(Icons.calendar_view_day_outlined, size: 18),
+                label: Text(rpText('readingPlan_fullSchedule', locale)),
+                onPressed: () => pushPage(
+                    ReadingPlanSchedulePage(entryId: id, service: svc),
+                    routeName: '/reading-plan/schedule'),
+              ),
             ),
           ],
         ),
@@ -349,116 +579,268 @@ class _Note extends StatelessWidget {
   final String text;
   const _Note({required this.text});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Text(text,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-      );
+  Widget build(BuildContext context) => Text(text,
+      style: TextStyle(color: Theme.of(context).colorScheme.primary));
 }
 
-class _PlanCard extends StatelessWidget {
+/// One day's reading inside a plan card: the passages (checked off as
+/// they are read), a button that opens them, and the manual tick.
+class _DayPanel extends StatelessWidget {
+  final ReadingPlanProgress entry;
   final ReadingPlan plan;
+  final int day;
+  final String label;
   final String locale;
-  final bool enabled;
-  final VoidCallback onStart;
-  const _PlanCard(
-      {required this.plan,
-      required this.locale,
-      required this.onStart,
-      this.enabled = true});
+  final ReadingPlanService svc;
+  final bool highlight;
+  const _DayPanel({
+    super.key,
+    required this.entry,
+    required this.plan,
+    required this.day,
+    required this.label,
+    required this.locale,
+    required this.svc,
+    this.highlight = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      key: ValueKey('plan.card.${plan.id}'),
-      margin: const EdgeInsets.only(bottom: 10),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(rpText('readingPlan_${plan.id}_name', locale),
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 2),
-            Text(rpText('readingPlan_daysCount', locale, {'days': plan.days}),
-                style: theme.textTheme.labelMedium),
-            const SizedBox(height: 6),
-            Text(rpText('readingPlan_${plan.id}_desc', locale)),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(
-                key: ValueKey('plan.start.${plan.id}'),
-                onPressed: enabled ? onStart : null,
-                child: Text(rpText('readingPlan_startButton', locale)),
+    final scheme = theme.colorScheme;
+    final segs = plan.day(day);
+    final isDone = entry.done.contains(day);
+    final pages = ReadingSession.forDay(entry.id, day, segs).pages.length;
+    final read = isDone ? pages : (entry.readChapters[day]?.length ?? 0);
+    final next = isDone ? null : firstUnreadSegment(entry, day, segs);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: highlight
+            ? scheme.primaryContainer.withValues(alpha: 0.55)
+            : scheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Expanded(
+              child: Text(
+                '$label · ${rpText('readingPlan_dayShort', locale, {'day': day})}'
+                ' · ${formatPlanDate(entry.dateOfDay(day))}',
+                style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: highlight ? scheme.primary : scheme.onSurfaceVariant),
               ),
             ),
+            if (isDone) Icon(Icons.check_circle, color: scheme.primary, size: 20),
+          ]),
+          const SizedBox(height: 10),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final s in segs)
+              PassageChip(
+                label: readingSegmentLabel(s, locale),
+                read: readingSegmentRead(entry, day, s),
+                onTap: () => openReadingSegment(context, s,
+                    entryId: entry.id, day: day, daySegments: segs),
+              ),
+          ]),
+          if (!isDone && read > 0 && pages > 1) ...[
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                      value: read / pages, minHeight: 5),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                  rpText('readingPlan_chaptersReadShort', locale,
+                      {'n': read, 'total': pages}),
+                  style: theme.textTheme.bodySmall),
+            ]),
           ],
+          const SizedBox(height: 12),
+          Row(children: [
+            if (next != null)
+              Expanded(
+                child: (highlight ? FilledButton.icon : FilledButton.tonalIcon)(
+                  key: ValueKey('plan.read.${entry.id}.$day'),
+                  icon: const Icon(Icons.menu_book_rounded, size: 18),
+                  label: Text(
+                      rpText(
+                          read > 0
+                              ? 'readingPlan_continueReading'
+                              : (highlight
+                                  ? 'readingPlan_readNow'
+                                  : 'readingPlan_catchUpDay'),
+                          locale),
+                      overflow: TextOverflow.ellipsis),
+                  onPressed: () => openReadingSegment(context, next,
+                      entryId: entry.id, day: day, daySegments: segs),
+                ),
+              )
+            else
+              const Spacer(),
+            const SizedBox(width: 8),
+            TextButton.icon(
+              key: ValueKey('plan.mark.${entry.id}.$day'),
+              icon: Icon(
+                  isDone ? Icons.check_circle : Icons.radio_button_unchecked,
+                  size: 18),
+              label: Text(rpText(
+                  isDone ? 'readingPlan_marked' : 'readingPlan_markDone',
+                  locale)),
+              onPressed: () => svc.setDone(entry.id, day, !isDone),
+            ),
+          ]),
+        ],
+      ),
+    );
+  }
+}
+
+/// A plan the reader could start: a picture, what it is, how long.
+class _AvailablePlan extends StatelessWidget {
+  final ReadingPlan plan;
+  final String locale;
+  final bool enabled;
+  final VoidCallback onStart;
+  const _AvailablePlan({
+    required this.plan,
+    required this.locale,
+    required this.onStart,
+    this.enabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Card(
+      key: ValueKey('plan.card.${plan.id}'),
+      elevation: 0,
+      color: scheme.surfaceContainerLow,
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: enabled ? onStart : null,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(readingPlanIcon(plan.id),
+                  color: scheme.onPrimaryContainer),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(rpText('readingPlan_${plan.id}_name', locale),
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w700)),
+                  if (!rpText('readingPlan_${plan.id}_name', locale)
+                      .contains('${plan.days}')) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                        rpText('readingPlan_daysCount', locale,
+                            {'days': plan.days}),
+                        style: theme.textTheme.labelMedium
+                            ?.copyWith(color: scheme.primary)),
+                  ],
+                  const SizedBox(height: 6),
+                  Text(rpText('readingPlan_${plan.id}_desc', locale),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant, height: 1.35)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            FilledButton.tonal(
+              key: ValueKey('plan.start.${plan.id}'),
+              onPressed: enabled ? onStart : null,
+              child: Text(rpText('readingPlan_startButton', locale)),
+            ),
+          ]),
         ),
       ),
     );
   }
 }
 
-class _DayCard extends StatelessWidget {
-  final String title;
-  final List<ReadingSegment> segments;
+class _CustomPlanTile extends StatelessWidget {
   final String locale;
-  final bool done;
-
-  /// Chapters of this day already scrolled to the end (null: not tracked).
-  final int? chaptersRead;
-  final int? chaptersTotal;
-  final void Function(ReadingSegment) onOpen;
-  final void Function(bool) onToggle;
-  const _DayCard({
-    super.key,
-    required this.title,
-    required this.segments,
-    required this.locale,
-    required this.done,
-    required this.onOpen,
-    required this.onToggle,
-    this.chaptersRead,
-    this.chaptersTotal,
-  });
+  final bool enabled;
+  final VoidCallback onStart;
+  const _CustomPlanTile(
+      {required this.locale, required this.enabled, required this.onStart});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              for (final s in segments)
-                ActionChip(
-                  label: Text(readingSegmentLabel(s, locale)),
-                  onPressed: () => onOpen(s),
-                ),
-            ]),
-            if (chaptersRead != null &&
-                chaptersTotal != null &&
-                chaptersRead! > 0) ...[
-              const SizedBox(height: 6),
-              Text(
-                  rpText('readingPlan_chaptersRead', locale,
-                      {'n': chaptersRead!, 'total': chaptersTotal!}),
-                  style: Theme.of(context).textTheme.bodySmall),
-            ],
-            const SizedBox(height: 8),
-            FilledButton.tonalIcon(
-              icon: Icon(done ? Icons.check_circle : Icons.circle_outlined),
-              label: Text(rpText(
-                  done ? 'readingPlan_marked' : 'readingPlan_markDone',
-                  locale)),
-              onPressed: () => onToggle(!done),
+      key: const ValueKey('plan.card.custom'),
+      elevation: 0,
+      color: Colors.transparent,
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.primary.withValues(alpha: 0.55), width: 1.4),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: enabled ? onStart : null,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(Icons.add, color: scheme.onPrimary),
             ),
-          ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(rpText('readingPlan_customTitle', locale),
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 4),
+                  Text(rpText('readingPlan_customDesc', locale),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant, height: 1.35)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            FilledButton(
+              key: const ValueKey('plan.start.custom'),
+              onPressed: enabled ? onStart : null,
+              child: Text(rpText('readingPlan_startButton', locale)),
+            ),
+          ]),
         ),
       ),
     );

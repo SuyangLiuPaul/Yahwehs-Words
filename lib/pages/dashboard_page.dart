@@ -54,6 +54,8 @@ import 'package:yahwehs_words/pages/profiles_page.dart';
 import 'package:yahwehs_words/pages/feedback_page.dart';
 import 'package:yahwehs_words/pages/search_page.dart';
 import 'package:yahwehs_words/pages/settings_page.dart';
+import 'package:yahwehs_words/widgets/reading_plan_widgets.dart';
+import 'package:yahwehs_words/widgets/reading_plan_sheets.dart' show formatPlanDate;
 import 'package:yahwehs_words/pages/songs_page.dart';
 import 'package:yahwehs_words/pages/videos_page.dart';
 import 'package:yahwehs_words/pages/misconceptions_page.dart';
@@ -2599,35 +2601,73 @@ class _ReadingPlanCard extends StatelessWidget {
 
   Widget _row(BuildContext context, ReadingPlanService svc,
       ReadingPlanProgress e, ReadingPlan plan) {
+    final theme = Theme.of(context);
     final status = readingPlanStatus(e, plan.days, svc.now);
     final today = status.today;
     final marked = e.done.contains(today);
-    return Column(
+    final pct = plan.days == 0 ? 0.0 : status.doneCount / plan.days;
+    final String line;
+    if (status.finished) {
+      line = rpText('readingPlan_completed', locale);
+    } else if (status.paused) {
+      line = rpText('readingPlan_paused', locale);
+    } else if (status.restDay) {
+      line = rpText('readingPlan_restDayNote', locale);
+    } else if (status.notStarted) {
+      line = rpText('readingPlan_notStarted', locale,
+          {'date': formatPlanDate(e.dateOfDay(1))});
+    } else {
+      line = plan
+          .day(today)
+          .map((s) => readingSegmentLabel(s, locale))
+          .join(' · ');
+    }
+    return Row(
       key: ValueKey('home.readingPlan.${e.id}'),
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(readingPlanName(plan, locale),
-            style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: 2),
-        Text(status.finished
-            ? rpText('readingPlan_finished', locale)
-            : status.paused
-                ? rpText('readingPlan_paused', locale)
-                : '${rpText('readingPlan_dayOf', locale, {
-                        'day': today,
-                        'days': plan.days
-                      })}'
-                    '${marked ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}'),
-        if (status.restDay) ...[
-          const SizedBox(height: 6),
-          Text(rpText('readingPlan_restDayNote', locale)),
-        ] else if (!status.finished && !status.paused) ...[
-          const SizedBox(height: 6),
-          Text(plan
-              .day(today)
-              .map((s) => readingSegmentLabel(s, locale))
-              .join(' · ')),
-        ],
+        PlanRing(
+          value: pct,
+          size: 46,
+          stroke: 4.5,
+          child: marked
+              ? Icon(Icons.check, size: 20, color: scheme.primary)
+              : Text('${(pct * 100).floor()}%',
+                  style: theme.textTheme.labelSmall
+                      ?.copyWith(fontWeight: FontWeight.w800)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(readingPlanName(plan, locale),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 2),
+              Text(
+                  status.finished || status.paused || status.restDay || status.notStarted
+                      ? line
+                      : '${rpText('readingPlan_dayOf', locale, {'day': today, 'days': plan.days})}'
+                          '${marked ? ' · ${rpText('readingPlan_marked', locale)} ✓' : ''}',
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: scheme.onSurfaceVariant)),
+              if (!status.finished &&
+                  !status.paused &&
+                  !status.restDay &&
+                  !status.notStarted) ...[
+                const SizedBox(height: 2),
+                Text(line,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600)),
+              ],
+            ],
+          ),
+        ),
+        Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
       ],
     );
   }

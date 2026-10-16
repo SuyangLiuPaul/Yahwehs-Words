@@ -700,7 +700,7 @@ void main() {
       expect(find.textContaining('第 3 天，共 365 天'), findsWidgets);
       expect(find.textContaining('创世记 3'), findsWidgets);
       // behind: day 2 unread
-      expect(find.textContaining('还有 1 天没读'), findsOneWidget);
+      expect(find.text('落后 1 天'), findsOneWidget);
     });
   });
 }
