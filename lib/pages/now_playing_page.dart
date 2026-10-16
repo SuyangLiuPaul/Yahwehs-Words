@@ -1,3 +1,4 @@
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import '../widgets/song_mix_picker.dart';
 import 'dart:async';
 
@@ -106,12 +107,10 @@ class NowPlayingPage extends StatelessWidget {
         builder: (context, _) {
           final item = player.currentItem;
           if (item == null) {
-            return Center(
-              child: Text(
-                uiStrings['songsNothingPlaying']?[locale] ??
-                    'Nothing is playing.',
-                style: TextStyle(color: scheme.onSurfaceVariant),
-              ),
+            return AppEmptyState(
+              icon: Icons.music_note_outlined,
+              title: uiStrings['songsNothingPlaying']?[locale] ??
+                  'Nothing is playing.',
             );
           }
           final song = item.song;

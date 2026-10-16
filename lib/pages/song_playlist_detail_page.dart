@@ -1,3 +1,4 @@
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:flutter/material.dart' hide RepeatMode;
 import 'package:provider/provider.dart';
 
@@ -259,19 +260,15 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (songs.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(32),
-        child: Center(
-          child: Text(
-            playlist.isSmart
-                ? (uiStrings['songsSmartPlaylistNote']?[locale] ??
-                    'A saved filter — nothing matches it right now.')
-                : (uiStrings['songsPlaylistEmpty']?[locale] ??
-                    'Nothing here yet.'),
-            textAlign: TextAlign.center,
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13),
-          ),
-        ),
+      return AppEmptyState(
+        icon: playlist.isSmart
+            ? Icons.filter_alt_outlined
+            : Icons.queue_music_outlined,
+        title: playlist.isSmart
+            ? (uiStrings['songsSmartPlaylistNote']?[locale] ??
+                'A saved filter — nothing matches it right now.')
+            : (uiStrings['songsPlaylistEmpty']?[locale] ??
+                'Nothing here yet.'),
       );
     }
 

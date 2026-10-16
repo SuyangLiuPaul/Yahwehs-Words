@@ -162,7 +162,8 @@ class _StudyTestamentsPageState extends State<StudyTestamentsPage> {
                       'Search a passage or a word',
                       '搜索经文或词语',
                       '搜尋經文或詞語'),
-                  border: const OutlineInputBorder()),
+                  filled: true,
+                  border: kStudySearchBorder),
               onChanged: (v) => setState(() => _query = v)),
           const SizedBox(height: 10),
           StudyPassageFilter(
@@ -316,7 +317,8 @@ class _StudyTestamentsPageState extends State<StudyTestamentsPage> {
                           prefixIcon: const Icon(Icons.search),
                           hintText: studyL(locale, 'Search a passage',
                               '搜索经文', '搜尋經文'),
-                          border: const OutlineInputBorder()),
+                          filled: true,
+                  border: kStudySearchBorder),
                       onChanged: (v) => setState(() => _rQuery = v)),
                   const SizedBox(height: 10),
                   StudyPassageFilter(

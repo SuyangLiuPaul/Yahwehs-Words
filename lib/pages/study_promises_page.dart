@@ -125,7 +125,8 @@ class _StudyPromisesPageState extends State<StudyPromisesPage> {
                   prefixIcon: const Icon(Icons.search),
                   hintText: studyL(locale, 'Search a promise or passage',
                       '搜索应许或经文', '搜尋應許或經文'),
-                  border: const OutlineInputBorder()),
+                  filled: true,
+                  border: kStudySearchBorder),
               onChanged: (v) => setState(() => _query = v)),
           const SizedBox(height: 10),
           StudyPassageFilter(

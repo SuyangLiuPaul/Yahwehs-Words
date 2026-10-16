@@ -6,6 +6,7 @@ import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/widgets/press_scale.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:yahwehs_words/utils/app_scroll_behavior.dart'
     show kSelectableTextPhysics;
 import 'package:yahwehs_words/utils/theme_color_helpers.dart';
@@ -344,15 +345,9 @@ class _EvidencePageState extends State<EvidencePage> {
                     ),
                     if (filtered.isEmpty)
                       Expanded(
-                        child: Center(
-                          child: Text(
-                            uiStrings['noResults']?[locale] ??
-                                'No results',
-                            style: TextStyle(
-                              color: scheme.onSurfaceVariant,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
+                        child: AppEmptyState(
+                          icon: Icons.search_off_rounded,
+                          title: uiStrings['noResults']?[locale] ?? 'No results',
                         ),
                       )
                     else

@@ -90,7 +90,8 @@ class _StudyPrinciplesPageState extends State<StudyPrinciplesPage> {
                             'Search a principle, passage or sermon number',
                             '搜索原则、经文或讲道编号',
                             '搜尋原則、經文或講道編號'),
-                        border: const OutlineInputBorder()),
+                        filled: true,
+                  border: kStudySearchBorder),
                     onChanged: (v) => setState(() => _query = v)),
                 const SizedBox(height: 10),
                 StudyPassageFilter(

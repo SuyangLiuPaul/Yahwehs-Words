@@ -11,6 +11,19 @@ import 'package:yahwehs_words/utils/reference_parser.dart';
 import 'package:yahwehs_words/utils/version_mapper.dart' show localeAwareBookName;
 import 'package:yahwehs_words/widgets/verse_popup_sheet.dart';
 
+/// Study-page inputs share the sermons search's look: a filled, rounded
+/// field with no outline, instead of a square outlined box.
+const OutlineInputBorder kStudyFieldBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.all(Radius.circular(16)),
+  borderSide: BorderSide.none,
+);
+
+/// The pill used for search boxes.
+const OutlineInputBorder kStudySearchBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.all(Radius.circular(24)),
+  borderSide: BorderSide.none,
+);
+
 String studyL(String locale, String en, String hs, String ht) =>
     locale == 'zh-Hans'
         ? hs
@@ -370,7 +383,8 @@ class StudyPassageFilter extends StatelessWidget {
           decoration: InputDecoration(
               labelText: label.isNotEmpty ? label : studyL(locale, 'Book', '按经卷', '按經卷'),
               isDense: true,
-              border: const OutlineInputBorder()),
+              filled: true,
+              border: kStudyFieldBorder),
           items: [
             DropdownMenuItem<String?>(
                 value: null,
@@ -394,7 +408,8 @@ class StudyPassageFilter extends StatelessWidget {
             decoration: InputDecoration(
                 labelText: studyL(locale, 'Chapter', '按章', '按章'),
                 isDense: true,
-                border: const OutlineInputBorder()),
+                filled: true,
+              border: kStudyFieldBorder),
             items: [
               DropdownMenuItem<int?>(
                   value: null,

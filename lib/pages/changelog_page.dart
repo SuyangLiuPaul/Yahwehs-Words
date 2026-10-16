@@ -17,6 +17,7 @@
 // in" is the other question this page gets asked.
 
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/app_version.dart';
@@ -286,16 +287,9 @@ class _ChangelogPageState extends State<ChangelogPage> {
     );
   }
 
-  Widget _empty(BuildContext context, AppSettings s) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            uiStrings['changelogEmpty']?[s.locale] ??
-                'No release notes are bundled with this build.',
-            textAlign: TextAlign.center,
-            style: _style(s, s.fontSize,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
-          ),
-        ),
+  Widget _empty(BuildContext context, AppSettings s) => AppEmptyState(
+        icon: Icons.history_edu_outlined,
+        title: uiStrings['changelogEmpty']?[s.locale] ??
+            'No release notes are bundled with this build.',
       );
 }

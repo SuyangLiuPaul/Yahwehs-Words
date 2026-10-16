@@ -11,6 +11,8 @@ import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/clipboard_helper.dart';
 import 'package:yahwehs_words/utils/jump_to_reference.dart';
+import 'package:yahwehs_words/utils/navigate_to_reader.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
 import 'package:yahwehs_words/widgets/localized_back_button.dart';
@@ -154,23 +156,22 @@ class _HighlightsPageState extends State<HighlightsPage> {
             ),
           if (items.isEmpty)
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Text(
-                    highlights.isEmpty
-                        ? (uiStrings['highlightsEmpty']?[locale] ??
-                            'No highlights yet. Long-press a verse and pick a color.')
-                        : (uiStrings['highlightsNoMatch']?[locale] ??
-                            'No highlights match this filter.'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: scheme.onSurfaceVariant,
-                      fontStyle: FontStyle.italic,
+              child: highlights.isEmpty
+                  ? AppEmptyState(
+                      icon: Icons.format_color_fill_outlined,
+                      title: uiStrings['highlightsEmptyTitle']?[locale] ??
+                          'No highlights yet',
+                      body: uiStrings['highlightsEmptyBody']?[locale] ??
+                          'Long-press a verse and pick a color.',
+                      actionLabel: uiStrings['emptyStateReadNow']?[locale] ??
+                          'Open the Bible',
+                      onAction: () => navigateToReader(context),
+                    )
+                  : AppEmptyState(
+                      icon: Icons.filter_alt_off_outlined,
+                      title: uiStrings['highlightsNoMatch']?[locale] ??
+                          'No highlights match this filter.',
                     ),
-                  ),
-                ),
-              ),
             )
           else
             Expanded(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:yahwehs_words/constants/motion.dart';
 import 'dart:async' show unawaited;
 import 'package:flutter/rendering.dart' show ScrollDirection;
@@ -254,12 +255,9 @@ class _SongsPageState extends State<SongsPage> {
           }
           final all = snap.data ?? const <Song>[];
           if (all.isEmpty) {
-            return Center(
-              child: Text(
-                uiStrings['songsEmpty']?[locale] ??
-                    'No songs available.',
-                style: TextStyle(color: scheme.onSurfaceVariant),
-              ),
+            return AppEmptyState(
+              icon: Icons.library_music_outlined,
+              title: uiStrings['songsEmpty']?[locale] ?? 'No songs available.',
             );
           }
           final themes = SongService.distinctThemes(all);

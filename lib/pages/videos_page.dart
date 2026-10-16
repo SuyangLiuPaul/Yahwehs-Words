@@ -3,6 +3,7 @@ import 'package:yahwehs_words/services/admin_overlay.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 
@@ -195,9 +196,9 @@ class _VideosPageState extends State<VideosPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (series.isEmpty) {
-      return Center(
-        child: Text(uiStrings['oneGodEmpty']?[locale] ?? 'Nothing here yet.',
-            style: TextStyle(color: scheme.onSurfaceVariant)),
+      return AppEmptyState(
+        icon: Icons.ondemand_video_outlined,
+        title: uiStrings['oneGodEmpty']?[locale] ?? 'Nothing here yet.',
       );
     }
     return ListView.separated(

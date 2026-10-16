@@ -1532,6 +1532,16 @@ const uiStrings = {
     'zh-Hant': '去讀經',
     'en': 'Open the Bible',
   },
+  'highlightsEmptyTitle': {
+    'zh-Hans': '还没有高亮',
+    'zh-Hant': '還沒有高亮',
+    'en': 'No highlights yet',
+  },
+  'highlightsEmptyBody': {
+    'zh-Hans': '长按经文，选择颜色即可添加。',
+    'zh-Hant': '長按經文，選擇顏色即可添加。',
+    'en': 'Long-press a verse and pick a color.',
+  },
   'libraryEmptyNotes': {
     'zh-Hans': '尚无笔记。长按经文,点击笔记图标即可添加。',
     'zh-Hant': '尚無筆記。長按經文,點擊筆記圖標即可添加。',

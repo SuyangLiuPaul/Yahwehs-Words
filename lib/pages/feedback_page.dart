@@ -371,7 +371,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     decoration: InputDecoration(
                       hintText: uiStrings['feedbackMessageHint']?[locale] ??
                           'Describe the bug / feature / thought.',
-                      border: const OutlineInputBorder(),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        borderSide: BorderSide.none,
+                      ),
                       filled: true,
                     ),
                   ),
@@ -383,7 +386,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     decoration: InputDecoration(
                       labelText: uiStrings['feedbackNameLabel']?[locale] ??
                           'Your name (optional)',
-                      border: const OutlineInputBorder(),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        borderSide: BorderSide.none,
+                      ),
                       filled: true,
                     ),
                   ),
@@ -402,7 +408,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       labelText: uiStrings['feedbackReplyToLabel']?[locale] ??
                           'Reply-to email (optional)',
                       hintText: 'you@example.com',
-                      border: const OutlineInputBorder(),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        borderSide: BorderSide.none,
+                      ),
                       filled: true,
                     ),
                   ),
