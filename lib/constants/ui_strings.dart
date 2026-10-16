@@ -4825,11 +4825,6 @@ const uiStrings = {
     'zh-Hant': '研讀雅偉的話。',
     'en': "Study Yahweh's Words",
   },
-  'contactIntro': {
-    'zh-Hans': '作者 Paul Liu',
-    'zh-Hant': '作者 Paul Liu',
-    'en': 'Made by Paul Liu',
-  },
   'contactTail': {
     'zh-Hans': '问题、反馈或其他事宜：',
     'zh-Hant': '問題、反饋或其他事宜：',
