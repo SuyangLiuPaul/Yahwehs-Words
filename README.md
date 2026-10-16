@@ -1,4 +1,4 @@
-**Status, 2026-10-17.** The latest release is **1.7.31** (2026-10-16 — [release](https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest)). Ahead of it, on the dev site and **not yet released**: [continuous vertical scrolling](#whats-new-since-173) and [Add-ons](docs/addon-modules.md) — importing Bible texts from MyBible.zone, MySword, theWord, Zefania XML, JSON and CSV. This file lags the code by design (see *Earlier additions* for what it last described in detail); when it disagrees with the tree, the tree wins.
+**Status, 2026-10-17.** The latest release is **1.7.32** (2026-10-17 — [release](https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest)): [continuous vertical scrolling](#whats-new-since-173) and [Add-ons](docs/addon-modules.md) — importing Bible texts from MyBible.zone, MySword, theWord, Zefania XML, JSON and CSV. This file lags the code by design (see *Earlier additions* for what it last described in detail); when it disagrees with the tree, the tree wins.
 
 <h1 align="center">Yahweh's Words · 雅伟之言</h1>
 
