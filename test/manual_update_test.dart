@@ -146,13 +146,13 @@ void main() {
     expect(find.text('請檢查網路後重試。'), findsOneWidget);
   });
 
-  test('both doors carry the tile', () {
-    for (final f in [
-      'lib/pages/about_page.dart',
-      'lib/pages/settings_page.dart'
-    ]) {
-      expect(File(f).readAsStringSync(), contains('ManualUpdateTile('),
-          reason: f);
-    }
+  test('Settings carries the tile; About points to it instead of repeating it',
+      () {
+    expect(File('lib/pages/settings_page.dart').readAsStringSync(),
+        contains('ManualUpdateTile('));
+    final about = File('lib/pages/about_page.dart').readAsStringSync();
+    expect(about, isNot(contains('ManualUpdateTile(')),
+        reason: 'one update control, in one place (2026-10-16)');
+    expect(about, contains('about.updateSettings'));
   });
 }
