@@ -2298,6 +2298,11 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                       paragraphMode: settings.paragraphMode,
                       onToggleParagraphMode: () =>
                           settings.setParagraphMode(!settings.paragraphMode),
+                      verticalScroll: settings.verticalScroll,
+                      onToggleVerticalScroll: widget.session != null
+                          ? null
+                          : () => settings
+                              .setVerticalScroll(!settings.verticalScroll),
                       deviceClass: dc,
                       onToggleSplitView: widget.onToggleSplitView,
                       splitViewActive: widget.splitViewActive,
@@ -2698,6 +2703,11 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                         paragraphMode: settings.paragraphMode,
                         onToggleParagraphMode: () => settings
                             .setParagraphMode(!settings.paragraphMode),
+                        verticalScroll: settings.verticalScroll,
+                        onToggleVerticalScroll: widget.session != null
+                            ? null
+                            : () => settings
+                                .setVerticalScroll(!settings.verticalScroll),
                       ),
                     // Bottom bar — selection actions only. (v1.2.69:
                     // the always-visible reader-progress bar was
@@ -7270,6 +7280,11 @@ class _BibleReaderBottomBar extends StatelessWidget {
   final VoidCallback onFontSize;
   final bool paragraphMode;
   final VoidCallback onToggleParagraphMode;
+
+  /// Continuous vertical scrolling: on/off and the switch. Null callback
+  /// (a reading-plan day, which always pages) leaves the button out.
+  final bool verticalScroll;
+  final VoidCallback? onToggleVerticalScroll;
   final DeviceClass deviceClass;
   final String locale;
 
@@ -7283,6 +7298,8 @@ class _BibleReaderBottomBar extends StatelessWidget {
     required this.onFontSize,
     required this.paragraphMode,
     required this.onToggleParagraphMode,
+    this.verticalScroll = false,
+    this.onToggleVerticalScroll,
     required this.deviceClass,
     required this.locale,
   });
@@ -7426,6 +7443,18 @@ class _BibleReaderBottomBar extends StatelessWidget {
                         scheme: scheme,
                         activeColor: paragraphMode ? scheme.primary : null,
                       ),
+                      if (onToggleVerticalScroll != null)
+                        _BottomBarBtn(
+                          key: const ValueKey('reader.verticalScrollBtn'),
+                          icon: Icons.swap_vert_rounded,
+                          tooltip: uiStrings['verticalScroll']?[locale] ??
+                              'Continuous vertical scrolling',
+                          onTap: onToggleVerticalScroll,
+                          iconSize: iconSize,
+                          iconPad: iconPad,
+                          scheme: scheme,
+                          activeColor: verticalScroll ? scheme.primary : null,
+                        ),
                       _BottomBarBtn(
                         icon: Icons.chevron_right_rounded,
                         tooltip: uiStrings['nextChapter']?[locale] ?? 'Next',
@@ -7462,6 +7491,7 @@ class _BottomBarBtn extends StatelessWidget {
   final Color? activeColor;
 
   const _BottomBarBtn({
+    super.key,
     required this.icon,
     required this.tooltip,
     required this.onTap,
@@ -7481,17 +7511,25 @@ class _BottomBarBtn extends StatelessWidget {
     // comfortable to tap on phones — otherwise the bar becomes a
     // frustrating mis-tap factory on small screens.
     final hitSize = (iconSize + 2 * iconPad).clamp(44.0, 64.0);
-    return Tooltip(
-      message: tooltip,
-      child: InkResponse(
-        onTap: onTap,
-        radius: hitSize / 2,
-        containedInkWell: false,
-        child: SizedBox(
-          width: hitSize,
-          height: hitSize,
-          child: Center(
-            child: Icon(icon, size: iconSize, color: color),
+    // Flexible + scaleDown: with seven buttons a big icon setting on a
+    // 320px screen wants more than the row has, and a button that is
+    // a few points smaller beats a striped overflow band.
+    return Flexible(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Tooltip(
+          message: tooltip,
+          child: InkResponse(
+            onTap: onTap,
+            radius: hitSize / 2,
+            containedInkWell: false,
+            child: SizedBox(
+              width: hitSize,
+              height: hitSize,
+              child: Center(
+                child: Icon(icon, size: iconSize, color: color),
+              ),
+            ),
           ),
         ),
       ),
@@ -7513,6 +7551,8 @@ class _FloatingHeader extends StatelessWidget {
   final VoidCallback? onToggleSidebar;
   final bool paragraphMode;
   final VoidCallback? onToggleParagraphMode;
+  final bool verticalScroll;
+  final VoidCallback? onToggleVerticalScroll;
   final DeviceClass deviceClass;
   final VoidCallback? onToggleSplitView;
   final bool splitViewActive;
@@ -7558,6 +7598,8 @@ class _FloatingHeader extends StatelessWidget {
     this.onToggleSidebar,
     this.paragraphMode = false,
     this.onToggleParagraphMode,
+    this.verticalScroll = false,
+    this.onToggleVerticalScroll,
     required this.deviceClass,
     this.onToggleSplitView,
     this.splitViewActive = false,
@@ -8167,6 +8209,9 @@ class _FloatingHeader extends StatelessWidget {
                           case 'paragraph':
                             onToggleParagraphMode?.call();
                             break;
+                          case 'verticalScroll':
+                            onToggleVerticalScroll?.call();
+                            break;
                           case 'library':
                             pushPage(const LibraryPage(),
                                 routeName: '/library');
@@ -8388,6 +8433,7 @@ class _FloatingHeader extends StatelessWidget {
                           ),
                         ));
                         final hasReadingSection = onToggleSplitView != null ||
+                            onToggleVerticalScroll != null ||
                             (showSidebarToggle &&
                                 onToggleParagraphMode != null);
                         if (hasReadingSection) {
@@ -8429,6 +8475,21 @@ class _FloatingHeader extends StatelessWidget {
                                       'Paragraph Flow')
                                   : (uiStrings['verseByVerse']?[locale] ??
                                       'Verse by Verse'),
+                            ),
+                          ));
+                        }
+                        if (onToggleVerticalScroll != null) {
+                          items.add(PopupMenuItem(
+                            key: const ValueKey('reader.verticalScrollMenu'),
+                            value: 'verticalScroll',
+                            child: _menuRow(
+                              context,
+                              icon: Icons.swap_vert_rounded,
+                              iconColor:
+                                  verticalScroll ? scheme.primary : null,
+                              label: uiStrings['verticalScrollShort']?[locale] ??
+                                  'Vertical scroll',
+                              trailing: verticalScroll ? '✓' : null,
                             ),
                           ));
                         }

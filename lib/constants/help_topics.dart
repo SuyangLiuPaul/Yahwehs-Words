@@ -259,6 +259,31 @@ const List<HelpTopic> kHelpTopics = [
     open: HelpDestination.settings,
   ),
   HelpTopic(
+    id: 'vertical-scroll',
+    section: HelpSection.reading,
+    title: HelpText(
+      '连续滚动阅读',
+      '連續捲動閱讀',
+      'Continuous vertical scrolling',
+    ),
+    body: HelpText(
+      '打开后，上下滑动就能一路读下去：一章读完直接接着下一章，往回滑也能回到上一章，不用翻页。章与章之间有章名分隔，顶栏会跟着显示你读到哪一章。\n\n在「设置」›「连续滚动阅读」里打开，或点阅读页底栏的 ⇅ 按钮、「⋯」菜单里的「连续滚动」。读经计划里的一天仍按章翻页。',
+      '打開後，上下滑動就能一路讀下去：一章讀完直接接著下一章，往回滑也能回到上一章，不用翻頁。章與章之間有章名分隔，頂欄會跟著顯示你讀到哪一章。\n\n在「設定」›「連續捲動閱讀」裡打開，或點閱讀頁底欄的 ⇅ 按鈕、「⋯」選單裡的「連續捲動」。讀經計畫裡的一天仍按章翻頁。',
+      'When on, just scroll: one chapter runs straight into the next, and scrolling back returns to the one before, with no page turns. A chapter heading divides them and the top bar follows the chapter you are in.\n\nTurn it on in Settings › Continuous vertical scrolling, with the ⇅ button on the reader\'s bottom bar, or from the ⋯ menu (Vertical scroll). A reading-plan day still pages chapter by chapter.',
+    ),
+    path: ['settings', 'verticalScroll'],
+    keywords: [
+      'scroll',
+      '滚动',
+      'vertical',
+      '连续',
+      'continuous',
+      'page',
+      '翻页',
+    ],
+    open: HelpDestination.settings,
+  ),
+  HelpTopic(
     id: 'immersive',
     section: HelpSection.reading,
     title: HelpText(

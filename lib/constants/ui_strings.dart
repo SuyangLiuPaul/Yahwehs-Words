@@ -5754,6 +5754,11 @@ const uiStrings = {
     'zh-Hant': '連續捲動閱讀',
     'en': 'Continuous vertical scrolling',
   },
+  'verticalScrollShort': {
+    'zh-Hans': '连续滚动',
+    'zh-Hant': '連續捲動',
+    'en': 'Vertical scroll',
+  },
   'verticalScrollSubtitle': {
     'zh-Hans': '上下滑动即可一路读下去，章与章首尾相连，不必翻页。',
     'zh-Hant': '上下滑動即可一路讀下去，章與章首尾相連，不必翻頁。',
