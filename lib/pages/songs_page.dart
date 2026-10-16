@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/constants/motion.dart';
 import 'dart:async' show unawaited;
 import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -651,13 +652,25 @@ class _SongsPageState extends State<SongsPage> {
   }
 }
 
-class _IntroCard extends StatelessWidget {
+/// The directory's blurb. Folded to two lines until tapped: it is read
+/// once, and until now it pushed the search box down the screen every
+/// time the page opened.
+class _IntroCard extends StatefulWidget {
   final AppSettings settings;
   final ColorScheme scheme;
   const _IntroCard({required this.settings, required this.scheme});
 
   @override
+  State<_IntroCard> createState() => _IntroCardState();
+}
+
+class _IntroCardState extends State<_IntroCard> {
+  bool _open = false;
+
+  @override
   Widget build(BuildContext context) {
+    final settings = widget.settings;
+    final scheme = widget.scheme;
     final locale = settings.locale;
     final title =
         uiStrings['songsIntroTitle']?[locale] ?? 'Church Songs Directory';
@@ -665,46 +678,68 @@ class _IntroCard extends StatelessWidget {
         'Songs from 福音电台 (fydt.org), Christian Disciples Church '
             'and CGDC Hong Kong. Tap ▶ to listen, or open an entry for '
             'the instrumental, music video, sheet music and lyrics.';
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: scheme.primary.withValues(alpha: 0.25)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Material(
+      color: scheme.primaryContainer.withValues(alpha: 0.4),
+      borderRadius: BorderRadius.circular(18),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: const ValueKey('songs.intro'),
+        onTap: () => setState(() => _open = !_open),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.library_music_rounded,
-                  color: scheme.primary, size: 22),
-              const SizedBox(width: 8),
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: scheme.primary.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.library_music_rounded,
+                    color: scheme.primary, size: 22),
+              ),
+              const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onPrimaryContainer,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedSize(
+                      duration: AppMotion.duration(context, AppMotion.fast),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        body,
+                        maxLines: _open ? null : 2,
+                        overflow: _open ? null : TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: settings.fontFamily,
+                          fontFamilyFallback: kCjkFontFallback,
+                          fontSize: 12,
+                          height: 1.45,
+                          color: scheme.onSurface.withValues(alpha: 0.75),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Icon(_open ? Icons.expand_less : Icons.expand_more,
+                  color: scheme.onSurfaceVariant),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            body,
-            style: TextStyle(
-              fontFamily: settings.fontFamily, fontFamilyFallback: kCjkFontFallback,
-              fontSize: 12,
-              height: 1.45,
-              color: scheme.onSurface.withValues(alpha: 0.75),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -1527,10 +1562,10 @@ class _SongTile extends StatelessWidget {
 
     return Material(
       color: scheme.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => _openDetail(context),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 10, 12, 10),
           child: Row(
@@ -1604,7 +1639,7 @@ class _SongTile extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: scheme.secondaryContainer
                                   .withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               localizedSongTheme(t, locale),

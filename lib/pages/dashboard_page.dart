@@ -1966,8 +1966,19 @@ class _LinkTile extends StatelessWidget {
       semanticLabel: label,
       child: Row(
         children: [
-          Icon(icon, color: scheme.primary, size: 20),
-          const SizedBox(width: 8),
+          // A tinted tile behind the glyph, the same device the reading
+          // plan list and the sermon topics use, so the icons read as a
+          // set rather than as loose symbols.
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.11),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: scheme.primary, size: 18),
+          ),
+          const SizedBox(width: 10),
           // Keep every link readable; long translations grow the tile.
           Expanded(
             child: Text(

@@ -19,6 +19,7 @@ import 'package:yahwehs_words/utils/navigate_to_reader.dart';
 import 'package:yahwehs_words/utils/note_reference_parser.dart';
 import 'package:yahwehs_words/utils/reference_parser.dart' show BibleReference;
 import 'package:yahwehs_words/widgets/verse_popup_sheet.dart' show showVersePopup;
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
 import 'package:yahwehs_words/widgets/left_accent_card.dart';
 import 'package:yahwehs_words/widgets/home_icon_button.dart';
 import 'package:yahwehs_words/widgets/language_switcher_button.dart';
@@ -203,8 +204,10 @@ class _NotesTabState extends State<_NotesTab>
       body = _emptyState(
         context,
         Icons.sticky_note_2_outlined,
-        uiStrings['libraryEmptyNotes']?[locale] ??
-            'No notes yet. Long-press a verse and tap the note icon to add one.',
+        uiStrings['libraryEmptyNotesBody']?[locale] ??
+            'Long-press a verse and tap the note icon to add one.',
+        title: uiStrings['libraryEmptyNotesTitle']?[locale] ?? 'No notes yet',
+        openBible: true,
       );
     } else if (_scope != _NotesScope.all && current == null) {
       body = _emptyState(
@@ -474,8 +477,11 @@ class _BookmarksTab extends StatelessWidget {
       return _emptyState(
         context,
         Icons.bookmark_outline_rounded,
-        uiStrings['libraryEmptyBookmarks']?[locale] ??
-            'No bookmarks yet. Long-press a verse and tap the bookmark icon.',
+        uiStrings['libraryEmptyBookmarksBody']?[locale] ??
+            'Long-press a verse and tap the bookmark icon.',
+        title:
+            uiStrings['libraryEmptyBookmarksTitle']?[locale] ?? 'No bookmarks yet',
+        openBible: true,
       );
     }
     final entries = _resolveAnnotations(mainProvider, ids);
@@ -915,26 +921,15 @@ void _navigateToVerse(BuildContext context, Verse v, MainProvider mp) {
 
 /// Generic empty-state widget used by both library tabs when the user
 /// has no notes / no bookmarks yet. Centered icon + italic hint text.
-Widget _emptyState(BuildContext context, IconData icon, String text) {
-  final scheme = Theme.of(context).colorScheme;
-  return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 48, color: scheme.outline),
-          const SizedBox(height: 12),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: scheme.onSurfaceVariant,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
-    ),
+Widget _emptyState(BuildContext context, IconData icon, String text,
+    {String? title, bool openBible = false}) {
+  final locale = Provider.of<AppSettings>(context, listen: false).locale;
+  return AppEmptyState(
+    icon: icon,
+    title: title ?? text,
+    body: title == null ? null : text,
+    actionLabel:
+        openBible ? (uiStrings['emptyStateReadNow']?[locale] ?? 'Open the Bible') : null,
+    onAction: openBible ? () => navigateToReader(context) : null,
   );
 }

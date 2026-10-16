@@ -28,6 +28,8 @@
 // line is the difference between a true statement and a false one.
 
 import 'package:flutter/material.dart';
+import 'package:yahwehs_words/widgets/app_empty_state.dart';
+import 'package:yahwehs_words/utils/navigate_to_reader.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/canon_chapters.dart' show canonLastChapter;
@@ -158,43 +160,18 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.auto_stories_outlined,
-                size: 48, color: scheme.onSurfaceVariant),
-            const SizedBox(height: 16),
-            Text(
-              uiStrings['readingStatsEmpty']?[locale] ??
-                  'Nothing recorded yet.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: settings.fontSize,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              uiStrings['readingStatsEmptyBody']?[locale] ??
-                  'Chapters you spend time in are noted on this device '
-                      'only, and never sent anywhere. Open a chapter and '
-                      'stay a moment, then come back.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: settings.fontFamily,
-                fontFamilyFallback: kCjkFontFallback,
-                fontSize: (settings.fontSize - 2).clamp(12.0, 16.0),
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
+    return AppEmptyState(
+      icon: Icons.insights_outlined,
+      title: uiStrings['readingStatsEmpty']?[locale] ?? 'Nothing recorded yet.',
+      body: uiStrings['readingStatsEmptyBody']?[locale] ??
+          'Chapters you spend time in are noted on this device '
+              'only, and never sent anywhere. Open a chapter and '
+              'stay a moment, then come back.',
+      actionLabel: uiStrings['emptyStateReadNow']?[locale] ?? 'Open the Bible',
+      onAction: () => navigateToReader(context),
+      textStyle: TextStyle(
+        fontFamily: settings.fontFamily,
+        fontFamilyFallback: kCjkFontFallback,
       ),
     );
   }

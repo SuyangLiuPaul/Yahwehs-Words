@@ -1507,6 +1507,31 @@ const uiStrings = {
     'zh-Hant': '所選範圍總字詞數:{n}',
     'en': 'Total words in scope: {n}',
   },
+  'libraryEmptyNotesTitle': {
+    'zh-Hans': '还没有笔记',
+    'zh-Hant': '還沒有筆記',
+    'en': 'No notes yet',
+  },
+  'libraryEmptyNotesBody': {
+    'zh-Hans': '长按经文，点击笔记图标即可添加。',
+    'zh-Hant': '長按經文，點擊筆記圖標即可添加。',
+    'en': 'Long-press a verse and tap the note icon to add one.',
+  },
+  'libraryEmptyBookmarksTitle': {
+    'zh-Hans': '还没有书签',
+    'zh-Hant': '還沒有書籤',
+    'en': 'No bookmarks yet',
+  },
+  'libraryEmptyBookmarksBody': {
+    'zh-Hans': '长按经文，点击书签图标即可添加。',
+    'zh-Hant': '長按經文，點擊書籤圖標即可添加。',
+    'en': 'Long-press a verse and tap the bookmark icon.',
+  },
+  'emptyStateReadNow': {
+    'zh-Hans': '去读经',
+    'zh-Hant': '去讀經',
+    'en': 'Open the Bible',
+  },
   'libraryEmptyNotes': {
     'zh-Hans': '尚无笔记。长按经文,点击笔记图标即可添加。',
     'zh-Hant': '尚無筆記。長按經文,點擊筆記圖標即可添加。',

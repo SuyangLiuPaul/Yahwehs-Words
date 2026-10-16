@@ -967,40 +967,56 @@ class _TopicGroup extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final locale = context.watch<AppSettings>().locale;
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       elevation: 0,
+      color: scheme.surfaceContainerLow,
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: scheme.outlineVariant),
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
       ),
       child: ExpansionTile(
         shape: const Border(),
         collapsedShape: const Border(),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-        childrenPadding: const EdgeInsets.only(bottom: 4),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        childrenPadding: const EdgeInsets.only(bottom: 8),
         // 2026-08-02 (round 60): tinted icon avatar ahead of the
         // topic label, mirroring the icon-prefixed treatment given
         // to the Home dashboard and Settings section headers — one
         // consistent glyph (rather than a per-topic guess) since the
         // 20 sermon topics don't map cleanly to distinct icons.
         leading: Container(
-          width: 34,
-          height: 34,
+          width: 42,
+          height: 42,
           decoration: BoxDecoration(
-            color: scheme.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            color: scheme.primaryContainer,
+            borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(Icons.campaign_outlined, size: 18, color: scheme.primary),
+          child: Icon(Icons.campaign_outlined,
+              size: 22, color: scheme.onPrimaryContainer),
         ),
         title: Text(
           localizedSermonTopic(topic, locale),
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: const TextStyle(fontWeight: FontWeight.w700),
         ),
-        subtitle: Text(
-          _subtitle(sermons.length, locale),
-          style: TextStyle(
-            fontSize: 12,
-            color: scheme.onSurface.withValues(alpha: 0.6),
+        // The count is the thing a reader scans for, so it is a pill.
+        subtitle: Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              _subtitle(sermons.length, locale),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: scheme.primary,
+              ),
+            ),
           ),
         ),
         // Auto-expand when one of OUR sermons matches lastReadId so
@@ -1083,20 +1099,21 @@ class _SermonRow extends StatelessWidget {
             : null,
         borderRadius: BorderRadius.circular(8),
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           child: ListTile(
             dense: true,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
             title: Builder(
               builder: (ctx) {
                 final locale = ctx.watch<AppSettings>().locale;
                 return Text(
                   sermon.localizedTitle(locale),
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontWeight: FontWeight.w600, height: 1.3),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 );

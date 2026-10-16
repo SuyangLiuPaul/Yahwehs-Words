@@ -2908,13 +2908,23 @@ class _SectionHeader extends StatelessWidget {
     final settings = context.watch<AppSettings>();
     final size = (settings.fontSize - 2).clamp(11.0, 22.0).toDouble();
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
+      padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: size + 3, color: scheme.primary),
-            const SizedBox(width: 6),
+            // A tinted tile behind the glyph, like the plan list, the
+            // sermon topics and the Home quick links.
+            Container(
+              width: size + 12,
+              height: size + 12,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.11),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: size + 2, color: scheme.primary),
+            ),
+            const SizedBox(width: 10),
           ],
           Expanded(
             child: Text(
