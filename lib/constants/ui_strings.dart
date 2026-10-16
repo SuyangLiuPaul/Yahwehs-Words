@@ -1542,6 +1542,16 @@ const uiStrings = {
     'zh-Hant': '長按經文，選擇顏色即可添加。',
     'en': 'Long-press a verse and pick a color.',
   },
+  'lemma': {
+    'zh-Hans': '原文',
+    'zh-Hant': '原文',
+    'en': 'Word',
+  },
+  'gloss': {
+    'zh-Hans': '释义',
+    'zh-Hant': '釋義',
+    'en': 'Gloss',
+  },
   'libraryEmptyNotes': {
     'zh-Hans': '尚无笔记。长按经文,点击笔记图标即可添加。',
     'zh-Hant': '尚無筆記。長按經文,點擊筆記圖標即可添加。',

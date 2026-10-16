@@ -180,6 +180,12 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
     );
   }
 
+  // Fixed row heights, so the pinned identity column on the left and the
+  // scrolling counts on the right line up row for row.
+  static const double _rowH = 56;
+  static const double _headH = 40;
+  static const double _pinW = 116;
+
   Widget _buildScrollable(
       List<_Row> rows, bool isGreek, bool bothCanons,
       ColorScheme scheme, String locale) {
@@ -189,23 +195,15 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
     final groups = bothCanons
         ? <_Group>[..._otGroups(locale), ..._ntGroups(locale)]
         : (isGreek ? _ntGroups(locale) : _otGroups(locale));
-    final headerCells = _headerCells(groups, books, scheme, locale);
 
-    // Apply zoom: scale every column width proportionally so the
-    // entire table grows / shrinks together. Font sizes also scale
-    // (handled inside _cellWidget via the zoom field).
-    // Book columns widened from 38 → 46 so 4-digit counts (e.g. 7259
-    // for very common words) fit at natural font size; FittedBox
-    // (in _cellWidget) is the safety net for the rare wider case.
-    final fixedWidth = (64.0 + 96.0 + 140.0 + 60.0) * _zoom;
-    final groupWidth = groups.length * 70.0 * _zoom;
-    final bookWidth = books.length * 46.0 * _zoom;
-    final totalWidth = fixedWidth + groupWidth + bookWidth;
+    // Zoom scales every width, height and font together.
+    final rightWidth = (190.0 + 72.0 + groups.length * 70.0 + books.length * 46.0) * _zoom;
+    final maxTotal = rows.fold<int>(
+        1, (m, r) => (r.concordance?.total ?? 0) > m ? r.concordance!.total : m);
 
     // Enable mouse-drag scrolling on web: by default Flutter only
     // accepts touch + trackpad as scroll-by-drag inputs, so a desktop
     // user can't grab the table and drag it like a mobile user can.
-    // Adding PointerDeviceKind.mouse lets click-and-drag work on web.
     final dragScrollBehaviour = ScrollConfiguration.of(context).copyWith(
       dragDevices: const {
         PointerDeviceKind.touch,
@@ -213,8 +211,6 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
         PointerDeviceKind.trackpad,
         PointerDeviceKind.stylus,
       },
-      // Don't show the platform's overscroll glow; we have our own
-      // visible Scrollbars for both axes.
       scrollbars: false,
     );
 
@@ -222,12 +218,7 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
       color: Colors.transparent,
       child: Column(
         children: [
-          // Zoom controls + copy button + summary footer share the
-          // same axis so they stay visible while the user scrolls the
-          // table.
           _buildZoomBar(scheme, locale, rows, books, groups),
-          // Two-axis scroll: outer vertical (sheet's controller),
-          // inner horizontal (its own controller + visible scrollbar).
           Expanded(
             child: Scrollbar(
               controller: widget.scrollController,
@@ -236,34 +227,69 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
                 behavior: dragScrollBehaviour,
                 child: SingleChildScrollView(
                   controller: widget.scrollController,
-                  child: Scrollbar(
-                    controller: _horizontalController,
-                    thumbVisibility: true,
-                    notificationPredicate: (n) => n.depth == 1,
-                    child: ScrollConfiguration(
-                      behavior: dragScrollBehaviour,
-                      child: SingleChildScrollView(
-                        controller: _horizontalController,
-                        scrollDirection: Axis.horizontal,
-                        child: SizedBox(
-                          width: totalWidth,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _row(headerCells, scheme, isHeader: true),
-                              for (int i = 0; i < rows.length; i++)
-                                _row(
-                                    _dataCells(rows[i], groups, books, scheme,
-                                        locale),
-                                    scheme,
-                                    isHeader: false,
-                                    zebra: i.isOdd),
-                            ],
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Pinned: which word it is. Stays put while the
+                      // counts scroll sideways beneath the reader's thumb.
+                      Container(
+                        width: _pinW * _zoom,
+                        decoration: BoxDecoration(
+                          color: scheme.surface,
+                          border: Border(
+                            right: BorderSide(
+                                color: scheme.outlineVariant, width: 0.8),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: scheme.shadow.withValues(alpha: 0.06),
+                              blurRadius: 6,
+                              offset: const Offset(2, 0),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _pinHeader(scheme, locale),
+                            for (var i = 0; i < rows.length; i++)
+                              _pinRow(rows[i], scheme, zebra: i.isOdd),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Scrollbar(
+                          controller: _horizontalController,
+                          thumbVisibility: true,
+                          notificationPredicate: (n) => n.depth == 1,
+                          child: ScrollConfiguration(
+                            behavior: dragScrollBehaviour,
+                            child: SingleChildScrollView(
+                              controller: _horizontalController,
+                              scrollDirection: Axis.horizontal,
+                              child: SizedBox(
+                                width: rightWidth,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _dataRow(
+                                        _headerCells(groups, books, locale),
+                                        scheme,
+                                        isHeader: true),
+                                    for (var i = 0; i < rows.length; i++)
+                                      _dataRow(
+                                          _dataCells(rows[i], groups, books,
+                                              locale, maxTotal),
+                                          scheme,
+                                          isHeader: false,
+                                          zebra: i.isOdd),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -449,17 +475,17 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
             children: [
               _statChip(
                   uiStrings['statWords']?[locale] ?? 'Words',
-                  '$wordCount',
+                  _n(wordCount),
                   scheme),
               _statChip(
                   uiStrings['statTotal']?[locale] ?? 'Total occurrences',
-                  '$totalOccurrences',
+                  _n(totalOccurrences),
                   scheme),
               _statChip(
                   uiStrings['statTopBook']?[locale] ?? 'Most frequent book',
                   topBook == null
                       ? '—'
-                      : '${localeAwareBookName(topBook!, locale, widget.currentVersion)} ($topCount)',
+                      : '${localeAwareBookName(topBook!, locale, widget.currentVersion)} (${_n(topCount)})',
                   scheme),
               _statChip(
                   uiStrings['statCanon']?[locale] ?? 'Canon',
@@ -505,24 +531,92 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
 
   // ── Header / data builders ────────────────────────────────────────
 
-  List<_Cell> _headerCells(List<_Group> groups, List<String> books,
-      ColorScheme scheme, String locale) {
+  static String _n(int v) => v.toString().replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]},');
+
+  Widget _pinHeader(ColorScheme scheme, String locale) {
+    return Container(
+      height: _headH * _zoom,
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.symmetric(horizontal: 10 * _zoom),
+      color: scheme.secondaryContainer.withValues(alpha: 0.6),
+      child: Text(
+        uiStrings['lemma']?[locale] ?? 'Word',
+        style: TextStyle(
+          fontSize: 12 * _zoom,
+          fontWeight: FontWeight.w800,
+          color: scheme.onSecondaryContainer,
+        ),
+      ),
+    );
+  }
+
+  /// One word: its Strong's number as a small tag over the word itself.
+  Widget _pinRow(_Row row, ColorScheme scheme, {required bool zebra}) {
+    final e = row.entry;
+    return Container(
+      height: _rowH * _zoom,
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.symmetric(horizontal: 10 * _zoom),
+      decoration: BoxDecoration(
+        color: zebra
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            : scheme.surface,
+        border: Border(
+          bottom: BorderSide(
+              color: scheme.outlineVariant.withValues(alpha: 0.5), width: 0.5),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: 6 * _zoom, vertical: 1 * _zoom),
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text(
+              e.number,
+              style: TextStyle(
+                fontSize: 10.5 * _zoom,
+                fontWeight: FontWeight.w700,
+                color: scheme.primary,
+              ),
+            ),
+          ),
+          SizedBox(height: 3 * _zoom),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              e.lemma,
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 19 * _zoom,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurface,
+                height: 1.15,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<_Cell> _headerCells(
+      List<_Group> groups, List<String> books, String locale) {
     final cells = <_Cell>[
       _Cell(
-          text: uiStrings['colStrongs']?[locale] ?? "Strong's",
-          width: 64,
-          align: TextAlign.left),
-      _Cell(
-          text: uiStrings['lemma']?[locale] ?? 'Word',
-          width: 96,
-          align: TextAlign.left),
-      _Cell(
           text: uiStrings['gloss']?[locale] ?? 'Gloss',
-          width: 140,
+          width: 190,
           align: TextAlign.left),
       _Cell(
           text: uiStrings['colTotal']?[locale] ?? 'Total',
-          width: 60,
+          width: 72,
           align: TextAlign.center),
     ];
     for (final g in groups) {
@@ -539,54 +633,68 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
     return cells;
   }
 
+  /// A count's shade: the more of this WORD's occurrences sit in a place,
+  /// the deeper the tint, so the shape of where it is used reads before
+  /// any number does.
+  double _heat(int n, int rowMax) =>
+      (n <= 0 || rowMax <= 0) ? 0 : (n / rowMax).clamp(0.0, 1.0);
+
   List<_Cell> _dataCells(_Row row, List<_Group> groups, List<String> books,
-      ColorScheme scheme, String locale) {
+      String locale, int maxTotal) {
     final entry = row.entry;
     final byBook = row.concordance?.byBook ?? const <String, int>{};
     final total = row.concordance?.total ?? 0;
+    final groupSums = [
+      for (final g in groups)
+        g.books.fold<int>(0, (a, b) => a + (byBook[b] ?? 0)),
+    ];
+    final groupMax = groupSums.fold<int>(0, (m, v) => v > m ? v : m);
+    final bookMax = books.fold<int>(0, (m, b) => (byBook[b] ?? 0) > m ? byBook[b]! : m);
     final cells = <_Cell>[
-      _Cell(text: entry.number, width: 64, align: TextAlign.left, mono: true),
-      _Cell(text: entry.lemma, width: 96, align: TextAlign.left, bold: true),
       _Cell(
           text: entry.localizedGloss(locale),
-          width: 140,
+          width: 190,
           align: TextAlign.left,
-          maxLines: 2),
+          maxLines: 3),
       _Cell(
-          text: total > 0 ? '$total' : '·',
-          width: 60,
+          text: total > 0 ? _n(total) : '·',
+          width: 72,
           align: TextAlign.center,
-          bold: true),
+          bold: true,
+          bar: total > 0 ? total / maxTotal : null),
     ];
-    for (final g in groups) {
-      final sum = g.books.fold<int>(0, (a, b) => a + (byBook[b] ?? 0));
+    for (var i = 0; i < groups.length; i++) {
+      final sum = groupSums[i];
       cells.add(_Cell(
-          text: sum > 0 ? '$sum' : '·',
+          text: sum > 0 ? _n(sum) : '·',
           width: 70,
           align: TextAlign.center,
-          dim: sum == 0));
+          dim: sum == 0,
+          heat: _heat(sum, groupMax)));
     }
     for (final book in books) {
       final count = byBook[book] ?? 0;
       cells.add(_Cell(
-          text: count > 0 ? '$count' : '·',
+          text: count > 0 ? _n(count) : '·',
           width: 46,
           align: TextAlign.center,
-          dim: count == 0));
+          dim: count == 0,
+          heat: _heat(count, bookMax)));
     }
     return cells;
   }
 
   // ── Row + cell rendering ─────────────────────────────────────────
 
-  Widget _row(List<_Cell> cells, ColorScheme scheme,
+  Widget _dataRow(List<_Cell> cells, ColorScheme scheme,
       {required bool isHeader, bool zebra = false}) {
     final bg = isHeader
-        ? scheme.surfaceContainerHigh
+        ? scheme.secondaryContainer.withValues(alpha: 0.6)
         : (zebra
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
             : Colors.transparent);
-    return DecoratedBox(
+    return Container(
+      height: (isHeader ? _headH : _rowH) * _zoom,
       decoration: BoxDecoration(
         color: bg,
         border: Border(
@@ -597,9 +705,6 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
         ),
       ),
       child: Row(
-        // Default crossAxisAlignment (center) — each cell sizes to its
-        // text content. CrossAxisAlignment.stretch was causing render
-        // issues on web because cells had no intrinsic vertical bound.
         children: [for (final c in cells) _cellWidget(c, scheme, isHeader)],
       ),
     );
@@ -607,22 +712,17 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
 
   Widget _cellWidget(_Cell c, ColorScheme scheme, bool isHeader) {
     final color = c.dim
-        ? scheme.onSurfaceVariant.withValues(alpha: 0.45)
-        : (isHeader ? scheme.onSurfaceVariant : scheme.onSurface);
-    // Scale font size and column width by the current zoom factor so
-    // every cell grows / shrinks together when the user taps +/−.
+        ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
+        : (isHeader ? scheme.onSecondaryContainer : scheme.onSurface);
     final style = TextStyle(
-      fontSize: (isHeader ? 11 : 12) * _zoom,
+      fontSize: (isHeader ? 12 : 12.5) * _zoom,
       fontWeight: isHeader || c.bold ? FontWeight.w700 : FontWeight.w400,
-      fontFamily: c.mono ? 'monospace' : null,
       color: color,
-      height: 1.2,
+      height: 1.25,
     );
     // Numeric cells (centered) must NEVER show "..." for digits — that
     // would corrupt counts like "27" → "..." which is meaningless.
-    // Use FittedBox(scaleDown) so the number scales down to fit its
-    // cell instead of truncating. Identity cells (left-aligned) keep
-    // ellipsis for graceful long-text handling.
+    // FittedBox(scaleDown) shrinks the number to its cell instead.
     final isNumeric = c.align == TextAlign.center;
     final textWidget = Text(
       c.text,
@@ -632,25 +732,46 @@ class _WordDistributionTableState extends State<WordDistributionTable> {
       softWrap: !isNumeric && c.maxLines > 1,
       style: style,
     );
+    final heat = c.heat;
     final cell = Container(
       width: c.width * _zoom,
-      padding: EdgeInsets.symmetric(horizontal: 6 * _zoom, vertical: 6 * _zoom),
+      height: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 6 * _zoom, vertical: 4 * _zoom),
       alignment: c.align == TextAlign.left
           ? Alignment.centerLeft
           : Alignment.center,
       decoration: BoxDecoration(
+        color: heat != null && heat > 0
+            ? scheme.primary.withValues(alpha: 0.07 + 0.30 * heat)
+            : null,
         border: Border(
           right: BorderSide(
-            color: scheme.outlineVariant.withValues(alpha: 0.3),
+            color: scheme.outlineVariant.withValues(alpha: 0.25),
             width: 0.5,
           ),
         ),
       ),
       child: isNumeric
-          ? FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.center,
-              child: textWidget,
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.center,
+                  child: textWidget,
+                ),
+                if (c.bar != null) ...[
+                  SizedBox(height: 4 * _zoom),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(3),
+                    child: LinearProgressIndicator(
+                      value: c.bar!.clamp(0.0, 1.0),
+                      minHeight: 4 * _zoom,
+                      backgroundColor: scheme.primary.withValues(alpha: 0.12),
+                    ),
+                  ),
+                ],
+              ],
             )
           : textWidget,
     );
@@ -826,18 +947,24 @@ class _Cell {
   final double width;
   final TextAlign align;
   final bool bold;
-  final bool mono;
   final bool dim;
   final int maxLines;
   final String? tooltip;
+
+  /// 0..1 shade of this cell relative to its row's largest.
+  final double? heat;
+
+  /// 0..1 bar under the number (the Total column).
+  final double? bar;
   _Cell({
     required this.text,
     required this.width,
     required this.align,
     this.bold = false,
-    this.mono = false,
     this.dim = false,
     this.maxLines = 1,
     this.tooltip,
+    this.heat,
+    this.bar,
   });
 }

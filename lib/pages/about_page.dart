@@ -214,40 +214,67 @@ class _Header extends StatelessWidget {
       {required this.scheme, required this.locale, required this.settings});
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-        child: Row(
-          children: [
-            Icon(Icons.menu_book_rounded, color: scheme.primary, size: 32),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: scheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    uiStrings['appTagline']?[locale] ??
-                        "Study Yahweh's Words",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: scheme.onSurfaceVariant,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    final on = scheme.onPrimary;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            scheme.primary,
+            Color.alphaBlend(Colors.black.withValues(alpha: 0.28), scheme.primary),
           ],
         ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: on.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(Icons.menu_book_rounded, color: on, size: 30),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  uiStrings['appName']?[locale] ?? 'Yahweh\'s Words',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: on,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  uiStrings['appTagline']?[locale] ?? "Study Yahweh's Words",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: on.withValues(alpha: 0.85),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: on.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text('v$kAppVersion',
+                style: TextStyle(
+                    color: on, fontSize: 12, fontWeight: FontWeight.w700)),
+          ),
+        ],
       ),
     );
   }
@@ -264,6 +291,12 @@ class _MissionCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Card(
+      elevation: 0,
+      color: scheme.surfaceContainerLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(22),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+      ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
         child: Column(
@@ -491,21 +524,32 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 15, color: scheme.primary),
-            const SizedBox(width: 6),
+            // A tinted tile behind the glyph, as on Home, Settings and
+            // the reading plan, so the sections read as one set.
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: scheme.primary.withValues(alpha: 0.11),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 17, color: scheme.primary),
+            ),
+            const SizedBox(width: 10),
           ],
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              color: scheme.primary,
-              letterSpacing: 0.6,
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: scheme.primary,
+                letterSpacing: 0.2,
+              ),
             ),
           ),
         ],
@@ -597,12 +641,30 @@ class _AttribRow extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final hasUrl = url != null && url!.isNotEmpty;
     final phraseSpans = _spans(scheme, context);
+    final nameStyle = TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: scheme.onSurface,
+      height: 1.4,
+    );
+    final licenceStyle = TextStyle(
+      fontSize: 12,
+      color: scheme.onSurfaceVariant,
+      height: 1.5,
+    );
+    final licenceWidget = phraseSpans.isEmpty
+        ? Text(licence, style: licenceStyle)
+        : Text.rich(TextSpan(children: phraseSpans), style: licenceStyle);
+    final openIcon = hasUrl && phraseSpans.isEmpty
+        ? Icon(Icons.open_in_new_rounded,
+            size: 15, color: scheme.primary.withValues(alpha: 0.8))
+        : null;
     return InkWell(
       // A row whose licence text carries its own links must not also be
       // one big tap target — the row tap would swallow the phrase taps.
       onTap: hasUrl && phraseSpans.isEmpty ? () => _open(context) : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 14),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -613,49 +675,42 @@ class _AttribRow extends StatelessWidget {
             ),
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 5,
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                  height: 1.45,
-                ),
+        // Two columns only where there is room for them. On a phone
+        // the name and its licence stack, so neither is squeezed into
+        // half a screen.
+        child: LayoutBuilder(builder: (context, c) {
+          if (c.maxWidth >= 520) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 5, child: Text(name, style: nameStyle)),
+                const SizedBox(width: 14),
+                Expanded(flex: 6, child: licenceWidget),
+                if (openIcon != null) ...[
+                  const SizedBox(width: 6),
+                  openIcon,
+                ],
+              ],
+            );
+          }
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: Text(name, style: nameStyle)),
+                  if (openIcon != null) ...[
+                    const SizedBox(width: 8),
+                    openIcon,
+                  ],
+                ],
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 6,
-              child: phraseSpans.isEmpty
-                  ? Text(
-                      licence,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: scheme.onSurfaceVariant,
-                        height: 1.45,
-                      ),
-                    )
-                  : Text.rich(
-                      TextSpan(children: phraseSpans),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: scheme.onSurfaceVariant,
-                        height: 1.45,
-                      ),
-                    ),
-            ),
-            if (hasUrl && phraseSpans.isEmpty) ...[
-              const SizedBox(width: 4),
-              Icon(Icons.open_in_new_rounded,
-                  size: 14, color: scheme.primary.withValues(alpha: 0.75)),
+              const SizedBox(height: 4),
+              licenceWidget,
             ],
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -669,6 +724,13 @@ class _AttribTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.zero,
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      color: scheme.surfaceContainerLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
         child: Column(children: rows),

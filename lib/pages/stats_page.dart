@@ -399,6 +399,9 @@ class _BooksTabState extends State<_BooksTab> {
             sortColumnIndex: _sortColumn,
             sortAscending: _ascending,
             columnSpacing: 16,
+            headingRowColor: WidgetStatePropertyAll(
+                scheme.secondaryContainer.withValues(alpha: 0.6)),
+            dividerThickness: 0.5,
             columns: [
               DataColumn(
                 label: Text(uiStrings['statsBook']?[l] ?? 'Book',
@@ -438,8 +441,14 @@ class _BooksTabState extends State<_BooksTab> {
               ),
             ],
             rows: [
-              for (final b in sortedBooks)
-                DataRow(cells: [
+              for (final (i, b) in sortedBooks.indexed)
+                DataRow(
+                    // Alternate rows tinted, so a row can be followed
+                    // across six columns.
+                    color: WidgetStatePropertyAll(i.isOdd
+                        ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+                        : Colors.transparent),
+                    cells: [
                   DataCell(SizedBox(
                     width: 160,
                     child: Row(
@@ -2738,7 +2747,7 @@ class _TopLemmasCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
         color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2753,7 +2762,7 @@ class _TopLemmasCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           for (var i = 0; i < lemmas.length; i++) ...[
-            if (i > 0) const Divider(height: 12),
+            if (i > 0) const Divider(height: 14),
             Row(
               children: [
                 Container(
@@ -2795,16 +2804,41 @@ class _TopLemmasCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  '${lemmas[i].count}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.primary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                // Scaled down rather than overflowing: with the text
+                // slider up and a comma in the number the count was the
+                // widest fixed thing in the row.
+                Flexible(
+                  flex: 0,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 64),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        lemmas[i].count.toString().replaceAllMapped(
+                            RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]},'),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.primary,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
+            ),
+            // How this word's count compares with the most frequent one.
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                value: lemmas.first.count == 0
+                    ? 0
+                    : (lemmas[i].count / lemmas.first.count).clamp(0.0, 1.0),
+                minHeight: 4,
+                backgroundColor: scheme.primary.withValues(alpha: 0.1),
+              ),
             ),
           ],
         ],
