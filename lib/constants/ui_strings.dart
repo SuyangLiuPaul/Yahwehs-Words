@@ -5080,6 +5080,36 @@ const uiStrings = {
     'zh-Hant': '版權說明與聯絡方式',
     'en': 'Attributions & licensing',
   },
+  'aboutMissionVerse': {
+    'zh-Hans': '认识你独一的真神，并且认识你所差来的耶稣基督，这就是永生。',
+    'zh-Hant': '認識你獨一的真神，並且認識你所差來的耶穌基督，這就是永生。',
+    'en': 'And this is life eternal, that they might know thee the only true God, and Jesus Christ, whom thou hast sent.',
+  },
+  'aboutMissionVerseRef': {
+    'zh-Hans': '约翰福音 17:3（和合本雅伟版）',
+    'zh-Hant': '約翰福音 17:3（和合本雅偉版）',
+    'en': 'John 17:3 (KJV)',
+  },
+  'aboutMissionTitle': {
+    'zh-Hans': '我们的宗旨',
+    'zh-Hant': '我們的宗旨',
+    'en': 'Our purpose',
+  },
+  'aboutMissionBody': {
+    'zh-Hans': '我们的宗旨是传扬耶稣基督以及天国的福音，引领人认识那位差耶稣基督来的独一真神雅伟（Yahweh）。',
+    'zh-Hant': '我們的宗旨是傳揚耶穌基督以及天國的福音，引領人認識那位差耶穌基督來的獨一真神雅偉（Yahweh）。',
+    'en': 'Our purpose is to proclaim Jesus Christ and the gospel of the kingdom, and to lead people to know Yahweh, the one true God who sent Jesus Christ.',
+  },
+  'aboutNameTitle': {
+    'zh-Hans': '关于「雅伟」这个名字',
+    'zh-Hant': '關於「雅偉」這個名字',
+    'en': 'About the name “Yahweh”',
+  },
+  'aboutNameBody': {
+    'zh-Hans': '旧约希伯来文圣经里，神的名字写作 יהוה（YHWH），共出现 6,828 次（按 WLC 希伯来文本统计）。许多中文译本把它译作「耶和华」，英文译本多作 “LORD”。本应用采用更接近希伯来原文读音的「雅伟 / Yahweh」。',
+    'zh-Hant': '舊約希伯來文聖經裡，神的名字寫作 יהוה（YHWH），共出現 6,828 次（按 WLC 希伯來文本統計）。許多中文譯本把它譯作「耶和華」，英文譯本多作 “LORD”。本應用採用更接近希伯來原文讀音的「雅偉 / Yahweh」。',
+    'en': 'In the Hebrew Bible, God’s name is written יהוה (YHWH) and appears 6,828 times (counted in the WLC Hebrew text). Many Chinese translations render it 「耶和华」 and many English ones “LORD”. This app uses “Yahweh”, which is closer to the original Hebrew pronunciation.',
+  },
   'aboutDisclaimer': {
     'zh-Hans': '本应用是非商业的个人 / 教会研经工具。应用代码以 MIT 许可证开源，'
         '但圣经文本、字典数据、讲道文本、地图等资源仍由其各自版权方所有，仅在'

@@ -78,6 +78,8 @@ class AboutPage extends StatelessWidget {
             children: [
               _Header(scheme: scheme, locale: locale, settings: settings),
               const SizedBox(height: 16),
+              _MissionCard(scheme: scheme, locale: locale),
+              const SizedBox(height: 12),
               _DisclaimerCard(scheme: scheme, locale: locale),
               const SizedBox(height: 12),
               _ContactCard(scheme: scheme, locale: locale),
@@ -242,6 +244,118 @@ class _Header extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Why the app is called what it is called, and what it is for. First on
+/// the page: everything below it is licences and credits, which a reader
+/// reaches only after asking who made this and why.
+class _MissionCard extends StatelessWidget {
+  final ColorScheme scheme;
+  final String locale;
+  const _MissionCard({required this.scheme, required this.locale});
+  @override
+  Widget build(BuildContext context) {
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              Icon(Icons.flag_outlined, color: scheme.primary, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                uiStrings['aboutMissionTitle']?[locale] ?? 'Our purpose',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.primary,
+                ),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Text(
+              uiStrings['aboutMissionBody']?[locale] ??
+                  'Our purpose is to proclaim Jesus Christ and the gospel of '
+                      'the kingdom, and to lead people to know Yahweh, the '
+                      'one true God who sent Jesus Christ.',
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // The verse the purpose is drawn from.
+            Container(
+              key: const ValueKey('about.missionVerse'),
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(12),
+                border: Border(
+                    left: BorderSide(color: scheme.primary, width: 3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    uiStrings['aboutMissionVerse']?[locale] ??
+                        'And this is life eternal, that they might know thee '
+                            'the only true God, and Jesus Christ, whom thou '
+                            'hast sent.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      fontStyle: FontStyle.italic,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    uiStrings['aboutMissionVerseRef']?[locale] ??
+                        'John 17:3 (KJV)',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            Divider(height: 1, color: scheme.outlineVariant),
+            const SizedBox(height: 12),
+            Text(
+              uiStrings['aboutNameTitle']?[locale] ??
+                  'About the name “Yahweh”',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              uiStrings['aboutNameBody']?[locale] ??
+                  'In the Hebrew Bible, God’s name is written יהוה (YHWH). '
+                      'This app uses “Yahweh”, which is closer to the '
+                      'original Hebrew pronunciation.',
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: scheme.onSurfaceVariant,
               ),
             ),
           ],
