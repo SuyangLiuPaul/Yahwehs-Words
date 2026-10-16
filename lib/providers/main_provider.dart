@@ -570,6 +570,15 @@ class MainProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// [setActiveChapterControllers] for use while building: no
+  /// notification (the caller tells listeners afterwards, once the frame
+  /// is over, with [refreshActiveChapterControllers]).
+  void setActiveChapterControllersQuietly(ChapterControllers c) {
+    _activeChapterControllers = c;
+  }
+
+  void refreshActiveChapterControllers() => notifyListeners();
+
   ItemScrollController get itemScrollController =>
       _activeChapterControllers?.itemScrollController ??
       _fallbackItemScrollController;
@@ -1303,10 +1312,23 @@ class MainProvider extends ChangeNotifier {
   // Verse-to-item index map for paragraph mode grouping
   Map<int, int> _verseToItemMap = {};
 
-  void setVerseToItemMap(Map<int, int> map) {
+  void setVerseToItemMap(Map<int, int> map,
+      {int topItem = 0, double topAlignment = 0}) {
     _verseToItemMap = map;
+    _chapterTopItem = topItem;
+    _chapterTopAlignment = topAlignment;
     // Intentionally no notifyListeners() — called during build
   }
+
+  /// The list row that is the top of the chapter on screen, and the
+  /// viewport fraction it should sit at. A paged chapter's top is row 0
+  /// flush with the edge; in continuous scrolling it is the chapter's
+  /// heading row somewhere inside a longer list, a little below the
+  /// floating header.
+  int _chapterTopItem = 0;
+  double _chapterTopAlignment = 0;
+  int get chapterTopItem => _chapterTopItem;
+  double get chapterTopAlignment => _chapterTopAlignment;
 
   /// Pending cross-page jump request. Set by news/evidence/cross-ref
   /// detail pages BEFORE navigating to the reader; consumed by
@@ -1463,7 +1485,8 @@ class MainProvider extends ChangeNotifier {
   /// Use when switching chapters/books.
   void jumpToTop() {
     if (itemScrollController.isAttached) {
-      itemScrollController.jumpTo(index: 0);
+      itemScrollController.jumpTo(
+          index: _chapterTopItem, alignment: _chapterTopAlignment);
     }
   }
 

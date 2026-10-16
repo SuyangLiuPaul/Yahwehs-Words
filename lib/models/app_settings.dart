@@ -96,6 +96,7 @@ const _kNotificationsEnabled = 'notificationsEnabled';
 const _kNotificationCategories = 'notificationCategories';
 const _kShowSectionTitles = 'showSectionTitles';
 const _kShowBookIntro = 'showBookIntro';
+const _kVerticalScroll = 'verticalScroll';
 const _kPickVerseAfterChapter = 'pickVerseAfterChapter';
 // 2026-09-08: the once-a-day GitHub release check (see
 // `lib/services/update_check_scheduler.dart`). Native builds only —
@@ -410,6 +411,10 @@ class AppSettings extends ChangeNotifier {
   /// Settings → Reading.
   bool _showBookIntro = true;
 
+  /// Reader scrolls continuously through the Bible, chapter flowing into
+  /// chapter, instead of paging one chapter at a time. Default OFF.
+  bool _verticalScroll = false;
+
   bool _autoCheckUpdates = true;
   UpdateCheckFrequency _updateCheckFrequency = UpdateCheckFrequency.daily;
   int _lastUpdateCheckMs = 0;
@@ -488,6 +493,7 @@ class AppSettings extends ChangeNotifier {
       NotificationCategoryPrefs.defaultFor(categoryId);
   bool get showSectionTitles => _showSectionTitles;
   bool get showBookIntro => _showBookIntro;
+  bool get verticalScroll => _verticalScroll;
   bool get pickVerseAfterChapter => _pickVerseAfterChapter;
 
   /// Ask GitHub once a day whether a newer release exists. See
@@ -1249,6 +1255,14 @@ class AppSettings extends ChangeNotifier {
     await prefs.setBool(_kShowSectionTitles, enabled);
   }
 
+  Future<void> setVerticalScroll(bool enabled) async {
+    if (_verticalScroll == enabled) return;
+    _verticalScroll = enabled;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kVerticalScroll, enabled);
+  }
+
   Future<void> setShowBookIntro(bool enabled) async {
     if (_showBookIntro == enabled) return;
     _showBookIntro = enabled;
@@ -1410,6 +1424,7 @@ class AppSettings extends ChangeNotifier {
     _notificationsEnabled = false;
     _showSectionTitles = true;
     _showBookIntro = true;
+    _verticalScroll = false;
     _pickVerseAfterChapter = false;
     _autoCheckUpdates = true;
     _updateCheckFrequency = UpdateCheckFrequency.daily;
@@ -1661,6 +1676,7 @@ class AppSettings extends ChangeNotifier {
     }
     _showSectionTitles = prefs.getBool(_kShowSectionTitles) ?? true;
     _showBookIntro = prefs.getBool(_kShowBookIntro) ?? true;
+    _verticalScroll = prefs.getBool(_kVerticalScroll) ?? false;
     _pickVerseAfterChapter =
         prefs.getBool(_kPickVerseAfterChapter) ?? false;
     // Unscoped reads: this pair is per-device (see [lastUpdateCheck]).
@@ -1887,6 +1903,7 @@ class AppSettings extends ChangeNotifier {
         'notificationsEnabled': _notificationsEnabled,
         'showSectionTitles': _showSectionTitles,
         'showBookIntro': _showBookIntro,
+        'verticalScroll': _verticalScroll,
         'pickVerseAfterChapter': _pickVerseAfterChapter,
         'aiModel': _aiModel,
         'notesSortMode': _notesSortMode,
@@ -1986,6 +2003,9 @@ class AppSettings extends ChangeNotifier {
       }
       if (m['showBookIntro'] is bool) {
         _showBookIntro = m['showBookIntro'] as bool;
+      }
+      if (m['verticalScroll'] is bool) {
+        _verticalScroll = m['verticalScroll'] as bool;
       }
       if (m['pickVerseAfterChapter'] is bool) {
         _pickVerseAfterChapter = m['pickVerseAfterChapter'] as bool;

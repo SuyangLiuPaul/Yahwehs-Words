@@ -471,10 +471,28 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     });
   }
 
+  /// Where the chapter on screen sits inside the continuous list, so the
+  /// pill and progress bar can keep thinking in per-chapter rows.
+  final _VerticalLayout _vLayout = _VerticalLayout();
+
   void _handleItemPositionsChanged() {
-    final positions =
+    var positions =
         _attachedPositionsListener?.itemPositions.value;
     if (positions == null || positions.isEmpty || !mounted) return;
+    if (_vLayout.active) {
+      final base = _vLayout.base;
+      final rows = _vLayout.rows;
+      positions = [
+        for (final p in positions)
+          if (p.index >= base && p.index < base + rows)
+            ItemPosition(
+              index: p.index - base,
+              itemLeadingEdge: p.itemLeadingEdge,
+              itemTrailingEdge: p.itemTrailingEdge,
+            ),
+      ];
+      if (positions.isEmpty) return;
+    }
 
     final visible = positions
         .where((p) => p.itemTrailingEdge > 0 && p.itemLeadingEdge < 1)
@@ -657,10 +675,10 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     if (!c.isAttached) return;
     scrollToSafely(
       c,
-      index: 0,
+      index: mp.chapterTopItem,
       duration: AppMotion.slow,
       curve: AppMotion.enter,
-      alignment: 0,
+      alignment: mp.chapterTopAlignment,
     );
     // Also reveal the chrome — convention is "I'm back at the top,
     // here are the navigation controls again".
@@ -748,6 +766,23 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                         ),
                       ],
                     ),
+                    if (widget.session == null) ...[
+                      const SizedBox(height: 8),
+                      SwitchListTile(
+                        key: const ValueKey('reader.verticalScroll'),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        title: Text(
+                          uiStrings['verticalScroll']?[settings.locale] ??
+                              'Continuous vertical scrolling',
+                        ),
+                        value: settings.verticalScroll,
+                        onChanged: (v) async {
+                          await settings.setVerticalScroll(v);
+                          setSheet(() {});
+                        },
+                      ),
+                    ],
                   ],
                 );
               },
@@ -1080,6 +1115,22 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
   // `jumper.captureCurrentVerseNum` / `scrollToVerseNumInChapter`
   // helpers are still in `lib/utils/jump_to_reference.dart` if a
   // future feature wants the precise restore back.
+  /// Continuous scrolling carried the top of the list into another
+  /// chapter. Unlike [_switchTo] nothing scrolls: the reader is already
+  /// there.
+  void _onFlowChapter(MainProvider provider, String book, int chap) {
+    final matched = provider.versesInChapter(book, chap);
+    if (matched.isEmpty) return;
+    provider.clearHighlightIndex();
+    provider.setCurrentChapter(book: book, chapter: chap);
+    provider.updateCurrentVerse(verse: matched.first);
+    if (mounted) {
+      _visibleItemIndexNotifier.value = 0;
+      _visibleItemPosNotifier.value = 0;
+      _chapterProgressNotifier.value = 0;
+    }
+  }
+
   void _switchTo(MainProvider provider, String book, int chap) {
     final matched = provider.versesInChapter(book, chap);
     if (matched.isEmpty) return;
@@ -1623,7 +1674,11 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
             itemToVerseIndex: itemToVerseIndex,
           );
         }
-        mainProvider.setVerseToItemMap(verseToItemMap);
+        // Continuous scrolling owns the map (its rows are offset by the
+        // chapters above); writing the per-chapter one here would undo it.
+        if (!(settings.verticalScroll && widget.session == null)) {
+          mainProvider.setVerseToItemMap(verseToItemMap);
+        }
 
         // Drain a pending cross-page jump (e.g. from a Daily News
         // verse-reference tap or a Bible Evidence "scripture
@@ -1958,6 +2013,14 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                       onNotification: _onScrollNotification,
                       child:
                     Builder(builder: (pageBuildCtx) {
+                      if (settings.verticalScroll && widget.session == null) {
+                        return _VerticalChapterFlow(
+                          deviceClass: dc,
+                          layout: _vLayout,
+                          onScrolledInto: _onFlowChapter,
+                        );
+                      }
+                      _vLayout.active = false;
                       final chapterList = _paneChapters(mainProvider);
                       final currentChapterPageIdx =
                           _chapterIdxIn(chapterList, mainProvider);
@@ -2801,7 +2864,8 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                           }
                           scrollToSafely(
                             mainProvider.itemScrollController,
-                            index: 0,
+                            index: mainProvider.chapterTopItem,
+                            alignment: mainProvider.chapterTopAlignment,
                             duration: AppMotion.slow,
                             curve: AppMotion.enter,
                           );
@@ -9576,6 +9640,553 @@ class _BookIntroCardState extends State<_BookIntroCard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Continuous vertical scrolling ─────────────────────────────────────
+
+/// Where the chapter on screen sits inside the continuous list. The pane
+/// keeps thinking in per-chapter rows (header, paragraph groups, footer)
+/// for its position pill and progress bar; this is the offset between the
+/// two numbering schemes.
+class _VerticalLayout {
+  bool active = false;
+
+  /// List row of the current chapter's heading.
+  int base = 0;
+
+  /// Rows from the heading through the row after the chapter's last group.
+  int rows = 0;
+}
+
+class _FlowChapter {
+  _FlowChapter({
+    required this.ci,
+    required this.book,
+    required this.chapter,
+    required this.verses,
+    required this.groups,
+    required this.verseToItem,
+  }) {
+    var n = 0;
+    for (final g in groups) {
+      starts.add(n);
+      n += g.length;
+    }
+  }
+
+  /// Index in `MainProvider.chapterList`.
+  final int ci;
+  final String book;
+  final int chapter;
+  final List<Verse> verses;
+  final List<List<Verse>> groups;
+
+  /// Chapter verse index → per-chapter item (1-based groups).
+  final Map<int, int> verseToItem;
+
+  /// First verse index of each group.
+  final List<int> starts = [];
+
+  late final bool hasParagraphData = groups.any((g) => g.length > 1);
+
+  /// List row of this chapter's heading.
+  int base = 0;
+
+  /// Heading plus one row per paragraph group.
+  int get rows => 1 + groups.length;
+}
+
+/// The reader as ONE list: chapters flow into each other in both
+/// directions, instead of one chapter per page.
+///
+/// A window of neighbouring chapters is kept in a single
+/// ScrollablePositionedList. The window grows at the end as the reader
+/// nears it (free), and at the start once scrolling has settled (it
+/// rebuilds the list at the same row and offset, so nothing moves).
+/// Everything that talks to the list by row number — verse jumps, the
+/// position pill, scroll-to-top — goes through the offset published in
+/// [_VerticalLayout] and `MainProvider.setVerseToItemMap`.
+class _VerticalChapterFlow extends StatefulWidget {
+  const _VerticalChapterFlow({
+    required this.deviceClass,
+    required this.layout,
+    required this.onScrolledInto,
+  });
+
+  final DeviceClass deviceClass;
+  final _VerticalLayout layout;
+
+  /// The top of the list crossed into another chapter.
+  final void Function(MainProvider mp, String book, int chapter)
+      onScrolledInto;
+
+  @override
+  State<_VerticalChapterFlow> createState() => _VerticalChapterFlowState();
+}
+
+class _VerticalChapterFlowState extends State<_VerticalChapterFlow> {
+  static ChapterControllers _newControllers() => ChapterControllers(
+        itemScrollController: ItemScrollController(),
+        scrollOffsetController: ScrollOffsetController(),
+        itemPositionsListener: ItemPositionsListener.create(),
+        scrollOffsetListener: ScrollOffsetListener.create(),
+      );
+
+  ChapterControllers _controllers = _newControllers();
+  ChapterControllers? _listening;
+
+  /// Bumped whenever the list is rebuilt from scratch; keys the list.
+  int _gen = 0;
+
+  /// The window, as indexes into `MainProvider.chapterList`.
+  int _lo = -1;
+  int _hi = -1;
+
+  /// The chapter this widget believes is at the top. A different current
+  /// chapter in the provider is therefore somebody ELSE navigating.
+  int? _trackedIdx;
+
+  /// Where a (re)built list starts: a chapter index, the row inside it,
+  /// and the alignment — null meaning "just below the floating header".
+  ({int ci, int local, double? alignment}) _anchor =
+      (ci: 0, local: 0, alignment: null);
+
+  String _sig = '';
+  List<_FlowChapter> _win = const [];
+  int _lead = 0;
+  int _total = 0;
+  double _align = 0;
+  bool _inMotion = false;
+
+  @override
+  void dispose() {
+    _listening?.itemPositionsListener.itemPositions
+        .removeListener(_onPositions);
+    widget.layout.active = false;
+    final mp = _mpOrNull();
+    if (mp != null && identical(mp.activeChapterControllers, _controllers)) {
+      mp.setActiveChapterControllers(null);
+    }
+    super.dispose();
+  }
+
+  MainProvider? _mpOrNull() {
+    try {
+      return context.read<MainProvider>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ── Window ──────────────────────────────────────────────────────────
+
+  _FlowChapter _chapterAt(MainProvider mp, AppSettings settings,
+      ({String book, int chapter}) tgt, int ci) {
+    final verses = mp.versesInChapter(tgt.book, tgt.chapter);
+    final cached = mp.cachedParagraphGrouping(
+      book: tgt.book,
+      chapter: tgt.chapter,
+      paragraphMode: settings.paragraphMode,
+      versesLength: verses.length,
+    );
+    if (cached != null) {
+      return _FlowChapter(
+        ci: ci,
+        book: tgt.book,
+        chapter: tgt.chapter,
+        verses: verses,
+        groups: cached.groups,
+        verseToItem: cached.verseToItem,
+      );
+    }
+    final groups = settings.paragraphMode
+        ? _BibleReadingPaneState._groupIntoParagraphs(verses)
+        : verses.map((v) => [v]).toList();
+    final vToI = <int, int>{};
+    final iToV = <int, int>{0: 0};
+    var vIdx = 0;
+    for (var g = 0; g < groups.length; g++) {
+      iToV[g + 1] = vIdx;
+      for (var v = 0; v < groups[g].length; v++) {
+        vToI[vIdx] = g + 1;
+        vIdx++;
+      }
+    }
+    mp.setCachedParagraphGrouping(
+      book: tgt.book,
+      chapter: tgt.chapter,
+      paragraphMode: settings.paragraphMode,
+      versesLength: verses.length,
+      groups: groups,
+      verseToItem: vToI,
+      itemToVerseIndex: iToV,
+    );
+    return _FlowChapter(
+      ci: ci,
+      book: tgt.book,
+      chapter: tgt.chapter,
+      verses: verses,
+      groups: groups,
+      verseToItem: vToI,
+    );
+  }
+
+  void _reset(int cur) {
+    _gen++;
+    _lo = (cur - 2).clamp(0, 1 << 20);
+    _anchor = (ci: cur, local: 0, alignment: null);
+    _controllers = _newControllers();
+  }
+
+  int _rowChapter(int row) {
+    // Window chapters are few; a linear scan is plenty.
+    for (var i = _win.length - 1; i >= 0; i--) {
+      if (row >= _win[i].base) return i;
+    }
+    return 0;
+  }
+
+  /// Publish the offset of window chapter [w] to the pane and provider.
+  void _publish(MainProvider mp, _FlowChapter w) {
+    final shifted = {
+      for (final e in w.verseToItem.entries) e.key: e.value + w.base,
+    };
+    mp.setVerseToItemMap(shifted, topItem: w.base, topAlignment: _align);
+    widget.layout
+      ..active = true
+      ..base = w.base
+      ..rows = w.rows + 1;
+  }
+
+  // ── Scroll tracking ─────────────────────────────────────────────────
+
+  void _bindListener() {
+    final l = _controllers;
+    if (identical(_listening, l)) return;
+    _listening?.itemPositionsListener.itemPositions
+        .removeListener(_onPositions);
+    _listening = l;
+    l.itemPositionsListener.itemPositions.addListener(_onPositions);
+  }
+
+  /// The row sitting at the line just under the floating header.
+  ItemPosition? _rowAtLine(Iterable<ItemPosition> positions) {
+    ItemPosition? best;
+    ItemPosition? first;
+    for (final p in positions) {
+      if (p.itemTrailingEdge <= 0 || p.itemLeadingEdge >= 1) continue;
+      if (first == null || p.itemLeadingEdge < first.itemLeadingEdge) {
+        first = p;
+      }
+      if (p.itemLeadingEdge <= _align + 0.002 &&
+          p.itemTrailingEdge > _align + 0.002) {
+        if (best == null || p.index > best.index) best = p;
+      }
+    }
+    return best ?? first;
+  }
+
+  void _onPositions() {
+    if (!mounted || _win.isEmpty) return;
+    final mp = context.read<MainProvider>();
+    final positions = _controllers.itemPositionsListener.itemPositions.value;
+    if (positions.isEmpty) return;
+    final top = _rowAtLine(positions);
+    if (top == null) return;
+
+    final w = _win[_rowChapter(top.index)];
+    if (w.ci != _trackedIdx) {
+      _trackedIdx = w.ci;
+      _publish(mp, w);
+      widget.onScrolledInto(mp, w.book, w.chapter);
+    }
+
+    // Reaching the last loaded chapters: load further ahead.
+    final listLen = mp.chapterList.length;
+    var maxRow = 0;
+    for (final p in positions) {
+      if (p.itemLeadingEdge < 1 && p.index > maxRow) maxRow = p.index;
+    }
+    final lastVisible = _win[_rowChapter(maxRow)].ci;
+    if (_hi < listLen - 1 && lastVisible >= _hi - 1) {
+      setState(() => _hi = (_hi + 2).clamp(0, listLen - 1));
+    }
+    if (!_inMotion) _maybePrepend(top);
+  }
+
+  /// Load earlier chapters once scrolling has settled. The list is rebuilt
+  /// at the same row and offset, so the reader sees no movement.
+  void _maybePrepend([ItemPosition? top]) {
+    if (!mounted || _lo <= 0 || _win.isEmpty) return;
+    final t = top ??
+        _rowAtLine(_controllers.itemPositionsListener.itemPositions.value);
+    if (t == null) return;
+    final w = _win[_rowChapter(t.index)];
+    if (w.ci - _lo >= 2) return;
+    setState(() {
+      _anchor = (
+        ci: w.ci,
+        local: t.index - w.base,
+        alignment: t.itemLeadingEdge,
+      );
+      _lo = (_lo - 2).clamp(0, 1 << 20);
+      _gen++;
+      _controllers = _newControllers();
+    });
+  }
+
+  bool _onScrollNotification(ScrollNotification n) {
+    if (n is ScrollStartNotification) {
+      _inMotion = true;
+    } else if (n is ScrollEndNotification) {
+      _inMotion = false;
+      _maybePrepend();
+    }
+    return false;
+  }
+
+  // ── Build ───────────────────────────────────────────────────────────
+
+  @override
+  Widget build(BuildContext context) {
+    final mp = context.watch<MainProvider>();
+    final settings = context.watch<AppSettings>();
+    final list = mp.chapterList;
+    if (list.isEmpty) return const SizedBox.shrink();
+    final cur = mp.findChapterIndex(mp.currentBook, mp.currentChapter) ?? 0;
+
+    final sig = '${mp.renderedVersion}|${list.length}|${settings.paragraphMode}';
+    final fresh = _lo < 0 || sig != _sig;
+    var jumpTo = -1;
+    if (fresh) {
+      _sig = sig;
+      _trackedIdx = cur;
+      _reset(cur);
+      _hi = (cur + 2).clamp(0, list.length - 1);
+    } else if (cur != _trackedIdx) {
+      _trackedIdx = cur;
+      if (!mp.hasPendingJump && cur >= _lo && cur <= _hi) {
+        jumpTo = cur; // somebody asked for a chapter we already have
+      } else {
+        _reset(cur);
+        _hi = (cur + 2).clamp(0, list.length - 1);
+      }
+    }
+    if (_hi < cur) _hi = (cur + 2).clamp(0, list.length - 1);
+    if (_lo > cur) _lo = (cur - 2).clamp(0, 1 << 20);
+
+    _lead = _lo == 0 ? 1 : 0;
+    var row = _lead;
+    final win = <_FlowChapter>[];
+    for (var ci = _lo; ci <= _hi && ci < list.length; ci++) {
+      final w = _chapterAt(mp, settings, list[ci], ci);
+      w.base = row;
+      row += w.rows;
+      win.add(w);
+    }
+    _win = win;
+    _total = row + 1; // + the closing spacer
+    final curWin = win.firstWhere((w) => w.ci == cur, orElse: () => win.first);
+
+    final topInset = MediaQuery.of(context).padding.top;
+    final inset = topInset + 48 * settings.menuScale + 18;
+    final isSelected = mp.selectedVerses.isNotEmpty;
+
+    Widget content = LayoutBuilder(builder: (context, cons) {
+      final h = cons.maxHeight.isFinite && cons.maxHeight > 0
+          ? cons.maxHeight
+          : 800.0;
+      _align = (inset / h).clamp(0.0, 0.4);
+      _publish(mp, curWin);
+
+      final a = _anchor;
+      final aw = win.firstWhere((w) => w.ci == a.ci, orElse: () => win.first);
+      var initIndex = aw.base + a.local.clamp(0, aw.rows - 1);
+      var initAlign = a.alignment ?? _align;
+      if (a.alignment == null && aw.ci == 0 && a.local == 0) {
+        // Genesis 1 opens on the top spacer, exactly like the paged reader.
+        initIndex = 0;
+        initAlign = 0;
+      }
+
+      if (jumpTo >= 0) {
+        final target = jumpTo;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          final w = _win.where((x) => x.ci == target);
+          final c = _controllers.itemScrollController;
+          if (w.isEmpty || !c.isAttached) return;
+          c.jumpTo(index: w.first.base, alignment: _align);
+        });
+      }
+
+      return ScrollablePositionedList.builder(
+        key: ValueKey(_gen),
+        itemCount: _total,
+        initialScrollIndex: initIndex.clamp(0, _total - 1),
+        initialAlignment: initAlign,
+        itemScrollController: _controllers.itemScrollController,
+        itemPositionsListener: _controllers.itemPositionsListener,
+        scrollOffsetController: _controllers.scrollOffsetController,
+        scrollOffsetListener: _controllers.scrollOffsetListener,
+        itemBuilder: (context, i) {
+          if (_lead == 1 && i == 0) return SizedBox(height: inset);
+          if (i >= _total - 1) {
+            final bottomInset = MediaQuery.of(context).padding.bottom;
+            final isPhoneWidth = MediaQuery.of(context).size.width < 560;
+            final extra = isSelected
+                ? (isPhoneWidth
+                    ? 200 * settings.menuScale
+                    : 132 * settings.menuScale)
+                : 96 * settings.menuScale;
+            return SizedBox(height: bottomInset + extra);
+          }
+          final w = _win[_rowChapter(i)];
+          return _buildRow(context, mp, settings, w, i - w.base, w.ci == cur);
+        },
+      );
+    });
+
+    // Registered while building so the pane's post-frame jump consumer
+    // already sees this list's controllers; the pane is told afterwards.
+    if (!identical(mp.activeChapterControllers, _controllers)) {
+      mp.setActiveChapterControllersQuietly(_controllers);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _bindListener();
+        mp.refreshActiveChapterControllers();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _bindListener();
+      });
+    }
+
+    content = NotificationListener<ScrollNotification>(
+      onNotification: _onScrollNotification,
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: ResponsiveBreakpoints.readingPadding(widget.deviceClass),
+        ),
+        child: content,
+      ),
+    );
+
+    if (!settings.readingPaperTheme) return content;
+    final baseTheme = Theme.of(context);
+    return Theme(
+      data: baseTheme.copyWith(
+        colorScheme: baseTheme.colorScheme.copyWith(
+          primary: _PaperTheme.accent,
+          onSurface: _PaperTheme.ink,
+          onSurfaceVariant: _PaperTheme.inkMuted,
+          surface: _PaperTheme.background,
+          primaryContainer: _PaperTheme.selection,
+          onPrimaryContainer: _PaperTheme.ink,
+        ),
+        textTheme: baseTheme.textTheme.apply(
+          bodyColor: _PaperTheme.ink,
+          displayColor: _PaperTheme.ink,
+        ),
+      ),
+      child: content,
+    );
+  }
+
+  Widget _buildRow(BuildContext context, MainProvider mp,
+      AppSettings settings, _FlowChapter w, int local, bool isCurrent) {
+    if (local == 0) {
+      Widget head = _FlowChapterHeading(
+        title: '${bookNameForDisplay(w.book, settings.locale, mp.renderedVersion)} ${w.chapter}',
+        first: w.ci == 0,
+      );
+      if (w.chapter == 1 && settings.showBookIntro) {
+        final intro = BookIntroService.forBook(toEnglish(w.book) ?? w.book);
+        if (intro != null) {
+          head = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              head,
+              _BookIntroCard(intro: intro, locale: settings.locale),
+            ],
+          );
+        }
+      }
+      return head;
+    }
+    final g = local - 1;
+    final group = w.groups[g];
+    // Highlights and jumps address verses by their index in the CURRENT
+    // chapter. Other chapters on screen get indexes that can never match.
+    final startIdx = w.starts[g] - (isCurrent ? 0 : 1000000);
+    final isFirst = g == 0;
+    SectionHeading? heading;
+    if (settings.showSectionTitles) {
+      final fv = group.first;
+      heading = SectionTitleService.headingAt(
+        version: mp.renderedVersion,
+        englishBook: toEnglish(fv.book) ?? fv.book,
+        chapter: fv.chapter,
+        verse: fv.verse,
+      );
+    }
+    final body = group.length == 1
+        ? VerseWidget(
+            verse: group.first,
+            index: startIdx,
+            hasParagraphData: w.hasParagraphData,
+            isFirst: isFirst,
+          )
+        : ParagraphGroupWidget(
+            group: group,
+            startVerseIndex: startIdx,
+            isFirst: isFirst,
+          );
+    return heading == null
+        ? body
+        : _SectionHeading(
+            title: heading.title,
+            context: heading.context,
+            isFirst: isFirst,
+            child: body,
+          );
+  }
+}
+
+/// "创世记 2" between chapters in continuous scrolling.
+class _FlowChapterHeading extends StatelessWidget {
+  const _FlowChapterHeading({required this.title, required this.first});
+
+  final String title;
+  final bool first;
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<AppSettings>();
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      key: ValueKey('flow.heading.$title'),
+      padding: EdgeInsets.fromLTRB(16, first ? 4 : 26, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!first)
+            Divider(height: 1, color: scheme.outlineVariant.withValues(alpha: 0.6)),
+          if (!first) const SizedBox(height: 18),
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: settings.fontFamily,
+              fontFamilyFallback: kCjkFontFallback,
+              fontSize: settings.fontSize + 6,
+              fontWeight: FontWeight.w700,
+              color: scheme.primary,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1256,6 +1256,32 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                   ),
                   const Divider(height: 1),
                   SwitchListTile(
+                    key: const ValueKey('settings.verticalScroll'),
+                    title: Text(
+                      uiStrings['verticalScroll']?[settings.locale] ??
+                          'Continuous vertical scrolling',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['verticalScrollSubtitle']?[settings.locale] ??
+                          'Scroll up and down through the whole Bible, one '
+                              'chapter flowing into the next.',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    value: settings.verticalScroll,
+                    onChanged: (val) => settings.setVerticalScroll(val),
+                  ),
+                  const Divider(height: 1),
+                  SwitchListTile(
                     title: Text(
                       uiStrings['showBookIntro']?[settings.locale] ??
                           'Book introductions',
