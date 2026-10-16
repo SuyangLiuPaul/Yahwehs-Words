@@ -34,6 +34,52 @@ saying plainly that it was not re-derived.
 > says which one it was measured against. Nothing in this file was
 > committed and nothing was fixed.
 
+
+---
+
+## Add-ons (importing third-party Bible modules) — what is not done, 2026-10-17
+
+Design, evidence and limits: [`addon-modules.md`](addon-modules.md). Everything
+below is `[open; checked 2026-10-17]` — written the day the feature landed, so
+nothing here is older than the code.
+
+- **No real third-party module has been imported.** Every fixture is
+  synthetic (`tools/make_addon_fixtures.py`); the reader matches Python's
+  `sqlite3` row for row and survives a hostile-input suite, and each parser
+  matches the layout its source documents — but only one real file per format
+  proves a real module matches. Needs the owner to name a file or approve a
+  download, one at a time (a public-domain KJV for MyBible.zone and one for
+  theWord would cover both SQLite and text). Checklist:
+  [`addons-manual-verification.md`](addons-manual-verification.md).
+- **Not verified, accepted anyway.** theWord's blank-vs-`- - -` convention for
+  an absent verse and the full settings-key list; Zefania's official schema;
+  MySword's `Details` columns (all treated as optional).
+- **Commentaries, dictionaries, cross-reference modules: recognised and
+  declined.** They need a surface built for their shape (a per-verse commentary
+  sheet, a headword lookup). MyBible's dictionary layout is specified;
+  MySword's `dictionary(word,data)` is verified from a real file; MySword and
+  theWord commentary layouts are not.
+- **e-Sword: not supported**, by decision. Only an exporter's source documents
+  `.bbli`; `.bblx` is unverified and its RTF text is not understood. Revisit
+  with a real file.
+- **zip archives** (MyBible modules are often distributed zipped): refused with
+  "unzip it first". Phase 2 with hard limits (one entry, ≤ 200 MB, ≤ 100:1).
+- **Strong's numbers, headings, red letters of an import are counted and not
+  shown.** Headings could become a per-add-on overlay beside
+  `section_title_service.dart`; Strong's would need the aligned layer
+  (`TaggedTextService`) to accept an add-on.
+- **Right-to-left modules are recorded and warned about; the reader is not
+  flipped.**
+- **Versification is recorded, never corrected** (Septuagint-numbered Psalms).
+- **`<pb/>` / `<CM>` paragraph hints are best effort** (read as *end of
+  paragraph*): unverified against a real module; cosmetic if wrong.
+- **Unit tests cannot reach IndexedDB or `path_provider`.** The store is tested
+  through an in-memory backend; the real halves are small enough to read in one
+  sitting and are closed by hand on dev.
+- **Native builds not yet made for the new dependency** (`file_selector`):
+  iOS, Android, macOS (sandboxed release), Windows, Linux must build before a
+  release. Web is built and imports on dev.
+
 ---
 
 ## Data and pipeline
