@@ -1247,6 +1247,9 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
     if (verses.isEmpty) return '';
     final settings = context.read<AppSettings>();
     final strip = settings.copyStripParentheticals;
+    // An imported edition is copied exactly as its file has it.
+    final verbatim =
+        isVerbatimEdition(context.read<MainProvider>().renderedVersion);
 
     int bookOrder(String book) {
       final en = toEnglish(book) ?? book;
@@ -1279,7 +1282,7 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
       case 'withRef':
         return sorted
             .map((v) =>
-                '[${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}] ${sanitizeForCopy(v.text, stripParentheticals: strip)}')
+                '[${display_names.bookNameForDisplay(v.book)} ${v.chapter}:${v.verseLabel}] ${sanitizeForCopy(v.text, stripParentheticals: strip, verbatim: verbatim)}')
             .join('\n');
       case 'devotional':
         // 2026-05-17 (v1.2.48): join with a single space, not '\n'.
@@ -1288,13 +1291,13 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
         // "灵修模式不是一节一行而是全部都一起的". Settings preview
         // mirrors this in getDevotionalFormattedText().
         final versesText =
-            sorted.map((v) => sanitizeForCopy(v.text, stripParentheticals: strip)).join(' ');
+            sorted.map((v) => sanitizeForCopy(v.text, stripParentheticals: strip, verbatim: verbatim)).join(' ');
         final range = formatVerseRangeLabels(sorted);
         return '$versesText\n(${display_names.bookNameForDisplay(first.book)} ${first.chapter}:$range)';
       case 'plain':
       default:
         final body = sorted
-            .map((v) => '${v.verseLabel} ${sanitizeForCopy(v.text, stripParentheticals: strip)}')
+            .map((v) => '${v.verseLabel} ${sanitizeForCopy(v.text, stripParentheticals: strip, verbatim: verbatim)}')
             .join('\n');
         return '${display_names.bookNameForDisplay(first.book)} ${first.chapter}\n$body';
     }
@@ -1504,7 +1507,8 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
       body: verses
           .map((v) => sanitizeForCopy(v.text,
               stripParentheticals:
-                  context.read<AppSettings>().copyStripParentheticals))
+                  context.read<AppSettings>().copyStripParentheticals,
+              verbatim: isVerbatimEdition(version)))
           .join(' '),
       version: version,
       versionLabel: shortBibleVersionLabel(version),
@@ -2432,16 +2436,8 @@ class _BibleReadingPaneState extends State<BibleReadingPane> {
                         // Lookup the target version's short label so
                         // the overlay can show "Loading KJV…" instead
                         // of the generic "Loading version…".
-                        final destLabel = bibleVersions
-                            .firstWhere(
-                              (v) => v.value == version,
-                              orElse: () => const BibleVersionInfo(
-                                  value: '',
-                                  shortLabel: '',
-                                  menuLabel: '',
-                                  language: 'zh-Hans'),
-                            )
-                            .shortLabel;
+                        final destLabel =
+                            versionInfoFor(version)?.shortLabel ?? '';
                         p.setVersionSwitching(true, to: destLabel);
                         // Yield once so the overlay actually paints
                         // before we kick off the heavy json.decode
@@ -6630,10 +6626,7 @@ class _MiniReaderHeader extends StatelessWidget {
   });
 
   String _versionLabel(String slug) {
-    for (final v in bibleVersions) {
-      if (v.value == slug) return v.shortLabel;
-    }
-    return slug.toUpperCase();
+    return versionInfoFor(slug)?.shortLabel ?? slug.toUpperCase();
   }
 
   @override

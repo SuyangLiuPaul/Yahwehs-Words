@@ -5,6 +5,7 @@ import '../widgets/diagnosis_tile.dart';
 // 2026-05-20 (v1.2.67): `dart:js_interop` was here. See
 // `lib/utils/clear_cache_helper.dart` for the conditional-import
 // pattern that replaced it.
+import 'package:yahwehs_words/pages/addons_page.dart';
 import 'package:yahwehs_words/utils/app_nav.dart';
 import 'package:yahwehs_words/utils/app_scroll_behavior.dart'
     show kSelectableTextPhysics;
@@ -1279,6 +1280,31 @@ class _SettingsPageBodyState extends State<_SettingsPageBody> {
                     ),
                     value: settings.verticalScroll,
                     onChanged: (val) => settings.setVerticalScroll(val),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    key: const ValueKey('settings.addons'),
+                    leading: const Icon(Icons.extension_rounded),
+                    title: Text(
+                      uiStrings['addonsTitle']?[settings.locale] ?? 'Add-ons',
+                      style: TextStyle(
+                        fontSize: settings.fontSize + 2,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    subtitle: Text(
+                      uiStrings['addonsSettingsSubtitle']?[settings.locale] ??
+                          'Read a Bible text you downloaded elsewhere',
+                      style: TextStyle(
+                        fontSize: settings.fontSize,
+                        fontFamily: settings.fontFamily,
+                        fontFamilyFallback: kCjkFontFallback,
+                      ),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => pushPage(const AddonsPage(), routeName: '/addons'),
                   ),
                   const Divider(height: 1),
                   SwitchListTile(

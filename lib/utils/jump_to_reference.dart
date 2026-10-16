@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:yahwehs_words/constants/bible_versions.dart'
-    show bibleVersionFullCanonFallback, bibleVersions, BibleVersionInfo;
+    show bibleVersionFullCanonFallback, fullBibleVersionLabel;
 import 'package:yahwehs_words/models/verse.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/services/fetch_books.dart' show bookNameToEnglish;
@@ -98,16 +98,7 @@ Future<JumpResolution> resolveAndPrepareJump({
       matches = findMatches();
       if (matches.isNotEmpty) {
         switched = true;
-        final info = bibleVersions.firstWhere(
-          (v) => v.value == fallback,
-          orElse: () => BibleVersionInfo(
-            value: fallback,
-            shortLabel: fallback,
-            menuLabel: fallback,
-            language: 'zh-Hans',
-          ),
-        );
-        switchedLabel = info.menuLabel;
+        switchedLabel = fullBibleVersionLabel(fallback);
       }
     }
   }

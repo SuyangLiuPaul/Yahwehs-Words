@@ -307,8 +307,12 @@ class OfflinePackService extends ChangeNotifier {
   /// CUV-tr, CNV, CNV-tr and the LJK1 pair in 2026-08. The 雅伟的话
   /// export's Septuagint and its second CSB never shipped at all — see
   /// lib/constants/bible_versions.dart.
-  static List<String> get _bibleUrls =>
-      availableVersions.map((v) => 'assets/${v.value}.json').toList();
+  static List<String> get _bibleUrls => availableVersions
+      // An imported edition is not in the bundle: asking the network for
+      // `assets/user-x.json` would 404 and make the whole pack look partial.
+      .where((v) => !isImportedVersion(v.value))
+      .map((v) => 'assets/${v.value}.json')
+      .toList();
 
   static const List<String> _toolsUrls = [
     'assets/family_tree.json',

@@ -5765,6 +5765,437 @@ const uiStrings = {
     'en': 'Scroll up and down through the whole Bible, one chapter '
         'flowing into the next, instead of turning pages.',
   },
+  // ── Add-ons: importing third-party Bible modules (docs/addon-modules.md) ──
+  'addonsTitle': {
+    'zh-Hans': "导入模块",
+    'zh-Hant': "匯入模組",
+    'en': "Add-ons",
+  },
+  'addonsSettingsSubtitle': {
+    'zh-Hans': "导入你从别处下载的圣经译本",
+    'zh-Hant': "匯入你從別處下載的聖經譯本",
+    'en': "Read a Bible text you downloaded elsewhere",
+  },
+  'addonIntro': {
+    'zh-Hans': "把你从别处下载的圣经译本文件放进来，在这里阅读。文件只保存在这台设备上——不上传、不同步、不分享。",
+    'zh-Hant': "把你從別處下載的聖經譯本檔案放進來，在這裡閱讀。檔案只保存在這台裝置上——不上傳、不同步、不分享。",
+    'en': "Bring in a Bible text you downloaded elsewhere and read it here. Files stay on this device — never uploaded, synced or shared.",
+  },
+  'addonSupported': {
+    'zh-Hans': "可以读取：MyBible.zone（.SQLite3）、MySword（.bbl.mybible）、theWord（.ont .ot .nt）、Zefania XML、JSON、CSV。目前只导入圣经译本；注释、字典等以后再支持。",
+    'zh-Hant': "可以讀取：MyBible.zone（.SQLite3）、MySword（.bbl.mybible）、theWord（.ont .ot .nt）、Zefania XML、JSON、CSV。目前只匯入聖經譯本；註釋、字典等以後再支援。",
+    'en': "Reads MyBible.zone (.SQLite3), MySword (.bbl.mybible), theWord (.ont .ot .nt), Zefania XML, JSON and CSV. Bible texts only for now — commentaries and dictionaries come later.",
+  },
+  'addonChoose': {
+    'zh-Hans': "选择文件",
+    'zh-Hant': "選擇檔案",
+    'en': "Choose a file",
+  },
+  'addonEmptyTitle': {
+    'zh-Hans': "还没有导入的译本",
+    'zh-Hant': "還沒有匯入的譯本",
+    'en': "Nothing imported yet",
+  },
+  'addonEmptyBody': {
+    'zh-Hans': "点「选择文件」，从这台设备上挑一个译本文件。",
+    'zh-Hant': "點「選擇檔案」，從這台裝置上挑一個譯本檔案。",
+    'en': "Tap “Choose a file” and pick a Bible file from this device.",
+  },
+  'addonListHeader': {
+    'zh-Hans': "已导入的译本",
+    'zh-Hant': "已匯入的譯本",
+    'en': "Imported texts",
+  },
+  'addonStorage': {
+    'zh-Hans': "占用 {size}",
+    'zh-Hant': "佔用 {size}",
+    'en': "Using {size}",
+  },
+  'addonEnabled': {
+    'zh-Hans': "在版本列表中显示",
+    'zh-Hant': "在版本列表中顯示",
+    'en': "Show in the version list",
+  },
+  'addonMetaCounts': {
+    'zh-Hans': "{n} 节 · {b} 卷",
+    'zh-Hant': "{n} 節 · {b} 卷",
+    'en': "{n} verses · {b} books",
+  },
+  'addonOtOnly': {
+    'zh-Hans': "仅旧约",
+    'zh-Hant': "僅舊約",
+    'en': "Old Testament only",
+  },
+  'addonNtOnly': {
+    'zh-Hans': "仅新约",
+    'zh-Hant': "僅新約",
+    'en': "New Testament only",
+  },
+  'addonPartial': {
+    'zh-Hans': "部分书卷",
+    'zh-Hant': "部分書卷",
+    'en': "Some books only",
+  },
+  'addonFormat_myBible': {
+    'zh-Hans': "MyBible.zone",
+    'zh-Hant': "MyBible.zone",
+    'en': "MyBible.zone",
+  },
+  'addonFormat_mySword': {
+    'zh-Hans': "MySword",
+    'zh-Hant': "MySword",
+    'en': "MySword",
+  },
+  'addonFormat_theWord': {
+    'zh-Hans': "theWord",
+    'zh-Hant': "theWord",
+    'en': "theWord",
+  },
+  'addonFormat_zefania': {
+    'zh-Hans': "Zefania XML",
+    'zh-Hant': "Zefania XML",
+    'en': "Zefania XML",
+  },
+  'addonFormat_appJson': {
+    'zh-Hans': "JSON",
+    'zh-Hant': "JSON",
+    'en': "JSON",
+  },
+  'addonFormat_csv': {
+    'zh-Hans': "CSV",
+    'zh-Hant': "CSV",
+    'en': "CSV",
+  },
+  'addonYourFile': {
+    'zh-Hans': "你导入的文件",
+    'zh-Hant': "你匯入的檔案",
+    'en': "Your file",
+  },
+  'addonRead': {
+    'zh-Hans': "阅读这个译本",
+    'zh-Hant': "閱讀這個譯本",
+    'en': "Read this text",
+  },
+  'addonRemove': {
+    'zh-Hans': "从本设备移除",
+    'zh-Hant': "從本裝置移除",
+    'en': "Remove from this device",
+  },
+  'addonRemoveTitle': {
+    'zh-Hans': "移除「{name}」？",
+    'zh-Hant': "移除「{name}」？",
+    'en': "Remove “{name}”?",
+  },
+  'addonRemoveBody': {
+    'zh-Hans': "这个译本的文本会从本设备删除。原文件不受影响，你可以随时重新导入。",
+    'zh-Hant': "這個譯本的文字會從本裝置刪除。原檔案不受影響，你可以隨時重新匯入。",
+    'en': "The text is deleted from this device. Your original file is untouched and you can import it again any time.",
+  },
+  'addonRemoveConfirm': {
+    'zh-Hans': "移除",
+    'zh-Hant': "移除",
+    'en': "Remove",
+  },
+  'addonCancel': {
+    'zh-Hans': "取消",
+    'zh-Hant': "取消",
+    'en': "Cancel",
+  },
+  'addonClose': {
+    'zh-Hans': "关闭",
+    'zh-Hant': "關閉",
+    'en': "Close",
+  },
+  'addonDetailLanguage': {
+    'zh-Hans': "文件标明的语言",
+    'zh-Hant': "檔案標明的語言",
+    'en': "Language the file declares",
+  },
+  'addonDetailSource': {
+    'zh-Hans': "来源文件",
+    'zh-Hant': "來源檔案",
+    'en': "Source file",
+  },
+  'addonDetailImported': {
+    'zh-Hans': "导入时间",
+    'zh-Hant': "匯入時間",
+    'en': "Imported",
+  },
+  'addonShownAsIs': {
+    'zh-Hans': "按文件原样显示：本应用不改动导入的文本，也不替换其中的神名。",
+    'zh-Hant': "按檔案原樣顯示：本應用不改動匯入的文字，也不替換其中的神名。",
+    'en': "Shown exactly as the file has it: the app does not change imported text or replace the divine name in it.",
+  },
+  'addonStrongsNote': {
+    'zh-Hans': "文件带有 Strong 编号。本应用不显示它们，因为本应用自己的 Strong 显示依赖逐词对齐的数据。",
+    'zh-Hant': "檔案帶有 Strong 編號。本應用不顯示它們，因為本應用自己的 Strong 顯示依賴逐詞對齊的資料。",
+    'en': "The file carries Strong’s numbers. This app does not show them — its own Strong’s display relies on word-by-word alignment data.",
+  },
+  'addonRussianNote': {
+    'zh-Hans': "这个模块的诗篇按七十士译本编号，和本应用的其他版本可能相差一节。",
+    'zh-Hant': "這個模組的詩篇按七十士譯本編號，和本應用的其他版本可能相差一節。",
+    'en': "This module numbers the Psalms the Septuagint way, so references may be one verse off from the app’s other editions.",
+  },
+  'addonLegacy': {
+    'zh-Hans': "由旧版本导入",
+    'zh-Hant': "由舊版本匯入",
+    'en': "Imported by an earlier version",
+  },
+  'addonAnalysing': {
+    'zh-Hans': "正在读取文件…",
+    'zh-Hant': "正在讀取檔案…",
+    'en': "Reading the file…",
+  },
+  'addonPhase_parsing': {
+    'zh-Hans': "正在解析经文…",
+    'zh-Hant': "正在解析經文…",
+    'en': "Reading the verses…",
+  },
+  'addonStoring': {
+    'zh-Hans': "正在保存…",
+    'zh-Hant': "正在儲存…",
+    'en': "Saving…",
+  },
+  'addonFoundTitle': {
+    'zh-Hans': "找到了这个译本",
+    'zh-Hant': "找到了這個譯本",
+    'en': "Here is what was found",
+  },
+  'addonFoundBody': {
+    'zh-Hans': "{format} · {n} 节 · {b} 卷",
+    'zh-Hant': "{format} · {n} 節 · {b} 卷",
+    'en': "{format} · {n} verses · {b} books",
+  },
+  'addonNameLabel': {
+    'zh-Hans': "给它起个名字",
+    'zh-Hant': "給它起個名字",
+    'en': "Name it",
+  },
+  'addonNameHint': {
+    'zh-Hans': "例如：我的圣经",
+    'zh-Hant': "例如：我的聖經",
+    'en': "For example: My Bible",
+  },
+  'addonLicenceAttest': {
+    'zh-Hans': "我确认我有权在这台设备上使用这个文件。本应用不检查、也无法检查它的来源或版权。导入的内容只存在这台设备上，不会上传、不会同步、不会分享。",
+    'zh-Hant': "我確認我有權在這台裝置上使用這個檔案。本應用不檢查、也無法檢查它的來源或版權。匯入的內容只存在這台裝置上，不會上傳、不會同步、不會分享。",
+    'en': "I confirm I have the right to use this file on this device. This app does not and cannot check where it came from or who owns it. Imported content stays on this device — it is never uploaded, synced or shared.",
+  },
+  'addonImportButton': {
+    'zh-Hans': "导入",
+    'zh-Hant': "匯入",
+    'en': "Import",
+  },
+  'addonDoneTitle': {
+    'zh-Hans': "导入完成",
+    'zh-Hant': "匯入完成",
+    'en': "Imported",
+  },
+  'addonReadNow': {
+    'zh-Hans': "现在阅读",
+    'zh-Hant': "現在閱讀",
+    'en': "Read it now",
+  },
+  'addonDone': {
+    'zh-Hans': "完成",
+    'zh-Hant': "完成",
+    'en': "Done",
+  },
+  'addonReportAccepted': {
+    'zh-Hans': "已导入 {n} 节，共 {b} 卷。",
+    'zh-Hant': "已匯入 {n} 節，共 {b} 卷。",
+    'en': "Imported {n} verses in {b} books.",
+  },
+  'addonReportBooksDropped': {
+    'zh-Hans': "这个文件里有 {n} 卷本应用不收录，没有导入：{names}。",
+    'zh-Hant': "這個檔案裡有 {n} 卷本應用不收錄，沒有匯入：{names}。",
+    'en': "{n} books in this file are not ones the app carries, so they were not imported: {names}.",
+  },
+  'addonReportVersesDropped': {
+    'zh-Hans': "{n} 节不在本应用的经文范围内，已跳过。",
+    'zh-Hant': "{n} 節不在本應用的經文範圍內，已跳過。",
+    'en': "{n} verses fall outside the app’s chapters and were skipped.",
+  },
+  'addonReportDuplicates': {
+    'zh-Hans': "{n} 节重复，保留了第一次出现的。",
+    'zh-Hant': "{n} 節重複，保留了第一次出現的。",
+    'en': "{n} duplicate verses — the first of each was kept.",
+  },
+  'addonReportHeadings': {
+    'zh-Hans': "{n} 处小标题或章节标题没有导入。",
+    'zh-Hant': "{n} 處小標題或章節標題沒有匯入。",
+    'en': "{n} headings were not imported.",
+  },
+  'addonReportNotes': {
+    'zh-Hans': "保留了 {n} 条脚注。",
+    'zh-Hant': "保留了 {n} 條腳註。",
+    'en': "Kept {n} footnotes.",
+  },
+  'addonReportCrossRefs': {
+    'zh-Hans': "{n} 处交叉引用没有导入。",
+    'zh-Hant': "{n} 處交叉引用沒有匯入。",
+    'en': "{n} cross-references were not imported.",
+  },
+  'addonReportStrongs': {
+    'zh-Hans': "文件里的 Strong 编号没有显示。",
+    'zh-Hant': "檔案裡的 Strong 編號沒有顯示。",
+    'en': "The Strong’s numbers in the file are not shown.",
+  },
+  'addonReportSuper': {
+    'zh-Hans': "{n} 篇诗篇标题已并入第一节上方。",
+    'zh-Hant': "{n} 篇詩篇標題已併入第一節上方。",
+    'en': "{n} psalm titles were placed above verse 1.",
+  },
+  'addonReportStrays': {
+    'zh-Hans': "清理了 {n} 个多余的符号。",
+    'zh-Hant': "清理了 {n} 個多餘的符號。",
+    'en': "Cleaned up {n} stray symbols.",
+  },
+  'addonWarn_russianNumbering': {
+    'zh-Hans': "这个模块的诗篇按七十士译本编号，和本应用的其他版本可能相差一节。",
+    'zh-Hant': "這個模組的詩篇按七十士譯本編號，和本應用的其他版本可能相差一節。",
+    'en': "This module numbers the Psalms the Septuagint way; references may be one verse off from other editions.",
+  },
+  'addonWarn_zefaniaBookMismatch': {
+    'zh-Hans': "有书卷的编号和名称对不上，已跳过：{detail}",
+    'zh-Hant': "有書卷的編號和名稱對不上，已跳過：{detail}",
+    'en': "A book whose number and name disagree was skipped: {detail}",
+  },
+  'addonWarn_rightToLeft': {
+    'zh-Hans': "这个模块是从右向左书写的；本应用暂不翻转版面。",
+    'zh-Hant': "這個模組是從右向左書寫的；本應用暫不翻轉版面。",
+    'en': "This module is written right-to-left; the app does not flip its layout yet.",
+  },
+  'addonProblem_empty': {
+    'zh-Hans': "这个文件是空的。",
+    'zh-Hant': "這個檔案是空的。",
+    'en': "That file is empty.",
+  },
+  'addonProblem_tooLarge': {
+    'zh-Hans': "文件太大（{detail}）。上限 64 MB。",
+    'zh-Hant': "檔案太大（{detail}）。上限 64 MB。",
+    'en': "That file is {detail}. The limit is 64 MB.",
+  },
+  'addonProblem_notRecognised': {
+    'zh-Hans': "这个文件的格式本应用不认识。支持：MyBible、MySword、theWord、Zefania、JSON、CSV。",
+    'zh-Hant': "這個檔案的格式本應用不認識。支援：MyBible、MySword、theWord、Zefania、JSON、CSV。",
+    'en': "This app doesn’t recognise this file’s format. It reads MyBible, MySword, theWord, Zefania, JSON and CSV.",
+  },
+  'addonProblem_encrypted': {
+    'zh-Hans': "这个模块被出版方加了锁，本应用打不开。",
+    'zh-Hant': "這個模組被出版方加了鎖，本應用打不開。",
+    'en': "This module is locked by its publisher. The app can’t open it.",
+  },
+  'addonProblem_zipArchive': {
+    'zh-Hans': "这是一个压缩包。请先解压，再选择里面的模块文件。",
+    'zh-Hant': "這是一個壓縮檔。請先解壓縮，再選擇裡面的模組檔案。",
+    'en': "That’s a zip file. Unzip it first, then pick the module file inside.",
+  },
+  'addonProblem_eSword': {
+    'zh-Hans': "e-Sword 的模块暂不支持。",
+    'zh-Hant': "e-Sword 的模組暫不支援。",
+    'en': "e-Sword modules aren’t supported.",
+  },
+  'addonProblem_notABible': {
+    'zh-Hans': "这是一个{detail}模块。目前只能导入圣经译本，{detail}以后再支持。",
+    'zh-Hant': "這是一個{detail}模組。目前只能匯入聖經譯本，{detail}以後再支援。",
+    'en': "This is a {detail} module. Only Bible texts can be imported for now.",
+  },
+  'addonProblem_noVerses': {
+    'zh-Hans': "文件读出来了，但里面没有经文。",
+    'zh-Hant': "檔案讀出來了，但裡面沒有經文。",
+    'en': "The file was read, but it holds no verses.",
+  },
+  'addonProblem_noBooksInCanon': {
+    'zh-Hans': "文件读出来了，但里面没有本应用收录的书卷。",
+    'zh-Hant': "檔案讀出來了，但裡面沒有本應用收錄的書卷。",
+    'en': "The file was read, but none of its books are ones this app carries.",
+  },
+  'addonProblem_corruptFile': {
+    'zh-Hans': "文件读到一半坏了，可能没下载完。没有导入任何内容。",
+    'zh-Hant': "檔案讀到一半壞了，可能沒下載完。沒有匯入任何內容。",
+    'en': "The file is damaged part-way through — it may not have downloaded completely. Nothing was imported.",
+  },
+  'addonProblem_unsupportedLayout': {
+    'zh-Hans': "这是个有效的文件，但它的结构本应用读不了。",
+    'zh-Hant': "這是個有效的檔案，但它的結構本應用讀不了。",
+    'en': "This is a valid file, but its layout is one the app can’t read.",
+  },
+  'addonProblem_wrongVerseCount': {
+    'zh-Hans': "这个 theWord 文件的经文行数不对（{detail}），无法确定每一行对应哪一节，所以没有导入。",
+    'zh-Hant': "這個 theWord 檔案的經文行數不對（{detail}），無法確定每一行對應哪一節，所以沒有匯入。",
+    'en': "This theWord file has the wrong number of verse lines ({detail}), so there is no way to know which verse each line is. Nothing was imported.",
+  },
+  'addonProblem_nameEmpty': {
+    'zh-Hans': "请给它起个名字。",
+    'zh-Hant': "請給它起個名字。",
+    'en': "Please give it a name.",
+  },
+  'addonProblem_nameTaken': {
+    'zh-Hans': "已经有一个同名的译本了。换个名字，或先移除旧的。",
+    'zh-Hant': "已經有一個同名的譯本了。換個名字，或先移除舊的。",
+    'en': "A text with that name already exists. Choose another name, or remove the old one first.",
+  },
+  'addonProblem_licenceNotAttested': {
+    'zh-Hans': "需要先勾选确认。",
+    'zh-Hant': "需要先勾選確認。",
+    'en': "Please tick the confirmation first.",
+  },
+  'addonProblem_cancelled': {
+    'zh-Hans': "已取消，没有导入任何内容。",
+    'zh-Hant': "已取消，沒有匯入任何內容。",
+    'en': "Cancelled. Nothing was imported.",
+  },
+  'addonProblem_pickerFailed': {
+    'zh-Hans': "这台设备打不开文件选择窗口。",
+    'zh-Hant': "這台裝置打不開檔案選擇視窗。",
+    'en': "This device couldn’t open its file chooser.",
+  },
+  'addonProblem_couldNotStore': {
+    'zh-Hans': "文件没问题，是这台设备（或浏览器）不肯保存：空间不足，或处于无痕模式。",
+    'zh-Hant': "檔案沒問題，是這台裝置（或瀏覽器）不肯儲存：空間不足，或處於無痕模式。",
+    'en': "Your file is fine — this device (or browser) wouldn’t store it: no space, or private browsing.",
+  },
+  'addonProblem_unavailable': {
+    'zh-Hans': "这个版本的应用无法保存导入的模块。",
+    'zh-Hant': "這個版本的應用無法儲存匯入的模組。",
+    'en': "This build of the app can’t store imported texts.",
+  },
+  'addonKind_commentary': {
+    'zh-Hans': "注释",
+    'zh-Hant': "註釋",
+    'en': "commentary",
+  },
+  'addonKind_dictionary': {
+    'zh-Hans': "字典",
+    'zh-Hant': "字典",
+    'en': "dictionary",
+  },
+  'addonKind_crossReferences': {
+    'zh-Hans': "交叉引用",
+    'zh-Hant': "交叉引用",
+    'en': "cross-reference",
+  },
+  'addonKind_other': {
+    'zh-Hans': "其他类型的",
+    'zh-Hant': "其他類型的",
+    'en': "non-Bible",
+  },
+  'versionLangOther': {
+    'zh-Hans': "其他",
+    'zh-Hant': "其他",
+    'en': "Other",
+  },
+  'addonMissingNotice': {
+    'zh-Hans': "「{name}」不在这台设备上，已改读 {substitute}。重新导入文件即可在这里阅读。",
+    'zh-Hant': "「{name}」不在這台裝置上，已改讀 {substitute}。重新匯入檔案即可在這裡閱讀。",
+    'en': "“{name}” isn’t on this device. Showing {substitute}. Import the file again to read it here.",
+  },
+  'aboutLicenseUserSupplied': {
+    'zh-Hans': "读者自行导入的文本 · 本应用未核验其来源或授权 · 仅存于本机",
+    'zh-Hant': "讀者自行匯入的文本 · 本應用未核驗其來源或授權 · 僅存於本機",
+    'en': "Supplied by you · this app has not verified its source or rights · stored on this device only",
+  },
   'showBookIntro': {
     'zh-Hans': '书卷简介',
     'zh-Hant': '書卷簡介',

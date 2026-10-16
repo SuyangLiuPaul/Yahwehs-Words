@@ -4,7 +4,9 @@ import 'package:yahwehs_words/utils/berean_interlinear_display.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:yahwehs_words/constants/bible_versions.dart' show isImportedVersion;
 import 'package:yahwehs_words/models/verse.dart';
+import 'package:yahwehs_words/services/addons/addon_registry.dart';
 import 'package:yahwehs_words/providers/main_provider.dart';
 import 'package:yahwehs_words/services/error_reporter.dart';
 import 'package:yahwehs_words/services/fetch_books.dart'
@@ -305,9 +307,31 @@ class FetchVerses {
   /// together — roughly doubling the effective per-attempt budget for
   /// the same wall-clock wait the user already tolerates.
   static Future<List<Verse>> _fetchAndDecodeVerses(String path) async {
+    // An edition the reader imported lives in the device's own store, not in
+    // the bundle — and on the web a bundle MISS answers `index.html` with a
+    // 200, which decodes to "Unexpected token <", so it must be caught before
+    // the bundle is asked. It goes through the SAME decoder every bundled
+    // edition does, so an import cannot take a code path of its own.
+    final code = _addonCodeOf(path);
+    if (code != null) {
+      final stored = await AddonRegistry.readPayload(code);
+      if (stored == null) {
+        throw StateError('add-on "$code" is not on this device');
+      }
+      return decodeVerses(json.decode(stored));
+    }
     final jsonString = await rootBundle.loadString(path);
     return decodeVerses(json.decode(jsonString),
         version: path == 'assets/bib.json' ? 'bib' : '');
+  }
+
+  /// `assets/user-my-bible.json` → `user-my-bible`; null for a bundled path.
+  static String? _addonCodeOf(String path) {
+    const prefix = 'assets/';
+    const suffix = '.json';
+    if (!path.startsWith(prefix) || !path.endsWith(suffix)) return null;
+    final code = path.substring(prefix.length, path.length - suffix.length);
+    return isImportedVersion(code) ? code : null;
   }
 
   /// The pure half of [_fetchAndDecodeVerses] — decoded JSON in, verses

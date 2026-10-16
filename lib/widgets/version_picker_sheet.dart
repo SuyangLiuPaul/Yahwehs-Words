@@ -238,6 +238,8 @@ class _LanguageGroupedVersionBodyState
       // short word in every locale and not "希腊文原文".
       case 'el':
         return _t('versionLangGreek', 'Greek');
+      case 'other':
+        return _t('versionLangOther', 'Other');
       case 'zh-Hans':
       default:
         return _t('versionLangSimplified', 'Simplified');
@@ -315,7 +317,22 @@ class _LanguageGroupedVersionBodyState
                                 : scheme.onSurface,
                           ),
                         ),
-                        if (v.editionYear.isNotEmpty)
+                        if (isImportedVersion(v.value))
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              _t('addonYourFile', 'Your file'),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: settings.fontFamily,
+                                fontFamilyFallback: kCjkFontFallback,
+                                fontSize: 11,
+                                color: scheme.primary,
+                              ),
+                            ),
+                          )
+                        else if (v.editionYear.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(

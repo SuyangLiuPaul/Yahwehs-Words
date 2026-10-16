@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status="v" biblename="Sloppy Test" type="x-bible" revision="1">
+ <INFORMATION><title>Sloppy Test Bible</title><language>ENG</language></INFORMATION>
+ <BIBLEBOOK bnumber="1" bname="Genesis" bsname="Gen">
+  <CHAPTER cnumber="1">
+   <VERS vnumber="1">In the beginning God created the heaven and the earth.</VERS>
+   <VERS vnumber="2">And the earth was <STYLE css="font-style:italic">without form</STYLE>, and void;<BR/>and darkness was upon the face of the deep.</VERS>
+   <VERS vnumber="3">And God said, Let there be light<NOTE type="x-studynote">a note</NOTE>: and there was light.</vers>
+   <VERS vnumber="4">And God saw the light, that it was good: &amp; God divided the light from the darkness.</VERS>
+  </CHAPTER>
+  <CHAPTER cnumber="2">
+   <VERS vnumber="1">Thus the heavens and the earth were finished.</VERS>
+  </CHAPTER>
+ </BIBLEBOOK>
+ <BIBLEBOOK bnumber="2" bname="Matthew" bsname="Mat">
+  <CHAPTER cnumber="1">
+   <VERS vnumber="1">This book claims to be Exodus (2) but says Matthew.</VERS>
+  </CHAPTER>
+ </BIBLEBOOK>
+ <BIBLEBOOK bnumber="43" bname="John" bsname="Jhn">
+  <CHAPTER cnumber="3">
+   <CAPTION vref="16">The love of God</CAPTION>
+   <VERS vnumber="16">For God so loved the world, that he gave his only begotten Son.<XREF fscope="Rom 5:8"/></VERS>
+  </CHAPTER>
+ </BIBLEBOOK>
+ <BIBLEBOOK bnumber="99" bname="Tobit">
+  <CHAPTER cnumber="1"><VERS vnumber="1">Not in the canon.</VERS></CHAPTER>
+ </BIBLEBOOK>
+</XMLBIBLE>

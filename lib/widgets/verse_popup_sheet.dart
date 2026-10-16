@@ -6,7 +6,8 @@ import 'package:yahwehs_words/utils/clipboard_helper.dart';
 import 'package:provider/provider.dart';
 
 import 'package:yahwehs_words/constants/motion.dart';
-import 'package:yahwehs_words/constants/text_patterns.dart' show sanitizeVerseText;
+import 'package:yahwehs_words/constants/text_patterns.dart'
+    show isVerbatimEdition, sanitizeVerseText;
 import 'package:yahwehs_words/constants/ui_strings.dart';
 import 'package:yahwehs_words/models/app_settings.dart';
 import 'package:yahwehs_words/models/verse.dart';
@@ -194,7 +195,7 @@ class _VersePopupSheetState extends State<VersePopupSheet> {
     final buf = StringBuffer();
     buf.writeln('${_refLabel(locale)}\n');
     for (final v in verses) {
-      buf.writeln('${v.verse}. ${sanitizeVerseText(v.text, stripParentheticals: strip)}');
+      buf.writeln('${v.verse}. ${sanitizeVerseText(v.text, stripParentheticals: strip, verbatim: isVerbatimEdition(context.read<MainProvider>().currentVersion))}');
     }
     final scheme = Theme.of(context).colorScheme;
     final ok = await ClipboardHelper.copyText(buf.toString().trim());
@@ -429,7 +430,10 @@ class _VersePopupSheetState extends State<VersePopupSheet> {
               // readable prose. The reading pane has rich rendering
               // for `<note:...>` / `{...}` / `[...]`; the popup is
               // a peek surface and renders plain text only.
-              TextSpan(text: sanitizeVerseText(v.text)),
+              TextSpan(
+                  text: sanitizeVerseText(v.text,
+                      verbatim: isVerbatimEdition(
+                          context.read<MainProvider>().currentVersion))),
             ],
           ),
         ),

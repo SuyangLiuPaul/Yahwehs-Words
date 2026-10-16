@@ -1,3 +1,6 @@
+import 'package:yahwehs_words/constants/bible_versions.dart'
+    show importedVersionScripts;
+
 const englishToChinese = {
   // Old Testament (Simplified)
   "Genesis": "创世记",
@@ -281,6 +284,12 @@ const _englishVersionCodes = <String>{
 /// "Nasb" still resolve correctly.
 String scriptForVersion(String version) {
   final v = version.trim().toLowerCase();
+  // An edition the reader imported says, itself, which script its book names
+  // are in — recorded at import from the book names the file used. Without
+  // this branch an English import falls through to Chinese below, and its
+  // references read 創世記 beside its own English text.
+  final imported = importedVersionScripts[v];
+  if (imported != null) return imported;
   if (_englishVersionCodes.contains(v)) return 'en';
   return v.endsWith('-tr') ? 'zh-Hant' : 'zh-Hans';
 }

@@ -1,0 +1,20 @@
+[
+ {
+  "book": "Genesis",
+  "chapter": 1,
+  "verse": 1,
+  "text": "In the beginning."
+ },
+ {
+  "book": "Genesis",
+  "chapter": 1,
+  "verse": 2,
+  "text": "And the earth was without form."
+ },
+ {
+  "book": "John",
+  "chapter": "3",
+  "verse": "16",
+  "text": "For God so loved the world."
+ }
+]

@@ -1,6 +1,4 @@
-**Latest Watch verification:** [1.7.3 paired simulator screenshots](docs/screenshots/2026-10-01/apple-watch-1.7.3/README.md). Phone chapter refresh and Watch remote pause were observed; physical pairing remains separately unverified.
-
-Latest web Settings update: Basic by default, expandable Advanced, deployed to international and China dev/QAT/prod at 1.7.15. [Delivery and verification](docs/settings-basic-advanced-2026-10-08.md).
+**Status, 2026-10-17.** The latest release is **1.7.31** (2026-10-16 — [release](https://github.com/SuyangLiuPaul/Yahwehs-Words/releases/latest)). Ahead of it, on the dev site and **not yet released**: [continuous vertical scrolling](#whats-new-since-173) and [Add-ons](docs/addon-modules.md) — importing Bible texts from MyBible.zone, MySword, theWord, Zefania XML, JSON and CSV. This file lags the code by design (see *Earlier additions* for what it last described in detail); when it disagrees with the tree, the tree wins.
 
 <h1 align="center">Yahweh's Words · 雅伟之言</h1>
 
@@ -82,7 +80,28 @@ any APIs themselves**; everything is at the Firebase project level.
 
 ---
 
-## Latest additions
+## What's new since 1.7.3
+
+**Ahead of the latest release (dev site, unreleased)**
+
+- **Continuous vertical scrolling.** An optional reading mode — off by default — in which chapters flow into each other in both directions, with a chapter heading between them; the header, URL and position pill follow the chapter you are in. Switch: Settings, the reader's font sheet, the ⇅ button on the reader's bottom bar, or the ⋮ menu. Reading-plan days still page chapter by chapter. Also in Yahweh's Sword (its 阅读 mode).
+- **Add-ons: import your own Bible text.** Settings › Add-ons. Reads **MyBible.zone** (`.SQLite3`), **MySword** (`.bbl.mybible`), **theWord** (`.ont` `.ot` `.nt`), **Zefania XML**, and our own **JSON** and **CSV**; recognises (and declines) commentaries and dictionaries; refuses e-Sword and anything its publisher locked. The file stays on the device — never uploaded, synced or shared — and the reader confirms they have the right to use it first. An import is marked **Your file**, sorts after the shipped editions, and is shown exactly as its file has it. A pure-Dart, read-only SQLite reader makes this identical on web, iOS, Android, macOS, Windows and Linux with no native library. [Specification, evidence and limits](docs/addon-modules.md) · [what only a real module can prove](docs/addons-manual-verification.md).
+
+**Released**
+
+| Version | Date | What |
+| --- | --- | --- |
+| 1.7.31 | 2026-10-16 | About without duplicate update controls (they live in Settings; About links to them); no interface string names the author |
+| 1.7.30 | 2026-10-16 | Redesigned reading-plan pages and nicer empty states across the app; About states the purpose, quotes John 17:3 and notes the name *Yahweh* with its occurrence count; tables redesigned (word-distribution table with a pinned word column and heat shading, localised headers and thousands separators; book and lemma tables with zebra rows and bars) |
+| 1.7.26 – 1.7.29 | 2026-10-15 – 16 | **Reading plans**: six verified plans including M'Cheyne 1842; several at once, with a start date, pause and catch-up, and per-plan reminders; a chapter counts as read when you scroll to its end; your own plan, days off, streak, bulk catch-up, read again, share, midnight refresh; the reader opened from a plan is limited to the day's chapters, with a back arrow and a progress bar; the home card appears only once a plan is started; plan data is in the offline pack |
+| 1.7.25 | 2026-10-15 | English for the Bible-principles, promises and testaments pages |
+| 1.7.17 – 1.7.24 | 2026-10-08 – 12 | Store delivery work (Microsoft, Apple, Google), Genesis display labels across the app, mini-player artwork decoding capped to its display size |
+| 1.7.16 | 2026-10-08 | Basic and Advanced Settings on all platforms |
+| 1.7.4 – 1.7.15 | 2026-10-02 – 07 | Phone-controlled Apple Watch / Wear OS / CarPlay / Android Auto companions; offline song and sermon downloads with progress, retry and delete; Chinese lexicon follows Eagle's View with edition-orthography footnotes (1.7.8); sermon and song playback crash fixes (1.7.9, 1.7.10); one tagline, *Study Yahweh's Words* (1.7.13) |
+
+The per-version detail is the in-app **What's new** page (`assets/changelog.json`, generated from the commit history by `tools/build_changelog.py`).
+
+### Earlier additions (1.7.0 – 1.7.3)
 
 - Berean Interlinear NT word study with source Greek forms, English glosses, transliteration, Strong’s numbers and grammar. Greek-only reading editions stay hidden in Words at the owner’s request.
 - Scoped search charts and mutually exclusive fuzzy / pinyin text search controls.
@@ -94,8 +113,10 @@ any APIs themselves**; everything is at the Firebase project level.
 
 | Category     | Details                                                                                                                 |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| Versions     | KJV, LEB, NASB, 和合本雅伟版 (简 / 繁), 梁家铿译本 (简 / 繁)                              |
-| Reading      | Apple-glass reader controls; Light / Dark / System theme; Adjustable font family, size, line spacing, menu scale; Verse-by-verse or Paragraph Flow reading mode (default); Full-width reading on all devices; Grid view default for new users; Reading mode toggle in header on tablet+ |
+| Versions     | KJV · LEB · CSB · NET · Berean Standard Bible (Yahweh) · American Standard Version (Yahweh) · One God Translation (NT) · Berean Interlinear Bible (NT) · 和合本雅伟版 (简 / 繁) · 梁家铿译本 (简 / 繁) · 中文 NET (简 / 繁) — see [Bible Versions](#bible-versions) — **plus any text you import** ([Add-ons](docs/addon-modules.md)) |
+| Reading      | Apple-glass reader controls; Light / Dark / System theme; Adjustable font family, size, line spacing, menu scale; Verse-by-verse or Paragraph Flow reading mode (default); **optional continuous vertical scrolling** (chapters flow into each other both ways); Full-width reading on all devices; Grid view default for new users; Reading mode toggle in header on tablet+ |
+| Reading plans | Six verified plans (one-year Bible, M'Cheyne 1842, Paul's letters …) or your own, run several at once; start date, pause and catch-up, days off, per-plan daily reminders, streak; a chapter counts as read when you scroll to its end; the reader opened from a plan stays within the day's chapters |
+| Add-ons      | Import a Bible text from MyBible.zone / MySword / theWord / Zefania XML / JSON / CSV — local-only, licence-confirmed, shown exactly as the file has it; commentaries and dictionaries recognised and declined for now ([details](docs/addon-modules.md)) |
 | Highlights   | Mark verses with 6 colors (yellow, green, blue, pink, orange, purple); persistent across sessions                      |
 | Bookmarks    | Bookmark + per-verse notes; visible inline indicator next to every flagged verse in both verse-by-verse and paragraph mode |
 | Navigation   | Swipe left/right to change chapter; Floating chapter picker; Previous/next chapter buttons; Grid/List view for books with compact English/Chinese labels; Responsive grid for tablets/desktops; Collapsible sidebar for wide screens (≥600px) |
@@ -247,7 +268,8 @@ lib/
   widgets/                    BibleReadingPane, OriginalsSheet,
                               SetupInstructionsCard, CloudSetupDiagnostic,
                               GreetingCard, GoogleGLogo, etc.
-  services/                   Cloud (CloudAuthService,
+  services/                   addons/ (store, registry, import service),
+                              ReadingPlanService, Cloud (CloudAuthService,
                               RealtimeDbSyncService), AI proxy clients
                               (AiSearchService, AiBibleSearchService,
                               FeedbackService, ProfileService),
@@ -260,6 +282,10 @@ lib/
                               version mapper, verse span builder,
                               responsive breakpoints, jump-to-reference,
                               short-book-name.
+    addons/                   The Add-ons importer's pure-Dart half: SQLite
+                              reader, MyBible / MySword / theWord / Zefania /
+                              CSV / JSON parsers, markup normaliser, canon fit.
+                              Identical in Yahweh's Sword; see docs/addon-modules.md.
 netlify/
   functions/                  Server-side serverless functions:
                                 aiSearch.mjs (Bible-evidence AI search)
@@ -285,6 +311,12 @@ pubspec.yaml                  Flutter / Dart dependencies + asset
 | `scrollable_positioned_list`   | Precise verse scrolling and jump-to-index |
 | `scroll_to_index`              | Auto-scroll in BooksPage                  |
 | `shared_preferences`           | Persist settings & last position          |
+| `file_selector`                | The Add-ons file chooser (web, iOS, Android, macOS, Windows, Linux) |
+| `path_provider`                | Where native add-ons are stored (app-support directory) |
+| `web`                          | IndexedDB for add-ons on the web, and other browser APIs |
+| `crypto`                       | A short SHA-256 of an imported file, as provenance |
+
+The full list, with the reason for each, is in `pubspec.yaml` — which comments every dependency.
 
 ---
 
@@ -324,36 +356,52 @@ Each verse record:
 | `[text]` | Dotted-underline keyword |
 | `<note:text>` | Book icon, tap to show note dialog |
 
-Chapter/verse may be stored as strings or integers depending on source.
+Per-verse fields beyond `text`, all optional:
+
+| Field | Meaning |
+| --- | --- |
+| `isParagraphStart` | the verse opens a paragraph |
+| `paragraphType` | `inline` (default), `paragraph`, or `reference` (a quotation set as lines — internal `\n` are kept) |
+| `blockNotes` | block-level editorial footnotes, rendered as an indented block below the verse |
+| `superscription` | a psalm title printed above verse 1 (not a verse: no number, no id) |
+| `verseLabel` | the printed verse label when it differs from `verse` (e.g. `34a`) |
+| `subVerseOrder` | reading order among verses that share a `verse` number |
+
+The `id` in the example above is carried by the bundled assets but is not read by the app (`Verse.fromJson` ignores it; a verse's identity is its English book name, chapter and label). `[text]` prints its brackets only for the editions in `kBracketPreservingVersions`; elsewhere the word is styled, not bracketed. Chapter/verse may be stored as strings or integers depending on source. An imported edition's text is normalised to exactly four things — plain text, `[added words]`, `<note: …>` and `\n` — by `lib/utils/addons/markup_normaliser.dart` ([why](docs/addon-modules.md#what-it-does-to-the-text)).
 
 ---
 
 ## Bible Versions
 
-| Key | Name | Language | Filename | Paragraph Data (raw) | Paragraph Data (effective) |
-| --- | ---- | -------- | -------- | -------------------- | -------------------------- |
-| `kjv` | King James Version | English | `assets/kjv.json` | No | OT + NT replay |
-| `leb` | Lexham English Bible | English | `assets/leb.json` | No | OT + NT replay for available verses |
-| `nasb` | New American Standard Bible 2020 | English | `assets/nasb.json` | No | OT + NT replay |
-| `cuvs-yhwh` | 和合本雅伟版 (简) | Simplified Chinese | `assets/cuvs-yhwh.json` | No | OT + NT replay |
-| `cuvs-yhwh-tr` | 和合本雅偉版 (繁) | Traditional Chinese | `assets/cuvs-yhwh-tr.json` | No | OT + NT replay |
-| `biblexg-v2` | 梁家铿译本 (简) | Simplified Chinese | `assets/biblexg-v2.json` | NT only (canonical source) | NT |
-| `biblexg-v2-tr` | 梁家鏗譯本 (繁) | Traditional Chinese | `assets/biblexg-v2-tr.json` | NT only (canonical source) | NT |
+Generated by reading `lib/constants/bible_versions.dart` on 2026-10-17 (it is the source of truth; `pubspec.yaml`'s asset list is the second — an edition has to be declared there to ship at all). 20 catalogue rows, 14 visible:
 
-Default version on first launch: `cuvs-yhwh`.
+| Key | Name | Language | Asset |
+| --- | ---- | -------- | ----- |
+| `kjv` | King James Version (1611 / 1769 revision) | English | `assets/kjv.json` |
+| `leb` | Lexham English Bible (2012) | English | `assets/leb.json` |
+| `csb` | Christian Standard Bible (2017) | English | `assets/csb.json` |
+| `net` | NET Bible (text only) | English | `assets/net.json` |
+| `bsb-yhwh` | Berean Standard Bible (Yahweh) — divine name restored | English | `assets/bsb-yhwh.json` |
+| `asv-yhwh` | American Standard Version 1901 (Yahweh) — divine name restored | English | `assets/asv-yhwh.json` |
+| `ogt` | One God Translation (New Testament, with notes) | English | `assets/ogt.json` |
+| `bib` | Berean Interlinear Bible (New Testament; Greek–English, Strong's) | English | `assets/bib.json` |
+| `cuvs-yhwh` | 和合本雅伟版 (简体) | Simplified Chinese | `assets/cuvs-yhwh.json` |
+| `cuvs-yhwh-tr` | 和合本雅偉版 (繁體) | Traditional Chinese | `assets/cuvs-yhwh-tr.json` |
+| `biblexg-v3` | 梁家铿译本 (简体, New Testament) | Simplified Chinese | `assets/biblexg-v3.json` |
+| `biblexg-v3-tr` | 梁家鏗譯本 (繁體, New Testament) | Traditional Chinese | `assets/biblexg-v3-tr.json` |
+| `cnet` | 中文 NET (简体, with translators' notes) | Simplified Chinese | `assets/cnet.json` |
+| `cnet-tr` | 中文 NET (繁體, with translators' notes) | Traditional Chinese | `assets/cnet-tr.json` |
+| `user-…` | **Your file** — any text imported through Add-ons | any | the device's own store, never the bundle |
 
-<!-- 2026-09-01: this table used to also list `cuv`/`cuv-tr` (和合本),
-     `cnv`/`cnv-tr` (新译本), and `biblexg`/`biblexg-tr` (原文释经圣经
-     v1). All six were DELETED outright in v1.4.5 (2026-08-03) —
-     assets, bible_versions.dart entries, and copyright rows — the
-     user's explicit choice over a footnote-only fix (see HANDOFF.md,
-     "v1.4.0 — Import feature + Bible-version cleanup"). Old shared
-     links using those version codes no longer resolve. This table
-     kept listing them for a month after removal; check
-     lib/constants/bible_versions.dart before trusting any version
-     list in prose docs — pubspec.yaml's asset section is the second
-     source of truth, since a version's JSON has to be declared there
-     to ship at all. -->
+**In the catalogue but hidden** (`disabledVersions`): `nasb`, `wh` (Westcott–Hort Greek NT), `lxx` (Septuagint), `sblgnt`, and the superseded `biblexg-v2` / `biblexg-v2-tr` (a stored preference for one of these resolves to its named successor or, failing that, to the first edition of the same language). On the web build NASB's asset is additionally stripped from the bundle.
+
+**Default on first launch follows the interface language:** 简体 → `cuvs-yhwh`, 繁體 → `cuvs-yhwh-tr`, English → the first available English edition (`kjv`; NASB is the stated preference but is hidden).
+
+<!-- 2026-10-17: rewritten from the catalogue. The previous table listed seven
+     editions, three of them (nasb, biblexg-v2, biblexg-v2-tr) hidden, and
+     stated a default that is no longer true. It had a note warning that it had
+     drifted a month; it had drifted again — check
+     lib/constants/bible_versions.dart before trusting any list in prose docs. -->
 
 **Paragraph mode note**: Paragraph metadata is shared at load time. The NT uses LJK2 (`biblexg-v2`) as the canonical source; the OT uses `assets/web-ot-paragraphs.json`, a derived map of 11,922 verse starts from the public-domain World English Bible USFM. `FetchVerses` replays both sources by english book name + `chapter:verse`, so paragraph layout is consistent across translations wherever the version includes those verses.
 
@@ -520,6 +568,6 @@ The visible Passion timetable follows the supplied reference image, with selecta
 
 The Passion timetable is visible in both apps, with English, 简体中文 and 繁體中文 content and language switching. It includes all 14 source-diagram placements (both 08:00 events) and the original zoomable attachment. Exact Gospel markers and estimated diagram times are identified separately.
 
-## 1.7.3 delivery status
+## Earlier delivery record (1.7.3)
 
 [Platform delivery and remaining gates](docs/delivery-1.7.3-2026-10-01.md) records GitHub downloads, live websites, processed Apple builds and Google testing separately from public Store approval. Existing genuine screenshot galleries keep their original version labels.

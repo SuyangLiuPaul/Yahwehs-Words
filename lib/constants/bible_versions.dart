@@ -511,12 +511,97 @@ const kWebRestrictedVersions = <String>{'nasb'};
 /// the whole branch is tree-shaken out of native builds.
 const bool _kIsWeb = bool.fromEnvironment('dart.library.js_interop');
 
+// ── Editions the reader imported (add-ons) ──────────────────────────────
+//
+// `docs/addon-modules.md`. These maps are filled by `AddonRegistry` — at boot
+// and on every import, enable, disable and removal — and are EMPTY on a fresh
+// install and in every test that does not populate them, so the catalog
+// behaves exactly as it did before add-ons existed.
+//
+// Plain maps in a pure-Dart file on purpose: `tools/prerender_bible.dart`
+// imports this file under plain `dart run`, so nothing here may touch Flutter.
+
+/// Prefix on every imported edition's code. A namespace: it is what stops an
+/// import called `kjv` from shadowing the bundled KJV, and what lets every
+/// surface tell a supplied text from a shipped one by looking at the code.
+const String kImportedVersionPrefix = 'user-';
+
+/// True when [code] names a text the reader supplied.
+bool isImportedVersion(String code) => code.startsWith(kImportedVersionPrefix);
+
+/// code → the name the reader gave it.
+final Map<String, String> importedVersionLabels = <String, String>{};
+
+/// code → the script the edition's book names are written in: `en`,
+/// `zh-Hans` or `zh-Hant`. What `scriptForVersion` answers for an import.
+final Map<String, String> importedVersionScripts = <String, String>{};
+
+/// code → the picker tab: `en`, `zh-Hans`, `zh-Hant` or `other`.
+final Map<String, String> importedVersionFamilies = <String, String>{};
+
+/// code → (covers the Old Testament, covers the New Testament).
+final Map<String, ({bool ot, bool nt})> importedVersionCoverage =
+    <String, ({bool ot, bool nt})>{};
+
+/// The catalog rows for the imported editions, built on demand.
+List<BibleVersionInfo> get importedVersions => [
+      for (final e in importedVersionLabels.entries)
+        BibleVersionInfo(
+          value: e.key,
+          shortLabel:
+              e.value.length <= 6 ? e.value : '${e.value.substring(0, 5)}…',
+          menuLabel: e.value,
+          language:
+              importedVersionFamilies[e.key] ?? importedVersionScripts[e.key] ?? 'en',
+          editionYear: '',
+        ),
+    ];
+
+/// The edition to put in anything that LEAVES the device (the synced
+/// reading-position blob) in place of [code].
+///
+/// An imported edition's code is a slug of the name the reader gave it — "ESV
+/// from church" — and "imported content never leaves the device" has to be
+/// literally true of that too. A bundled stand-in of the same language family
+/// is what another device could actually open anyway.
+String syncSafeVersion(String code) {
+  if (!isImportedVersion(code)) return code;
+  switch (importedVersionFamilies[code] ?? importedVersionScripts[code]) {
+    case 'zh-Hans':
+      return 'cuvs-yhwh';
+    case 'zh-Hant':
+      return 'cuvs-yhwh-tr';
+    default:
+      return 'kjv';
+  }
+}
+
+/// The catalog row for [code], bundled or imported — THE one place that
+/// answers "what is this version", so that no two callers can disagree about
+/// an imported edition's label, language or script.
+BibleVersionInfo? versionInfoFor(String code) {
+  for (final v in bibleVersions) {
+    if (v.value == code) return v;
+  }
+  if (importedVersionLabels.containsKey(code)) {
+    for (final v in importedVersions) {
+      if (v.value == code) return v;
+    }
+  }
+  return null;
+}
+
 /// Versions shown in the picker (excludes disabled ones, and on web the
 /// unlicensed ones whose assets are stripped from the bundle).
-List<BibleVersionInfo> get availableVersions => bibleVersions
-    .where((v) => !disabledVersions.contains(v.value))
-    .where((v) => !(_kIsWeb && kWebRestrictedVersions.contains(v.value)))
-    .toList();
+List<BibleVersionInfo> get availableVersions => [
+      ...bibleVersions
+          .where((v) => !disabledVersions.contains(v.value))
+          .where((v) => !(_kIsWeb && kWebRestrictedVersions.contains(v.value))),
+      // Last, always. An imported text has not been checked by anyone, and
+      // putting it above the editions that have would be a claim about it that
+      // nothing supports.
+      ...importedVersions,
+    ];
 
 /// Coerce a version code to one this build can actually load.
 ///
@@ -593,7 +678,10 @@ String resolvableVersionFrom(
 /// what was read. Being last also means the ordering the user asked for
 /// — 英语繁体简体 — is still the ordering they see.
 List<String> get bibleLanguageOrder {
-  const order = ['en', 'zh-Hant', 'zh-Hans', 'el'];
+  // `other` is for an imported edition in a language the interface does not
+  // have a tab for — Russian, Spanish, Korean. It is last-but-one: the tabs
+  // above are for reading in the app's own languages.
+  const order = ['en', 'zh-Hant', 'zh-Hans', 'other', 'el'];
   final present = availableVersions.map((v) => v.language).toSet();
   return order.where(present.contains).toList();
 }
@@ -628,9 +716,13 @@ List<BibleVersionInfo> versionsForLanguage(String language) =>
 /// Falls back to `zh-Hans` for an unknown code (the app's primary
 /// audience) so the picker never lands on an empty tab.
 String bibleVersionLanguage(String value) {
-  for (final v in bibleVersions) {
-    if (v.value == value) return v.language;
-  }
+  final info = versionInfoFor(value);
+  if (info != null) return info.language;
+  // An imported edition this device does not hold (a preference restored from
+  // another device, say). English is the only guess that does not strand a
+  // reader on a text in a script they did not choose; the caller then shows
+  // the "isn't on this device" notice.
+  if (isImportedVersion(value)) return 'en';
   return 'zh-Hans';
 }
 
@@ -646,23 +738,17 @@ String bibleVersionLanguage(String value) {
 /// itself for an edition the catalogue does not know, the same as
 /// [shortBibleVersionLabel].
 String fullBibleVersionLabel(String version) {
-  for (final v in bibleVersions) {
-    if (v.value == version) return v.menuLabel;
-  }
-  return version;
+  return versionInfoFor(version)?.menuLabel ?? version;
 }
 
 String shortBibleVersionLabel(String version) {
-  return bibleVersions
-      .firstWhere(
-        (item) => item.value == version,
-        orElse: () => BibleVersionInfo(
-          value: version,
-          shortLabel: version,
-          menuLabel: version,
-          language: 'zh-Hans',
-        ),
-      )
+  return (versionInfoFor(version) ??
+          BibleVersionInfo(
+            value: version,
+            shortLabel: version,
+            menuLabel: version,
+            language: 'zh-Hans',
+          ))
       .shortLabel;
 }
 
@@ -673,15 +759,13 @@ String shortBibleVersionLabel(String version) {
 /// back to [shortBibleVersionLabel] itself for every edition that
 /// doesn't define a [BibleVersionInfo.narrowLabel].
 String narrowBibleVersionLabel(String version) {
-  final info = bibleVersions.firstWhere(
-    (item) => item.value == version,
-    orElse: () => BibleVersionInfo(
-      value: version,
-      shortLabel: version,
-      menuLabel: version,
-      language: 'zh-Hans',
-    ),
-  );
+  final info = versionInfoFor(version) ??
+      BibleVersionInfo(
+        value: version,
+        shortLabel: version,
+        menuLabel: version,
+        language: 'zh-Hans',
+      );
   return info.narrowLabel ?? info.shortLabel;
 }
 
@@ -695,6 +779,21 @@ String narrowBibleVersionLabel(String version) {
 /// Returns the version code to fall back to, or null when [version]
 /// already has full OT+NT coverage.
 String? bibleVersionFullCanonFallback(String version) {
+  // An imported edition may be a single Testament. Name the same-family
+  // full-canon edition the app ships, so a daily verse from the other
+  // Testament is not an empty card.
+  if (isImportedVersion(version)) {
+    final cov = importedVersionCoverage[version];
+    if (cov == null || (cov.ot && cov.nt)) return null;
+    switch (importedVersionFamilies[version] ?? importedVersionScripts[version]) {
+      case 'zh-Hans':
+        return 'cuvs-yhwh';
+      case 'zh-Hant':
+        return 'cuvs-yhwh-tr';
+      default:
+        return 'bsb-yhwh';
+    }
+  }
   switch (version) {
     case 'bib':
     case 'ogt':

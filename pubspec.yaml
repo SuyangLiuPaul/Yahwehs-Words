@@ -155,6 +155,8 @@ dependencies:
   #   share_plus  → the OS share sheet, for everywhere else it goes
   gal: ^2.3.0
   share_plus: ^10.1.4
+  # Add-ons importer: the platform file chooser (modules are picked, read as bytes, never uploaded).
+  file_selector: ^1.1.0
 
 dev_dependencies:
   flutter_test:

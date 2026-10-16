@@ -1,4 +1,5 @@
 import 'services/offline_audio_downloads.dart';
+import 'package:yahwehs_words/services/addons/addon_registry.dart';
 import 'package:yahwehs_words/services/media_companion_service.dart';
 import 'package:yahwehs_words/services/watch_reading_snapshot.dart';
 import 'package:yahwehs_words/pages/passion_wheel_page.dart';
@@ -834,6 +835,15 @@ class _MainAppState extends State<MainApp> with WidgetsBindingObserver {
       // `<note:>` format that's NATIVELY in LEB + biblexg-v2
       // continues to render as before; only the cross-version
       // overlay layer was dropped.
+      // Add-ons BEFORE restoreState: it validates the remembered edition
+      // against the catalog, and a catalog not yet filled would call an
+      // imported edition "unknown", swap it for a bundled one and — in the
+      // migration branch — remember the swap. Bounded and silent on failure:
+      // a reader whose browser will not open IndexedDB should get the app.
+      step = 'addons.restore';
+      ErrorReporter.breadcrumb('boot:step', data: step);
+      await AddonRegistry.restore()
+          .timeout(const Duration(seconds: 2), onTimeout: () {});
       step = 'appSettings.loadSettings';
       ErrorReporter.breadcrumb('boot:step', data: step);
       await appSettings.loadSettings();

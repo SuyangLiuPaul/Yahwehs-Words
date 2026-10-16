@@ -68,7 +68,9 @@ Dependencies to add: a SQLite reader (native library; WebAssembly build on
 the web) and a file picker. Both change every platform's build — CI must be
 green on all five before release.
 
-Blocked on: real sample modules. Either the owner names files he has used, or
+**Status 2026-10-17 — Bible modules are built** (MyBible.zone, MySword, theWord, Zefania, JSON, CSV), on the dev sites, unreleased. See `docs/addon-modules.md` for what is verified and `docs/addons-manual-verification.md` for what needs a real file. **Still open under this item:** commentaries and dictionaries (Phase 2, each needs a surface of its own), zip archives, e-Sword (declined until a real file exists), and one real module per format imported by hand on each platform.
+
+Was blocked on: real sample modules. Either the owner names files he has used, or
 approves downloading free public samples one at a time (name, source URL and
 size told first).
 

@@ -3,7 +3,7 @@ import 'dart:collection' show LinkedHashMap;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:yahwehs_words/constants/bible_versions.dart'
-    show resolvableVersion;
+    show resolvableVersion, syncSafeVersion;
 import 'package:yahwehs_words/constants/text_patterns.dart' show sanitizeForSearch;
 import 'package:yahwehs_words/models/verse.dart';
 import 'package:yahwehs_words/models/book.dart';
@@ -171,6 +171,12 @@ class MainProvider extends ChangeNotifier {
       // Evict oldest (front of the LinkedHashMap).
       _versesCache.remove(_versesCache.keys.first);
     }
+  }
+
+  /// Forget [version]'s parsed verses (an add-on that was removed or turned
+  /// off must not be served from memory after it is gone).
+  void evictVersionCache(String version) {
+    _versesCache.remove(version);
   }
 
   /// True if `version`'s parsed verse list is in the in-memory cache.
@@ -1536,7 +1542,9 @@ class MainProvider extends ChangeNotifier {
       // (no progress bar) until the user scrolls themselves.
       final sermonId = prefs.getString('sermons_last_read');
       final blob = jsonEncode({
-        'version': currentVersion,
+        // Never an imported edition's own code: it names a text that lives on
+        // this device only, and it is derived from a name the reader typed.
+        'version': syncSafeVersion(currentVersion),
         if (currentBook != null) 'book': currentBook,
         if (currentChapter != null) 'chapter': currentChapter,
         if (sermonId != null && sermonId.isNotEmpty)

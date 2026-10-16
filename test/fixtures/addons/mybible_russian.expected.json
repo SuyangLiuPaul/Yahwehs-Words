@@ -1,0 +1,55 @@
+{
+ "books": [],
+ "info": [
+  [
+   "language",
+   "ru"
+  ],
+  [
+   "russian_numbering",
+   "true"
+  ],
+  [
+   "right_to_left",
+   "false"
+  ]
+ ],
+ "verses": [
+  [
+   230,
+   22,
+   1,
+   "Psalm 22 in Russian numbering is 21 in the Hebrew."
+  ],
+  [
+   145,
+   1,
+   1,
+   "O Lord Almighty, God of our fathers."
+  ],
+  [
+   192,
+   1,
+   1,
+   "Additions to Esther."
+  ],
+  [
+   780,
+   1,
+   1,
+   "Paul to the Laodiceans."
+  ],
+  [
+   999,
+   1,
+   1,
+   "A number the specification does not know."
+  ],
+  [
+   10,
+   1,
+   1,
+   "In the beginning."
+  ]
+ ]
+}

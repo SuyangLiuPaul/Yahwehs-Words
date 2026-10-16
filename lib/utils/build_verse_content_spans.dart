@@ -523,7 +523,7 @@ List<InlineSpan> buildVerseContentSpans({
       // adjacent chunks (sanitizeForSearch's `.trim()` would collapse
       // them and merge words across span boundaries).
       spans.add(TextSpan(
-        text: displayCleanup(part),
+        text: displayCleanup(part, verbatim: isVerbatimEdition(versionCode)),
         recognizer: onTextTap != null
             ? (TapGestureRecognizer()..onTap = onTextTap)
             : null,

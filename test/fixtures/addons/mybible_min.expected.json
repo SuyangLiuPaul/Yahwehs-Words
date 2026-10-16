@@ -1,0 +1,93 @@
+{
+ "books": [
+  [
+   10,
+   "#ccccff",
+   "Gen",
+   "Genesis",
+   10
+  ],
+  [
+   500,
+   "#ffff99",
+   "Jhn",
+   "John",
+   500
+  ],
+  [
+   730,
+   "#ff6600",
+   "Rev",
+   "Revelation",
+   730
+  ]
+ ],
+ "info": [
+  [
+   "description",
+   "Synthetic Test Bible"
+  ],
+  [
+   "language",
+   "en"
+  ],
+  [
+   "strong_numbers",
+   "true"
+  ],
+  [
+   "detailed_info",
+   "<p>Made by tools/make_addon_fixtures.py</p>"
+  ]
+ ],
+ "verses": [
+  [
+   10,
+   1,
+   1,
+   "In the beginning God created the heaven and the earth."
+  ],
+  [
+   10,
+   1,
+   2,
+   "And the earth was <i>without form</i>, and void;<pb/>and darkness was upon the face of the deep."
+  ],
+  [
+   10,
+   1,
+   3,
+   "And God said, Let there be light: and there was light."
+  ],
+  [
+   10,
+   1,
+   4,
+   "And God saw the light<S>216</S>, that <J>it was good</J><n>note one</n>."
+  ],
+  [
+   10,
+   2,
+   1,
+   "Thus the heavens and the earth were finished<br/>and all the host of them."
+  ],
+  [
+   500,
+   3,
+   16,
+   "For God so loved the world<f>1</f>, that he gave his only begotten Son."
+  ],
+  [
+   500,
+   3,
+   17,
+   "For God sent not his Son<m>V-AAI-3S</m> into the world to condemn the world."
+  ],
+  [
+   730,
+   22,
+   21,
+   "The grace of our Lord Jesus Christ be with you all. Amen."
+  ]
+ ]
+}

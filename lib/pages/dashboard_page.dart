@@ -2219,17 +2219,8 @@ class _ContinueReadingHero extends StatelessWidget {
     String? menuLabel;
     String? shortLabel;
     if (currentVersion != null && currentVersion!.isNotEmpty) {
-      final info = bibleVersions.firstWhere(
-        (v) => v.value == currentVersion,
-        orElse: () => BibleVersionInfo(
-          value: currentVersion!,
-          shortLabel: currentVersion!,
-          menuLabel: currentVersion!,
-          language: 'zh-Hans',
-        ),
-      );
-      menuLabel = info.menuLabel;
-      shortLabel = info.shortLabel;
+      menuLabel = fullBibleVersionLabel(currentVersion!);
+      shortLabel = shortBibleVersionLabel(currentVersion!);
     }
     final shortBook =
         book != null ? shortBookName(book!, locale, currentVersion) : null;

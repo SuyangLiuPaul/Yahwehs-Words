@@ -57,16 +57,7 @@ class DailyVerseFallback {
   static String? fallbackVersionLabel(String currentVersion) {
     final fallback = bibleVersionFullCanonFallback(currentVersion);
     if (fallback == null) return null;
-    final info = bibleVersions.firstWhere(
-      (v) => v.value == fallback,
-      orElse: () => BibleVersionInfo(
-        value: fallback,
-        shortLabel: fallback,
-        menuLabel: fallback,
-        language: 'zh-Hans',
-      ),
-    );
-    return info.menuLabel;
+    return fullBibleVersionLabel(fallback);
   }
 
   /// Pre-warm the fallback bundle for [currentVersion] so the next

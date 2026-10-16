@@ -1,0 +1,57 @@
+{
+ "Bible": [
+  [
+   1,
+   1,
+   1,
+   "In the beginning God created the heaven and the earth."
+  ],
+  [
+   1,
+   1,
+   2,
+   "And the earth was <FI>without form<Fi>, and void;<CM>and darkness <WH2822> was upon the face of the deep."
+  ],
+  [
+   1,
+   1,
+   3,
+   "<TS>The First Day<Ts>And God said<WH559>, Let there be light<RF>a footnote<Rf>."
+  ],
+  [
+   43,
+   3,
+   16,
+   "For God so loved the world, <FR>that he gave his only begotten Son<Fr><RX43.3.17>."
+  ],
+  [
+   66,
+   22,
+   21,
+   "The grace of our Lord Jesus Christ be with you all. Amen."
+  ],
+  [
+   67,
+   1,
+   1,
+   "A book number outside 1-66."
+  ]
+ ],
+ "Details": [
+  [
+   "MySword Test Bible",
+   "A synthetic test",
+   "MST",
+   "",
+   "1.0",
+   "2026-10-17",
+   "2026-10-17",
+   0,
+   1,
+   1,
+   1,
+   "eng",
+   "0"
+  ]
+ ]
+}

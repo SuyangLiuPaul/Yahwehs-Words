@@ -170,6 +170,7 @@ accept the parameter that would make it so (documented per-row).
 | `StudyPromisesPage` | `/study/promises` | none | — | yes — linked from Home: promises of God, fulfilled or not, Bible first |
 | `StudyTestamentsPage` | `/study/testaments` | none | — | yes — linked from Home: New Testament quotations of, allusions to and types from the Old Testament |
 | `ReadingPlanPage` | `/reading-plan` | none | — | yes — reading plans (2026-10-15): pick a plan, today's passages, tick days; progress is per profile and synced |
+| `AddonsPage` | — | none (lists the texts this device holds) | — | **no** — what the page shows is the content of THIS device's own store (an imported text is never uploaded, synced or shared), so a link would open an empty list on any other device; opens from Settings and from the version picker's last row, Back returns to them (2026-10-17) |
 | `ReadingPlanSchedulePage` | — | none (names one running plan by its local id) | — | **no** — a running plan's id is local to the profile, so a link would open nothing on another device; a sub-page of `ReadingPlanPage`, Back returns to it (2026-10-16) |
 | `WorldHistoryWheelPage` | `/world-history-wheel` | none | — | yes — namespaced Sword world-history data |
 | `MisconceptionsPage` | `/misconceptions` | none | — | yes for the list; **individual entries are not a separate page today** (§2) — out of scope until/unless a `MisconceptionDetailPage` is split out |
