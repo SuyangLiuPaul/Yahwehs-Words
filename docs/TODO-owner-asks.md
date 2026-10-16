@@ -24,6 +24,13 @@ Olive Tree's *Vertical Scrolling* switch in Quick Settings.
   with screenshots, ship to dev first; the owner tries it on the phone.
 - Order: do this BEFORE item 2.
 
+**Status 2026-10-16:** built in both apps, committed locally (no version bump),
+deployed to dev/qat only (Words also cn-dev/cn-qat). Words: HomePage reader;
+Sword: classic 阅读 mode only (the 对照 parallel pane is a different reader and
+is not affected). Not covered: reading-plan sessions keep paging one chapter
+at a time (Words); not yet tried on a phone by the owner. Tests:
+`test/vertical_scroll_test.dart` in both repos.
+
 ## 2. Add-ons: importing third-party modules (asked 2026-10-16)
 
 Owner's feedback: the apps are closed; long-lived free study software
