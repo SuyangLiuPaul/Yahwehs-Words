@@ -5095,11 +5095,6 @@ const uiStrings = {
     'zh-Hant': '約翰福音 17:3（和合本雅偉版）',
     'en': 'John 17:3 (KJV)',
   },
-  'aboutUpdateSettings': {
-    'zh-Hans': '更新设置',
-    'zh-Hant': '更新設定',
-    'en': 'Update settings',
-  },
   'aboutMissionTitle': {
     'zh-Hans': '我们的宗旨',
     'zh-Hant': '我們的宗旨',

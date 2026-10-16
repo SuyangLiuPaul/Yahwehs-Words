@@ -598,10 +598,9 @@ void _doors() {
     });
 
     test('About does NOT repeat them (2026-10-16): two copies of one switch '
-        'is how two of them end up disagreeing; it links to Settings', () {
+        'is how two of them end up disagreeing', () {
       expect(about.contains('UpdateCheckTile('), isFalse);
       expect(about.contains('AutoUpdateCheckToggle('), isFalse);
-      expect(about.contains('about.updateSettings'), isTrue);
     });
 
     test('both are behind the platform gate, so the web is not shown a '
